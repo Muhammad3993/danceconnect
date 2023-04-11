@@ -15,6 +15,7 @@
 		7699B88040F8A987B510C191 /* libPods-danceConnect-danceConnectTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-danceConnect-danceConnectTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8797DDE729E433CF0020DDDB /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8797DDE629E433CF0020DDDB /* logo.png */; };
+		8797DDE929E440720020DDDB /* gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 8797DDE829E440720020DDDB /* gradient.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-danceConnect.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-danceConnect.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = danceConnect/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8797DDE629E433CF0020DDDB /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = logo.png; path = ../source/assets/images/logo.png; sourceTree = "<group>"; };
+		8797DDE829E440720020DDDB /* gradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gradient.png; path = ../source/assets/images/gradient.png; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-danceConnect-danceConnectTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-danceConnect-danceConnectTests.release.xcconfig"; path = "Target Support Files/Pods-danceConnect-danceConnectTests/Pods-danceConnect-danceConnectTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -88,6 +90,7 @@
 		13B07FAE1A68108700A75B9A /* danceConnect */ = {
 			isa = PBXGroup;
 			children = (
+				8797DDE829E440720020DDDB /* gradient.png */,
 				8797DDE629E433CF0020DDDB /* logo.png */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -246,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				8797DDE929E440720020DDDB /* gradient.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				8797DDE729E433CF0020DDDB /* logo.png in Resources */,
 			);

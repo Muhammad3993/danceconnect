@@ -12,7 +12,10 @@ const AuthorizationScreen = (): JSX.Element => {
   };
   return (
     <RN.View style={styles.container}>
-      <RN.Text>AuthorizationScreen</RN.Text>
+      <RN.Image
+        source={require('../../assets/images/logo.png')}
+        style={styles.logo}
+      />
       <RN.TouchableOpacity style={styles.btn} onPress={goToRegistr}>
         <RN.Text>go to reg screen</RN.Text>
       </RN.TouchableOpacity>
@@ -32,6 +35,11 @@ const styles = RN.StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
+  },
+  logo: {
+    height: undefined,
+    // width: 250,
+    marginTop: 124,
   },
 });
 export default AuthorizationScreen;
