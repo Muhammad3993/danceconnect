@@ -19,8 +19,9 @@ const rootState = {
 };
 
 const rootPersistConfig = {
-  key: 'root',
+  key: 'keyOfStore',
   storage: AsyncStorage,
+  timeout: null,
 };
 let middleware = applyMiddleware(sagaMiddleware, loggerMiddleware);
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);

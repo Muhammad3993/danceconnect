@@ -90,6 +90,7 @@ export const Input = ({
         placeholder={placeholder}
         keyboardType={keyboardType}
         onFocus={onFocus}
+        placeholderTextColor={colors.darkGray}
         onBlur={onBlur}
       />
       {secureText && renderRightIcon()}

@@ -42,14 +42,15 @@ const roles = [
   },
 ];
 const Board = () => {
-  const [name, setName] = useState('');
+  const {userName, isRegistrationsSuccess, setUserData} = useRegistration();
+  const [name, setName] = useState(userName);
   const [gender, setGender] = useState(genders[0]);
   const [country, setCountry] = useState('Indonesia');
   const [currentLocation, setLocation] = useState('Bali');
   const [role, setRole] = useState(roles[0]);
   const navigation = useNavigation();
 
-  const {isRegistrationsSuccess, setUserData} = useRegistration();
+  // console.log('userName', userName)
   useEffect(() => {
     if (isRegistrationsSuccess) {
       navigation.navigate('HOME');
@@ -60,7 +61,7 @@ const Board = () => {
     setUserData(name, gender.title, country, currentLocation, role.title);
   };
   return (
-    <RN.SafeAreaView style={styles.container}>
+    <RN.ScrollView style={styles.container}>
       <RN.Text style={styles.title}>Tell us a bit more about yourself</RN.Text>
       <RN.Text style={styles.description}>
         So we can offer you better communities and events near you
@@ -156,7 +157,7 @@ const Board = () => {
       <RN.View style={{paddingTop: 28, marginHorizontal: 24}}>
         <Button title="Let’s Start" onPress={onPressFinish} disabled={true} />
       </RN.View>
-    </RN.SafeAreaView>
+    </RN.ScrollView>
   );
 };
 

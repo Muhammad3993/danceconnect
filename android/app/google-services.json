@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "510785169210",
+    "firebase_url": "https://danceconnect-bf8c3-default-rtdb.firebaseio.com",
+    "project_id": "danceconnect-bf8c3",
+    "storage_bucket": "danceconnect-bf8c3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510785169210:android:49705f4a0e4174189f5203",
+        "android_client_info": {
+          "package_name": "com.danceconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "510785169210-nuvgcms1kiglc2vqe2stgpub06le22q7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.danceconnect",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "510785169210-lf70g9qu4i2htf64g20emmqs2elosoal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChZfdOlnZDJ6_aXuC6PAFV3ATmVvPloIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "510785169210-ah6jq7s6kvlmcr1s79v2720okgo5haf7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "510785169210-19sv7n72asil7sqo4ijqgosuhb2vog4j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.danceConnect.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

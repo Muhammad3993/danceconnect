@@ -6,18 +6,27 @@ import {initializeFB} from './source/api/authSocial';
 import {Provider as ReduxProvider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import store, {persistor} from './source/store';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {isAndroid} from './source/utils/constants';
 
 const App = () => {
   useEffect(() => {
     SplashScreen.hide();
     initializeFB();
+    GoogleSignin.configure({
+      scopes: ['email'],
+      webClientId:
+        '510785169210-nuvgcms1kiglc2vqe2stgpub06le22q7.apps.googleusercontent.com',
+      offlineAccess: true,
+    });
   }, []);
+  const statusBarContent = isAndroid ? 'light-content' : 'dark-content';
   return (
     <SafeAreaView style={styles.container}>
       <ReduxProvider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <StatusBar barStyle={'dark-content'} />
+          <StatusBar barStyle={statusBarContent} />
           <AppNavigator />
         </PersistGate>
       </ReduxProvider>

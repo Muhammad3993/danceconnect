@@ -14,10 +14,18 @@ import useRegistration from '../../hooks/useRegistration';
 const AuthorizationScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
   const btns = authButtons.slice(0, 3);
-  const {authorizaton, isLoading, saveEmail, userUid} = useRegistration();
-  const [email, setEmail] = useState<string>(saveEmail ?? '');
-  const [password, setPassword] = useState<string>('qwerty123');
+  const {
+    authorizaton,
+    isLoading,
+    isUserExists,
+    userUid,
+    authorizationWithGoogle,
+    isErrors,
+  } = useRegistration();
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
+  // console.log('isErrors', isErrors);
   const goSignUp = () => {
     navigation.navigate('REGISTRATION');
   };
@@ -25,12 +33,22 @@ const AuthorizationScreen = (): JSX.Element => {
     navigation.goBack();
   };
 
+  const onPressSocial = (iconName: string) => {
+    console.log('on press', iconName);
+    if (iconName === 'google') {
+      authorizationWithGoogle();
+    }
+  };
+
   useEffect(() => {
     if (userUid) {
       navigation.navigate('HOME');
-      console.log(userUid);
+      // console.log(userUid);
     }
-  }, [userUid, navigation]);
+    if (isUserExists) {
+      navigation.navigate('HOME');
+    }
+  }, [userUid, navigation, isUserExists]);
   const renderBackButton = () => {
     return (
       <RN.TouchableOpacity onPress={goBack} style={{paddingTop: 24}}>
@@ -85,7 +103,7 @@ const AuthorizationScreen = (): JSX.Element => {
                 <AuthButton
                   icon={btn.icon}
                   key={btn.key}
-                  onPress={btn?.onPress}
+                  onPress={() => onPressSocial(btn.icon)}
                 />
               );
             })}
@@ -127,19 +145,21 @@ const styles = RN.StyleSheet.create({
     paddingTop: 41,
     paddingBottom: 36,
     fontFamily: 'Mulish',
+    color: colors.textPrimary,
   },
   logo: {
     height: 55,
     width: 200,
-    marginTop: 84,
-    marginBottom: 20,
+    marginTop: 34,
+    // marginTop: 84,
+    // marginBottom: 20,
     alignSelf: 'center',
   },
   linesWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 24,
+    paddingTop: 4,
     marginHorizontal: 12,
   },
   line: {

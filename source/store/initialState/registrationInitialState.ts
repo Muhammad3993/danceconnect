@@ -2,7 +2,7 @@ export default {
   email: '',
   password: '',
   isLoading: false,
-  isAutorized: false,
+  isAuhtorized: false,
   errors: null,
   currentUser: null,
   name: '',
@@ -11,4 +11,5 @@ export default {
   location: '',
   role: '',
   isRegistrationsSuccess: false,
+  isUserExists: false,
 };

@@ -1,6 +1,8 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  authWithGoogleRequest,
   authorizationWithEmailRequest,
+  clearSignErrorRequest,
   logoutRequest,
   registrationWithEmailRequest,
   setRegistrationDataRequestAction,
@@ -12,8 +14,11 @@ import {
   selectIsLoadingRegistration,
   selectIsSuccessRegistration,
   selectUser,
+  selectUserName,
   selectUserUid,
+  selectorErrors,
 } from '../store/selectors/registrationSelector';
+import { selectUserExist } from '../store/selectors/registrationSelector';
 
 const useRegistration = () => {
   const dispatch = useDispatch();
@@ -23,6 +28,9 @@ const useRegistration = () => {
   const currentUser = useSelector(selectUser);
   const userUid = useSelector(selectUserUid);
   const isRegistrationsSuccess = useSelector(selectIsSuccessRegistration);
+  const userName = useSelector(selectUserName);
+  const isUserExists = useSelector(selectUserExist);
+  const isErrors = useSelector(selectorErrors);
 
   const registration = (email: string, password: string) => {
     dispatch(registrationWithEmailRequest({email, password}));
@@ -32,6 +40,13 @@ const useRegistration = () => {
   };
   const logout = () => {
     dispatch(logoutRequest());
+  };
+  const authorizationWithGoogle = () => {
+    dispatch(authWithGoogleRequest());
+  };
+
+  const clearErrors = () => {
+    dispatch(clearSignErrorRequest());
   };
 
   const setUserData = (
@@ -64,6 +79,11 @@ const useRegistration = () => {
     isRegistrationsSuccess,
     setUserData,
     logout,
+    authorizationWithGoogle,
+    userName,
+    isUserExists,
+    isErrors,
+    clearErrors,
   };
 };
 

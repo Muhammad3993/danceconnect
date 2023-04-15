@@ -2,6 +2,7 @@ import React from 'react';
 import * as RN from 'react-native';
 import {getLogoImg} from '../../utils';
 import {useNavigation} from '@react-navigation/native';
+import colors from '../utils/colors';
 
 type authType = {
   title?: string;
@@ -16,7 +17,7 @@ const AuthButton = ({title, onPress, icon, navigateTo}: authType) => {
     if (navigateTo) {
       navigation.navigate(navigateTo);
     } else {
-      onPress;
+      onPress();
     }
   };
   if (!title) {
@@ -37,7 +38,7 @@ const AuthButton = ({title, onPress, icon, navigateTo}: authType) => {
 const styles = RN.StyleSheet.create({
   wrapper: {
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.darkGray,
     marginTop: 14,
     borderRadius: 16,
     padding: 14,
@@ -57,10 +58,11 @@ const styles = RN.StyleSheet.create({
     lineHeight: 22.4,
     letterSpacing: 0.2,
     paddingLeft: 14,
+    color: colors.textPrimary,
   },
   noTitleBtn: {
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.darkGray,
     paddingHorizontal: 32,
     alignItems: 'center',
     borderRadius: 20,

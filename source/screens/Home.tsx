@@ -4,11 +4,11 @@ import useRegistration from '../hooks/useRegistration';
 import {Button} from '../components/Button';
 
 const HomeScreen = () => {
-  const {logout} = useRegistration();
+  const {logout, userName} = useRegistration();
 
   return (
     <RN.View>
-      <RN.Text>home screen</RN.Text>
+      <RN.Text>{`welcome back, ${userName}`}</RN.Text>
       <Button title="Logout" onPress={logout} disabled={true} />
     </RN.View>
   );

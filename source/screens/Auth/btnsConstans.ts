@@ -1,7 +1,7 @@
 import {
-  authWithEmail,
+  // authWithEmail,
   onAppleButtonPress,
-  onFacebookButtonPress,
+  // onFacebookButtonPress,
 } from '../../api/authSocial';
 
 export const authButtons = [

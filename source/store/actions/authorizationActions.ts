@@ -1,20 +1,23 @@
 import {
   AUTHORIZATION_WITH_EMAIL,
+  AUTHORIZATION_WITH_GOOGLE,
+  CLEAR,
   LOGOUT,
   REGISTRATION_WITH_EMAIL,
 } from '../actionTypes/authorizationActionTypes';
 
 type registrationParams = {
-  email: string;
-  password: string;
-  error?: null;
+  email?: string;
+  password?: string;
+  errors?: null | string | undefined;
   currentUser?: null;
   name?: '';
-  gender: '';
+  gender?: '';
   country?: '';
   location?: '';
   role?: '';
-  uid: '';
+  uid?: '';
+  isUserExists?: boolean;
 };
 export const registrationWithEmailRequest = ({
   email,
@@ -93,10 +96,12 @@ export const authorizationWithEmailRequest = ({
 });
 export const authorizationWithEmailSuccess = ({
   currentUser,
+  isUserExists,
 }: registrationParams) => ({
   type: AUTHORIZATION_WITH_EMAIL.SUCCESS,
   payload: {
     currentUser: currentUser,
+    isUserExists: isUserExists,
   },
 });
 export const authorizationWithEmailFail = (error: registrationParams) => ({
@@ -119,4 +124,28 @@ export const logoutFail = (error: registrationParams) => ({
   payload: {
     errors: error,
   },
+});
+
+export const authWithGoogleRequest = () => ({
+  type: AUTHORIZATION_WITH_GOOGLE.REQUEST,
+});
+export const authWithGoogleSuccess = ({
+  currentUser,
+  isUserExists,
+}: registrationParams) => ({
+  type: AUTHORIZATION_WITH_GOOGLE.SUCCESS,
+  payload: {
+    currentUser: currentUser,
+    isUserExists: isUserExists,
+  },
+});
+export const authWithGoogleFail = (error: registrationParams) => ({
+  type: AUTHORIZATION_WITH_GOOGLE.FAIL,
+  payload: {
+    errors: error,
+  },
+});
+
+export const clearSignErrorRequest = () => ({
+  type: CLEAR.ERRORS_REQUEST,
 });

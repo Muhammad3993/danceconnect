@@ -16,8 +16,14 @@ const RegistraionScreen = (): JSX.Element => {
   const btns = authButtons.slice(0, 3);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-
-  const {registration, isLoading, userUid} = useRegistration();
+  const {isErrors, clearErrors} = useRegistration();
+  const {
+    registration,
+    isLoading,
+    userUid,
+    authorizationWithGoogle,
+    isUserExists,
+  } = useRegistration();
   const onPressLogin = () => {
     navigation.navigate('AUTH');
   };
@@ -27,10 +33,26 @@ const RegistraionScreen = (): JSX.Element => {
   };
 
   useEffect(() => {
+    if (isErrors?.errors?.toString()?.length > 0) {
+      RN.Alert.alert('', isErrors?.errors?.toString());
+      clearErrors();
+    }
+  }, [isErrors]);
+
+  const onPressSocial = (iconName: string) => {
+    // console.log('on press', iconName);
+    if (iconName === 'google') {
+      authorizationWithGoogle();
+    }
+  };
+  useEffect(() => {
     if (userUid) {
       navigation.navigate('ONBOARDING');
     }
-  }, [userUid, navigation]);
+    if (isUserExists) {
+      navigation.navigate('HOME');
+    }
+  }, [userUid, navigation, isUserExists]);
 
   const onPressSignUp = () => {
     registration(email, password);
@@ -85,7 +107,7 @@ const RegistraionScreen = (): JSX.Element => {
                 <AuthButton
                   icon={btn.icon}
                   key={btn.key}
-                  onPress={btn?.onPress}
+                  onPress={() => onPressSocial(btn.icon)}
                 />
               );
             })}
@@ -127,12 +149,13 @@ const styles = RN.StyleSheet.create({
     paddingTop: 41,
     paddingBottom: 36,
     fontFamily: 'Mulish',
+    color: colors.textPrimary,
   },
   logo: {
     height: 55,
     width: 200,
-    marginTop: 84,
-    marginBottom: 20,
+    marginTop: 34,
+    // marginBottom: 20,
     alignSelf: 'center',
   },
   linesWrapper: {

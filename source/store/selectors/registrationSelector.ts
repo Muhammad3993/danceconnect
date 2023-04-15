@@ -16,3 +16,12 @@ export const selectEmailUser = (state: IRootState) =>
 
 export const selectIsSuccessRegistration = (state: IRootState) =>
   state.registration?.isRegistrationsSuccess ?? false;
+
+export const selectUserName = (state: IRootState) =>
+  state.registration?.name ?? '';
+
+export const selectUserExist = (state: IRootState) =>
+  state?.registration?.isUserExists ?? false;
+
+export const selectorErrors = (state: IRootState) =>
+  state?.registration?.errors ?? null;

@@ -37,10 +37,10 @@ const MainNavigator = () => {
   );
 };
 const AppNavigator = () => {
-  const {isAuthorized} = useRegistration();
+  const {isUserExists} = useRegistration();
   return (
     <NavigationContainer>
-      {isAuthorized ? <MainNavigator /> : <AuthNavigor />}
+      {isUserExists ? <MainNavigator /> : <AuthNavigor />}
       {/* <RootStack.Navigator screenOptions={{headerShown: false}}> */}
       {/* <AuthNavigor /> */}
       {/* </RootStack.Navigator> */}

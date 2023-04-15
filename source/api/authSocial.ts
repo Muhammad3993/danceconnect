@@ -2,8 +2,9 @@ import auth from '@react-native-firebase/auth';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import firebase from '@react-native-firebase/app';
 import database from '@react-native-firebase/database';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
-import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+// import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import {config, credentials} from './configFB';
 export const onAppleButtonPress = async () => {
   try {
@@ -27,31 +28,46 @@ export const onAppleButtonPress = async () => {
     console.log(error);
   }
 };
-export const onFacebookButtonPress = async () => {
-  try {
-    const result = await LoginManager.logInWithPermissions([
-      'public_profile',
-      'email',
-    ]);
+// export const onFacebookButtonPress = async () => {
+//   try {
+//     const result = await LoginManager.logInWithPermissions([
+//       'public_profile',
+//       'email',
+//     ]);
 
-    if (result.isCancelled) {
-      throw 'User cancelled the login process';
-    }
+//     if (result.isCancelled) {
+//       throw 'User cancelled the login process';
+//     }
 
-    const data = await AccessToken.getCurrentAccessToken();
+//     const data = await AccessToken.getCurrentAccessToken();
 
-    if (!data) {
-      throw 'Something went wrong obtaining access token';
-    }
+//     if (!data) {
+//       throw 'Something went wrong obtaining access token';
+//     }
 
-    const facebookCredential = auth.FacebookAuthProvider.credential(
-      data.accessToken,
-    );
+//     const facebookCredential = auth.FacebookAuthProvider.credential(
+//       data.accessToken,
+//     );
 
-    return auth().signInWithCredential(facebookCredential);
-  } catch (error) {
-    console.log(error);
-  }
+//     return auth().signInWithCredential(facebookCredential);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+export const signWithGoogle = async () => {
+  GoogleSignin.configure({
+    webClientId:
+      '510785169210-lf70g9qu4i2htf64g20emmqs2elosoal.apps.googleusercontent.com',
+  });
+  await GoogleSignin.hasPlayServices();
+  const {idToken} = await GoogleSignin.signIn();
+  const creds = auth.GoogleAuthProvider.credential(idToken);
+  return auth()
+    .signInWithCredential(creds)
+    .then(user => user.user)
+    .catch(err => {
+      console.log(err);
+    });
 };
 
 export const sinUpWithEmail = async (email: string, password: string) => {
@@ -60,7 +76,7 @@ export const sinUpWithEmail = async (email: string, password: string) => {
     .createUserWithEmailAndPassword(email, password)
     .then(user => user.user)
     .catch(err => {
-      throw new Error(err);
+      throw new Error(err.code);
     });
 };
 export const logInWithEmail = async (email: string, password: string) => {
@@ -69,7 +85,7 @@ export const logInWithEmail = async (email: string, password: string) => {
     .signInWithEmailAndPassword(email, password)
     .then(user => user.user)
     .catch(err => {
-      throw new Error(err);
+      throw new Error(err.code);
     });
 };
 
@@ -81,20 +97,16 @@ export const setInitialDataUser = async (
   location: string,
   role: string,
 ) => {
-  const newRef = database().ref('users/').push();
-
-  return newRef
-    .set({
+  return database()
+    .ref(`users/${uid}`)
+    .update({
       name: name,
       gender: gender,
       country: country,
       location: location,
       role: role,
     })
-    .then((data: any) => {
-      console.log('setInitialDataUser data', data);
-      return data;
-    });
+    .then();
 };
 
 export const logout = async () => {
@@ -105,5 +117,8 @@ export const logout = async () => {
 };
 
 export const initializeFB = async () => {
-  await firebase.initializeApp(credentials, config);
+  const {apps} = firebase;
+  if (!apps.length) {
+    await firebase.initializeApp(credentials, config);
+  }
 };

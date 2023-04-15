@@ -1,5 +1,7 @@
 import {
   AUTHORIZATION_WITH_EMAIL,
+  AUTHORIZATION_WITH_GOOGLE,
+  CLEAR,
   LOGOUT,
   REGISTRATION_WITH_EMAIL,
 } from '../actionTypes/authorizationActionTypes';
@@ -8,16 +10,17 @@ import registrationInitialState from '../initialState/registrationInitialState';
 export type registrationAction = {
   type: string;
   payload?: {
-    email: string;
-    password: string;
-    errors: null;
-    currentUser: undefined;
+    email?: string;
+    password?: string;
+    errors?: null | string;
+    currentUser?: undefined;
     name?: string;
     gender: string;
     country?: string;
     location?: string;
     role?: string;
-    isRegistrationsSuccess: boolean;
+    isRegistrationsSuccess?: boolean;
+    isUserExists?: boolean;
   };
 };
 
@@ -46,8 +49,8 @@ export default (
     case REGISTRATION_WITH_EMAIL.FAIL:
       return {
         ...state,
-        email: action.payload?.email,
-        password: '',
+        // email: action.payload?.email,
+        // password: '',
         errors: action.payload?.errors,
         isLoading: false,
         isAuthorized: false,
@@ -68,6 +71,7 @@ export default (
         isLoading: false,
         isAuthorized: true,
         currentUser: action.payload?.currentUser,
+        isUserExists: action.payload?.isUserExists,
       };
     case AUTHORIZATION_WITH_EMAIL.FAIL:
       return {
@@ -91,12 +95,35 @@ export default (
       return {
         ...state,
         isRegistrationsSuccess: true,
+        isUserExists: action.payload?.isUserExists,
         isAuthorized: true,
       };
     case REGISTRATION_WITH_EMAIL.SET_DATA_FAIL:
       return {
         ...state,
         isRegistrationsSuccess: false,
+      };
+    case AUTHORIZATION_WITH_GOOGLE.REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case AUTHORIZATION_WITH_GOOGLE.SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        currentUser: action.payload?.currentUser,
+        email: action?.payload?.currentUser?.email,
+        name: action.payload?.currentUser?.displayName,
+        isAuthorized: false,
+        isUserExists: action.payload?.isUserExists,
+        errors: null,
+      };
+    case AUTHORIZATION_WITH_GOOGLE.FAIL:
+      return {
+        ...state,
+        isLoading: false,
+        errors: action.payload?.errors,
       };
     case LOGOUT.SUCCESS: {
       return {
@@ -109,6 +136,12 @@ export default (
       return {
         ...state,
         errors: action?.payload?.errors,
+      };
+    }
+    case CLEAR.ERRORS_REQUEST: {
+      return {
+        ...state,
+        errors: null,
       };
     }
     default:

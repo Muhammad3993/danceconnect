@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import * as RN from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -6,17 +6,35 @@ import {AuthStackNavigationParamList} from '../../navigation/types';
 import {authButtons} from './btnsConstans';
 import AuthButton from '../../components/authBtn';
 import colors from '../../utils/colors';
+import useRegistration from '../../hooks/useRegistration';
+import {SCREEN_HEIGHT} from '../../utils/constants';
 
 const WeclomeScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
   const btns = authButtons.slice(0, 3);
   const lastBtn = authButtons[authButtons.length - 1];
+  const {authorizationWithGoogle, userUid, isUserExists} = useRegistration();
 
   const onPressLogin = () => {
     navigation.navigate('AUTH');
   };
+  useEffect(() => {
+    if (userUid && !isUserExists) {
+      navigation.navigate('ONBOARDING');
+    }
+    if (isUserExists) {
+      navigation.navigate('HOME');
+    }
+    console.log('isUserExists', isUserExists);
+  }, [userUid, navigation, isUserExists]);
+  const onPressSocial = (iconName: string) => {
+    console.log('on press', iconName);
+    if (iconName === 'google') {
+      authorizationWithGoogle();
+    }
+  };
   return (
-    <RN.View style={styles.container}>
+    <RN.SafeAreaView style={styles.container}>
       <RN.View>
         <RN.Image
           source={require('../../assets/images/logoauth.png')}
@@ -29,7 +47,7 @@ const WeclomeScreen = (): JSX.Element => {
               title={btn.title}
               icon={btn.icon}
               key={btn.key}
-              onPress={btn?.onPress}
+              onPress={() => onPressSocial(btn.icon)}
             />
           );
         })}
@@ -56,7 +74,7 @@ const WeclomeScreen = (): JSX.Element => {
           <RN.Text style={styles.logInText}>Log in</RN.Text>
         </RN.TouchableOpacity>
       </RN.View>
-    </RN.View>
+    </RN.SafeAreaView>
   );
 };
 
@@ -66,7 +84,7 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
     padding: 14,
     justifyContent: 'space-between',
-    paddingBottom: 44,
+    // paddingBottom: 44,
   },
   welcome: {
     fontSize: 32,
@@ -85,7 +103,7 @@ const styles = RN.StyleSheet.create({
   logo: {
     height: 55,
     width: 200,
-    marginTop: 124,
+    marginTop: SCREEN_HEIGHT / 10,
     alignSelf: 'center',
   },
   linesWrapper: {
@@ -106,6 +124,7 @@ const styles = RN.StyleSheet.create({
     fontWeight: '600',
     paddingHorizontal: 16,
     fontFamily: 'Mulish',
+    color: colors.darkGray,
   },
   bottomWrapper: {
     flexDirection: 'row',
