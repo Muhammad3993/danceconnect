@@ -6,6 +6,7 @@ import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
+import { AuthStackNavigationParamList } from '../../navigation/types';
 
 /**
  *
@@ -48,7 +49,7 @@ const Board = () => {
   const [country, setCountry] = useState('Indonesia');
   const [currentLocation, setLocation] = useState('Bali');
   const [role, setRole] = useState(roles[0]);
-  const navigation = useNavigation();
+  const navigation = useNavigation<AuthStackNavigationParamList>();
 
   // console.log('userName', userName)
   useEffect(() => {
@@ -78,7 +79,10 @@ const Board = () => {
       <RN.Text style={[styles.placeholderTitle, {marginTop: -24}]}>
         Gender
       </RN.Text>
-      <RN.View style={styles.choiseWrapper}>
+      <RN.ScrollView
+        style={styles.choiseWrapper}
+        showsHorizontalScrollIndicator={false}
+        horizontal>
         {genders.map(item => {
           return (
             <RN.TouchableOpacity
@@ -103,11 +107,12 @@ const Board = () => {
             </RN.TouchableOpacity>
           );
         })}
-      </RN.View>
+      </RN.ScrollView>
 
       <RN.Text style={styles.placeholderTitle}>Current country</RN.Text>
       <RN.View style={styles.inputWrapper}>
         <Input
+          editable={false}
           value={country}
           onChange={setCountry}
           placeholder="Your name"
@@ -119,6 +124,7 @@ const Board = () => {
       </RN.Text>
       <RN.View style={styles.inputWrapper}>
         <Input
+          editable={false}
           value={currentLocation}
           onChange={setLocation}
           placeholder="Your name"
@@ -128,7 +134,10 @@ const Board = () => {
       <RN.Text style={[styles.placeholderTitle, {marginTop: -24}]}>
         Define yourself can select few
       </RN.Text>
-      <RN.View style={styles.choiseWrapper}>
+      <RN.ScrollView
+        style={styles.choiseWrapper}
+        showsHorizontalScrollIndicator={false}
+        horizontal>
         {roles.map(item => {
           return (
             <RN.TouchableOpacity
@@ -153,8 +162,9 @@ const Board = () => {
             </RN.TouchableOpacity>
           );
         })}
-      </RN.View>
-      <RN.View style={{paddingTop: 28, marginHorizontal: 24}}>
+        <RN.View style={{paddingHorizontal: 14}} />
+      </RN.ScrollView>
+      <RN.View style={styles.finishBtn}>
         <Button title="Let’s Start" onPress={onPressFinish} disabled={true} />
       </RN.View>
     </RN.ScrollView>
@@ -186,7 +196,7 @@ const styles = RN.StyleSheet.create({
     fontFamily: 'Mulish',
   },
   inputWrapper: {
-    marginHorizontal: 24,
+    marginHorizontal: 10,
     paddingTop: 8,
   },
   placeholderTitle: {
@@ -195,10 +205,11 @@ const styles = RN.StyleSheet.create({
     lineHeight: 22.4,
     paddingTop: 28,
     paddingHorizontal: 24,
+    color: colors.textPrimary,
   },
   choiseWrapper: {
-    flexDirection: 'row',
-    paddingTop: 12,
+    // flexDirection: 'row',
+    padding: 12,
     paddingHorizontal: 24,
   },
   choiseItemContainer: {
@@ -213,6 +224,9 @@ const styles = RN.StyleSheet.create({
     fontWeight: '600',
     lineHeight: 22.4,
     letterSpacing: 0.2,
+  },
+  finishBtn: {
+    paddingVertical: 28,
   },
 });
 

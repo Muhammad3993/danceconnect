@@ -16,6 +16,7 @@ import {
 import {
   authWithGoogleFail,
   authWithGoogleSuccess,
+  authorizationWithEmailFail,
   authorizationWithEmailSuccess,
   logoutFail,
   logoutSuccess,
@@ -24,7 +25,9 @@ import {
   setRegistrationDataFailAction,
   setRegistrationDataSuccessAction,
 } from '../actions/authorizationActions';
-import {userExists} from '../../api/functions';
+import {getUserData, userExists} from '../../api/functions';
+import {setErrors} from '../../utils/helpers';
+import { clearUserDataInStorage, getUserDataRequestAction } from '../actions/profileActions';
 
 function* registrationEmail(action: any) {
   try {
@@ -39,19 +42,9 @@ function* registrationEmail(action: any) {
         isUserExists: exists,
       }),
     );
-  } catch (error: any) {
-    console.log('registrationWithEmailFail', error);
-    //auth/email-already-in-use
-    //The email address is already in use by another account.
-    if (error.toString()?.includes('auth/email-already-in-use')) {
-      yield put(
-        registrationWithEmailFail({
-          errors: 'The email address is already in use by another account.',
-        }),
-      );
-    } else {
-      yield put(registrationWithEmailFail(error));
-    }
+  } catch (error: string | undefined | unknown) {
+    console.log('registrationWithEmailFail error', error);
+    yield put(registrationWithEmailFail(setErrors(error?.toString())));
   }
 }
 function* authorizationEmail(action: any) {
@@ -59,6 +52,8 @@ function* authorizationEmail(action: any) {
     const {email, password} = action?.payload;
     const userCredentials = yield call(logInWithEmail, email, password);
     const {uid} = userCredentials?._user;
+    // const userData = yield call(getUserData, uid);
+    // console.log('authorizationEmail', userData);
     const exists = yield call(userExists, uid);
     yield put(
       authorizationWithEmailSuccess({
@@ -66,9 +61,10 @@ function* authorizationEmail(action: any) {
         isUserExists: exists,
       }),
     );
-  } catch (errors: any) {
-    console.log('registrationWithEmailFail', errors);
-    yield put(registrationWithEmailFail(errors));
+    yield put(getUserDataRequestAction());
+  } catch (error: string | undefined | unknown) {
+    console.log('authorizationEmail error', error);
+    yield put(authorizationWithEmailFail(setErrors(error?.toString())));
   }
 }
 function* registrationSetData(action: any) {
@@ -104,6 +100,7 @@ function* logoutUser() {
   try {
     yield call(logout);
     yield put(logoutSuccess());
+    yield put(clearUserDataInStorage());
   } catch (error) {
     yield put(logoutFail(error));
   }
@@ -120,9 +117,10 @@ function* authWthGoogle() {
         isUserExists: exists,
       }),
     );
-  } catch (error) {
+    yield put(getUserDataRequestAction());
+  } catch (error: string | undefined | unknown) {
     console.log('authWthGoogle error', error);
-    yield put(authWithGoogleFail(error));
+    yield put(authWithGoogleFail(setErrors(error?.toString())));
   }
 }
 function* registrationSaga() {

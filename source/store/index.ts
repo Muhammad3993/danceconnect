@@ -7,15 +7,19 @@ import registrationReducer from './reducers/registrationReducer';
 import registrationInitialState from './initialState/registrationInitialState';
 import rootSaga from './sagas';
 import {createLogger} from 'redux-logger';
+import profileReducer from './reducers/profileReducer';
+import profileInitialState from './initialState/profileInitialState';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
 
 const appReducer = combineReducers({
   registration: registrationReducer,
+  profile: profileReducer,
 });
 const rootState = {
   registration: registrationInitialState,
+  profile: profileInitialState,
 };
 
 const rootPersistConfig = {

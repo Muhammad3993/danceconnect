@@ -10,6 +10,7 @@ import {Input} from '../../components/input';
 import colors from '../../utils/colors';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
+import {forgotPassword} from '../../api/authSocial';
 
 const AuthorizationScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
@@ -21,11 +22,46 @@ const AuthorizationScreen = (): JSX.Element => {
     userUid,
     authorizationWithGoogle,
     isErrors,
+    clearErrors,
   } = useRegistration();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const errorViewHeight = new RN.Animated.Value(0);
 
-  // console.log('isErrors', isErrors);
+  const translateY = errorViewHeight.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-24, 24],
+    extrapolate: 'clamp',
+  });
+
+  useEffect(() => {
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    if (isErrors?.message?.length > 0) {
+      RN.Animated.timing(errorViewHeight, {
+        duration: 1000,
+        toValue: 1,
+        easing: RN.Easing.ease,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [clearErrors, errorViewHeight, isErrors]);
+
+  useEffect(() => {
+    if (isErrors?.message?.length > 0) {
+      setTimeout(() => {
+        RN.Animated.timing(errorViewHeight, {
+          duration: 1000,
+          toValue: 0,
+          useNativeDriver: false,
+          easing: RN.Easing.ease,
+        }).start();
+      }, 4000);
+      setTimeout(() => {
+        clearErrors();
+      }, 5000);
+    }
+  }, [clearErrors, errorViewHeight, isErrors]);
+
   const goSignUp = () => {
     navigation.navigate('REGISTRATION');
   };
@@ -39,11 +75,13 @@ const AuthorizationScreen = (): JSX.Element => {
       authorizationWithGoogle();
     }
   };
+  const resetPassword = () => {
+    forgotPassword(email);
+  };
 
   useEffect(() => {
-    if (userUid) {
-      navigation.navigate('HOME');
-      // console.log(userUid);
+    if (userUid && !isUserExists) {
+      navigation.navigate('ONBOARDING');
     }
     if (isUserExists) {
       navigation.navigate('HOME');
@@ -60,64 +98,79 @@ const AuthorizationScreen = (): JSX.Element => {
     <SafeAreaView style={styles.safeArea}>
       {renderBackButton()}
       <RN.KeyboardAvoidingView style={styles.container} behavior="height">
-        <RN.View>
-          <RN.Image
-            source={require('../../assets/images/logoauth.png')}
-            style={styles.logo}
-          />
-          <RN.Text style={styles.welcome}>Login</RN.Text>
-          <Input
-            value={email}
-            onChange={(v: string) => setEmail(v)}
-            placeholder="Email"
-            keyboardType="email-address"
-            iconName="inbox"
-          />
-          <Input
-            value={password}
-            onChange={(v: string) => setPassword(v)}
-            placeholder="Password"
-            keyboardType="default"
-            iconName="lock"
-            secureText
-          />
-          <Button
-            title="Login"
-            disabled={email.length > 0 && password.length > 0}
-            onPress={async () => authorizaton(email, password)}
-            isLoading={isLoading}
-          />
-          <RN.TouchableOpacity style={styles.recoveryPasswordBtn}>
-            <RN.Text style={styles.recoveryPasswordText}>
-              Forgot the password?
-            </RN.Text>
-          </RN.TouchableOpacity>
-          <RN.View style={styles.linesWrapper}>
-            <RN.View style={styles.line} />
-            <RN.Text style={styles.or}>or continue with</RN.Text>
-            <RN.View style={styles.line} />
+        <RN.ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+          <RN.View>
+            <RN.Image
+              source={require('../../assets/images/logoauth.png')}
+              style={styles.logo}
+            />
+            <RN.Text style={styles.welcome}>Login</RN.Text>
+            <Input
+              isErrorBorder={isErrors?.type?.includes('email')}
+              value={email}
+              onChange={(v: string) => setEmail(v)}
+              placeholder="Email"
+              keyboardType="email-address"
+              iconName="inbox"
+            />
+            <RN.Animated.View
+              style={{
+                alignItems: 'center',
+                // height: translateY,
+                marginBottom: translateY,
+              }}>
+              <RN.Text style={{color: 'red'}}>{isErrors?.message}</RN.Text>
+            </RN.Animated.View>
+            <Input
+              value={password}
+              onChange={(v: string) => setPassword(v)}
+              isErrorBorder={isErrors?.type?.includes('password')}
+              placeholder="Password"
+              keyboardType="default"
+              iconName="lock"
+              secureText
+            />
+            <Button
+              title="Login"
+              disabled={email.length > 0 && password.length > 0}
+              onPress={async () => authorizaton(email, password)}
+              isLoading={isLoading}
+            />
+            <RN.TouchableOpacity
+              disabled={email?.length <= 0}
+              style={styles.recoveryPasswordBtn}
+              onPress={resetPassword}>
+              <RN.Text style={styles.recoveryPasswordText}>
+                Forgot the password?
+              </RN.Text>
+            </RN.TouchableOpacity>
+            <RN.View style={styles.linesWrapper}>
+              <RN.View style={styles.line} />
+              <RN.Text style={styles.or}>or continue with</RN.Text>
+              <RN.View style={styles.line} />
+            </RN.View>
+            <RN.View style={styles.btnsWrapper}>
+              {btns?.map(btn => {
+                return (
+                  <AuthButton
+                    icon={btn.icon}
+                    key={btn.key}
+                    onPress={() => onPressSocial(btn.icon)}
+                  />
+                );
+              })}
+            </RN.View>
           </RN.View>
-          <RN.View style={styles.btnsWrapper}>
-            {btns?.map(btn => {
-              return (
-                <AuthButton
-                  icon={btn.icon}
-                  key={btn.key}
-                  onPress={() => onPressSocial(btn.icon)}
-                />
-              );
-            })}
-          </RN.View>
-        </RN.View>
 
-        <RN.View style={styles.bottomWrapper}>
-          <RN.Text style={styles.alreadyAccountText}>
-            Don’t have an account?
-          </RN.Text>
-          <RN.TouchableOpacity onPress={goSignUp}>
-            <RN.Text style={styles.logInText}>Sign up</RN.Text>
-          </RN.TouchableOpacity>
-        </RN.View>
+          <RN.View style={styles.bottomWrapper}>
+            <RN.Text style={styles.alreadyAccountText}>
+              Don’t have an account?
+            </RN.Text>
+            <RN.TouchableOpacity onPress={goSignUp}>
+              <RN.Text style={styles.logInText}>Sign up</RN.Text>
+            </RN.TouchableOpacity>
+          </RN.View>
+        </RN.ScrollView>
       </RN.KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -137,7 +190,9 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     padding: 14,
+    paddingHorizontal: 0,
     justifyContent: 'space-between',
+    paddingBottom: 0,
   },
   welcome: {
     fontSize: 32,
@@ -150,16 +205,15 @@ const styles = RN.StyleSheet.create({
   logo: {
     height: 55,
     width: 200,
-    marginTop: 34,
-    // marginTop: 84,
-    // marginBottom: 20,
+    marginTop: 84,
+    marginBottom: 20,
     alignSelf: 'center',
   },
   linesWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 4,
+    paddingTop: 65,
     marginHorizontal: 12,
   },
   line: {
@@ -178,6 +232,8 @@ const styles = RN.StyleSheet.create({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
+    paddingTop: 60,
+    paddingBottom: 40,
   },
   alreadyAccountText: {
     fontSize: 14,

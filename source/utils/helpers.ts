@@ -7,3 +7,60 @@ export const validateEmail = (email: string) => {
     re2.test(String(email).toLowerCase())
   );
 };
+
+export const setErrors = (valueError: string) => {
+  console.log('setErrors', valueError);
+  if (valueError?.includes('auth/wrong-password')) {
+    return {
+      message: 'Password or email incorrect',
+      type: ['email', 'password'],
+    };
+  }
+  if (valueError?.includes('auth/too-many-requests')) {
+    return {
+      message: 'Many requests.',
+      type: ['email', 'password'],
+    };
+  }
+  if (valueError?.includes('auth/email-already-in-use')) {
+    return {
+      message: 'Password or email incorrect',
+      type: ['email', 'password'],
+    };
+  }
+  if (valueError?.includes('auth/network-request-failed')) {
+    return {
+      message: 'Network error',
+      type: [],
+    };
+  }
+  if (valueError?.includes('auth/invalid-email')) {
+    return {
+      message: 'Invalid email',
+      type: ['email'],
+    };
+  }
+  if (valueError?.includes('auth/weak-password')) {
+    return {
+      message: 'Weak password',
+      type: ['password'],
+    };
+  }
+
+  return '';
+};
+
+export const getIcon = (name: string, isFocused: boolean) => {
+  switch (name) {
+    case 'Home':
+      return isFocused ? 'homefull' : 'homeoutline';
+    case 'Communities':
+      return isFocused ? 'comfull' : 'comoutline';
+    case 'Events':
+      return isFocused ? 'ticketfull' : 'ticketoutline';
+    case 'Profile':
+      return isFocused ? 'profilefull' : 'profileoutline';
+    default:
+      break;
+  }
+};

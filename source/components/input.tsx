@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
 
@@ -10,6 +10,8 @@ type InputProp = {
   keyboardType: RN.KeyboardTypeOptions;
   secureText?: boolean;
   iconName?: string;
+  editable?: boolean;
+  isErrorBorder?: boolean;
 };
 
 export const Input = ({
@@ -19,6 +21,8 @@ export const Input = ({
   keyboardType,
   secureText,
   iconName,
+  isErrorBorder,
+  editable = true,
 }: InputProp) => {
   const [backgroundColor, setBackgroundColor] = useState(colors.lightGray);
   const [borderColor, setBorderColor] = useState(colors.gray);
@@ -26,6 +30,32 @@ export const Input = ({
   const [tintColorEye, setTintColoEye] = useState(colors.darkGray);
   const [visiblePassword, setVisiblePassword] = useState(secureText);
   const isIconInbox = iconName === 'inbox';
+  // const springAnimated = new RN.Animated.Value(-0.5);
+  // const translateX = springAnimated.interpolate({
+  //   inputRange: [-0.5, 0, 1, 1.5], // added more count
+  //   outputRange: [0, -10, 10, 0],
+  //   // outputRange: [0, -14, 14, 0],
+  //   // extrapolate: 'identity',
+  // });
+
+  useLayoutEffect(() => {
+    if (isErrorBorder) {
+      setBorderColor(colors.redError);
+      // RN.Animated.spring(springAnimated, {
+      //   damping: 350,
+      //   mass: 20,
+      //   // stiffness: 100,
+      //   overshootClamping: false,
+      //   restSpeedThreshold: 0.0001,
+      //   restDisplacementThreshold: 0.0001,
+      //   useNativeDriver: true,
+      //   toValue: 1.5,
+      // }).start(() => setBorderColor(colors.gray));
+    } else {
+      setBorderColor(colors.gray);
+    }
+  }, [isErrorBorder]);
+
   const renderLeftIcon = () => {
     return (
       <RN.View style={styles.leftIconWrapper}>
@@ -77,13 +107,20 @@ export const Input = ({
     }
   };
   return (
-    <RN.View>
+    <RN.View style={{marginHorizontal: 14}}>
+      {/* <RN.Animated.View
+      style={{
+        transform: [{translateX}],
+        marginHorizontal: 14,
+      }}> */}
       {iconName && renderLeftIcon()}
+
       <RN.TextInput
         style={[
           styles.container,
           {borderColor, backgroundColor, paddingLeft: iconName ? 46 : 16},
         ]}
+        editable={editable}
         value={value}
         secureTextEntry={visiblePassword}
         onChangeText={(val: string) => onChangeText(val)}
@@ -93,7 +130,9 @@ export const Input = ({
         placeholderTextColor={colors.darkGray}
         onBlur={onBlur}
       />
+
       {secureText && renderRightIcon()}
+      {/* </RN.Animated.View> */}
     </RN.View>
   );
 };

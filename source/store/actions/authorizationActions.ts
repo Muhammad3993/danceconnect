@@ -9,7 +9,7 @@ import {
 type registrationParams = {
   email?: string;
   password?: string;
-  errors?: null | string | undefined;
+  errors: string | unknown | undefined | {};
   currentUser?: null;
   name?: '';
   gender?: '';

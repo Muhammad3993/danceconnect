@@ -40,6 +40,7 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.orange,
     paddingVertical: 16,
     justifyContent: 'center',
+    marginHorizontal: 14,
     borderRadius: 100,
   },
   indicator: {

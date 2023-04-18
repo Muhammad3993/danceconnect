@@ -12,10 +12,34 @@ import AuthorizationScreen from '../screens/Auth/Autorization';
 import useRegistration from '../hooks/useRegistration';
 import HomeScreen from '../screens/Home';
 import Board from '../screens/Auth/Board';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import colors from '../utils/colors';
+import BottomTabs from '../components/bottomTabs';
+import ProfileScreen from '../screens/Profile';
+import CommunitiesScreen from '../screens/Communities';
+import EventsScreen from '../screens/Events';
 
 // const RootStack = createStackNavigator<RootStackNavigationParamList>();
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
+const Tabs = createBottomTabNavigator();
+
+const TabsNavigator = () => {
+  return (
+    <Tabs.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.orange,
+        tabBarInactiveTintColor: colors.darkGray,
+      }}
+      tabBar={props => <BottomTabs {...props} />}>
+      <Tabs.Screen name="Home" component={HomeScreen} />
+      <Tabs.Screen name="Communities" component={CommunitiesScreen} />
+      <Tabs.Screen name="Events" component={EventsScreen} />
+      <Tabs.Screen name="Profile" component={ProfileScreen} />
+    </Tabs.Navigator>
+  );
+};
 
 const AuthNavigor = () => {
   return (
@@ -31,7 +55,9 @@ const AuthNavigor = () => {
 };
 const MainNavigator = () => {
   return (
-    <MainStack.Navigator>
+    <MainStack.Navigator
+      screenOptions={{headerShown: false, gestureEnabled: false}}>
+      <MainStack.Screen name={'TABS'} component={TabsNavigator} />
       <MainStack.Screen name={'HOME'} component={HomeScreen} />
     </MainStack.Navigator>
   );

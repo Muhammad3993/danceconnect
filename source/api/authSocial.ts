@@ -89,6 +89,17 @@ export const logInWithEmail = async (email: string, password: string) => {
     });
 };
 
+export const forgotPassword = async (email: string) => {
+  return firebase
+    .auth()
+    .sendPasswordResetEmail(email)
+    .then(user => {
+      console.log(user);
+      return user;
+    })
+    .catch(er => console.log('forgot password error', er));
+};
+
 export const setInitialDataUser = async (
   uid: string,
   name: string,

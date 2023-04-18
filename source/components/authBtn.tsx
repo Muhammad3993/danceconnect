@@ -46,6 +46,7 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     paddingVertical: 16,
+    marginHorizontal: 14,
   },
   logotype: {
     width: 24,

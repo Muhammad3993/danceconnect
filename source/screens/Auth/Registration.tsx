@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import * as RN from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -17,6 +17,14 @@ const RegistraionScreen = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const {isErrors, clearErrors} = useRegistration();
+  const errorViewHeight = new RN.Animated.Value(0);
+
+  const translateY = errorViewHeight.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-24, 24],
+    extrapolate: 'clamp',
+  });
+
   const {
     registration,
     isLoading,
@@ -33,11 +41,32 @@ const RegistraionScreen = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (isErrors?.errors?.toString()?.length > 0) {
-      RN.Alert.alert('', isErrors?.errors?.toString());
-      clearErrors();
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    if (isErrors?.message?.length > 0) {
+      RN.Animated.timing(errorViewHeight, {
+        duration: 1000,
+        toValue: 1,
+        easing: RN.Easing.ease,
+        useNativeDriver: false,
+      }).start();
     }
-  }, [isErrors]);
+  }, [clearErrors, errorViewHeight, isErrors]);
+
+  useEffect(() => {
+    if (isErrors?.message?.length > 0) {
+      setTimeout(() => {
+        RN.Animated.timing(errorViewHeight, {
+          duration: 1000,
+          toValue: 0,
+          useNativeDriver: false,
+          easing: RN.Easing.ease,
+        }).start();
+      }, 4000);
+      setTimeout(() => {
+        clearErrors();
+      }, 5000);
+    }
+  }, [clearErrors, errorViewHeight, isErrors]);
 
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
@@ -46,7 +75,7 @@ const RegistraionScreen = (): JSX.Element => {
     }
   };
   useEffect(() => {
-    if (userUid) {
+    if (userUid && !isUserExists) {
       navigation.navigate('ONBOARDING');
     }
     if (isUserExists) {
@@ -69,59 +98,71 @@ const RegistraionScreen = (): JSX.Element => {
     <SafeAreaView style={styles.safeArea}>
       {renderBackButton()}
       <RN.KeyboardAvoidingView style={styles.container} behavior="height">
-        <RN.View>
-          <RN.Image
-            source={require('../../assets/images/logoauth.png')}
-            style={styles.logo}
-          />
-          <RN.Text style={styles.welcome}>Create New Account</RN.Text>
-          <Input
-            value={email}
-            onChange={(v: string) => setEmail(v)}
-            placeholder="Email"
-            keyboardType="email-address"
-            iconName="inbox"
-          />
-          <Input
-            value={password}
-            onChange={(v: string) => setPassword(v)}
-            placeholder="Password"
-            keyboardType="default"
-            iconName="lock"
-            secureText
-          />
-          <Button
-            title="Sign up"
-            disabled={email.length > 0 && password.length > 0}
-            onPress={() => onPressSignUp()}
-            isLoading={isLoading}
-          />
-          <RN.View style={styles.linesWrapper}>
-            <RN.View style={styles.line} />
-            <RN.Text style={styles.or}>or continue with</RN.Text>
-            <RN.View style={styles.line} />
+        <RN.ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+          <RN.View>
+            <RN.Image
+              source={require('../../assets/images/logoauth.png')}
+              style={styles.logo}
+            />
+            <RN.Text style={styles.welcome}>Create New Account</RN.Text>
+            <Input
+              value={email}
+              onChange={(v: string) => setEmail(v)}
+              isErrorBorder={isErrors?.type?.includes('email')}
+              placeholder="Email"
+              keyboardType="email-address"
+              iconName="inbox"
+            />
+            <RN.Animated.View
+              style={{
+                alignItems: 'center',
+                marginBottom: translateY,
+                // height: translateY,
+              }}>
+              <RN.Text style={{color: 'red'}}>{isErrors?.message}</RN.Text>
+            </RN.Animated.View>
+            <Input
+              isErrorBorder={isErrors?.type?.includes('password')}
+              value={password}
+              onChange={(v: string) => setPassword(v)}
+              placeholder="Password"
+              keyboardType="default"
+              iconName="lock"
+              secureText
+            />
+            <Button
+              title="Sign up"
+              disabled={email.length > 0 && password.length > 0}
+              onPress={() => onPressSignUp()}
+              isLoading={isLoading}
+            />
+            <RN.View style={styles.linesWrapper}>
+              <RN.View style={styles.line} />
+              <RN.Text style={styles.or}>or continue with</RN.Text>
+              <RN.View style={styles.line} />
+            </RN.View>
+            <RN.View style={styles.btnsWrapper}>
+              {btns?.map(btn => {
+                return (
+                  <AuthButton
+                    icon={btn.icon}
+                    key={btn.key}
+                    onPress={() => onPressSocial(btn.icon)}
+                  />
+                );
+              })}
+            </RN.View>
           </RN.View>
-          <RN.View style={styles.btnsWrapper}>
-            {btns?.map(btn => {
-              return (
-                <AuthButton
-                  icon={btn.icon}
-                  key={btn.key}
-                  onPress={() => onPressSocial(btn.icon)}
-                />
-              );
-            })}
-          </RN.View>
-        </RN.View>
 
-        <RN.View style={styles.bottomWrapper}>
-          <RN.Text style={styles.alreadyAccountText}>
-            Already have an account?
-          </RN.Text>
-          <RN.TouchableOpacity onPress={onPressLogin}>
-            <RN.Text style={styles.logInText}>Log in</RN.Text>
-          </RN.TouchableOpacity>
-        </RN.View>
+          <RN.View style={styles.bottomWrapper}>
+            <RN.Text style={styles.alreadyAccountText}>
+              Already have an account?
+            </RN.Text>
+            <RN.TouchableOpacity onPress={onPressLogin}>
+              <RN.Text style={styles.logInText}>Log in</RN.Text>
+            </RN.TouchableOpacity>
+          </RN.View>
+        </RN.ScrollView>
       </RN.KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -141,6 +182,8 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     padding: 14,
+    paddingHorizontal: 0,
+    paddingBottom: 0,
     justifyContent: 'space-between',
   },
   welcome: {
@@ -154,15 +197,15 @@ const styles = RN.StyleSheet.create({
   logo: {
     height: 55,
     width: 200,
-    marginTop: 34,
-    // marginBottom: 20,
+    marginTop: 84,
+    marginBottom: 20,
     alignSelf: 'center',
   },
   linesWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 34,
+    paddingTop: 65,
     marginHorizontal: 12,
   },
   line: {
@@ -181,6 +224,8 @@ const styles = RN.StyleSheet.create({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
+    paddingTop: 60,
+    paddingBottom: 40,
   },
   alreadyAccountText: {
     fontSize: 14,

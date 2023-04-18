@@ -12,7 +12,7 @@ export type registrationAction = {
   payload?: {
     email?: string;
     password?: string;
-    errors?: null | string;
+    errors: string | object;
     currentUser?: undefined;
     name?: string;
     gender: string;
@@ -67,6 +67,7 @@ export default (
       return {
         ...state,
         email: action.payload?.currentUser?.email,
+        name: action.payload?.currentUser?.displayName,
         // password: action.payload?.password,
         isLoading: false,
         isAuthorized: true,
@@ -95,8 +96,9 @@ export default (
       return {
         ...state,
         isRegistrationsSuccess: true,
-        isUserExists: action.payload?.isUserExists,
+        // isUserExists: action.payload?.isUserExists,
         isAuthorized: true,
+        isUserExists: true,
       };
     case REGISTRATION_WITH_EMAIL.SET_DATA_FAIL:
       return {
