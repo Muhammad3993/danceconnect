@@ -1,13 +1,21 @@
 import React from 'react';
 import * as RN from 'react-native';
-import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
+import {
+  BottomTabBarProps,
+  BottomTabNavigationOptions,
+} from '@react-navigation/bottom-tabs';
 import colors from '../utils/colors';
 import {getIcon} from '../utils/helpers';
+import {useCommunities} from '../hooks/useCommunitites';
 
 const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
+  const {getCommunitites} = useCommunities();
   const tabs = state.routes;
+  const focusedOptions = descriptors[state.routes[state.index].key]
+    .options as BottomTabNavigationOptions;
+  const display = focusedOptions.tabBarStyle?.display;
   return (
-    <RN.View style={styles.container}>
+    <RN.View style={[styles.container, {display}]}>
       {tabs.map((route, index) => {
         const {tabBarActiveTintColor, tabBarInactiveTintColor} =
           descriptors[route.key].options;
@@ -17,7 +25,12 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
             target: route.key,
             canPreventDefault: true,
           });
-
+          if (route.state?.routeNames?.length > 1) {
+            navigation.navigate(route.state?.routeNames[0]);
+          }
+          if (route.name === 'Communities') {
+            getCommunitites();
+          }
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name);
           }

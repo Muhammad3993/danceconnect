@@ -9,9 +9,22 @@ type authType = {
   onPress?: () => void;
   navigateTo?: string;
   icon?: string;
+  isAvailable?: boolean;
+  disabled?: boolean;
 };
-const AuthButton = ({title, onPress, icon, navigateTo}: authType) => {
+const AuthButton = ({
+  title,
+  onPress,
+  icon,
+  navigateTo,
+  isAvailable = true,
+  disabled = false,
+}: authType) => {
   const navigation = useNavigation();
+  const isAvailableBtnStyle = {
+    backgroundColor: isAvailable ? 'tranparent' : colors.lightGray,
+    opacity: isAvailable ? 1 : 0.5,
+  };
 
   const onPressBtn = () => {
     if (navigateTo) {
@@ -22,13 +35,21 @@ const AuthButton = ({title, onPress, icon, navigateTo}: authType) => {
   };
   if (!title) {
     return (
-      <RN.TouchableOpacity onPress={onPressBtn} style={styles.noTitleBtn}>
+      <RN.TouchableOpacity
+        activeOpacity={0.7}
+        disabled={!isAvailable || disabled}
+        onPress={onPressBtn}
+        style={[styles.noTitleBtn, isAvailableBtnStyle]}>
         <RN.Image source={getLogoImg(icon)} style={styles.logotype} />
       </RN.TouchableOpacity>
     );
   }
   return (
-    <RN.TouchableOpacity onPress={onPressBtn} style={styles.wrapper}>
+    <RN.TouchableOpacity
+      activeOpacity={0.7}
+      disabled={!isAvailable || disabled}
+      onPress={onPressBtn}
+      style={[styles.wrapper, isAvailableBtnStyle]}>
       <RN.Image source={getLogoImg(icon)} style={styles.logotype} />
       <RN.Text style={styles.title}>{title}</RN.Text>
     </RN.TouchableOpacity>

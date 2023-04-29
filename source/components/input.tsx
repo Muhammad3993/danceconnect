@@ -12,6 +12,8 @@ type InputProp = {
   iconName?: string;
   editable?: boolean;
   isErrorBorder?: boolean;
+  maxLength?: number;
+  multiLine?: boolean;
 };
 
 export const Input = ({
@@ -23,6 +25,8 @@ export const Input = ({
   iconName,
   isErrorBorder,
   editable = true,
+  maxLength,
+  multiLine = false,
 }: InputProp) => {
   const [backgroundColor, setBackgroundColor] = useState(colors.lightGray);
   const [borderColor, setBorderColor] = useState(colors.gray);
@@ -120,6 +124,7 @@ export const Input = ({
           styles.container,
           {borderColor, backgroundColor, paddingLeft: iconName ? 46 : 16},
         ]}
+        maxLength={maxLength}
         editable={editable}
         value={value}
         secureTextEntry={visiblePassword}
@@ -129,6 +134,7 @@ export const Input = ({
         onFocus={onFocus}
         placeholderTextColor={colors.darkGray}
         onBlur={onBlur}
+        multiline={multiLine}
       />
 
       {secureText && renderRightIcon()}

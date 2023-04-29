@@ -8,5 +8,6 @@ export default {
   orange: '#F5A80C',
   tranparentOrange: 'rgba(245, 168, 12, 0.06)',
   purple: '#5C33D7',
+  lightPurple: '#F6F5FF',
   redError: '#F75555',
 };

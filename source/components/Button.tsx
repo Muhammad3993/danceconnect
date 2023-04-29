@@ -8,22 +8,39 @@ type ButtonProps = {
   onPress: () => {};
   disabled?: boolean;
   isLoading?: false;
+  buttonStyle?: {};
 };
-export const Button = ({title, onPress, disabled, isLoading}: ButtonProps) => {
+export const Button = ({
+  title,
+  onPress,
+  disabled,
+  isLoading,
+  buttonStyle,
+}: ButtonProps) => {
   return (
     <RN.TouchableOpacity
       onPress={onPress}
+      activeOpacity={0.7}
       disabled={!disabled}
       style={[
+        buttonStyle,
         styles.container,
         {
           backgroundColor: !disabled
             ? 'rgba(245, 168, 12, 0.6)'
-            : colors.orange,
+            : buttonStyle?.backgroundColor ?? colors.orange,
           flexDirection: isLoading ? 'row' : 'column',
         },
       ]}>
-      <RN.Text style={styles.title}>{title}</RN.Text>
+      <RN.Text
+        style={[
+          styles.title,
+          {
+            color: buttonStyle?.color ?? colors.white,
+          },
+        ]}>
+        {title}
+      </RN.Text>
       {isLoading && (
         <RN.ActivityIndicator
           size={'small'}
@@ -37,7 +54,6 @@ export const Button = ({title, onPress, disabled, isLoading}: ButtonProps) => {
 
 const styles = RN.StyleSheet.create({
   container: {
-    backgroundColor: colors.orange,
     paddingVertical: 16,
     justifyContent: 'center',
     marginHorizontal: 14,
@@ -52,5 +68,6 @@ const styles = RN.StyleSheet.create({
     fontWeight: '700',
     lineHeight: 22.4,
     textAlign: 'center',
+    fontFamily: 'Mulish-Light',
   },
 });

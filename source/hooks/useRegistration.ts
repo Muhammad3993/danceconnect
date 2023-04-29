@@ -18,7 +18,7 @@ import {
   selectUserUid,
   selectorErrors,
 } from '../store/selectors/registrationSelector';
-import { selectUserExist } from '../store/selectors/registrationSelector';
+import {selectUserExist} from '../store/selectors/registrationSelector';
 
 const useRegistration = () => {
   const dispatch = useDispatch();

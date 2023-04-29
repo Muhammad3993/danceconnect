@@ -49,6 +49,7 @@ const WeclomeScreen = (): JSX.Element => {
                 icon={btn.icon}
                 key={btn.key}
                 onPress={() => onPressSocial(btn.icon)}
+                isAvailable={btn?.isAvailable}
               />
             );
           })}

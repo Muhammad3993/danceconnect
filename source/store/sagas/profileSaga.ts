@@ -6,6 +6,7 @@ import {
 } from '../actions/profileActions';
 import {selectUserUid} from '../selectors/registrationSelector';
 import {getUserData} from '../../api/functions';
+import {getCommunitiesRequestAction} from '../actions/communityActions';
 
 function* getUserDataRequest() {
   try {
@@ -18,6 +19,7 @@ function* getUserDataRequest() {
         userData: data,
       }),
     );
+    yield put(getCommunitiesRequestAction());
   } catch (error: any) {
     yield put(getUserDataFailAction(error));
   }

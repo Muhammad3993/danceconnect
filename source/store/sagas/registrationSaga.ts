@@ -28,6 +28,7 @@ import {
 import {getUserData, userExists} from '../../api/functions';
 import {setErrors} from '../../utils/helpers';
 import { clearUserDataInStorage, getUserDataRequestAction } from '../actions/profileActions';
+import { clearCommunititesData } from '../actions/communityActions';
 
 function* registrationEmail(action: any) {
   try {
@@ -101,6 +102,7 @@ function* logoutUser() {
     yield call(logout);
     yield put(logoutSuccess());
     yield put(clearUserDataInStorage());
+    yield put(clearCommunititesData());
   } catch (error) {
     yield put(logoutFail(error));
   }

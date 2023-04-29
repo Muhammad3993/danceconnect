@@ -1,0 +1,20 @@
+export default {
+  isLoading: false,
+  name: '',
+  description: '',
+  country: '',
+  location: '',
+  creatorUid: '',
+  categories: [],
+  images: [],
+  errors: null,
+  isCreated: false,
+  dataCommunities: [],
+  following: {
+    isLoadingFollow: false,
+    communityUid: '',
+    userUid: '',
+    userImg: '',
+  },
+  followingCommunities: [],
+};

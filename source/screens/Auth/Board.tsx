@@ -6,7 +6,9 @@ import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
-import { AuthStackNavigationParamList } from '../../navigation/types';
+import {AuthStackNavigationParamList} from '../../navigation/types';
+import LocationSelection from '../../components/locationSelection';
+import {locationData} from '../../utils/constants';
 
 /**
  *
@@ -46,8 +48,8 @@ const Board = () => {
   const {userName, isRegistrationsSuccess, setUserData} = useRegistration();
   const [name, setName] = useState(userName);
   const [gender, setGender] = useState(genders[0]);
-  const [country, setCountry] = useState('Indonesia');
-  const [currentLocation, setLocation] = useState('Bali');
+  const [country, setCountry] = useState('');
+  const [currentCity, setCity] = useState('');
   const [role, setRole] = useState(roles[0]);
   const navigation = useNavigation<AuthStackNavigationParamList>();
 
@@ -59,7 +61,7 @@ const Board = () => {
   }, [isRegistrationsSuccess, navigation]);
 
   const onPressFinish = () => {
-    setUserData(name, gender.title, country, currentLocation, role.title);
+    setUserData(name, gender.title, country, currentCity, role.title);
   };
   return (
     <RN.ScrollView style={styles.container}>
@@ -109,29 +111,15 @@ const Board = () => {
         })}
       </RN.ScrollView>
 
-      <RN.Text style={styles.placeholderTitle}>Current country</RN.Text>
-      <RN.View style={styles.inputWrapper}>
-        <Input
-          editable={false}
-          value={country}
-          onChange={setCountry}
-          placeholder="Your name"
-          keyboardType="default"
-        />
-      </RN.View>
-      <RN.Text style={[styles.placeholderTitle, {marginTop: -24}]}>
-        location
-      </RN.Text>
-      <RN.View style={styles.inputWrapper}>
-        <Input
-          editable={false}
-          value={currentLocation}
-          onChange={setLocation}
-          placeholder="Your name"
-          keyboardType="default"
-        />
-      </RN.View>
-      <RN.Text style={[styles.placeholderTitle, {marginTop: -24}]}>
+      <LocationSelection
+        data={locationData}
+        onChooseCountry={setCountry}
+        selectedCountry={country}
+        onChooseCity={setCity}
+        selectedCity={currentCity}
+      />
+
+      <RN.Text style={[styles.placeholderTitle, {marginTop: -4}]}>
         Define yourself can select few
       </RN.Text>
       <RN.ScrollView

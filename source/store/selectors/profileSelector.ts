@@ -7,3 +7,6 @@ export const selectUserName = (state: IRootState) =>
 
 export const selectUserImg = (state: IRootState) =>
   state.registration?.currentUser?.photoURL ?? null;
+
+export const selectUserData = (state: IRootState) =>
+  state.profile?.userData ?? null;

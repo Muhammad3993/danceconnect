@@ -1,9 +1,13 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  getFocusedRouteNameFromRoute,
+} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   AuthStackNavigationParamList,
   MainStackNavigationParamList,
+  navigationRef,
   // RootStackNavigationParamList,
 } from './types';
 import WeclomeScreen from '../screens/Auth/WelcomeScreen';
@@ -16,25 +20,50 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import colors from '../utils/colors';
 import BottomTabs from '../components/bottomTabs';
 import ProfileScreen from '../screens/Profile';
-import CommunitiesScreen from '../screens/Communities';
+import CommunitiesScreen from '../screens/Community/Communities';
 import EventsScreen from '../screens/Events';
+import CreateCommunity from '../screens/Community/CreateCommunity';
 
 // const RootStack = createStackNavigator<RootStackNavigationParamList>();
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
 const Tabs = createBottomTabNavigator();
 
+const CommunityStack = createStackNavigator();
+const CommunityNavigator = () => {
+  return (
+    <CommunityStack.Navigator
+      initialRouteName="CommunitiesMain"
+      screenOptions={{headerShown: false, gestureEnabled: false}}>
+      <CommunityStack.Screen
+        name="CommunitiesMain"
+        component={CommunitiesScreen}
+      />
+      <CommunityStack.Screen
+        name="CreateCommunity"
+        component={CreateCommunity}
+      />
+    </CommunityStack.Navigator>
+  );
+};
 const TabsNavigator = () => {
   return (
     <Tabs.Navigator
-      screenOptions={{
+      screenOptions={({route}) => ({
         headerShown: false,
         tabBarActiveTintColor: colors.orange,
         tabBarInactiveTintColor: colors.darkGray,
-      }}
+        tabBarHideOnKeyboard: true,
+        tabBarStyle: (route => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+          return {
+            display: routeName === 'CreateCommunity' ? 'none' : 'flex',
+          };
+        })(route),
+      })}
       tabBar={props => <BottomTabs {...props} />}>
       <Tabs.Screen name="Home" component={HomeScreen} />
-      <Tabs.Screen name="Communities" component={CommunitiesScreen} />
+      <Tabs.Screen name="Communities" component={CommunityNavigator} />
       <Tabs.Screen name="Events" component={EventsScreen} />
       <Tabs.Screen name="Profile" component={ProfileScreen} />
     </Tabs.Navigator>
@@ -65,7 +94,7 @@ const MainNavigator = () => {
 const AppNavigator = () => {
   const {isUserExists} = useRegistration();
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {isUserExists ? <MainNavigator /> : <AuthNavigor />}
       {/* <RootStack.Navigator screenOptions={{headerShown: false}}> */}
       {/* <AuthNavigor /> */}

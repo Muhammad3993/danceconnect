@@ -15,11 +15,13 @@ export const authButtons = [
     title: 'Continue with Apple',
     icon: 'apple',
     onPress: () => onAppleButtonPress(),
+    isAvailable: false,
   },
   {
     key: 2,
     title: 'Continue with Facebook',
     icon: 'facebook',
+    isAvailable: false,
     // onPress: () => onFacebookButtonPress(),
   },
   {

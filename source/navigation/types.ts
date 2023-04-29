@@ -1,5 +1,9 @@
+import {createNavigationContainerRef} from '@react-navigation/native';
 import {StackScreenProps} from '@react-navigation/stack';
 import React from 'react';
+
+export const navigationRef = createNavigationContainerRef();
+
 export type AuthStackNavigationParamList = {
   [x: string]: any;
   AUTH: {

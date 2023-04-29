@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
+import {LogBox, StatusBar, StyleSheet} from 'react-native';
 import AppNavigator from './source/navigation/rootNavigator';
 import SplashScreen from 'react-native-splash-screen';
 import {initializeFB} from './source/api/authSocial';
@@ -21,6 +21,7 @@ const App = () => {
       offlineAccess: true,
     });
   }, []);
+  LogBox.ignoreAllLogs();
   const statusBarContent = isAndroid ? 'light-content' : 'dark-content';
   return (
     <SafeAreaView style={styles.container}>

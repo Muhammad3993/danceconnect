@@ -9,6 +9,8 @@ import rootSaga from './sagas';
 import {createLogger} from 'redux-logger';
 import profileReducer from './reducers/profileReducer';
 import profileInitialState from './initialState/profileInitialState';
+import communitiesReducer from './reducers/communitiesReducer';
+import communitiesInitialState from './initialState/communitiesInitialState';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
@@ -16,16 +18,19 @@ const loggerMiddleware = createLogger();
 const appReducer = combineReducers({
   registration: registrationReducer,
   profile: profileReducer,
+  communities: communitiesReducer,
 });
 const rootState = {
   registration: registrationInitialState,
   profile: profileInitialState,
+  communities: communitiesInitialState,
 };
 
 const rootPersistConfig = {
   key: 'keyOfStore',
   storage: AsyncStorage,
   timeout: null,
+  blacklist: ['communities'],
 };
 let middleware = applyMiddleware(sagaMiddleware, loggerMiddleware);
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);
