@@ -12,12 +12,18 @@ export type communititesAction = {
     location?: string;
     creatorUid?: string;
     categories?: string[];
+    followers?: string[];
     images?: string[];
     errors?: null;
     isCreated?: false;
     dataCommunities?: string[];
     following?: followingParams;
     followingCommunities?: string[];
+    communityByIdData?: null;
+    isLoadingById?: false;
+    communityUid?: string;
+    isLoadingChangeInformation?: boolean;
+    saveChanges?: boolean;
   };
 };
 
@@ -140,6 +146,57 @@ export default (
           userImg: '',
           communityUid: '',
         },
+      };
+    case COMMUNITIES.GET_COMMUNITY_BY_ID_REQUEST:
+      return {
+        ...state,
+        communityByIdData: null,
+        isLoadingById: true,
+        communityUid: action.payload?.communityUid,
+      };
+    case COMMUNITIES.GET_COMMUNITY_BY_ID_SUCCESS:
+      return {
+        ...state,
+        isLoadingById: false,
+        communityByIdData: action.payload?.communityByIdData,
+        communityUid: '',
+      };
+    case COMMUNITIES.GET_COMMUNITY_BY_ID_FAIL:
+      return {
+        ...state,
+        communityByIdData: null,
+        isLoadingById: false,
+        communityUid: '',
+      };
+    case COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_REQUEST:
+      return {
+        ...state,
+        isLoadingChangeInformation: true,
+        name: action?.payload?.name,
+        description: action?.payload?.description,
+        country: action?.payload?.country,
+        location: action?.payload?.location,
+        categories: action?.payload?.categories,
+        followers: action?.payload?.followers,
+        images: action?.payload?.images,
+        saveChanges: false,
+      };
+    case COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_SUCCESS:
+      return {
+        ...state,
+        isLoadingChangeInformation: false,
+        saveChanges: true,
+      };
+    case COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_FAIL:
+      return {
+        ...state,
+        isLoadingChangeInformation: false,
+        saveChanges: false,
+      };
+    case COMMUNITIES.CHANGE_INFORMATION_VALUE:
+      return {
+        ...state,
+        saveChanges: false,
       };
     case COMMUNITIES.CLEAR_DATA:
       return {

@@ -7,13 +7,17 @@ enum Item {
   id = 0,
   country = '',
   cities = '',
+  places = '',
 }
 type selectionProps = {
   onChooseCity: (value: string) => void;
   selectedCity: string;
   onChooseCountry: (value: string) => void;
   selectedCountry: string;
+  onChoosePlace: (value: string) => void;
+  selectedPlace: string;
   data: string[keyof Item];
+  isEvent?: boolean;
 };
 const LocationSelection = ({
   data,
@@ -21,13 +25,20 @@ const LocationSelection = ({
   selectedCountry,
   onChooseCity,
   selectedCity,
+  onChoosePlace,
+  selectedPlace,
+  isEvent = false,
 }: selectionProps) => {
   const [currentCounty, setCurrentCountry] = useState(
     data[0]?.country ?? selectedCountry,
   );
   const [isOpenedCountry, setIsOpenedCountry] = useState(false);
   const [isOpenedCities, setIsOpenedCities] = useState(false);
+  const [isOpenedPlaces, setIsOpenedPlaces] = useState(false);
   const [currentCity, setCurrentCity] = useState(selectedCity);
+  const [currentPlace, setCurrentPlace] = useState(
+    data[0]?.places[0] ?? selectedPlace,
+  );
 
   const onPressCountry = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -35,9 +46,6 @@ const LocationSelection = ({
     setCurrentCountry(value);
     onChooseCountry(value);
     onPressCity(
-      data?.filter((item: typeof Item) => item.country === value)[0]?.cities[0],
-    );
-    console.log(
       data?.filter((item: typeof Item) => item.country === value)[0]?.cities[0],
     );
   };
@@ -53,6 +61,12 @@ const LocationSelection = ({
     setIsOpenedCities(false);
     setCurrentCity(value);
     onChooseCity(value);
+  };
+  const onPressPlace = (value: string) => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    setIsOpenedPlaces(false);
+    onChoosePlace(value);
+    setCurrentPlace(value);
   };
   const renderCountry = () => {
     return (
@@ -102,7 +116,9 @@ const LocationSelection = ({
   const cities = data?.find(
     (item: typeof Item) => item?.country === currentCounty,
   )?.cities;
-  //   console.log(cities);
+  const places = data?.find(
+    (item: typeof Item) => item?.country === currentCounty,
+  )?.places;
 
   const renderCity = () => {
     return (
@@ -147,10 +163,54 @@ const LocationSelection = ({
       </>
     );
   };
+  const renderPlace = () => {
+    return (
+      <>
+        <RN.Text style={styles.title}>Place</RN.Text>
+        <RN.TouchableOpacity
+          style={[
+            styles.selectContainer,
+            {
+              borderBottomLeftRadius: isOpenedPlaces ? 0 : 8,
+              borderBottomRightRadius: isOpenedPlaces ? 0 : 8,
+            },
+          ]}
+          onPress={() => setIsOpenedPlaces(val => !val)}>
+          <RN.Text style={styles.selectItemText}>{currentPlace}</RN.Text>
+          <RN.Image
+            source={{uri: 'arrowdown'}}
+            style={{height: 20, width: 20}}
+          />
+        </RN.TouchableOpacity>
+        {isOpenedPlaces && (
+          <RN.View>
+            {places.map((item: string, index: number) => {
+              const isLastItem = places[places.length - 1];
+              return (
+                <RN.TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.selectContainerIsOpened,
+                    {
+                      borderBottomLeftRadius: item === isLastItem ? 8 : 0,
+                      borderBottomRightRadius: item === isLastItem ? 8 : 0,
+                    },
+                  ]}
+                  onPress={() => onPressPlace(item)}>
+                  <RN.Text style={styles.selectItemText}>{item}</RN.Text>
+                </RN.TouchableOpacity>
+              );
+            })}
+          </RN.View>
+        )}
+      </>
+    );
+  };
   return (
     <RN.View style={styles.container}>
       {renderCountry()}
       {renderCity()}
+      {isEvent && currentCounty === 'Indonesia' && renderPlace()}
     </RN.View>
   );
 };

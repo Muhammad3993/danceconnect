@@ -3,6 +3,7 @@ import {
   selectCommunities,
   selectFollowingCommunities,
   selectIsLoadingWithFollow,
+  selectIsSaveChanges,
   selectLoadingInCreateCommunity,
 } from '../store/selectors/communitiesSelector';
 import {
@@ -23,6 +24,8 @@ export const useCommunities = () => {
   const isLoadingWithFollow = useSelector(selectIsLoadingWithFollow);
   const followingCommunities = useSelector(selectFollowingCommunities);
   const userId = useSelector(selectUserUid);
+  const isSaveChanges = useSelector(selectIsSaveChanges);
+
   const joinedCommunities =
     communitiesData?.filter(
       (item: any) =>
@@ -30,6 +33,9 @@ export const useCommunities = () => {
         item?.followers?.find((user: any) => user.userUid === userId),
     ) ?? [];
 
+  const managingCommunity = communitiesData?.filter(
+    (item: any) => item?.creatorUid === userId,
+  );
   const create = ({
     name,
     description,
@@ -63,6 +69,7 @@ export const useCommunities = () => {
         userImg: userImg,
       }),
     );
+    // dispatch(getCommunityByIdRequestAction({communityUid: communityUid}));
   };
   const cancelFollowed = ({
     communityUid,
@@ -89,5 +96,7 @@ export const useCommunities = () => {
     isFollowedCurrentCommunity,
     joinedCommunities,
     followingCommunities,
+    managingCommunity,
+    isSaveChanges,
   };
 };

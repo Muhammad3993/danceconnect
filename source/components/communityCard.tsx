@@ -1,18 +1,22 @@
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import * as RN from 'react-native';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import {useCommunities} from '../hooks/useCommunitites';
 import {useProfile} from '../hooks/useProfile';
+import {useNavigation} from '@react-navigation/native';
+import database from '@react-native-firebase/database';
+import { isAndroid } from '../utils/constants';
 
 type props = {
   item: any;
+  idx: number;
 };
 
-const CommunityCard = ({item}: props) => {
+const CommunityCard = ({item}: any) => {
   const {userUid} = useRegistration();
+  const navigation = useNavigation();
   const data = item.item;
-  const index = item.index;
   const {
     isLoadingWithFollow,
     isFollowedCurrentCommunity,
@@ -26,7 +30,23 @@ const CommunityCard = ({item}: props) => {
   const isMyCommunity = userUid === data?.creatorUid;
   const isFollowed = isFollowedCurrentCommunity(data?.id);
   const [crntIndex, setCrntIndex] = useState(null);
+  const [displayedData, setDisplayedData] = useState();
+  const index = communitiesData?.findIndex((itm: any) => itm.id === data.id);
 
+  const goToCommunity = () => {
+    navigation.navigate('CommunityScreen', {data});
+  };
+  useEffect(() => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    const onValueChange = database()
+      .ref(`community/${data?.id}`)
+      .on('value', snapshot => {
+        setDisplayedData(snapshot.val());
+      });
+
+    return () =>
+      database().ref(`community/${data?.id}`).off('value', onValueChange);
+  }, [data.id]);
   useMemo(() => {
     if (isLoadingWithFollow) {
       setLoading(true);
@@ -35,18 +55,21 @@ const CommunityCard = ({item}: props) => {
     }
   }, [isLoadingWithFollow]);
   const description =
-    data?.description?.length > 70
-      ? data?.description?.slice(0, 70) + '...'
-      : data?.description;
+    displayedData?.description?.length > 70
+      ? displayedData?.description?.slice(0, 70) + '...'
+      : displayedData?.description;
   const title =
-    data?.name?.length > 70 ? data?.name?.slice(0, 50) + '...' : data.name;
+    displayedData?.name?.length > 70
+      ? displayedData?.name?.slice(0, 50) + '...'
+      : displayedData?.name;
   useMemo(() => {
     const count =
       communitiesData
         ?.map(item => item)
-        ?.filter(item => item?.id === data?.id)[0]?.followers?.length ?? 0;
+        ?.filter(item => item?.id === displayedData?.id)[0]?.followers
+        ?.length ?? 0;
     setCountFollowers(count);
-  }, [communitiesData, data?.id]);
+  }, [communitiesData, displayedData?.id]);
   const renderCount = () => {
     // const usersImg = communitiesData
     //   ?.map(item => item)
@@ -82,15 +105,15 @@ const CommunityCard = ({item}: props) => {
   const renderTags = (tags: string[]) => {
     return (
       <RN.View style={styles.tagsContainer}>
-        {tags?.slice(0, 3)?.map(tag => {
+        {tags?.slice(0, 2)?.map(tag => {
           return (
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.tagsItem}>{tag}</RN.Text>
             </RN.View>
           );
         })}
-        {tags?.length > 3 && (
-          <RN.Text style={styles.tagsItem}>{`+${tags?.length - 3}`}</RN.Text>
+        {tags?.length > 2 && (
+          <RN.Text style={styles.tagsItem}>{`+${tags?.length - 2}`}</RN.Text>
         )}
       </RN.View>
     );
@@ -120,30 +143,31 @@ const CommunityCard = ({item}: props) => {
     });
   };
   return (
-    <RN.View style={styles.itemContainer} key={index}>
+    <RN.View style={styles.itemContainer}>
       <RN.TouchableOpacity
-        key={index}
-        // onPress={() => onPressJoin(data?.id, index)}
+        onPress={goToCommunity}
         style={styles.headerItemContainer}
         activeOpacity={0.7}>
         <RN.View style={{maxWidth: '80%'}}>
-          {data?.categories && renderTags(data?.categories)}
+          {displayedData?.categories && renderTags(displayedData?.categories)}
           <RN.Text style={styles.itemTitle}>{title}</RN.Text>
           <RN.Text style={styles.itemDesc}>{description}</RN.Text>
         </RN.View>
-        {data?.images?.length > 0 && (
-          <RN.View>
-            <RN.Image
-              source={{
-                uri: 'data:image/png;base64,' + data?.images[0]?.base64,
-              }}
-              style={styles.itemImg}
-            />
-          </RN.View>
-        )}
+        <RN.Image
+          defaultSource={require('../assets/images/default.jpeg')}
+          source={
+            displayedData?.images?.length > 0
+              ? {
+                  uri:
+                    'data:image/png;base64,' + displayedData?.images[0]?.base64,
+                }
+              : require('../assets/images/default.jpeg')
+          }
+          style={styles.itemImg}
+        />
       </RN.TouchableOpacity>
       <RN.View style={{borderTopWidth: 1, borderColor: colors.gray}} />
-      <RN.View style={styles.footerItemContainer} key={index}>
+      <RN.View style={styles.footerItemContainer}>
         {renderCount()}
         <RN.View>
           {isLoadingWithFollow &&
@@ -183,6 +207,7 @@ const styles = RN.StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 12,
     marginBottom: 16,
+    marginHorizontal: isAndroid ? 0 : 20,
   },
   joinBtn: {
     backgroundColor: colors.orange,

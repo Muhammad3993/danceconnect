@@ -1,7 +1,9 @@
 import {Dimensions, Platform} from 'react-native';
 
 export const SCREEN_HEIGHT = Dimensions.get('screen').height;
+export const SCREEN_WIDTH = Dimensions.get('screen').width;
 export const isAndroid = Platform.OS === 'android';
+export const GOOGLE_API_KEY = 'AIzaSyAaMUmA9rKPazM7tBeEEelzUuonq4hrxUk';
 
 export const dataDanceCategory = [
   {
@@ -55,6 +57,7 @@ export const locationData = [
     id: 0,
     country: 'Indonesia',
     cities: ['Bali'],
+    places: ['Bali', 'Bali 2'],
   },
   {
     id: 1,

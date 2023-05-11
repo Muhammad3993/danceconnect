@@ -11,6 +11,8 @@ import profileReducer from './reducers/profileReducer';
 import profileInitialState from './initialState/profileInitialState';
 import communitiesReducer from './reducers/communitiesReducer';
 import communitiesInitialState from './initialState/communitiesInitialState';
+import eventsReducer from './reducers/eventsReducer';
+import eventsInitialState from './initialState/eventsInitialState';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
@@ -19,11 +21,13 @@ const appReducer = combineReducers({
   registration: registrationReducer,
   profile: profileReducer,
   communities: communitiesReducer,
+  events: eventsReducer,
 });
 const rootState = {
   registration: registrationInitialState,
   profile: profileInitialState,
   communities: communitiesInitialState,
+  events: eventsInitialState,
 };
 
 const rootPersistConfig = {

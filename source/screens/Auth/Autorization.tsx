@@ -106,8 +106,9 @@ const AuthorizationScreen = (): JSX.Element => {
             />
             <RN.Text style={styles.welcome}>Login</RN.Text>
             <Input
+              autoComplete={'email'}
               isErrorBorder={isErrors?.type?.includes('email')}
-              value={email}
+              value={email.toLowerCase()}
               onChange={(v: string) => setEmail(v)}
               placeholder="Email"
               keyboardType="email-address"

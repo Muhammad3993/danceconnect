@@ -17,4 +17,6 @@ export default {
     userImg: '',
   },
   followingCommunities: [],
+  communityByIdData: null,
+  isLoadingChangeInformation: false,
 };

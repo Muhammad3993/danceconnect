@@ -1,18 +1,34 @@
-import {call, debounce, put, select, takeLatest} from 'redux-saga/effects';
+import {
+  call,
+  debounce,
+  put,
+  select,
+  take,
+  takeLatest,
+} from 'redux-saga/effects';
 import {selectUserUid} from '../selectors/registrationSelector';
 import {
+  changeInformationCommunity,
   createCommunity,
   getCommunities,
+  getCommunityByUid,
   joinCommunity,
+  removeCommunity,
 } from '../../api/functions';
 import {COMMUNITIES} from '../actionTypes/communityActionTypes';
 import {
   cancelFollowedCommunityFailAction,
   cancelFollowedCommunitySuccessAction,
+  changeInformationCommunitySuccessAction,
+  changeInformationValueAction,
   createCommunityFailAction,
   createCommunitySuccessAction,
   getCommunitiesFailAction,
   getCommunitiesSuccessAction,
+  getCommunityByIdFailAction,
+  getCommunityByIdSuccessAction,
+  removeCommunityFailAction,
+  removeCommunitySuccessAction,
   startFollowedCommunityFailAction,
   startFollowedCommunitySuccessAction,
 } from '../actions/communityActions';
@@ -65,11 +81,13 @@ function* createCommunityRequest(action: any) {
       categories,
       images,
     );
-    // console.log('createCommunityRequest', response);
     yield put(createCommunitySuccessAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
         name: 'CommunitiesMain',
+        params: {
+          createdCommunity: true,
+        },
       }),
     );
   } catch (error) {
@@ -82,13 +100,8 @@ function* startFollowingCommunity(action: any) {
   const {communityUid, userUid, userImg} = action?.payload;
   try {
     yield call(joinCommunity, communityUid, userUid, userImg);
-    // yield put(
-    //   startFollowedCommunitySuccessAction({
-    //     followingCommunities: followingCommunities,
-    //   }),
-    // );
-    // console.log('followingCommunities', followingCommunities);
     yield put(getCommunitiesRequestAction());
+    // yield put(getCommunityByIdRequestAction(communityUid));
   } catch (error) {
     console.log('startFollowingCommunity', error);
     yield put(startFollowedCommunityFailAction());
@@ -99,13 +112,73 @@ function* cancelFollowingCommunity(action: any) {
   try {
     yield call(joinCommunity, communityUid, userUid, userImg);
     yield put(cancelFollowedCommunitySuccessAction());
-    // yield put(getCommunitiesRequestAction());
   } catch (error) {
     console.log('cancelFollowingCommunity', error);
     yield put(cancelFollowedCommunityFailAction());
   }
 }
+
+function* getCommunityByIdRequest(action: any) {
+  const {communityUid} = action?.payload;
+  try {
+    yield put(
+      getCommunityByIdSuccessAction({
+        communityByIdData: yield call(getCommunityByUid, communityUid),
+      }),
+    );
+  } catch (error) {
+    console.log('er', error);
+    yield put(getCommunityByIdFailAction(error));
+  }
+}
+function* changeInformation(action: any) {
+  const {
+    name,
+    description,
+    country,
+    location,
+    communityUid,
+    categories,
+    images,
+    followers,
+  } = action?.payload;
+  try {
+    yield call(
+      changeInformationCommunity,
+      name,
+      description,
+      country,
+      location,
+      communityUid,
+      followers,
+      categories,
+      images,
+    );
+    // console.log('changeInformation', action.payload);
+    yield put(changeInformationCommunitySuccessAction());
+    yield put(getCommunitiesRequestAction());
+    // yield put(getCommunityByIdRequestAction({communityUid: communityUid}));
+    yield put(changeInformationValueAction());
+  } catch (error) {
+    yield put(cancelFollowedCommunityFailAction());
+  }
+}
+
+function* removeCommunityRequest(action: any) {
+  try {
+    yield call(removeCommunity, action?.payload?.uid);
+    yield put(removeCommunitySuccessAction());
+    yield put(getCommunitiesRequestAction());
+  } catch (error) {
+    yield put(removeCommunityFailAction());
+  }
+}
+
 function* communititesSaga() {
+  yield takeLatest(
+    COMMUNITIES.GET_COMMUNITY_BY_ID_REQUEST,
+    getCommunityByIdRequest,
+  );
   yield takeLatest(COMMUNITIES.GET_DATA_REQUEST, getCommunitiesRequest);
   yield takeLatest(COMMUNITIES.CREATE_REQUEST, createCommunityRequest);
   yield debounce(2000, COMMUNITIES.CREATE_SUCCESS, getCommunitiesRequest);
@@ -116,6 +189,14 @@ function* communititesSaga() {
   yield takeLatest(
     COMMUNITIES.CANCEL_FOLLOWING_REQUEST,
     cancelFollowingCommunity,
+  );
+  yield takeLatest(
+    COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_REQUEST,
+    changeInformation,
+  );
+  yield takeLatest(
+    COMMUNITIES.REMOVE_COMMUNITY_REQUEST,
+    removeCommunityRequest,
   );
 }
 

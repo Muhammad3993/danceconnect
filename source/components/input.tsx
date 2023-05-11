@@ -14,6 +14,7 @@ type InputProp = {
   isErrorBorder?: boolean;
   maxLength?: number;
   multiLine?: boolean;
+  autoComplete?: string;
 };
 
 export const Input = ({
@@ -27,6 +28,7 @@ export const Input = ({
   editable = true,
   maxLength,
   multiLine = false,
+  autoComplete,
 }: InputProp) => {
   const [backgroundColor, setBackgroundColor] = useState(colors.lightGray);
   const [borderColor, setBorderColor] = useState(colors.gray);
@@ -135,6 +137,7 @@ export const Input = ({
         placeholderTextColor={colors.darkGray}
         onBlur={onBlur}
         multiline={multiLine}
+        autoComplete={autoComplete}
       />
 
       {secureText && renderRightIcon()}

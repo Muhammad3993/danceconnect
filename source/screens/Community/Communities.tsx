@@ -1,21 +1,16 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {useCommunities} from '../../hooks/useCommunitites';
 import CreateCommunityButton from '../../components/createCommunityBtn';
 import Search from '../../components/search';
-import useRegistration from '../../hooks/useRegistration';
-import {useProfile} from '../../hooks/useProfile';
-import BottomSheet from '../../components/bottomSheet';
+import FiltersBottom from '../../components/bottomFilters';
 import CommunityCard from '../../components/communityCard';
+import {isAndroid} from '../../utils/constants';
 
 const TABS = ['All', 'Joined', 'Managing'];
-Array.prototype.diff = function (a: string | any[]) {
-  return this.filter(function (i) {
-    return a.indexOf(i) >= 0;
-  });
-};
+
 const CommunitiesScreen = () => {
   const {
     communitiesData,
@@ -23,33 +18,39 @@ const CommunitiesScreen = () => {
     isLoading,
     isLoadingWithFollow,
     joinedCommunities,
+    managingCommunity,
   } = useCommunities();
-  const {userUid} = useRegistration();
+  const routeProps = useRoute();
   const navigation = useNavigation();
   const [searchValue, onSearch] = useState('');
   const [currentTab, setCurrentTab] = useState(TABS[0]);
-  const [displayedData, setDisplayedData] = useState<string[]>([]);
+  const [displayedData, setDisplayedData] = useState(communitiesData);
   const [openingFilters, setOpeningFilters] = useState(false);
-  const [communitiesCountValue, setCommunitiesCountValue] = useState(0);
+  const [communitiesCountValue, setCommunitiesCountValue] = useState(
+    communitiesData?.length ?? 0,
+  );
   const [addedStyles, setAddedStyles] = useState<string[]>(
     new Array(0).fill(''),
   );
-  const managingCommunity = useMemo(
-    () => communitiesData?.filter((item: any) => item?.creatorUid === userUid),
-    [communitiesData, userUid],
-  );
-  // const onRefresh = useCallback(() => {
-  //   setRefreshing(true);
-  //   getCommunitites();
-  //   setRefreshing(false);
-  // }, [getCommunitites]);
+
+  const removedCommunity =
+    (routeProps.params?.removedCommunity ||
+      routeProps.params?.createdCommunity) ??
+    null;
 
   useEffect(() => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    // getCommunitites();
-    setCommunitiesCountValue(communitiesData?.length ?? 0);
-    onPressTab('All');
-  }, [communitiesData?.length]);
+    if (removedCommunity) {
+      onPressTab('All');
+    }
+  }, [removedCommunity]);
+
+  useEffect(() => {
+    getCommunitites();
+  }, []);
+
+  useEffect(() => {
+    setDisplayedData(communitiesData);
+  }, [communitiesData.length]);
 
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -71,54 +72,47 @@ const CommunitiesScreen = () => {
     onSearch(value);
   };
   const onFilter = () => {
-    const data = communitiesData.filter((item: any) => {
-      const itemData = `${item.categories?.map(m => m)}`;
-      const textData = addedStyles?.map(it => it.toString());
-      return itemData.indexOf(textData) > -1;
-    });
-    if (!searchValue?.length) {
-      setDisplayedData(data);
-      setCommunitiesCountValue(displayedData?.length ?? 0);
+    const data = communitiesData.filter((item: any) =>
+      item?.categories?.some((ai: any) => addedStyles.includes(ai)),
+    );
+    setDisplayedData(data);
+    if (!addedStyles?.length) {
+      setDisplayedData(communitiesData);
     }
+    setCommunitiesCountValue(displayedData?.length ?? 0);
   };
 
-  const onPressTab = useCallback(
-    (value: string) => {
-      RN.LayoutAnimation.configureNext(
-        RN.LayoutAnimation.Presets.easeInEaseOut,
-      );
-      setCurrentTab(value);
-      // getCommunitites();
-      switch (value) {
-        case 'All':
-          getCommunitites();
-          return setDisplayedData(communitiesData);
-        case 'Joined':
-          getCommunitites();
-          return setDisplayedData(joinedCommunities);
-        case 'Managing':
-          getCommunitites();
-          return setDisplayedData(managingCommunity);
-        default:
-          return communitiesData;
-      }
-    },
-    [communitiesData, getCommunitites, joinedCommunities, managingCommunity],
-  );
+  useEffect(() => {
+    switch (currentTab) {
+      case 'All':
+        return setDisplayedData(communitiesData);
+      case 'Joined':
+        return setDisplayedData(joinedCommunities);
+      case 'Managing':
+        return setDisplayedData(managingCommunity);
+      default:
+        return setDisplayedData(communitiesData);
+    }
+  }, [currentTab]);
+  const onPressTab = (value: string) => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    setCurrentTab(value);
+  };
 
   useMemo(() => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setCommunitiesCountValue(displayedData?.length ?? 0);
   }, [displayedData.length]);
 
   const renderItemCommunity = (item: any) => {
-    return <CommunityCard item={item} key={item.index} />;
+    return <CommunityCard item={item} key={item.index + item.item.id} />;
   };
 
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
         <RN.Text style={styles.emptyText}>There is no community yet</RN.Text>
-        {communitiesData?.length <= 0 && (
+        {communitiesData?.length <= 0 && !isLoading && (
           <CreateCommunityButton
             onPress={() => navigation.navigate('CreateCommunity')}
           />
@@ -135,9 +129,6 @@ const CommunitiesScreen = () => {
     );
   };
 
-  // if (isLoading && !isLoadingWithFollow) {
-  //   return renderLoading();
-  // }
   const renderHeader = () => {
     return (
       <>
@@ -176,6 +167,13 @@ const CommunitiesScreen = () => {
             );
           })}
         </RN.View>
+      </>
+    );
+  };
+
+  const renderFilters = () => {
+    return (
+      <>
         {currentTab !== 'All' && <RN.View style={{marginBottom: 14}} />}
         {currentTab === 'All' && (
           <RN.View style={styles.filterWrapper}>
@@ -208,23 +206,28 @@ const CommunitiesScreen = () => {
     );
   };
 
-  return (
-    <RN.View style={styles.container}>
-      {renderHeader()}
-      {isLoading && !isLoadingWithFollow && renderLoading()}
+  const renderFlat = () => {
+    return (
       <RN.FlatList
         data={displayedData}
         showsVerticalScrollIndicator={false}
-        // onRefresh={onRefresh}
-        // refreshing={refreshing}
-        // ListHeaderComponent={renderHeader()}
-        refreshControl={renderLoading()}
-        renderItem={(item: any) => renderItemCommunity(item)}
-        keyExtractor={(item, _index) => `${item}${_index}`}
+        ListHeaderComponent={renderFilters()}
+        renderItem={renderItemCommunity}
+        keyExtractor={(item, _index) => `${item.item?.id}/${_index}`}
         ListEmptyComponent={renderEmpty()}
       />
+    );
+  };
+  return (
+    <RN.SafeAreaView style={styles.container}>
+      {renderHeader()}
+      {isLoading && !isLoadingWithFollow && renderLoading()}
+      {displayedData?.length > 0 && renderFlat()}
+      {/* {displayedData?.map((item: any, index: number) =>
+        renderItemCommunity(item, index),
+      )} */}
       {openingFilters && (
-        <BottomSheet
+        <FiltersBottom
           onClose={() => setOpeningFilters(false)}
           selectedStyles={addedStyles}
           setSelectedStyles={setAddedStyles}
@@ -232,7 +235,7 @@ const CommunitiesScreen = () => {
           onFilter={onFilter}
         />
       )}
-    </RN.View>
+    </RN.SafeAreaView>
   );
 };
 
@@ -348,6 +351,7 @@ const styles = RN.StyleSheet.create({
   },
   filterWrapper: {
     paddingVertical: 14,
+    paddingHorizontal: isAndroid ? 0 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

@@ -1,6 +1,7 @@
 import React from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
+import {isAndroid} from '../utils/constants';
 
 type searchProps = {
   onSearch: (value: string) => void;
@@ -42,7 +43,7 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     margin: 20,
-    marginHorizontal: 0,
+    marginHorizontal: isAndroid ? 0 : 20,
   },
   inputContainer: {
     borderWidth: 1,

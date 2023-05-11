@@ -6,10 +6,9 @@ import {
 } from '@react-navigation/bottom-tabs';
 import colors from '../utils/colors';
 import {getIcon} from '../utils/helpers';
-import {useCommunities} from '../hooks/useCommunitites';
+import {isAndroid} from '../utils/constants';
 
 const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
-  const {getCommunitites} = useCommunities();
   const tabs = state.routes;
   const focusedOptions = descriptors[state.routes[state.index].key]
     .options as BottomTabNavigationOptions;
@@ -27,9 +26,6 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
           });
           if (route.state?.routeNames?.length > 1) {
             navigation.navigate(route.state?.routeNames[0]);
-          }
-          if (route.name === 'Communities') {
-            getCommunitites();
           }
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name);
@@ -74,6 +70,7 @@ const styles = RN.StyleSheet.create({
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     paddingVertical: 8,
+    paddingBottom: isAndroid ? 0 : 24,
   },
   itemContainer: {
     marginHorizontal: 20,

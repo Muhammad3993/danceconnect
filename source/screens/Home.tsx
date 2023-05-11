@@ -3,6 +3,7 @@ import * as RN from 'react-native';
 import {useProfile} from '../hooks/useProfile';
 import colors from '../utils/colors';
 import CreateCommunityButton from '../components/createCommunityBtn';
+import { isAndroid } from '../utils/constants';
 
 const HomeScreen = () => {
   const {userName, userImgUrl} = useProfile();
@@ -51,8 +52,8 @@ const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingTop: 40,
-    paddingHorizontal: 16,
+    paddingTop: isAndroid ? 40 : 44,
+    paddingHorizontal: 20,
   },
   nameContainer: {
     flexDirection: 'row',

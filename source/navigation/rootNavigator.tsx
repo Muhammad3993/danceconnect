@@ -21,8 +21,11 @@ import colors from '../utils/colors';
 import BottomTabs from '../components/bottomTabs';
 import ProfileScreen from '../screens/Profile';
 import CommunitiesScreen from '../screens/Community/Communities';
-import EventsScreen from '../screens/Events';
+import EventsScreen from '../screens/Events/Events';
 import CreateCommunity from '../screens/Community/CreateCommunity';
+import CommunityScreen from '../screens/Community/CommunityScreen';
+import EditCommunity from '../screens/Community/EditCommunity';
+import CreateEvent from '../screens/Events/CreateEvent';
 
 // const RootStack = createStackNavigator<RootStackNavigationParamList>();
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
@@ -43,6 +46,12 @@ const CommunityNavigator = () => {
         name="CreateCommunity"
         component={CreateCommunity}
       />
+      <CommunityStack.Screen
+        name="CommunityScreen"
+        component={CommunityScreen}
+      />
+      <CommunityStack.Screen name="EditCommunity" component={EditCommunity} />
+      <CommunityStack.Screen name="CreateEvent" component={CreateEvent} />
     </CommunityStack.Navigator>
   );
 };
@@ -56,9 +65,16 @@ const TabsNavigator = () => {
         tabBarHideOnKeyboard: true,
         tabBarStyle: (route => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-          return {
-            display: routeName === 'CreateCommunity' ? 'none' : 'flex',
-          };
+          if (routeName === 'CreateCommunity') {
+            return {display: 'none'};
+          }
+          if (routeName === 'EditCommunity') {
+            return {display: 'none'};
+          }
+          if (routeName === 'CreateEvent') {
+            return {display: 'none'};
+          }
+          return {display: 'flex'};
         })(route),
       })}
       tabBar={props => <BottomTabs {...props} />}>

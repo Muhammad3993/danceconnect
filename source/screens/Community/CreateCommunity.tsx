@@ -21,7 +21,7 @@ const CreateCommunity = () => {
   const [visibleFooter, setVisibleFooter] = useState(true);
   const [isErrorName, setIsErrorName] = useState(false);
   const [isDescriptionError, setIsDescriptionError] = useState(false);
-  const [county, selectedCounty] = useState('');
+  const [country, selectedCountry] = useState('');
   const [city, selectedCity] = useState('');
   const [countNameSymbols, setCountNameSymbols] = useState({
     current: name?.length,
@@ -73,7 +73,7 @@ const CreateCommunity = () => {
       create({
         name: name,
         description: description,
-        country: county,
+        country: country,
         location: city,
         categories: addedStyles,
         images: images,
@@ -373,7 +373,7 @@ const CreateCommunity = () => {
     );
   };
   return (
-    <RN.View style={styles.container}>
+    <RN.SafeAreaView style={styles.container}>
       {renderHeader()}
       <RN.ScrollView>
         {renderCreateHeader()}
@@ -383,15 +383,15 @@ const CreateCommunity = () => {
         {renderChooseImage()}
         <LocationSelection
           data={locationData}
-          onChooseCountry={selectedCounty}
+          onChooseCountry={selectedCountry}
           onChooseCity={selectedCity}
           selectedCity={city}
-          selectedCountry={county}
+          selectedCountry={country}
         />
         <RN.View style={{paddingBottom: 40}} />
       </RN.ScrollView>
       {visibleFooter && renderFooter()}
-    </RN.View>
+    </RN.SafeAreaView>
   );
 };
 

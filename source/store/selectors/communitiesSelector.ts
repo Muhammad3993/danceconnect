@@ -11,3 +11,11 @@ export const selectIsLoadingWithFollow = (state: IRootState) =>
 
 export const selectFollowingCommunities = (state: IRootState) =>
   state?.communities?.followingCommunities ?? [];
+export const selectCommunityById = (state: IRootState) =>
+  state?.communities?.communityByIdData ?? null;
+export const selectLoadingInCommunityById = (state: IRootState) =>
+  state?.communities?.isLoadingById ?? false;
+export const selectLoadingChangeInformationCommunity = (state: IRootState) =>
+  state?.communities?.isLoadingChangeInformation ?? false;
+export const selectIsSaveChanges = (state: IRootState) =>
+  state?.communities?.saveChanges ?? false;

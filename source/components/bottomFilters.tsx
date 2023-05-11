@@ -13,7 +13,7 @@ type props = {
   onClear: () => void;
   onFilter: () => void;
 };
-const BottomSheet = ({
+const FiltersBottom = ({
   onClose,
   selectedStyles,
   setSelectedStyles,
@@ -223,4 +223,4 @@ const styles = RN.StyleSheet.create({
   },
 });
 
-export default BottomSheet;
+export default FiltersBottom;

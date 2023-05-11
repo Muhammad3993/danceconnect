@@ -5,10 +5,11 @@ import colors from '../utils/colors';
 
 type ButtonProps = {
   title: string;
-  onPress: () => {};
+  onPress: () => void;
   disabled?: boolean;
   isLoading?: false;
   buttonStyle?: {};
+  iconName?: string;
 };
 export const Button = ({
   title,
@@ -16,6 +17,7 @@ export const Button = ({
   disabled,
   isLoading,
   buttonStyle,
+  iconName,
 }: ButtonProps) => {
   return (
     <RN.TouchableOpacity
@@ -29,14 +31,30 @@ export const Button = ({
           backgroundColor: !disabled
             ? 'rgba(245, 168, 12, 0.6)'
             : buttonStyle?.backgroundColor ?? colors.orange,
-          flexDirection: isLoading ? 'row' : 'column',
+          flexDirection: isLoading || iconName ? 'row' : 'column',
+          paddingVertical: buttonStyle?.paddingVertical ?? 16,
+          paddingHorizontal: buttonStyle?.paddingHorizontal ?? 16,
         },
       ]}>
+      {iconName && (
+        <RN.View style={{justifyContent: 'center'}}>
+          <RN.Image
+            source={{uri: iconName}}
+            style={{
+              height: 20,
+              width: 21,
+              tintColor: colors.purple,
+              marginRight: 12,
+            }}
+          />
+        </RN.View>
+      )}
       <RN.Text
         style={[
           styles.title,
           {
             color: buttonStyle?.color ?? colors.white,
+            fontSize: buttonStyle?.fontSize ?? 16,
           },
         ]}>
         {title}
@@ -44,7 +62,7 @@ export const Button = ({
       {isLoading && (
         <RN.ActivityIndicator
           size={'small'}
-          color={colors.white}
+          color={buttonStyle?.color ?? colors.white}
           style={styles.indicator}
         />
       )}
