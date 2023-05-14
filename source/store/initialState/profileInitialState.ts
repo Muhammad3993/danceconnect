@@ -6,4 +6,6 @@ export default {
   // country: '',
   errors: null,
   userData: null,
+  userUid: '',
+  userByIdData: null,
 };

@@ -48,16 +48,19 @@ export default (state = eventsInitialState, action: eventAction) => {
       return {
         ...state,
         eventsList: [],
+        loadingEvents: true,
       };
     case EVENT.GET_EVENTS_SUCCESS:
       return {
         ...state,
         eventsList: action.payload?.eventsList,
+        loadingEvents: false,
       };
     case EVENT.GET_EVENTS_FAIL:
       return {
         ...state,
         eventsList: [],
+        loadingEvents: false,
       };
     case EVENT.GET_EVENT_BY_ID_REQUEST:
       return {

@@ -64,7 +64,7 @@ const CommunitiesScreen = () => {
         m.toLowerCase(),
       )} ${item?.name?.toLowerCase()}`;
       const textData = value.toLowerCase();
-      console.log(itemData, textData);
+      // console.log(itemData, textData);
       return itemData.indexOf(textData) > -1;
     });
     setDisplayedData(search);
@@ -132,40 +132,42 @@ const CommunitiesScreen = () => {
   const renderHeader = () => {
     return (
       <>
-        <Search
-          onSearch={onChangeTextSearch}
-          searchValue={searchValue}
-          placeholder="Community name, dance style"
-          onPressAdd={() => navigation.navigate('CreateCommunity')}
-        />
-        <RN.View style={styles.tabsWrapper}>
-          {TABS.map((item: string, index: number) => {
-            return (
-              <RN.TouchableOpacity
-                onPress={() => onPressTab(item)}
-                key={index}
-                style={[
-                  styles.itemTabContainer,
-                  {
-                    borderBottomWidth: currentTab === item ? 3 : 0,
-                    marginBottom: -1,
-                    paddingHorizontal: 16,
-                    paddingBottom: 8,
-                  },
-                ]}>
-                <RN.Text
+        <RN.View style={{paddingHorizontal: 20}}>
+          <Search
+            onSearch={onChangeTextSearch}
+            searchValue={searchValue}
+            placeholder="Community name, dance style"
+            onPressAdd={() => navigation.navigate('CreateCommunity')}
+          />
+          <RN.View style={styles.tabsWrapper}>
+            {TABS.map((item: string, index: number) => {
+              return (
+                <RN.TouchableOpacity
+                  onPress={() => onPressTab(item)}
+                  key={index}
                   style={[
-                    styles.itemTabText,
+                    styles.itemTabContainer,
                     {
-                      color:
-                        currentTab === item ? colors.purple : colors.darkGray,
+                      borderBottomWidth: currentTab === item ? 3 : 0,
+                      marginBottom: -1,
+                      paddingHorizontal: 16,
+                      paddingBottom: 8,
                     },
                   ]}>
-                  {item}
-                </RN.Text>
-              </RN.TouchableOpacity>
-            );
-          })}
+                  <RN.Text
+                    style={[
+                      styles.itemTabText,
+                      {
+                        color:
+                          currentTab === item ? colors.purple : colors.darkGray,
+                      },
+                    ]}>
+                    {item}
+                  </RN.Text>
+                </RN.TouchableOpacity>
+              );
+            })}
+          </RN.View>
         </RN.View>
       </>
     );
@@ -223,9 +225,7 @@ const CommunitiesScreen = () => {
       {renderHeader()}
       {isLoading && !isLoadingWithFollow && renderLoading()}
       {displayedData?.length > 0 && renderFlat()}
-      {/* {displayedData?.map((item: any, index: number) =>
-        renderItemCommunity(item, index),
-      )} */}
+
       {openingFilters && (
         <FiltersBottom
           onClose={() => setOpeningFilters(false)}

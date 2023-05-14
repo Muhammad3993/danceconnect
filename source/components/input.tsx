@@ -7,7 +7,7 @@ type InputProp = {
   value: string;
   onChange: (value: string) => {};
   placeholder: string;
-  keyboardType: RN.KeyboardTypeOptions;
+  keyboardType?: RN.KeyboardTypeOptions;
   secureText?: boolean;
   iconName?: string;
   editable?: boolean;

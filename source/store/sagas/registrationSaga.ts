@@ -27,8 +27,11 @@ import {
 } from '../actions/authorizationActions';
 import {getUserData, userExists} from '../../api/functions';
 import {setErrors} from '../../utils/helpers';
-import { clearUserDataInStorage, getUserDataRequestAction } from '../actions/profileActions';
-import { clearCommunititesData } from '../actions/communityActions';
+import {
+  clearUserDataInStorage,
+  getUserDataRequestAction,
+} from '../actions/profileActions';
+import {clearCommunititesData} from '../actions/communityActions';
 
 function* registrationEmail(action: any) {
   try {

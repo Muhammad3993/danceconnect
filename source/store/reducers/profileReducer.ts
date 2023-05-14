@@ -12,6 +12,8 @@ export type profileAction = {
     // country: string;
     errors: null;
     isLoading: false;
+    userUid?: '';
+    userByIdData?: null;
   };
 };
 
@@ -39,7 +41,21 @@ export default (state = profileInitialState, action: profileAction) => {
         ...state,
         ...profileInitialState,
       };
-
+    case PROFILE.GET_USER_BY_ID_REQUEST:
+      return {
+        ...state,
+        userByIdData: null,
+      };
+    case PROFILE.GET_USER_BY_ID_SUCCESS:
+      return {
+        ...state,
+        userByIdData: action.payload?.userByIdData,
+      };
+    case PROFILE.GET_USER_BY_ID_FAIL:
+      return {
+        ...state,
+        userByIdData: null,
+      };
     default:
       return state;
   }

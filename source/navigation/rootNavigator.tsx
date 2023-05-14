@@ -3,6 +3,7 @@ import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
+import analytics from '@react-native-firebase/analytics';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   AuthStackNavigationParamList,
@@ -26,6 +27,7 @@ import CreateCommunity from '../screens/Community/CreateCommunity';
 import CommunityScreen from '../screens/Community/CommunityScreen';
 import EditCommunity from '../screens/Community/EditCommunity';
 import CreateEvent from '../screens/Events/CreateEvent';
+import EventScreen from '../screens/Events/EventScreen';
 
 // const RootStack = createStackNavigator<RootStackNavigationParamList>();
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
@@ -33,6 +35,7 @@ const MainStack = createStackNavigator<MainStackNavigationParamList>();
 const Tabs = createBottomTabNavigator();
 
 const CommunityStack = createStackNavigator();
+const EventsStack = createStackNavigator();
 const CommunityNavigator = () => {
   return (
     <CommunityStack.Navigator
@@ -52,7 +55,19 @@ const CommunityNavigator = () => {
       />
       <CommunityStack.Screen name="EditCommunity" component={EditCommunity} />
       <CommunityStack.Screen name="CreateEvent" component={CreateEvent} />
+      <CommunityStack.Screen name="EventScreen" component={EventScreen} />
     </CommunityStack.Navigator>
+  );
+};
+const EventsNavigator = () => {
+  return (
+    <EventsStack.Navigator
+      initialRouteName="Events"
+      screenOptions={{headerShown: false, gestureEnabled: false}}>
+      <EventsStack.Screen name="Events" component={EventsScreen} />
+      <EventsStack.Screen name="CreateEvent" component={CreateEvent} />
+      <EventsStack.Screen name="EventScreen" component={EventScreen} />
+    </EventsStack.Navigator>
   );
 };
 const TabsNavigator = () => {
@@ -80,7 +95,7 @@ const TabsNavigator = () => {
       tabBar={props => <BottomTabs {...props} />}>
       <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Communities" component={CommunityNavigator} />
-      <Tabs.Screen name="Events" component={EventsScreen} />
+      <Tabs.Screen name="Events" component={EventsNavigator} />
       <Tabs.Screen name="Profile" component={ProfileScreen} />
     </Tabs.Navigator>
   );
@@ -109,8 +124,26 @@ const MainNavigator = () => {
 };
 const AppNavigator = () => {
   const {isUserExists} = useRegistration();
+  const routeNameRef = React.useRef();
+  // const navigationRef = React.useRef();
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        routeNameRef.current = navigationRef.current.getCurrentRoute().name;
+      }}
+      onStateChange={async () => {
+        const previousRouteName = routeNameRef.current;
+        const currentRouteName = navigationRef.current.getCurrentRoute().name;
+
+        if (previousRouteName !== currentRouteName) {
+          await analytics().logScreenView({
+            screen_name: currentRouteName,
+            screen_class: currentRouteName,
+          });
+        }
+        routeNameRef.current = currentRouteName;
+      }}>
       {isUserExists ? <MainNavigator /> : <AuthNavigor />}
       {/* <RootStack.Navigator screenOptions={{headerShown: false}}> */}
       {/* <AuthNavigor /> */}

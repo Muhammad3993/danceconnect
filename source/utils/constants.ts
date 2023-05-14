@@ -58,20 +58,24 @@ export const locationData = [
     country: 'Indonesia',
     cities: ['Bali'],
     places: ['Bali', 'Bali 2'],
+    countryCode: 'ID',
   },
   {
     id: 1,
     country: 'Australia',
     cities: ['Sydney', 'Melbourne'],
+    countryCode: 'AU',
   },
   {
     id: 2,
     country: 'Singapore',
     cities: ['Singapore'],
+    countryCode: 'SG',
   },
   {
     id: 3,
     country: 'Argentina',
     cities: ['Buenos Aires', 'Cordoba'],
+    countryCode: 'AR',
   },
 ];

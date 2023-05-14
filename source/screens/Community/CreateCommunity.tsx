@@ -108,7 +108,11 @@ const CreateCommunity = () => {
       includeBase64: true,
     };
     launchImageLibrary(options, response => {
-      setImages([...images, response?.assets[0]]);
+      if (response.assets) {
+        setImages([...images, response?.assets[0]]);
+      } else {
+        console.log('cancel');
+      }
     });
   };
   useEffect(() => {
@@ -373,25 +377,28 @@ const CreateCommunity = () => {
     );
   };
   return (
-    <RN.SafeAreaView style={styles.container}>
-      {renderHeader()}
-      <RN.ScrollView>
-        {renderCreateHeader()}
-        {renderNameCommunity()}
-        {renderChooseCategory()}
-        {renderDescription()}
-        {renderChooseImage()}
-        <LocationSelection
-          data={locationData}
-          onChooseCountry={selectedCountry}
-          onChooseCity={selectedCity}
-          selectedCity={city}
-          selectedCountry={country}
-        />
-        <RN.View style={{paddingBottom: 40}} />
-      </RN.ScrollView>
-      {visibleFooter && renderFooter()}
-    </RN.SafeAreaView>
+    <RN.KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <RN.SafeAreaView style={styles.container}>
+        {renderHeader()}
+        <RN.ScrollView>
+          {renderCreateHeader()}
+          {renderNameCommunity()}
+          {renderChooseCategory()}
+          {renderDescription()}
+          {renderChooseImage()}
+          <LocationSelection
+            data={locationData}
+            onChooseCountry={selectedCountry}
+            onChooseCity={selectedCity}
+            selectedCity={city}
+            selectedCountry={country}
+          />
+
+          <RN.View style={{paddingBottom: 40}} />
+        </RN.ScrollView>
+        {visibleFooter && renderFooter()}
+      </RN.SafeAreaView>
+    </RN.KeyboardAvoidingView>
   );
 };
 

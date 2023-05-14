@@ -7,6 +7,7 @@ import {isAndroid} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import database from '@react-native-firebase/database';
 import useRegistration from '../hooks/useRegistration';
+import { useNavigation } from '@react-navigation/native';
 
 type props = {
   item?: any;
@@ -14,11 +15,13 @@ type props = {
 const EventCard = ({item}: props) => {
   const data = item;
   const [eventData, setEventData] = useState();
+  const navigation = useNavigation();
+
   const {userUid} = useRegistration();
   const isPassedEvent =
     moment(data.eventDate?.startDate).format('YYYY-MM-DD') <
     moment(new Date()).format('YYYY-MM-DD');
-  const {loadingAttend, attendEvent, eventsDataById} = useEvents();
+  const {loadingAttend, attendEvent, eventsDataById, eventList} = useEvents();
   const [loading, setLoading] = useState(false);
   const [crntIndex, setCrntIndex] = useState(null);
   const index = eventsDataById?.findIndex(
@@ -28,19 +31,23 @@ const EventCard = ({item}: props) => {
   const isJoined = eventData?.attendedPeople?.find(
     (user: any) => user.userUid === userUid,
   );
+
+  const goToEvent = () => {
+    navigation.navigate('EventScreen', {data});
+  };
   // console.log(item);
   useEffect(() => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const onValueChange = database()
       .ref(`events/${data?.eventUid}`)
       .on('value', snapshot => {
-        console.log(snapshot);
+        // console.log(snapshot);
         setEventData(snapshot.val());
       });
 
     return () =>
       database().ref(`events/${data?.eventUid}`).off('value', onValueChange);
-  }, [data?.eventUid, item.communityId]);
+  }, [data?.eventUid, eventData?.communityUid]);
   const renderTags = (tags: string[]) => {
     return (
       <RN.View style={styles.tagsContainer}>
@@ -61,7 +68,7 @@ const EventCard = ({item}: props) => {
   const onPressAttend = (idx: number) => {
     setCrntIndex(idx);
     attendEvent({
-      communityUid: item.communityId,
+      communityUid: eventData?.communityUid,
       userUid: userUid,
       eventUid: eventData?.eventUid,
     });
@@ -88,7 +95,7 @@ const EventCard = ({item}: props) => {
       <RN.View style={{position: 'absolute', bottom: 10, right: 0}}>
         <RN.View>
           {loadingAttend &&
-          eventsDataById?.findIndex((itm: any) => itm.id === data.id) ===
+          eventList?.findIndex((itm: any) => itm.eventUid === data.eventUid) ===
             crntIndex ? (
             <>{renderLoading()}</>
           ) : isJoined ? (
@@ -114,7 +121,7 @@ const EventCard = ({item}: props) => {
     );
   };
   return (
-    <RN.View style={styles.container}>
+    <RN.TouchableOpacity style={styles.container} onPress={goToEvent}>
       <RN.Image
         source={
           eventData?.images?.length > 0
@@ -159,7 +166,7 @@ const EventCard = ({item}: props) => {
         </RN.View>
       </RN.View>
       {renderAttendBtn()}
-    </RN.View>
+    </RN.TouchableOpacity>
   );
 };
 const styles = RN.StyleSheet.create({

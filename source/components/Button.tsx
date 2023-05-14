@@ -7,7 +7,7 @@ type ButtonProps = {
   title: string;
   onPress: () => void;
   disabled?: boolean;
-  isLoading?: false;
+  isLoading?: boolean;
   buttonStyle?: {};
   iconName?: string;
 };
@@ -34,6 +34,7 @@ export const Button = ({
           flexDirection: isLoading || iconName ? 'row' : 'column',
           paddingVertical: buttonStyle?.paddingVertical ?? 16,
           paddingHorizontal: buttonStyle?.paddingHorizontal ?? 16,
+          marginHorizontal: buttonStyle?.marginHorizontal ?? 14,
         },
       ]}>
       {iconName && (
@@ -74,7 +75,7 @@ const styles = RN.StyleSheet.create({
   container: {
     paddingVertical: 16,
     justifyContent: 'center',
-    marginHorizontal: 14,
+    // marginHorizontal: 14,
     borderRadius: 100,
   },
   indicator: {

@@ -5,8 +5,19 @@ export const userExists = async (uid: string) => {
   return snap.exists();
 };
 export const getUserData = async (uid: string) => {
+  const user = firebase.auth().currentUser?._user;
+  // console.log(user);
   const snap = await firebase.database().ref(`users/${uid}`).once('value');
   // console.log('getUserData', snap.val());
+  const refUser = database().ref(`users/${uid}/auth_data`);
+  refUser.transaction(currentDate => {
+    return {...currentDate, ...user};
+  });
+
+  return snap.val();
+};
+export const getUserDataById = async (uid: string) => {
+  const snap = await firebase.database().ref(`users/${uid}`).once('value');
   return snap.val();
 };
 export const getCommunityByUid = async (communityUid: string) => {
@@ -241,6 +252,7 @@ export const createEvent = async (
       eventUid: refNewEvent.key,
       eventDate: eventDate,
       place: place,
+      communityUid: communityUid,
     })
     .then(() => {
       refEventsUser

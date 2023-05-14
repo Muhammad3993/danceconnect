@@ -80,8 +80,8 @@ const BottomCalendar = ({
   const onTimePicker = (times: any) => {
     console.log(times);
     // const timeSelect = isAndroid ? new Date(times).getTime() : times?.timestamp;
-    setValue(times);
-    // setTime(timeSelect);
+    // setValue(times);
+    setTime(times);
   };
 
   const renderTimePickerIOS = () => {

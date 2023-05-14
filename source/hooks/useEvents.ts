@@ -10,16 +10,16 @@ import {createEventRequestAction} from '../store/actions/eventActions';
 import {
   selectEventByIdData,
   selectEventList,
-  selectLoadingEvets,
+  selectLoadingEvents,
   selectLoadingattendEvent,
 } from '../store/selectors/eventsSelector';
-import { selectUserUid } from '../store/selectors/registrationSelector';
+import {selectUserUid} from '../store/selectors/registrationSelector';
 
 const useEvents = () => {
   const dispatch = useDispatch();
-  const eventList = useSelector(selectEventList);
+  const eventList = useSelector(selectEventList) ?? [];
   const eventsDataById = useSelector(selectEventByIdData);
-  const loadingEvents = useSelector(selectLoadingEvets);
+  const loadingEvents = useSelector(selectLoadingEvents);
   const loadingAttend = useSelector(selectLoadingattendEvent);
   const userId = useSelector(selectUserUid);
   const attendingEvents =

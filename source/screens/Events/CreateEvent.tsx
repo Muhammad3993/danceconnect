@@ -132,7 +132,11 @@ const CreateEvent = () => {
       includeBase64: true,
     };
     launchImageLibrary(options, response => {
-      setImages([...images, response?.assets[0]]);
+      if (response.assets) {
+        setImages([...images, response?.assets[0]]);
+      } else {
+        console.log('cancel');
+      }
     });
   };
   useEffect(() => {
@@ -439,40 +443,42 @@ const CreateEvent = () => {
     );
   };
   return (
-    <RN.SafeAreaView style={styles.container}>
-      {renderHeader()}
-      <RN.ScrollView>
-        {renderCreateHeader()}
-        {renderNameCommunity()}
-        {renderChooseCategory()}
-        {renderDescription()}
-        {renderEventDates()}
-        {renderChooseImage()}
-        <LocationSelection
-          data={locationData}
-          onChooseCountry={selectedCountry}
-          onChooseCity={selectedCity}
-          selectedCity={city}
-          selectedCountry={country}
-          onChoosePlace={selectedPlace}
-          selectedPlace={place}
-          isEvent
-        />
-        <RN.View style={{paddingBottom: 40}} />
-      </RN.ScrollView>
-      {visibleFooter && renderFooter()}
-      {openCalendar && (
-        <BottomCalendar
-          onClose={() => setOpenCalendar(false)}
-          end={endDate}
-          start={startDate}
-          time={time}
-          setTime={setTime}
-          setStart={setStartDate}
-          setEnd={setEndDate}
-        />
-      )}
-    </RN.SafeAreaView>
+    <RN.KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <RN.SafeAreaView style={styles.container}>
+        {renderHeader()}
+        <RN.ScrollView>
+          {renderCreateHeader()}
+          {renderNameCommunity()}
+          {renderChooseCategory()}
+          {renderDescription()}
+          {renderEventDates()}
+          {renderChooseImage()}
+          <LocationSelection
+            data={locationData}
+            onChooseCountry={selectedCountry}
+            onChooseCity={selectedCity}
+            selectedCity={city}
+            selectedCountry={country}
+            onChoosePlace={selectedPlace}
+            selectedPlace={place}
+            // isEvent
+          />
+          <RN.View style={{paddingBottom: 40}} />
+        </RN.ScrollView>
+        {visibleFooter && renderFooter()}
+        {openCalendar && (
+          <BottomCalendar
+            onClose={() => setOpenCalendar(false)}
+            end={endDate}
+            start={startDate}
+            time={time}
+            setTime={setTime}
+            setStart={setStartDate}
+            setEnd={setEndDate}
+          />
+        )}
+      </RN.SafeAreaView>
+    </RN.KeyboardAvoidingView>
   );
 };
 const styles = RN.StyleSheet.create({

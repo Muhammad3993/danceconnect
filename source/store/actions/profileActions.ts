@@ -8,6 +8,8 @@ type userParams = {
   //   gender: string;
   //   country: string;
   errors?: null;
+  userUid?: '';
+  userByIdData?: null | object;
 };
 export const getUserDataRequestAction = () => ({
   type: PROFILE.GET_DATA_REQUEST,
@@ -26,4 +28,22 @@ export const getUserDataFailAction = ({errors}: userParams) => ({
 
 export const clearUserDataInStorage = () => ({
   type: PROFILE.CLEAR_USER_DATA,
+});
+
+export const getUserByIdRequestAction = (userUid: string) => ({
+  type: PROFILE.GET_USER_BY_ID_REQUEST,
+  payload: {
+    userUid: userUid,
+  },
+});
+
+export const getUserByIdSuccessAction = ({userByIdData}: userParams) => ({
+  type: PROFILE.GET_USER_BY_ID_SUCCESS,
+  payload: {
+    userByIdData: userByIdData,
+  },
+});
+
+export const getUserByIdFailAction = () => ({
+  type: PROFILE.GET_USER_BY_ID_FAIL,
 });

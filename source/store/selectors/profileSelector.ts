@@ -10,3 +10,6 @@ export const selectUserImg = (state: IRootState) =>
 
 export const selectUserData = (state: IRootState) =>
   state.profile?.userData ?? null;
+
+export const getUserByIdData = (state: IRootState) =>
+  state?.profile?.userByIdData ?? null;
