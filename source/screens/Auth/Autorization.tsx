@@ -11,6 +11,7 @@ import colors from '../../utils/colors';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {forgotPassword} from '../../api/authSocial';
+import useAppStateHook from '../../hooks/useAppState';
 
 const AuthorizationScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
@@ -26,6 +27,7 @@ const AuthorizationScreen = (): JSX.Element => {
   } = useRegistration();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const {setLoading} = useAppStateHook();
   const errorViewHeight = new RN.Animated.Value(0);
 
   const translateY = errorViewHeight.interpolate({
@@ -70,13 +72,19 @@ const AuthorizationScreen = (): JSX.Element => {
   };
 
   const onPressSocial = (iconName: string) => {
-    console.log('on press', iconName);
+    // console.log('on press', iconName);
+    setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
     }
   };
   const resetPassword = () => {
-    forgotPassword(email);
+    console.log('resetPassword');
+    // forgotPassword(email);
+  };
+  const onPressLogin = async () => {
+    setLoading(true);
+    authorizaton(email, password);
   };
 
   useEffect(() => {
@@ -114,14 +122,13 @@ const AuthorizationScreen = (): JSX.Element => {
               keyboardType="email-address"
               iconName="inbox"
             />
-            <RN.Animated.View
-              style={{
-                alignItems: 'center',
-                // height: translateY,
-                marginBottom: translateY,
-              }}>
-              <RN.Text style={{color: 'red'}}>{isErrors?.message}</RN.Text>
-            </RN.Animated.View>
+            {isErrors?.message?.length > 0 && (
+              <RN.View style={styles.errorMessage}>
+                <RN.Text style={styles.errorMessageText}>
+                  {isErrors?.message}
+                </RN.Text>
+              </RN.View>
+            )}
             <Input
               value={password}
               onChange={(v: string) => setPassword(v)}
@@ -134,7 +141,7 @@ const AuthorizationScreen = (): JSX.Element => {
             <Button
               title="Login"
               disabled={email.length > 0 && password.length > 0}
-              onPress={async () => authorizaton(email, password)}
+              onPress={onPressLogin}
               isLoading={isLoading}
             />
             <RN.TouchableOpacity
@@ -187,6 +194,15 @@ const styles = RN.StyleSheet.create({
     height: 20,
     width: 24,
     marginHorizontal: 30,
+  },
+  errorMessage: {
+    marginTop: -16,
+    paddingBottom: 6,
+    alignItems: 'center',
+  },
+  errorMessageText: {
+    color: colors.redError,
+    fontSize: 13,
   },
   container: {
     flex: 1,

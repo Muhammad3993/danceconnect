@@ -13,6 +13,8 @@ import communitiesReducer from './reducers/communitiesReducer';
 import communitiesInitialState from './initialState/communitiesInitialState';
 import eventsReducer from './reducers/eventsReducer';
 import eventsInitialState from './initialState/eventsInitialState';
+import appStateInitialState from './initialState/appStateInitialState';
+import appStateReducer from './reducers/appStateReducer';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
@@ -22,19 +24,21 @@ const appReducer = combineReducers({
   profile: profileReducer,
   communities: communitiesReducer,
   events: eventsReducer,
+  appState: appStateReducer,
 });
 const rootState = {
   registration: registrationInitialState,
   profile: profileInitialState,
   communities: communitiesInitialState,
   events: eventsInitialState,
+  appState: appStateInitialState,
 };
 
 const rootPersistConfig = {
   key: 'keyOfStore',
   storage: AsyncStorage,
   timeout: null,
-  blacklist: ['communities'],
+  // blacklist: ['communities'],
 };
 let middleware = applyMiddleware(sagaMiddleware, loggerMiddleware);
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);

@@ -75,21 +75,25 @@ function* createCommunityRequest(action: any) {
       createCommunity,
       name,
       description,
-      country,
+      // country,
       location,
       creatorUid,
       categories,
       images,
     );
     yield put(createCommunitySuccessAction());
-    navigationRef.current?.dispatch(
-      CommonActions.navigate({
-        name: 'CommunitiesMain',
-        params: {
-          createdCommunity: true,
-        },
-      }),
-    );
+    setTimeout(() => {
+      navigationRef.current?.dispatch(
+        CommonActions.navigate({
+          name: 'CommunitiesMain',
+          params: {
+            createdCommunity: true,
+          },
+        }),
+      );
+    }, 500);
+
+    yield put(getCommunitiesRequestAction());
   } catch (error) {
     console.log('createCommunityRequest error', error);
     yield put(createCommunityFailAction(error));
@@ -135,7 +139,7 @@ function* changeInformation(action: any) {
   const {
     name,
     description,
-    country,
+    // country,
     location,
     communityUid,
     categories,
@@ -147,7 +151,7 @@ function* changeInformation(action: any) {
       changeInformationCommunity,
       name,
       description,
-      country,
+      // country,
       location,
       communityUid,
       followers,
@@ -169,6 +173,16 @@ function* removeCommunityRequest(action: any) {
     yield call(removeCommunity, action?.payload?.uid);
     yield put(removeCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
+    setTimeout(() => {
+      navigationRef.current?.dispatch(
+        CommonActions.navigate({
+          name: 'CommunitiesMain',
+          params: {
+            removedCommunity: true,
+          },
+        }),
+      );
+    }, 500);
   } catch (error) {
     yield put(removeCommunityFailAction());
   }
@@ -181,7 +195,7 @@ function* communititesSaga() {
   );
   yield takeLatest(COMMUNITIES.GET_DATA_REQUEST, getCommunitiesRequest);
   yield takeLatest(COMMUNITIES.CREATE_REQUEST, createCommunityRequest);
-  yield debounce(2000, COMMUNITIES.CREATE_SUCCESS, getCommunitiesRequest);
+  // yield debounce(2000, COMMUNITIES.CREATE_SUCCESS, getCommunitiesRequest);
   yield takeLatest(
     COMMUNITIES.START_FOLLOWING_REQUEST,
     startFollowingCommunity,

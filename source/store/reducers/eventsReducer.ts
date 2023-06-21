@@ -21,6 +21,9 @@ export type eventAction = {
     place?: string;
     communityUid?: string;
     loadingAttend?: false;
+    isLoadingChangeInformation?: false;
+    saveChanges?: false;
+    typeEvent: string;
   };
 };
 
@@ -95,6 +98,41 @@ export default (state = eventsInitialState, action: eventAction) => {
       return {
         ...state,
         loadingAttend: false,
+      };
+    case EVENT.CHANGE_INFORMATION_EVENT_REQUEST:
+      return {
+        ...state,
+        isLoadingChangeInformation: true,
+        name: action?.payload?.name,
+        description: action?.payload?.description,
+        // country: action?.payload?.country,
+        location: action?.payload?.location,
+        categories: action?.payload?.categories,
+        followers: action?.payload?.followers,
+        images: action?.payload?.images,
+        eventDate: action?.payload?.eventDate,
+        place: action?.payload?.place,
+        typeEvent: action?.payload?.typeEvent,
+        saveChanges: false,
+      };
+    case EVENT.CHANGE_INFORMATION_EVENT_SUCCESS:
+      return {
+        ...state,
+        isLoadingChangeInformation: false,
+        saveChanges: true,
+      };
+
+    case EVENT.CHANGE_INFORMATION_EVENT_SUCCESS:
+      return {
+        ...state,
+        isLoadingChangeInformation: false,
+        saveChanges: false,
+      };
+
+    case EVENT.CHANGE_INFORMATION_VALUE:
+      return {
+        ...state,
+        saveChanges: false,
       };
     default:
       return state;

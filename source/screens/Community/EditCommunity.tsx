@@ -7,30 +7,37 @@ import {Button} from '../../components/Button';
 import {useCommunityById} from '../../hooks/useCommunityById';
 import {launchImageLibrary} from 'react-native-image-picker';
 import CategorySelector from '../../components/catregorySelector';
-import {dataDanceCategory} from '../../utils/constants';
+import {
+  dataDanceCategory,
+  isAndroid,
+  statusBarHeight,
+} from '../../utils/constants';
 import {useCommunities} from '../../hooks/useCommunitites';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import FindCity from '../../components/findCity';
 
+interface city {
+  structured_formatting: {
+    main_text: '';
+  };
+  terms: [{offset: 0; value: ''}, {offset: 1; value: ''}];
+}
 const EditCommunity = () => {
   const routeParams = useRoute();
   const navigation = useNavigation();
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
     routeParams?.params?.id,
   );
-  const {
-    name,
-    description,
-    categories,
-    country,
-    location,
-    id,
-    images,
-    followers,
-  } = routeParams?.params;
+  const {name, description, categories, location, id, images, followers} =
+    routeParams?.params;
   const {isSaveChanges} = useCommunities();
-  //   console.log('route', name, description, categories, country, location);
+  // console.log('route', images);
   const [title, setTitle] = useState(name);
   const [desc, setDesc] = useState(description);
   const [imgs, setImgs] = useState(images);
+  const [openLocation, setOpenLocation] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<city>(location);
+
   const [countNameSymbols, setCountNameSymbols] = useState({
     current: name?.length,
     maxSymbols: 100,
@@ -89,13 +96,13 @@ const EditCommunity = () => {
   const onChooseImage = async () => {
     let options = {
       mediaType: 'image',
-      maxWidth: 300,
-      maxHeight: 550,
+      maxWidth: 1300,
+      maxHeight: 1550,
       quality: 1,
       includeBase64: true,
     };
     launchImageLibrary(options, response => {
-      if (images?.length > 0) {
+      if (imgs?.length > 0) {
         setImgs([...imgs, response?.assets[0]]);
       } else {
         setImgs([response?.assets[0]]);
@@ -111,11 +118,17 @@ const EditCommunity = () => {
   };
 
   const onPressSaveChanges = () => {
+    const locationEdt =
+      selectedLocation?.structured_formatting?.main_text +
+      ', ' +
+      (selectedLocation?.structured_formatting?.main_text?.length > 0
+        ? selectedLocation?.terms[1].value
+        : '');
     changeInformation({
       name: title,
       description: desc,
-      country: country,
-      location: location,
+      // country: countryEdit,
+      location: locationEdt,
       categories: addedStyles,
       followers: followers,
       images: imgs,
@@ -212,15 +225,12 @@ const EditCommunity = () => {
         <RN.View style={styles.nameTitle}>
           <RN.Text style={styles.title}>Upload Cover Image</RN.Text>
         </RN.View>
-        {/* <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          What picture is better to put here?
-        </RN.Text> */}
-        {imgs?.length > 0 ? (
+        {images?.length > 0 ? (
           <RN.ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             style={{
-              flex: 1,
+              // flex: 1,
               paddingHorizontal: 20,
               marginVertical: 12,
             }}>
@@ -230,7 +240,7 @@ const EditCommunity = () => {
                   <RN.Image
                     key={index}
                     style={{height: 160, width: 160, marginRight: 8}}
-                    source={{uri: img?.uri}}
+                    source={{uri: 'data:image/png;base64,' + img?.base64}}
                   />
                   <RN.TouchableOpacity
                     onPress={() => onPressDeleteImg(img)}
@@ -244,20 +254,7 @@ const EditCommunity = () => {
               );
             })}
             <RN.TouchableOpacity
-              style={{
-                alignSelf: 'center',
-                height: 80,
-                width: 160,
-                borderWidth: 1,
-                borderColor: colors.purple,
-                borderStyle: 'dotted',
-                alignContent: 'center',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 10,
-                marginRight: 40,
-              }}
+              style={styles.uploadPictureBtn}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
               <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
@@ -283,9 +280,6 @@ const EditCommunity = () => {
             <RN.Text style={styles.countMaxSymbols}> can select few</RN.Text>
           </RN.Text>
         </RN.View>
-        {/* <RN.Text style={styles.definition}>
-          Create and share events, discuss them with your group members
-        </RN.Text> */}
         {addedStyles?.length > 0 && (
           <RN.View style={styles.danceStyleContainer}>
             {addedStyles?.map(item => {
@@ -315,16 +309,58 @@ const EditCommunity = () => {
     );
   };
   return (
-    <RN.SafeAreaView style={styles.container}>
+    <>
       {renderHeader()}
-      <RN.ScrollView>
-        {renderNameCommunity()}
-        {renderDescription()}
-        {renderChooseCategory()}
-        {renderChooseImage()}
-      </RN.ScrollView>
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid
+        extraScrollHeight={isAndroid ? 0 : 90}
+        showsVerticalScrollIndicator={false}
+        style={{backgroundColor: colors.white}}
+        // contentContainerStyle={styles.content}
+      >
+        <RN.SafeAreaView style={styles.container}>
+          <RN.ScrollView>
+            {renderNameCommunity()}
+            {renderDescription()}
+            {renderChooseCategory()}
+            {renderChooseImage()}
+            <RN.Text style={styles.placeholderTitle}>City</RN.Text>
+            <RN.TouchableOpacity
+              onPress={() => setOpenLocation(true)}
+              style={styles.selectLocationBtn}>
+              <RN.Text style={styles.locationText}>
+                {selectedLocation?.structured_formatting?.main_text?.length > 0
+                  ? `${
+                      selectedLocation?.structured_formatting?.main_text +
+                      ', ' +
+                      selectedLocation?.terms[1]?.value
+                    }`
+                  : location}
+              </RN.Text>
+
+              <RN.View
+                style={{
+                  justifyContent: 'center',
+                }}>
+                <RN.Image
+                  source={{uri: 'arrowdown'}}
+                  style={{height: 20, width: 20}}
+                />
+              </RN.View>
+            </RN.TouchableOpacity>
+          </RN.ScrollView>
+        </RN.SafeAreaView>
+      </KeyboardAwareScrollView>
+      {openLocation && (
+        <FindCity
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+          onClosed={() => setOpenLocation(false)}
+        />
+      )}
       {visibleFooter && renderFooter()}
-    </RN.SafeAreaView>
+    </>
   );
 };
 
@@ -333,16 +369,56 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  selectLocationBtn: {
+    marginHorizontal: 20,
+    marginVertical: 14,
+    backgroundColor: colors.lightGray,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: colors.grayTransparent,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+  },
+  locationText: {
+    paddingVertical: 16,
+    fontSize: 16,
+    lineHeight: 22.4,
+    letterSpacing: 0.2,
+    color: colors.textPrimary,
+  },
+  placeholderTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22.4,
+    paddingHorizontal: 24,
+    color: colors.textPrimary,
+  },
   iconHeader: {
-    height: 30,
-    width: 34,
+    height: 18,
+    width: 24,
   },
   headerWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // paddingTop: 12,
+    paddingTop: statusBarHeight,
     paddingHorizontal: 18,
     paddingBottom: 14,
+    backgroundColor: colors.white,
+  },
+  uploadPictureBtn: {
+    alignSelf: 'center',
+    height: 80,
+    width: 160,
+    borderWidth: 1,
+    borderColor: colors.purple,
+    borderStyle: 'dotted',
+    alignContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginRight: 40,
   },
   title: {
     fontSize: 16,
@@ -384,6 +460,7 @@ const styles = RN.StyleSheet.create({
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     backgroundColor: colors.lightGray,
+    paddingBottom: 8,
   },
   addedDanceStyleItem: {
     borderWidth: 1,

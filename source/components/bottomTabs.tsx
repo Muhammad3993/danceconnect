@@ -33,10 +33,7 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
         };
         const isFocused = state.index === index;
         return (
-          <RN.TouchableOpacity
-            key={index}
-            style={styles.itemContainer}
-            onPress={onPressTab}>
+          <RN.TouchableOpacity key={index} onPress={onPressTab}>
             <RN.View style={{alignSelf: 'center'}}>
               <RN.Image
                 resizeMode={'contain'}
@@ -66,14 +63,13 @@ const styles = RN.StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
+    paddingHorizontal: 14,
+    // justifyContent: 'center',
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     paddingVertical: 8,
     paddingBottom: isAndroid ? 0 : 24,
-  },
-  itemContainer: {
-    marginHorizontal: 20,
   },
   icon: {
     height: 24,

@@ -54,7 +54,8 @@ const useRegistration = () => {
     gender: string,
     country: string,
     location: string,
-    role: string,
+    role: string[],
+    individualStyles: string[],
   ) => {
     dispatch(
       setRegistrationDataRequestAction({
@@ -64,6 +65,7 @@ const useRegistration = () => {
         country: country,
         location: location,
         role: role,
+        individualStyles: individualStyles,
       }),
     );
   };

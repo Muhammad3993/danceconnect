@@ -1,4 +1,4 @@
-import {call, put, select, takeLatest} from 'redux-saga/effects';
+import {call, debounce, put, select, takeLatest} from 'redux-saga/effects';
 
 import {
   AUTHORIZATION_WITH_EMAIL,
@@ -25,13 +25,18 @@ import {
   setRegistrationDataFailAction,
   setRegistrationDataSuccessAction,
 } from '../actions/authorizationActions';
-import {getUserData, userExists} from '../../api/functions';
+import {userExists} from '../../api/functions';
 import {setErrors} from '../../utils/helpers';
 import {
   clearUserDataInStorage,
   getUserDataRequestAction,
 } from '../actions/profileActions';
-import {clearCommunititesData} from '../actions/communityActions';
+import {
+  clearCommunititesData,
+  getCommunitiesRequestAction,
+} from '../actions/communityActions';
+import {getEventsRequestAction} from '../actions/eventActions';
+import {setLoadingAction} from '../actions/appStateActions';
 
 function* registrationEmail(action: any) {
   try {
@@ -46,8 +51,10 @@ function* registrationEmail(action: any) {
         isUserExists: exists,
       }),
     );
+    yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('registrationWithEmailFail error', error);
+    yield put(setLoadingAction({onLoading: false}));
     yield put(registrationWithEmailFail(setErrors(error?.toString())));
   }
 }
@@ -56,6 +63,8 @@ function* authorizationEmail(action: any) {
     const {email, password} = action?.payload;
     const userCredentials = yield call(logInWithEmail, email, password);
     const {uid} = userCredentials?._user;
+    // yield put(getCommunitiesRequestAction());
+    yield put(getEventsRequestAction());
     // const userData = yield call(getUserData, uid);
     // console.log('authorizationEmail', userData);
     const exists = yield call(userExists, uid);
@@ -66,24 +75,28 @@ function* authorizationEmail(action: any) {
       }),
     );
     yield put(getUserDataRequestAction());
+    yield put(getCommunitiesRequestAction());
+    yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('authorizationEmail error', error);
     yield put(authorizationWithEmailFail(setErrors(error?.toString())));
+    yield put(setLoadingAction({onLoading: false}));
   }
 }
 function* registrationSetData(action: any) {
   try {
-    const {uid, name, gender, country, location, role} = action?.payload;
-    const response = yield call(
-      setInitialDataUser,
-      uid,
-      name,
-      gender,
-      country,
-      location,
-      role,
-    );
-    console.log('registrationSetData', response, action.payload);
+    const {uid, name, gender, country, location, role, individualStyles} =
+      action?.payload;
+    yield call(setInitialDataUser, {
+      uid: uid,
+      name: name,
+      gender: gender,
+      country: country,
+      location: location,
+      role: role,
+      individualStyles: individualStyles,
+    });
+    // console.log('registrationSetData', response, action.payload);
     yield put(
       setRegistrationDataSuccessAction(
         uid,
@@ -92,10 +105,13 @@ function* registrationSetData(action: any) {
         country,
         location,
         role,
+        individualStyles,
       ),
     );
+    yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     console.log('registrationSetData error', error);
+    yield put(setLoadingAction({onLoading: false}));
     yield put(setRegistrationDataFailAction(error));
   }
 }
@@ -123,9 +139,13 @@ function* authWthGoogle() {
       }),
     );
     yield put(getUserDataRequestAction());
+    yield put(getCommunitiesRequestAction());
+    yield put(getEventsRequestAction());
+    yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('authWthGoogle error', error);
     yield put(authWithGoogleFail(setErrors(error?.toString())));
+    yield put(setLoadingAction({onLoading: false}));
   }
 }
 function* registrationSaga() {

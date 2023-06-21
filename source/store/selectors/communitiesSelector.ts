@@ -1,5 +1,4 @@
-import {IRootState} from '..';
-
+import store, {IRootState} from '..';
 export const selectCommunities = (state: IRootState) =>
   state.communities?.dataCommunities ?? [];
 export const selectLoadingInCreateCommunity = (state: IRootState) =>
@@ -19,3 +18,18 @@ export const selectLoadingChangeInformationCommunity = (state: IRootState) =>
   state?.communities?.isLoadingChangeInformation ?? false;
 export const selectIsSaveChanges = (state: IRootState) =>
   state?.communities?.saveChanges ?? false;
+
+export const selectManagingCommunities = (userUid: string) =>
+  store
+    .getState()
+    ?.communities?.dataCommunities?.filter(
+      (item: any) => item?.creatorUid === userUid,
+    ) ?? [];
+export const selectJoinedCommunitites = (userUid: string) =>
+  store
+    .getState()
+    ?.communities?.dataCommunities?.filter(
+      (item: any) =>
+        item?.followers?.length > 0 &&
+        item?.followers?.find((user: any) => user.userUid === userUid),
+    );

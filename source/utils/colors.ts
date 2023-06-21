@@ -11,4 +11,5 @@ export default {
   transparentPurple: '#584CF414',
   lightPurple: '#F6F5FF',
   redError: '#F75555',
+  grayTransparent: 'rgba(238, 238, 238, 1)',
 };

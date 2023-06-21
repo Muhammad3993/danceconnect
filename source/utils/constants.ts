@@ -1,9 +1,41 @@
-import {Dimensions, Platform} from 'react-native';
+import {Dimensions, Platform, NativeModules, StatusBar} from 'react-native';
 
 export const SCREEN_HEIGHT = Dimensions.get('screen').height;
 export const SCREEN_WIDTH = Dimensions.get('screen').width;
 export const isAndroid = Platform.OS === 'android';
 export const GOOGLE_API_KEY = 'AIzaSyAaMUmA9rKPazM7tBeEEelzUuonq4hrxUk';
+const {StatusBarManager} = NativeModules;
+export const genders = [
+  {
+    id: 1,
+    title: 'Male',
+  },
+  {
+    id: 2,
+    title: 'Female',
+  },
+  {
+    id: 3,
+    title: 'Nonbinary',
+  },
+];
+export const roles = [
+  {
+    id: 0,
+    title: 'I’m Dancer',
+  },
+  {
+    id: 1,
+    title: 'I’m Teacher',
+  },
+  {
+    id: 2,
+    title: 'I’m Organizer',
+  },
+];
+export const statusBarHeight = isAndroid
+  ? StatusBar.currentHeight
+  : StatusBarManager.HEIGHT;
 
 export const dataDanceCategory = [
   {
@@ -52,30 +84,41 @@ export const dataDanceCategory = [
   },
 ];
 
+export const typesEvent = [
+  {id: 1, name: 'Festival / Congress / Workshop'},
+  {id: 2, name: 'Competitions'},
+  {id: 3, name: 'Class'},
+  {id: 4, name: 'Party'},
+];
 export const locationData = [
+  // {
+  //   id: 0,
+  //   country: 'Argentina',
+  //   cities: ['Buenos Aires', 'Cordoba'],
+  //   countryCode: 'AR',
+  // },
+  // {
+  //   id: 1,
+  //   country: 'Australia',
+  //   cities: ['Sydney', 'Melbourne'],
+  //   countryCode: 'AU',
+  // },
+  // {
+  //   id: 2,
+  //   country: 'Indonesia',
+  //   cities: ['Bali'],
+  //   places: ['Bali', 'Bali 2'],
+  //   countryCode: 'ID',
+  // },
+  // {
+  //   id: 3,
+  //   country: 'Singapore',
+  //   cities: ['Singapore'],
+  //   countryCode: 'SG',
+  // },
   {
     id: 0,
-    country: 'Indonesia',
-    cities: ['Bali'],
-    places: ['Bali', 'Bali 2'],
-    countryCode: 'ID',
-  },
-  {
-    id: 1,
-    country: 'Australia',
-    cities: ['Sydney', 'Melbourne'],
-    countryCode: 'AU',
-  },
-  {
-    id: 2,
-    country: 'Singapore',
-    cities: ['Singapore'],
-    countryCode: 'SG',
-  },
-  {
-    id: 3,
-    country: 'Argentina',
-    cities: ['Buenos Aires', 'Cordoba'],
-    countryCode: 'AR',
+    country: 'United States of America',
+    countryCode: 'USA',
   },
 ];

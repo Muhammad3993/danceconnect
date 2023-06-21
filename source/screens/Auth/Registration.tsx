@@ -10,6 +10,7 @@ import {Input} from '../../components/input';
 import colors from '../../utils/colors';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
+import useAppStateHook from '../../hooks/useAppState';
 
 const RegistraionScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
@@ -18,6 +19,7 @@ const RegistraionScreen = (): JSX.Element => {
   const [password, setPassword] = useState<string>('');
   const {isErrors, clearErrors} = useRegistration();
   const errorViewHeight = new RN.Animated.Value(0);
+  const {setLoading} = useAppStateHook();
 
   const translateY = errorViewHeight.interpolate({
     inputRange: [0, 1],
@@ -70,6 +72,7 @@ const RegistraionScreen = (): JSX.Element => {
 
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
+    setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
     }
@@ -84,6 +87,7 @@ const RegistraionScreen = (): JSX.Element => {
   }, [userUid, navigation, isUserExists]);
 
   const onPressSignUp = () => {
+    setLoading(true);
     registration(email, password);
   };
 
@@ -106,21 +110,20 @@ const RegistraionScreen = (): JSX.Element => {
             />
             <RN.Text style={styles.welcome}>Create New Account</RN.Text>
             <Input
-              value={email}
+              value={email.toLowerCase()}
               onChange={(v: string) => setEmail(v)}
               isErrorBorder={isErrors?.type?.includes('email')}
               placeholder="Email"
               keyboardType="email-address"
               iconName="inbox"
             />
-            <RN.Animated.View
-              style={{
-                alignItems: 'center',
-                marginBottom: translateY,
-                // height: translateY,
-              }}>
-              <RN.Text style={{color: 'red'}}>{isErrors?.message}</RN.Text>
-            </RN.Animated.View>
+            {isErrors?.message?.length > 0 && (
+              <RN.View style={styles.errorMessage}>
+                <RN.Text style={styles.errorMessageText}>
+                  {isErrors?.message}
+                </RN.Text>
+              </RN.View>
+            )}
             <Input
               isErrorBorder={isErrors?.type?.includes('password')}
               value={password}
@@ -178,6 +181,15 @@ const styles = RN.StyleSheet.create({
     height: 20,
     width: 24,
     marginHorizontal: 30,
+  },
+  errorMessage: {
+    marginTop: -16,
+    paddingBottom: 6,
+    alignItems: 'center',
+  },
+  errorMessageText: {
+    color: colors.redError,
+    fontSize: 13,
   },
   container: {
     flex: 1,

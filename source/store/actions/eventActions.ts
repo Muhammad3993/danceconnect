@@ -18,6 +18,7 @@ export type eventParams = {
   eventDate?: {};
   place?: string;
   communityUid?: string;
+  typeEvent: string;
 };
 
 export type followingParams = {
@@ -29,26 +30,28 @@ export type followingParams = {
 export const createEventRequestAction = ({
   name,
   description,
-  country,
+  // country,
   location,
   place,
   creatorUid,
   categories,
   images,
   eventDate,
+  typeEvent,
   communityUid,
 }: eventParams) => ({
   type: EVENT.EVENT_CREATE_REQUEST,
   payload: {
     name: name,
     description: description,
-    country: country,
+    // country: country,
     location: location,
     place: place,
     creatorUid: creatorUid,
     categories: categories,
     images: images,
     eventDate: eventDate,
+    typeEvent: typeEvent,
     communityUid: communityUid,
   },
 });
@@ -104,4 +107,41 @@ export const startAttendEventSuccessAction = () => ({
 });
 export const startAttendEventFailAction = () => ({
   type: EVENT.START_ATTEND_EVENT_FAIL,
+});
+export const changeInformationEventRequestAction = ({
+  name,
+  description,
+  // country,
+  location,
+  categories,
+  images,
+  eventDate,
+  place,
+  typeEvent,
+  eventUid,
+}: eventParams) => ({
+  type: EVENT.CHANGE_INFORMATION_EVENT_REQUEST,
+  payload: {
+    name: name,
+    description: description,
+    // country: country,
+    location: location,
+    categories: categories,
+    images: images,
+    eventDate: eventDate,
+    place: place,
+    typeEvent: typeEvent,
+    eventUid: eventUid,
+  },
+});
+export const changeInformationEventSuccessAction = () => ({
+  type: EVENT.CHANGE_INFORMATION_EVENT_SUCCESS,
+});
+
+export const changeInformationEventFailAction = () => ({
+  type: EVENT.CHANGE_INFORMATION_EVENT_FAIL,
+});
+
+export const changeInformationValueAction = () => ({
+  type: EVENT.CHANGE_INFORMATION_VALUE,
 });

@@ -12,6 +12,9 @@ import {isAndroid} from '../utils/constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const moment = extendMoment(Moment);
+let minWeekDay = moment.updateLocale('en', {
+  weekdaysMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+});
 
 type props = {
   onClose: () => void;
@@ -65,7 +68,6 @@ const BottomCalendar = ({
   const onOpen = () => {
     modalizeRef.current?.open();
   };
-
   const onClosed = () => {
     onClose();
   };
@@ -78,10 +80,11 @@ const BottomCalendar = ({
     setOpeningTime(v => !v);
   };
   const onTimePicker = (times: any) => {
-    console.log(times);
+    // console.log(moment(times?.getTime()).format('HH:mm'));
+
     // const timeSelect = isAndroid ? new Date(times).getTime() : times?.timestamp;
     // setValue(times);
-    setTime(times);
+    setTime(times?.getTime());
   };
 
   const renderTimePickerIOS = () => {
@@ -120,6 +123,19 @@ const BottomCalendar = ({
   };
   const [startDate, setStartDate] = useState(start);
   const [endDate, setEndDate] = useState(end);
+
+  const dateEvent = `${String(
+    minWeekDay.weekdaysMin(moment(startDate)),
+  ).toUpperCase()}, ${String(
+    moment(startDate).format('MMM Do'),
+  ).toUpperCase()}${
+    endDate !== null
+      ? ' - ' +
+        String(minWeekDay.weekdaysMin(moment(endDate))).toUpperCase() +
+        ',' +
+        String(moment(endDate).format('MMM Do')).toUpperCase()
+      : ''
+  }`;
 
   useEffect(() => {
     setStart({start: startDate !== null ? moment(startDate).toDate() : null});
@@ -189,7 +205,7 @@ const BottomCalendar = ({
           paddingTop: 35,
         }}>
         <RN.View style={{alignSelf: 'center'}}>
-          <RN.Text style={styles.filtersText}>Select Date and Time</RN.Text>
+          <RN.Text style={styles.filtersText}>Date and Time</RN.Text>
         </RN.View>
         <RN.TouchableOpacity
           style={{alignSelf: 'flex-end', marginTop: -25}}
@@ -211,27 +227,22 @@ const BottomCalendar = ({
         adjustToContentHeight>
         <RN.View>
           {renderHeader()}
-          <RN.View style={styles.nameTitle}>
-            <RN.View>
-              <RN.Text style={styles.title}>
-                Selected date:
-                <RN.Text style={{color: colors.darkGray}}>
-                  {` ${moment(startDate).format('MMMM Do')}${
-                    endDate !== null
-                      ? ' - ' + moment(endDate).format('MMMM Do')
-                      : ''
-                  }`}
+          {startDate !== null && (
+            <RN.View style={styles.nameTitle}>
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={[styles.title, {fontSize: 15}]}>
+                  {dateEvent}
                 </RN.Text>
-              </RN.Text>
+              </RN.View>
+              <RN.TouchableOpacity
+                style={styles.timeContainer}
+                onPress={() => setOpeningTime(v => !v)}>
+                <RN.Text style={styles.timeText}>
+                  {moment(time).format('HH:mm')}
+                </RN.Text>
+              </RN.TouchableOpacity>
             </RN.View>
-            <RN.TouchableOpacity
-              style={{justifyContent: 'center'}}
-              onPress={() => setOpeningTime(v => !v)}>
-              <RN.Text style={[styles.title, {color: colors.darkGray}]}>
-                {moment(time).format('HH:mm')}
-              </RN.Text>
-            </RN.TouchableOpacity>
-          </RN.View>
+          )}
           {openingTime ? (
             isAndroid ? (
               renderTimePicker()
@@ -318,6 +329,22 @@ const styles = RN.StyleSheet.create({
     fontWeight: '500',
     lineHeight: 28.8,
     fontSize: 24,
+  },
+  timeContainer: {
+    justifyContent: 'center',
+    backgroundColor: colors.grayTransparent,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: 'lightgray',
+  },
+  timeText: {
+    fontSize: 15,
+    color: colors.textPrimary,
+    lineHeight: 21,
+    letterSpacing: 0.3,
+    fontWeight: '600',
+    paddingHorizontal: 6,
+    paddingVertical: 4,
   },
 });
 

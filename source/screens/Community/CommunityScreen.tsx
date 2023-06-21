@@ -13,36 +13,48 @@ import useEvents from '../../hooks/useEvents';
 import EventCard from '../../components/eventCard';
 import sotrtBy from 'lodash.sortby';
 import moment from 'moment';
+import Carousel from '../../components/carousel';
 
-const TABS = ['Upcoming Events', 'Attending', 'Passed'];
 const CommunityScreen = () => {
   const routeProps = useRoute();
   const navigation = useNavigation();
-  const {userImgUrl} = useProfile();
+  const {userImgUrl, userById, getUser} = useProfile();
   const {userUid} = useRegistration();
   const {startFollowed} = useCommunities();
 
   const {data}: any = routeProps.params;
   const {id} = data;
   const isAdmin = userUid === data?.creatorUid;
+  const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
   const {remove} = useCommunityById(id);
   const [isJoined, setJoined] = useState();
   const [openingDescription, setOpeningDescription] = useState(false);
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
   const [displayedData, setDisplayedData] = useState();
-  const {getEventById, eventsDataById, loadingEvents, attendingEvents} =
-    useEvents();
+  const {
+    getEventById,
+    eventsDataById,
+    loadingEvents,
+    attendingEventsForCommunity,
+  } = useEvents();
   const [currentTab, setCurrentTab] = useState(TABS[0]);
   const [events, setEvents] = useState([]);
 
   const upcomingEvents =
     eventsDataById?.filter(
-      (item: any) =>
+      (item: {eventDate: {startDate: Date}}) =>
         moment(item.eventDate?.startDate).format('YYYY-MM-DD') >=
         moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
   const [desc, setDesc] = useState();
-
+  useEffect(() => {
+    getUser(displayedData?.creatorUid);
+  }, [displayedData?.creatorUid]);
+  const passedEvents = eventsDataById?.filter(
+    (item: any) =>
+      moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
+      moment(new Date()).format('YYYY-MM-DD'),
+  );
   useEffect(() => {
     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const onValueChange = database()
@@ -92,7 +104,7 @@ const CommunityScreen = () => {
   };
   const onPressRemove = async () => {
     remove();
-    navigation.navigate('CommunitiesMain', {removedCommunity: true});
+    // navigation.navigate('CommunitiesMain', {removedCommunity: true});
   };
   useMemo(() => {
     setJoined(
@@ -102,7 +114,11 @@ const CommunityScreen = () => {
 
   const renderTags = () => {
     return (
-      <RN.View style={styles.tagsContainer}>
+      <RN.View
+        style={[
+          styles.tagsContainer,
+          {marginTop: displayedData?.images?.length > 0 ? -50 : -10},
+        ]}>
         <RN.ScrollView
           horizontal
           style={styles.scrollTags}
@@ -198,13 +214,8 @@ const CommunityScreen = () => {
       case 'Upcoming Events':
         return setEvents(upcomingEvents);
       case 'Attending':
-        return setEvents(attendingEvents);
+        return setEvents(attendingEventsForCommunity);
       case 'Passed':
-        const passedEvents = eventsDataById?.filter(
-          (item: any) =>
-            moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
-            moment(new Date()).format('YYYY-MM-DD'),
-        );
         return setEvents(passedEvents);
       default:
         return setEvents(upcomingEvents);
@@ -247,13 +258,33 @@ const CommunityScreen = () => {
             </RN.TouchableOpacity>
           );
         })}
-        <RN.View style={{paddingRight: 34}} />
+        {/* <RN.View style={{paddingRight: 34}} /> */}
       </RN.ScrollView>
     );
   };
   const renderEvents = () => {
     if (loadingEvents) {
       return <RN.ActivityIndicator size={'small'} color={colors.orange} />;
+    }
+    if (currentTab === 'Passed' && !passedEvents?.length) {
+      return (
+        <RN.View style={styles.passedEventsContainer}>
+          <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
+            {isAdmin
+              ? 'You don`t have any past events yet'
+              : 'There are no past events yet'}
+          </RN.Text>
+        </RN.View>
+      );
+    }
+    if (!events?.length && eventsDataById?.length > 0) {
+      return (
+        <RN.View style={styles.passedEventsContainer}>
+          <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
+            There are no events yet
+          </RN.Text>
+        </RN.View>
+      );
     }
     return (
       <>
@@ -264,18 +295,99 @@ const CommunityScreen = () => {
       </>
     );
   };
+  const onOpenMaps = () => {
+    const url = RN.Platform.select({
+      ios: `maps:0,0?q=${displayedData?.location}`,
+      android: `geo:0,0?q=${displayedData?.location}`,
+    });
+
+    RN.Linking.openURL(url);
+  };
+  const renderMapInfoOrganizer = () => {
+    return (
+      <>
+        <RN.TouchableOpacity
+          style={styles.mapInfoContainer}
+          onPress={onOpenMaps}>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.View
+                style={{
+                  backgroundColor: colors.transparentPurple,
+                  padding: 10,
+                  borderRadius: 100,
+                }}>
+                <RN.Image
+                  source={{uri: 'locate'}}
+                  style={{height: 20, width: 20, tintColor: colors.purple}}
+                />
+              </RN.View>
+            </RN.View>
+            <RN.Text
+              style={styles.locateText}>{`${displayedData?.location}`}</RN.Text>
+          </RN.View>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text style={styles.seeMapsText}>Maps</RN.Text>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.View
+                style={{
+                  transform: [{rotate: '180deg'}],
+                  height: 14,
+                  width: 16,
+                }}>
+                <RN.Image
+                  source={{uri: 'backicon'}}
+                  style={{height: 14, width: 16, tintColor: colors.purple}}
+                />
+              </RN.View>
+            </RN.View>
+          </RN.View>
+        </RN.TouchableOpacity>
+        <RN.View style={styles.organizerContainer}>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.Image
+              source={
+                userById?.profileImg
+                  ? {
+                      uri:
+                        'data:image/png;base64,' + userById?.profileImg?.base64,
+                    }
+                  : require('../../assets/images/defaultuser.png')
+              }
+              style={styles.organizerImg}
+            />
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text style={styles.organizerName}>
+                {userById?.auth_data?.displayName ?? userById?.name}
+              </RN.Text>
+              <RN.Text style={styles.organizer}>Organizer</RN.Text>
+            </RN.View>
+          </RN.View>
+          {!isAdmin && (
+            <RN.TouchableOpacity style={styles.contactBtn}>
+              <RN.Text style={styles.contactText}>Contact</RN.Text>
+            </RN.TouchableOpacity>
+          )}
+        </RN.View>
+      </>
+    );
+  };
   return (
     <RN.ScrollView style={styles.container}>
       {header()}
-      <RN.Image
+      {/* <RN.Image
         source={
           displayedData?.images?.length > 0
             ? {uri: 'data:image/png;base64,' + displayedData?.images[0]?.base64}
             : require('../../assets/images/default.jpeg')
         }
         style={{height: 350, width: SCREEN_WIDTH}}
-      />
+      /> */}
+      <Carousel items={displayedData?.images} />
       {renderTitle()}
+      {renderMapInfoOrganizer()}
       {!isAdmin ? (
         <RN.View style={styles.btnJoin}>
           <Button
@@ -291,7 +403,7 @@ const CommunityScreen = () => {
         <RN.View style={styles.btnJoin}>
           <Button
             onPress={() =>
-              navigation.navigate('CreateEvent', {communityUid: data.id})
+              navigation.navigate('CreateEvent', {communityData: data})
             }
             disabled
             // isLoading={isLoadingWithFollow}
@@ -316,6 +428,73 @@ const styles = RN.StyleSheet.create({
     left: '47%',
     zIndex: 2,
   },
+  passedEventsContainer: {
+    paddingVertical: 50,
+    alignItems: 'center',
+  },
+  seeMapsText: {
+    color: colors.purple,
+    fontSize: 14,
+    fontWeight: '600',
+    lineHeight: 22.4,
+    marginRight: 4,
+  },
+  locateText: {
+    fontSize: 14,
+    lineHeight: 22.4,
+    fontWeight: '600',
+    paddingVertical: 20,
+    marginLeft: 12,
+    color: colors.textPrimary,
+  },
+  mapInfoContainer: {
+    marginHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderColor: colors.gray,
+    marginTop: 14,
+  },
+  organizerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 22,
+    paddingVertical: 14,
+    paddingBottom: 20,
+  },
+  organizerName: {
+    fontSize: 16,
+    color: colors.textPrimary,
+    lineHeight: 22.4,
+    letterSpacing: 0.2,
+    fontWeight: '700',
+  },
+  organizerImg: {
+    height: 38,
+    width: 38,
+    borderRadius: 100,
+    marginRight: 16,
+  },
+  organizer: {
+    color: colors.darkGray,
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 19.6,
+    letterSpacing: 0.2,
+  },
+  contactBtn: {
+    borderWidth: 1,
+    borderColor: colors.purple,
+    borderRadius: 50,
+    paddingHorizontal: 22,
+    justifyContent: 'center',
+  },
+  contactText: {
+    color: colors.purple,
+    fontSize: 16,
+    lineHeight: 22.4,
+    letterSpacing: 0.2,
+  },
   tabsWrapper: {
     // flexDirection: 'row',
     // justifyContent: 'space-around',
@@ -333,7 +512,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 16,
     lineHeight: 25.2,
     // letterSpacing: 0.2,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -400,11 +579,16 @@ const styles = RN.StyleSheet.create({
     fontWeight: '700',
   },
   titleDesc: {
-    color: colors.textPrimary,
+    color: '#424242',
+    fontSize: 16,
+    lineHeight: 20,
+    letterSpacing: 0.2,
+    fontWeight: '500',
   },
   tagsContainer: {
     flexDirection: 'row',
     marginTop: -20,
+    zIndex: 1,
   },
   tagItem: {
     backgroundColor: colors.purple,

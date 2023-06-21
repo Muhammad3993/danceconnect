@@ -1,5 +1,6 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  changeInformationEventRequestAction,
   eventParams,
   followingParams,
   getEventByIdRequestAction,
@@ -8,12 +9,21 @@ import {
 } from '../store/actions/eventActions';
 import {createEventRequestAction} from '../store/actions/eventActions';
 import {
+  selectAttentingEvents,
   selectEventByIdData,
   selectEventList,
+  selectIsSaveChanges,
+  selectLoadingChangeInformationEvent,
   selectLoadingEvents,
   selectLoadingattendEvent,
+  selectManagingEvents,
+  selectPassedEvents,
+  selectUpcomingEvents,
+  selectUpcomingEventsWithUserUid,
+  selectWithManagingEvents,
 } from '../store/selectors/eventsSelector';
 import {selectUserUid} from '../store/selectors/registrationSelector';
+import {useProfile} from './useProfile';
 
 const useEvents = () => {
   const dispatch = useDispatch();
@@ -22,7 +32,26 @@ const useEvents = () => {
   const loadingEvents = useSelector(selectLoadingEvents);
   const loadingAttend = useSelector(selectLoadingattendEvent);
   const userId = useSelector(selectUserUid);
-  const attendingEvents =
+  const loadingWithChangeInformation = useSelector(
+    selectLoadingChangeInformationEvent,
+  );
+  const isSaveChanges = useSelector(selectIsSaveChanges);
+
+  const managingEvents = selectManagingEvents(userId);
+  const attentingsEvents = selectAttentingEvents(userId);
+  const attendEventWithUserUid = selectUpcomingEventsWithUserUid(userId);
+  const upcomingEvents = selectUpcomingEvents();
+  const passingEvents = selectPassedEvents();
+  const managingEventsWithPassed = useSelector(selectWithManagingEvents);
+  const {individualStyles} = useProfile();
+  const maybeEvents = upcomingEvents?.filter(
+    i =>
+      i?.creatorUid !== userId &&
+      i?.attendedPeople?.find((user: any) => user.userUid !== userId) &&
+      i?.categories?.some(st => individualStyles?.includes(st)),
+  );
+
+  const attendingEventsForCommunity =
     eventsDataById?.filter(
       (item: any) =>
         item?.attendedPeople?.length > 0 &&
@@ -46,6 +75,7 @@ const useEvents = () => {
     categories,
     images,
     eventDate,
+    typeEvent,
   }: eventParams) => {
     dispatch(
       createEventRequestAction({
@@ -59,6 +89,7 @@ const useEvents = () => {
         categories: categories,
         images: images,
         eventDate: eventDate,
+        typeEvent: typeEvent,
       }),
     );
   };
@@ -70,8 +101,36 @@ const useEvents = () => {
         eventUid: eventUid,
       }),
     );
-    // dispatch(getCommunityByIdRequestAction({communityUid: communityUid}));
   };
+
+  const changeInformation = ({
+    name,
+    description,
+    // country,
+    location,
+    categories,
+    images,
+    eventDate,
+    place,
+    eventUid,
+    typeEvent,
+  }: eventParams) => {
+    dispatch(
+      changeInformationEventRequestAction({
+        name,
+        description,
+        // country,
+        location,
+        categories,
+        images,
+        eventDate,
+        place,
+        eventUid,
+        typeEvent,
+      }),
+    );
+  };
+
   return {
     createEvent,
     eventList,
@@ -81,7 +140,17 @@ const useEvents = () => {
     loadingEvents,
     loadingAttend,
     attendEvent,
-    attendingEvents,
+    attendingEventsForCommunity,
+    changeInformation,
+    loadingWithChangeInformation,
+    isSaveChanges,
+    managingEvents,
+    attentingsEvents,
+    upcomingEvents,
+    passingEvents,
+    attendEventWithUserUid,
+    maybeEvents,
+    managingEventsWithPassed
   };
 };
 export default useEvents;

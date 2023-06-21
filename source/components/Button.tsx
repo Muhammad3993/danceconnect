@@ -60,13 +60,13 @@ export const Button = ({
         ]}>
         {title}
       </RN.Text>
-      {isLoading && (
+      {/* {isLoading && (
         <RN.ActivityIndicator
           size={'small'}
           color={buttonStyle?.color ?? colors.white}
           style={styles.indicator}
         />
-      )}
+      )} */}
     </RN.TouchableOpacity>
   );
 };

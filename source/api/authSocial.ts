@@ -100,14 +100,16 @@ export const forgotPassword = async (email: string) => {
     .catch(er => console.log('forgot password error', er));
 };
 
-export const setInitialDataUser = async (
-  uid: string,
-  name: string,
-  gender: string,
-  country: string,
-  location: string,
-  role: string,
-) => {
+export const setInitialDataUser = async ({
+  uid,
+  name,
+  gender,
+  country,
+  location,
+  role,
+  individualStyles,
+}) => {
+  // console.log('')
   return database()
     .ref(`users/${uid}`)
     .update({
@@ -116,6 +118,7 @@ export const setInitialDataUser = async (
       country: country,
       location: location,
       role: role,
+      individualStyles: individualStyles,
     })
     .then();
 };
@@ -125,6 +128,12 @@ export const logout = async () => {
     .auth()
     .signOut()
     .then((data: any) => console.log('signOut', data));
+};
+
+export const removeAccount = async () => {
+  // const user = auth().currentUser;
+  firebase.auth().currentUser?.delete();
+  // return user?.delete().then();
 };
 
 export const initializeFB = async () => {

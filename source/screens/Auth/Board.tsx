@@ -32,28 +32,35 @@ const genders = [
 ];
 const roles = [
   {
-    id: 1,
+    id: 0,
     title: 'I’m Dancer',
   },
   {
-    id: 2,
+    id: 1,
     title: 'I’m Teacher',
   },
   {
-    id: 3,
+    id: 2,
     title: 'I’m Organizer',
   },
 ];
 const Board = () => {
   const {userName, isRegistrationsSuccess, setUserData} = useRegistration();
   const [name, setName] = useState(userName);
-  const [gender, setGender] = useState(genders[0]);
+  const [gender, setGender] = useState();
   const [country, setCountry] = useState('');
   const [currentCity, setCity] = useState('');
-  const [role, setRole] = useState(roles[0]);
+  const [role, setRole] = useState<string[]>(new Array(0).fill(''));
   const navigation = useNavigation<AuthStackNavigationParamList>();
 
-  // console.log('userName', userName)
+  const onPressRole = (item: any) => {
+    const filter = role.filter(itm => itm !== item);
+    if (role?.includes(item)) {
+      setRole(filter);
+    } else {
+      setRole([...role, item]);
+    }
+  };
   useEffect(() => {
     if (isRegistrationsSuccess) {
       navigation.navigate('HOME');
@@ -61,7 +68,7 @@ const Board = () => {
   }, [isRegistrationsSuccess, navigation]);
 
   const onPressFinish = () => {
-    setUserData(name, gender.title, country, currentCity, role.title);
+    setUserData(name, gender?.title, currentCity, country, role);
   };
   return (
     <RN.ScrollView style={styles.container}>
@@ -74,7 +81,7 @@ const Board = () => {
         <Input
           value={name}
           onChange={setName}
-          placeholder="Your name"
+          placeholder="ex. Eric"
           keyboardType="default"
         />
       </RN.View>
@@ -93,7 +100,7 @@ const Board = () => {
                 styles.choiseItemContainer,
                 {
                   borderColor:
-                    item.id === gender.id ? colors.orange : colors.gray,
+                    item.id === gender?.id ? colors.orange : colors.gray,
                 },
               ]}>
               <RN.Text
@@ -101,7 +108,7 @@ const Board = () => {
                   styles.choiseItemText,
                   {
                     color:
-                      item.id === gender.id ? colors.orange : colors.darkGray,
+                      item.id === gender?.id ? colors.orange : colors.darkGray,
                   },
                 ]}>
                 {item?.title}
@@ -127,22 +134,23 @@ const Board = () => {
         showsHorizontalScrollIndicator={false}
         horizontal>
         {roles.map(item => {
+          const crntIdx =
+            role.find((idx: any) => idx?.id === item.id)?.id === item.id;
+
           return (
             <RN.TouchableOpacity
-              onPress={() => setRole(item)}
+              onPress={() => onPressRole(item)}
               style={[
                 styles.choiseItemContainer,
                 {
-                  borderColor:
-                    item.id === role.id ? colors.orange : colors.gray,
+                  borderColor: crntIdx ? colors.orange : colors.gray,
                 },
               ]}>
               <RN.Text
                 style={[
                   styles.choiseItemText,
                   {
-                    color:
-                      item.id === role.id ? colors.orange : colors.darkGray,
+                    color: crntIdx ? colors.orange : colors.darkGray,
                   },
                 ]}>
                 {item?.title}
@@ -153,7 +161,7 @@ const Board = () => {
         <RN.View style={{paddingHorizontal: 14}} />
       </RN.ScrollView>
       <RN.View style={styles.finishBtn}>
-        <Button title="Let’s Start" onPress={onPressFinish} disabled={true} />
+        <Button title="Next" onPress={onPressFinish} disabled={true} />
       </RN.View>
     </RN.ScrollView>
   );

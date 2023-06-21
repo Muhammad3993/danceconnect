@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
+import {getConstantsFromFirebase} from '../api/functions';
 
 interface itemProp {
   title: string;
@@ -8,69 +9,71 @@ interface itemProp {
   items: string[];
 }
 type selectopProps = {
-  data: itemProp[];
+  data?: itemProp[];
   onChoosheDanceStyle: (value: string) => void;
   addedStyles: string[];
 };
 const keyExtractor = (item: string, index: number) => index;
 
 const CategorySelector = ({
-  data,
   onChoosheDanceStyle,
   addedStyles,
 }: selectopProps) => {
-  //   console.log(data);
   const [currentIndex, setCurrentIndex] = useState(null);
+  const [danceStyles, setDanceStyles] = useState([]);
+
   const onSelectItem = (key: React.SetStateAction<null>) => {
     setCurrentIndex(key === currentIndex ? null : key);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   };
+  useEffect(() => {
+    getConstantsFromFirebase().then(dc => setDanceStyles(dc.danceStyles));
+  }, []);
   const renderStyles = (items: any[]) => {
     return (
       <>
-        {items?.map(
-          (
-            item: {
-              name: string;
-            },
-            index: React.Key | null | undefined,
-          ) => {
-            const isAvailable = addedStyles?.includes(item.name);
-            return (
-              <RN.TouchableOpacity
-                key={index}
-                style={styles.danceStyleItem}
-                activeOpacity={0.7}
-                onPress={() => onChoosheDanceStyle(item.name)}>
-                <RN.Text
-                  style={[
-                    styles.danceStyleText,
-                    {
-                      color: isAvailable ? colors.orange : colors.darkGray,
-                    },
-                  ]}>
-                  {item?.name}
-                </RN.Text>
-              </RN.TouchableOpacity>
-            );
-          },
-        )}
+        {items?.map((item: string, index: React.Key | null | undefined) => {
+          const isAvailable = addedStyles?.includes(item);
+          return (
+            <RN.TouchableOpacity
+              key={index}
+              style={[
+                styles.danceStyleItem,
+                {
+                  borderColor: isAvailable ? colors.orange : colors.darkGray,
+                },
+              ]}
+              activeOpacity={0.7}
+              onPress={() => onChoosheDanceStyle(item)}>
+              <RN.Text
+                style={[
+                  styles.danceStyleText,
+                  {
+                    color: isAvailable ? colors.orange : colors.darkGray,
+                  },
+                ]}>
+                {item}
+              </RN.Text>
+            </RN.TouchableOpacity>
+          );
+        })}
       </>
     );
   };
-  const renderItem = ({title, id, items}: itemProp) => {
+  const renderItem = (data: any) => {
+    const {item, index} = data;
     const rotateIcon = {
-      transform: [{rotate: id === currentIndex ? '270deg' : '180deg'}],
+      transform: [{rotate: index === currentIndex ? '270deg' : '180deg'}],
     };
     // 270 down 180 left
-    const key = keyExtractor(title, id);
+    const key = keyExtractor(item?.title, index);
     return (
       <RN.View style={styles.itemContainer}>
         <RN.TouchableOpacity
           style={styles.titleWrapper}
           onPress={() => onSelectItem(key)}
           activeOpacity={0.7}>
-          <RN.Text style={styles.itemTitle}>{title}</RN.Text>
+          <RN.Text style={styles.itemTitle}>{item?.title}</RN.Text>
           <RN.View style={styles.rightIconWrapper}>
             <RN.Animated.Image
               source={{uri: 'backicon'}}
@@ -78,9 +81,9 @@ const CategorySelector = ({
             />
           </RN.View>
         </RN.TouchableOpacity>
-        {id === currentIndex && (
+        {index === currentIndex && (
           <RN.Animated.View style={styles.animatedBody}>
-            {renderStyles(items)}
+            {renderStyles(item?.items)}
           </RN.Animated.View>
         )}
       </RN.View>
@@ -89,8 +92,8 @@ const CategorySelector = ({
   return (
     <RN.View style={styles.mainContainer}>
       <RN.FlatList
-        data={data}
-        renderItem={({item}) => renderItem(item)}
+        data={Object.values(danceStyles)}
+        renderItem={item => renderItem(item)}
         keyExtractor={(item, index) => `${item}-${index}`}
       />
     </RN.View>
@@ -144,7 +147,7 @@ const styles = RN.StyleSheet.create({
   },
   danceStyleItem: {
     borderWidth: 1,
-    borderColor: colors.orange,
+    // borderColor: colors.orange,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,

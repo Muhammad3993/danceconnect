@@ -19,6 +19,9 @@ const CreateCommunityButton = ({onPress}: props) => {
       onPress={onPress ?? onPressBtn}>
       <RN.View style={styles.circleWrapper}>
         <RN.Image source={{uri: 'comfull'}} style={styles.communityIcon} />
+        <RN.View style={styles.circlePlus}>
+          <RN.Image source={{uri: 'plus'}} style={styles.plusIcon} />
+        </RN.View>
       </RN.View>
       <RN.View style={{marginLeft: -10}}>
         <RN.Text style={styles.title}>Start a new community</RN.Text>
@@ -70,6 +73,21 @@ const styles = RN.StyleSheet.create({
     fontWeight: '400',
     color: colors.darkGray,
     fontFamily: 'Mulish-Regular',
+  },
+  circlePlus: {
+    position: 'absolute',
+    top: -4,
+    right: 0,
+    borderWidth: 3,
+    borderRadius: 100,
+    backgroundColor: colors.white,
+    borderColor: colors.purple,
+    padding: 2,
+  },
+  plusIcon: {
+    height: 12,
+    width: 12,
+    tintColor: colors.purple,
   },
 });
 export default CreateCommunityButton;

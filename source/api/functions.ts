@@ -20,6 +20,32 @@ export const getUserDataById = async (uid: string) => {
   const snap = await firebase.database().ref(`users/${uid}`).once('value');
   return snap.val();
 };
+
+export const getImgsAttendedPeopleToEvent = async (ids: string[]) => {
+  let images: string[] = [];
+  for (let i = 0; i < ids.length; i++) {
+    const item = ids[i];
+    const ref = await firebase.database().ref(`users/${item}`).once('value');
+    const img = ref.val()?.profileImg;
+    images.push(img);
+  }
+  return Object.values(images);
+};
+
+export const uploadImgProfile = async (uid: string, img: object) => {
+  return database()
+    .ref(`users/${uid}`)
+    .update({
+      profileImg: img,
+    })
+    .then();
+};
+
+export const getConstantsFromFirebase = async () => {
+  const constants = await firebase.database().ref('appConstants').once('value');
+  return constants.val();
+};
+
 export const getCommunityByUid = async (communityUid: string) => {
   // database()
   //   .ref(`community/${communityUid}`)
@@ -37,7 +63,7 @@ export const getCommunityByUid = async (communityUid: string) => {
 export const createCommunity = async (
   name: string,
   description: string,
-  country: string,
+  // country: string,
   location: string,
   creatorUid: string,
   categories: string[],
@@ -48,7 +74,7 @@ export const createCommunity = async (
     .update({
       name: name,
       description: description,
-      country: country,
+      // country: country,
       location: location,
       creatorUid: creatorUid,
       categories: categories,
@@ -81,7 +107,9 @@ export const getCommunities = async () => {
 export const removeCommunity = async (uid: string) => {
   await database().ref(`community/${uid}`).remove();
 };
-
+export const removeEvent = async (uid: string) => {
+  await database().ref(`events/${uid}`).remove();
+};
 export const joinCommunity = async (
   communityUid: string,
   userUid: string,
@@ -192,7 +220,7 @@ export const joinEvent = async (
 export const changeInformationCommunity = async (
   name: string,
   description: string,
-  country: string,
+  // country: string,
   location: string,
   communityUid: string,
   followers: string[],
@@ -204,11 +232,47 @@ export const changeInformationCommunity = async (
     .update({
       name: name,
       description: description,
-      country: country,
+      // country: country,
       followers: followers,
       categories: categories,
       images: images,
       location: location,
+    })
+    .then();
+};
+// name: string,
+// description: string,
+// country: string,
+// location: string,
+// creatorUid: string,
+// categories: string[],
+// images: string[],
+// eventDate: null,
+// place: string,
+export const changeInformationEvent = async (
+  name: string,
+  description: string,
+  // country: string,
+  location: string,
+  categories: string[],
+  images: string[],
+  eventDate: null,
+  place: string,
+  typeEvent: string,
+  eventUid: string,
+) => {
+  return database()
+    .ref(`events/${eventUid}`)
+    .update({
+      name: name,
+      description: description,
+      // country: country,
+      categories: categories,
+      images: images,
+      location: location,
+      eventDate: eventDate,
+      place: place,
+      typeEvent: typeEvent,
     })
     .then();
 };
@@ -228,23 +292,27 @@ export const getEventByUid = async (eventUid: string) => {
 export const createEvent = async (
   name: string,
   description: string,
-  country: string,
+  // country: string,
   location: string,
   creatorUid: string,
   categories: string[],
   images: string[],
   eventDate: null,
   place: string,
+  typeEvent: string,
   communityUid: string,
 ) => {
   const refEventsCommunity = database().ref(`community/${communityUid}/events`);
   const refEventsUser = database().ref(`users/${creatorUid}/events`);
   const refNewEvent = database().ref('/events').push();
+  const attedCreator = {
+    userUid: creatorUid,
+  };
   return refNewEvent
     .update({
       name: name,
       description: description,
-      country: country,
+      // country: country,
       location: location,
       creatorUid: creatorUid,
       categories: categories,
@@ -253,6 +321,8 @@ export const createEvent = async (
       eventDate: eventDate,
       place: place,
       communityUid: communityUid,
+      typeEvent: typeEvent,
+      attendedPeople: [attedCreator],
     })
     .then(() => {
       refEventsUser

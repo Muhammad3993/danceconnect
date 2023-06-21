@@ -43,7 +43,7 @@ export const getCommunitiesFailAction = ({errors}: communityParams) => ({
 export const createCommunityRequestAction = ({
   name,
   description,
-  country,
+  // country,
   location,
   creatorUid,
   categories,
@@ -53,7 +53,7 @@ export const createCommunityRequestAction = ({
   payload: {
     name: name,
     description: description,
-    country: country,
+    // country: country,
     location: location,
     creatorUid: creatorUid,
     categories: categories,
@@ -142,7 +142,7 @@ export const getCommunityByIdFailAction = ({error}: any) => ({
 export const changeInformationCommunityRequestAction = ({
   name,
   description,
-  country,
+  // country,
   location,
   communityUid,
   categories,
@@ -153,7 +153,7 @@ export const changeInformationCommunityRequestAction = ({
   payload: {
     name: name,
     description: description,
-    country: country,
+    // country: country,
     location: location,
     communityUid: communityUid,
     followers: followers,

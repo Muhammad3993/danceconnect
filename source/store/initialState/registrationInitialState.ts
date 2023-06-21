@@ -12,4 +12,5 @@ export default {
   role: '',
   isRegistrationsSuccess: false,
   isUserExists: false,
+  individualStyles: [],
 };

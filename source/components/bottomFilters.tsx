@@ -1,10 +1,13 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import * as RN from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import CategorySelector from './catregorySelector';
 import {dataDanceCategory} from '../utils/constants';
 import colors from '../utils/colors';
 import {Button} from './Button';
+import {Portal} from 'react-native-portalize';
+import { useProfile } from '../hooks/useProfile';
+import FindCity from './findCity';
 
 type props = {
   onClose: () => void;
@@ -12,6 +15,9 @@ type props = {
   setSelectedStyles: () => void;
   onClear: () => void;
   onFilter: () => void;
+  setCommunityLocation: () => void;
+  onOpening?: boolean;
+  communityLocation?: string;
 };
 const FiltersBottom = ({
   onClose,
@@ -19,9 +25,20 @@ const FiltersBottom = ({
   setSelectedStyles,
   onClear,
   onFilter,
+  setCommunityLocation,
+  communityLocation,
+  onOpening,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
 
+  const {userCountry} = useProfile();
+  const [openLocation, setOpenLocation] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<string>(communityLocation);
+
+  const onChooseLocation = (value) => {
+    setSelectedLocation(value);
+    setCommunityLocation(value);
+  };
   const onChoosheDanceStyle = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const isAvailable = selectedStyles?.includes(value);
@@ -30,6 +47,8 @@ const FiltersBottom = ({
     } else {
       setSelectedStyles([...selectedStyles, value]);
     }
+    setSelectedLocation(userCountry);
+    setCommunityLocation(userCountry);
   };
   const onPressDeleteItem = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -37,6 +56,11 @@ const FiltersBottom = ({
     setSelectedStyles(filter);
   };
 
+  const onPressClear = () => {
+    setSelectedLocation(userCountry);
+    setCommunityLocation(userCountry);
+    onClear();
+  }
   const onOpen = () => {
     modalizeRef.current?.open();
   };
@@ -45,13 +69,17 @@ const FiltersBottom = ({
     onClose();
   };
   useEffect(() => {
-    onOpen();
-  }, []);
+    if (onOpening) {
+      modalizeRef.current?.open();
+    } else {
+      modalizeRef.current?.close();
+    }
+  }, [onOpening]);
 
   const onPressFilter = () => {
     onFilter();
     onClose();
-  }
+  };
   const renderHeader = () => {
     return (
       <RN.View
@@ -77,7 +105,7 @@ const FiltersBottom = ({
           title="Clear All"
           disabled
           buttonStyle={styles.clearBtn}
-          onPress={onClear}
+          onPress={onPressClear}
         />
         <Button
           title="Show Results"
@@ -102,53 +130,89 @@ const FiltersBottom = ({
   };
   return (
     <>
-      <Modalize
-        ref={modalizeRef}
-        onClose={onClosed}
-        handlePosition="inside"
-        scrollViewProps={{scrollEnabled: true}}
-        modalStyle={styles.container}
-        disableScrollIfPossible={false}
-        adjustToContentHeight>
-        <RN.View>
-          {renderHeader()}
-          {line()}
-          <RN.View style={styles.nameTitle}>
-            <RN.Text style={styles.title}>Choose Dance Style</RN.Text>
-          </RN.View>
-          {selectedStyles?.length > 0 && (
-            <RN.View style={styles.danceStyleContainer}>
-              {selectedStyles?.map(item => {
-                return (
-                  <RN.TouchableOpacity
-                    style={styles.addedDanceStyleItem}
-                    activeOpacity={0.7}
-                    onPress={() => onPressDeleteItem(item)}>
-                    <RN.Text style={styles.addedDanceStyleText}>{item}</RN.Text>
-                    <RN.View style={{justifyContent: 'center', marginTop: 2}}>
-                      <RN.Image
-                        style={{
-                          height: 14,
-                          width: 14,
-                          tintColor: colors.orange,
-                        }}
-                        source={{uri: 'close'}}
-                      />
-                    </RN.View>
-                  </RN.TouchableOpacity>
-                );
-              })}
+      <Portal>
+        <Modalize
+          ref={modalizeRef}
+          onClose={onClosed}
+          handlePosition="inside"
+          scrollViewProps={{scrollEnabled: true}}
+          modalStyle={styles.container}
+          disableScrollIfPossible={false}
+          adjustToContentHeight>
+          <RN.View>
+            {renderHeader()}
+            {line()}
+            <RN.TouchableOpacity
+              style={styles.selectorContainer}
+              onPress={() => setOpenLocation(true)}>
+              <RN.View>
+                <RN.Text style={styles.selectorTitle}>Location</RN.Text>
+                <RN.View style={styles.userLocationWrapper}>
+                  <RN.Image
+                    source={{uri: 'locate'}}
+                    style={{height: 16, width: 16}}
+                  />
+                  <RN.Text style={styles.userLocationText}>
+                    {selectedLocation}
+                  </RN.Text>
+                </RN.View>
+              </RN.View>
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Image
+                  source={{uri: 'arrowright'}}
+                  style={{height: 16, width: 16, tintColor: colors.black}}
+                />
+              </RN.View>
+            </RN.TouchableOpacity>
+            {line()}
+            <RN.View style={styles.nameTitle}>
+              <RN.Text style={styles.title}>Choose Dance Style</RN.Text>
             </RN.View>
-          )}
-          <CategorySelector
-            data={dataDanceCategory}
-            onChoosheDanceStyle={onChoosheDanceStyle}
-            addedStyles={selectedStyles}
+            {selectedStyles?.length > 0 && (
+              <RN.View style={styles.danceStyleContainer}>
+                {selectedStyles?.map(item => {
+                  return (
+                    <RN.TouchableOpacity
+                      style={styles.addedDanceStyleItem}
+                      activeOpacity={0.7}
+                      onPress={() => onPressDeleteItem(item)}>
+                      <RN.Text style={styles.addedDanceStyleText}>
+                        {item}
+                      </RN.Text>
+                      <RN.View style={{justifyContent: 'center', marginTop: 2}}>
+                        <RN.Image
+                          style={{
+                            height: 14,
+                            width: 14,
+                            tintColor: colors.orange,
+                          }}
+                          source={{uri: 'close'}}
+                        />
+                      </RN.View>
+                    </RN.TouchableOpacity>
+                  );
+                })}
+              </RN.View>
+            )}
+            <CategorySelector
+              data={dataDanceCategory}
+              onChoosheDanceStyle={onChoosheDanceStyle}
+              addedStyles={selectedStyles}
+            />
+            {line()}
+            {renderFooter()}
+          </RN.View>
+        </Modalize>
+        {openLocation && (
+          <FindCity
+            selectedLocation={selectedLocation}
+            setSelectedLocation={value =>
+              onChooseLocation(value?.structured_formatting?.main_text)
+            }
+            onClosed={() => setOpenLocation(false)}
           />
-          {line()}
-          {renderFooter()}
-        </RN.View>
-      </Modalize>
+        )}
+      </Portal>
     </>
   );
 };
@@ -156,6 +220,56 @@ const FiltersBottom = ({
 const styles = RN.StyleSheet.create({
   container: {
     backgroundColor: colors.white,
+  },
+
+  selectorTitle: {
+    fontSize: 20,
+    lineHeight: 24,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  userLocationWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 8,
+  },
+  selectedDateWrapper: {
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: colors.orange,
+    paddingVertical: 4,
+    paddingRight: 8,
+    borderRadius: 12,
+  },
+  userLocationText: {
+    paddingLeft: 8,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  selectorContainer: {
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+  },
+  showPassedEventsContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  showPassedText: {
+    fontSize: 16,
+    color: colors.textPrimary,
+    fontWeight: '600',
+  },
+  tickContainer: {
+    padding: 2,
+    borderWidth: 1,
+    borderRadius: 4,
   },
   addedDanceStyleItem: {
     borderWidth: 1,
@@ -214,6 +328,7 @@ const styles = RN.StyleSheet.create({
     // paddingHorizontal: 14,
     backgroundColor: colors.white,
     marginHorizontal: 14,
+    paddingBottom: 24,
   },
   filtersText: {
     color: colors.textPrimary,

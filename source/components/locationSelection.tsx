@@ -1,7 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
-import {searchCities} from '../api/cities';
+import {
+  searchCities,
+  searchPlaces,
+  searchPlacesInEvent,
+  searchStateOfUSA,
+} from '../api/cities';
 import {Input} from './input';
 enum Item {
   id = 0,
@@ -16,9 +21,10 @@ type selectionProps = {
   onChooseCountry: (value: string) => void;
   selectedCountry: string;
   onChoosePlace: (value: string) => void;
-  selectedPlace: string;
+  selectedPlace: any;
   data: string[keyof Item];
   isEvent?: boolean;
+  isErrors?: boolean;
 };
 const LocationSelection = ({
   data,
@@ -29,89 +35,85 @@ const LocationSelection = ({
   onChoosePlace,
   selectedPlace,
   isEvent = false,
+  isErrors = false,
 }: selectionProps) => {
-  const [currentCounty, setCurrentCountry] = useState(
-    data[0]?.country ?? selectedCountry,
-  );
+  const [currentCounty, setCurrentCountry] = useState(selectedCountry ?? '');
   const [isOpenedCountry, setIsOpenedCountry] = useState(false);
-  // const [isOpenedCities, setIsOpenedCities] = useState(false);
-  const [isOpenedPlaces, setIsOpenedPlaces] = useState(false);
-  const [currentCity, setCurrentCity] = useState(selectedCity);
-  const [currentPlace, setCurrentPlace] = useState(
-    data[0]?.places[0] ?? selectedPlace,
-  );
+  const [currentCity, setCurrentCity] = useState(selectedCity ?? '');
+  const [currentPlace, setCurrentPlace] = useState('');
+
   const countryCode = data?.find(
     (it: typeof Item) => it.country === currentCounty,
   )?.countryCode;
 
   const [citiesGeocode, setCitiesGeocode] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
+  const [placesGeocode, setPlacesGeocode] = useState([]);
+  const [placesInEventGeocode, setPlacesInEventGeocode] = useState([]);
+  const [searchValue, setSearchValue] = useState(selectedCity ?? '');
+  const [searchPlace, setSearchPlace] = useState(selectedCountry ?? '');
+  const [searchPlaceInEvent, setSearchPlaceInEvent] = useState(
+    selectedPlace ?? '',
+  );
 
-  // useMemo(() => {
-  //   getCities(currentCounty).then((cities: any) => setCitiesGeocode(cities));
-  // }, [currentCounty]);
-
-  // console.log('citiesGeocode', citiesGeocode);
   const onPressCountry = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setIsOpenedCountry(false);
     setCurrentCountry(value);
     onChooseCountry(value);
-    onPressCity(citiesGeocode[0] ?? '');
+    setSearchValue('');
+    // onPressState(citiesGeocode[0] ?? '');
+  };
+  const onSearchPlace = (value: string) => {
+    setSearchPlaceInEvent(value);
+    searchPlacesInEvent(currentCounty, currentCity, value).then((cities: any) =>
+      setPlacesInEventGeocode(
+        cities?.map((city: any) => city?.structured_formatting),
+      ),
+    );
+  };
+  const onSearchState = (value: string) => {
+    setSearchValue(value);
+    searchStateOfUSA(value).then((cities: any) =>
+      setCitiesGeocode(cities?.map((city: any) => city?.structured_formatting)),
+    );
   };
   const onSearchCity = (value: string) => {
-    setSearchValue(value);
-    searchCities(currentCounty, countryCode, value).then((cities: any) =>
-      setCitiesGeocode(
-        cities?.map((city: any) => city?.structured_formatting?.main_text),
+    setSearchPlace(value);
+    // console.log('onsearch', currentCity);
+    searchPlaces(searchValue, currentCity, value).then((places: any) =>
+      setPlacesGeocode(
+        places?.map((place: any) => place?.structured_formatting),
       ),
     );
   };
 
-  // const fetchCities = (countryCode: string) => {
-  //   const autocompleteService = new AutocompleteService();
-  //   const query = 'cities';
-  //   const options = {
-  //     types: ['(cities)'],
-  //     componentRestrictions: {country: countryCode},
-  //   };
-  //   autocompleteService.getPlacePredictions(
-  //     {input: query, ...options},
-  //     (results: any, status: any) => {
-  //       if (status === 'OK') {
-  //         console.log(results);
-  //         setCitiesGeocode(results);
-  //       }
-  //     },
-  //   );
-  // };
-
-  // console.log(fetchCities('AR'));
-
-  useEffect(() => {
-    onPressCity(
-      data?.filter((item: typeof Item) => item.country === currentCounty)[0]
-        ?.cities,
-    );
-  }, []);
-  const onPressCity = (value: string) => {
+  const onPressState = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    // setIsOpenedCities(false);
-    setCurrentCity(value);
-    onChooseCity(value);
+    setCurrentCity(value?.main_text);
+    onChooseCountry(value?.main_text);
     setCitiesGeocode([]);
-    setSearchValue(value);
+    setSearchValue(value?.main_text);
+  };
+  const onPressCity = (value: string) => {
+    // console.log(value);
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // setCurrentPlace(value?.main_text);
+    onChooseCity(value?.main_text);
+    setPlacesGeocode([]);
+    setSearchPlace(value?.main_text);
   };
   const onPressPlace = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    setIsOpenedPlaces(false);
-    onChoosePlace(value);
-    setCurrentPlace(value);
+    setCurrentPlace(value?.main_text);
+    setSearchPlaceInEvent(value?.main_text);
+    onChoosePlace(value?.main_text);
+    setPlacesInEventGeocode([]);
   };
+
   const renderCountry = () => {
     return (
       <>
-        <RN.Text style={styles.title}>Choose Location</RN.Text>
+        <RN.Text style={styles.title}>Country</RN.Text>
         <RN.TouchableOpacity
           style={[
             styles.selectContainer,
@@ -153,23 +155,16 @@ const LocationSelection = ({
       </>
     );
   };
-  const cities = data?.find(
-    (item: typeof Item) => item?.country === currentCounty,
-  )?.cities;
-  const places = data?.find(
-    (item: typeof Item) => item?.country === currentCounty,
-  )?.places;
 
-  const renderCity = () => {
+  const renderState = () => {
     return (
       <>
-        <RN.Text style={styles.title}>City / Province</RN.Text>
+        <RN.Text style={styles.title}>State</RN.Text>
         <Input
           value={searchValue}
-          onChange={onSearchCity}
-          placeholder="Search city / province"
-          // maxLength={countNameSymbols.maxSymbols}
-          // isErrorBorder={isErrorName}
+          onChange={onSearchState}
+          isErrorBorder={isErrors}
+          placeholder="Search state"
         />
         {citiesGeocode?.length > 0 && (
           <RN.View style={{marginTop: -24}}>
@@ -185,32 +180,36 @@ const LocationSelection = ({
                       borderBottomRightRadius: item === isLastItem ? 8 : 0,
                     },
                   ]}
-                  onPress={() => onPressCity(item)}>
-                  <RN.Text style={styles.selectItemText}>{item}</RN.Text>
+                  onPress={() => onPressState(item)}>
+                  <RN.Text style={styles.selectItemText}>
+                    {item?.main_text}
+                  </RN.Text>
+                  <RN.Text style={{color: colors.darkGray}}>
+                    {item?.secondary_text}
+                  </RN.Text>
                 </RN.TouchableOpacity>
               );
             })}
           </RN.View>
         )}
-        {/* <RN.TouchableOpacity
-          style={[
-            styles.selectContainer,
-            {
-              borderBottomLeftRadius: isOpenedCities ? 0 : 8,
-              borderBottomRightRadius: isOpenedCities ? 0 : 8,
-            },
-          ]}
-          onPress={() => setIsOpenedCities(val => !val)}>
-          <RN.Text style={styles.selectItemText}>{currentCity}</RN.Text>
-          <RN.Image
-            source={{uri: 'arrowdown'}}
-            style={{height: 20, width: 20}}
-          />
-        </RN.TouchableOpacity>
-        {isOpenedCities && (
-          <RN.View>
-            {citiesGeocode.map((item: string, index: number) => {
-              const isLastItem = cities[cities.length - 1];
+      </>
+    );
+  };
+  // если 1 строкой = city
+  const renderCity = () => {
+    return (
+      <>
+        <RN.Text style={styles.title}>City</RN.Text>
+        <Input
+          value={searchPlace}
+          onChange={onSearchCity}
+          placeholder="Search city"
+          isErrorBorder={isErrors}
+        />
+        {placesGeocode?.length > 0 && (
+          <RN.View style={{marginTop: -24}}>
+            {placesGeocode.map((item: string, index: number) => {
+              const isLastItem = placesGeocode[placesGeocode.length - 1];
               return (
                 <RN.TouchableOpacity
                   key={index}
@@ -222,12 +221,17 @@ const LocationSelection = ({
                     },
                   ]}
                   onPress={() => onPressCity(item)}>
-                  <RN.Text style={styles.selectItemText}>{item}</RN.Text>
+                  <RN.Text style={styles.selectItemText}>
+                    {item?.main_text}
+                  </RN.Text>
+                  <RN.Text style={{color: colors.darkGray}}>
+                    {item?.secondary_text}
+                  </RN.Text>
                 </RN.TouchableOpacity>
               );
             })}
           </RN.View>
-        )} */}
+        )}
       </>
     );
   };
@@ -235,25 +239,17 @@ const LocationSelection = ({
     return (
       <>
         <RN.Text style={styles.title}>Place</RN.Text>
-        <RN.TouchableOpacity
-          style={[
-            styles.selectContainer,
-            {
-              borderBottomLeftRadius: isOpenedPlaces ? 0 : 8,
-              borderBottomRightRadius: isOpenedPlaces ? 0 : 8,
-            },
-          ]}
-          onPress={() => setIsOpenedPlaces(val => !val)}>
-          <RN.Text style={styles.selectItemText}>{currentPlace}</RN.Text>
-          <RN.Image
-            source={{uri: 'arrowdown'}}
-            style={{height: 20, width: 20}}
-          />
-        </RN.TouchableOpacity>
-        {isOpenedPlaces && (
-          <RN.View>
-            {places.map((item: string, index: number) => {
-              const isLastItem = places[places.length - 1];
+        <Input
+          value={searchPlaceInEvent}
+          onChange={onSearchPlace}
+          isErrorBorder={isErrors}
+          placeholder="Search place"
+        />
+        {placesInEventGeocode?.length > 0 && (
+          <RN.View style={{marginTop: -24}}>
+            {placesInEventGeocode.map((item: string, index: number) => {
+              const isLastItem =
+                placesInEventGeocode[placesInEventGeocode.length - 1];
               return (
                 <RN.TouchableOpacity
                   key={index}
@@ -265,7 +261,12 @@ const LocationSelection = ({
                     },
                   ]}
                   onPress={() => onPressPlace(item)}>
-                  <RN.Text style={styles.selectItemText}>{item}</RN.Text>
+                  <RN.Text style={styles.selectItemText}>
+                    {item?.main_text}
+                  </RN.Text>
+                  <RN.Text style={{color: colors.darkGray}}>
+                    {item?.secondary_text}
+                  </RN.Text>
                 </RN.TouchableOpacity>
               );
             })}
@@ -276,9 +277,10 @@ const LocationSelection = ({
   };
   return (
     <RN.View style={styles.container}>
-      {renderCountry()}
+      {/* {renderCountry()} */}
+      {renderState()}
       {renderCity()}
-      {isEvent && currentCounty === 'Indonesia' && renderPlace()}
+      {isEvent && renderPlace()}
     </RN.View>
   );
 };
@@ -322,7 +324,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 22.4,
     letterSpacing: 0.2,
     fontWeight: '400',
-    color: colors.darkGray,
+    color: colors.textPrimary,
   },
 });
 

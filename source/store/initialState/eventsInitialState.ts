@@ -9,7 +9,7 @@ export default {
   followers: '',
   images: '',
   errors: '',
-  eventsList: '',
+  eventsList: [],
   eventsByIdData: [],
   eventUid: '',
   eventDate: '',

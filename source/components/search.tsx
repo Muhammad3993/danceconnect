@@ -9,6 +9,7 @@ type searchProps = {
   placeholder: string;
   onPressAdd?: () => void;
   visibleAddBtn?: boolean;
+  autoFocus?: boolean;
 };
 const Search = ({
   onPressAdd,
@@ -16,12 +17,17 @@ const Search = ({
   searchValue,
   placeholder,
   visibleAddBtn = true,
+  autoFocus = false,
 }: searchProps) => {
   const addButton = () => {
     return (
-      <RN.TouchableOpacity onPress={onPressAdd} style={styles.buttonContainer}>
-        <RN.Image source={{uri: 'plus'}} style={{height: 26, width: 28}} />
-      </RN.TouchableOpacity>
+      <RN.View style={{justifyContent: 'center'}}>
+        <RN.TouchableOpacity
+          onPress={onPressAdd}
+          style={styles.buttonContainer}>
+          <RN.Image source={{uri: 'plus'}} style={{height: 15, width: 15}} />
+        </RN.TouchableOpacity>
+      </RN.View>
     );
   };
   const searchIcon = () => {
@@ -38,10 +44,11 @@ const Search = ({
         value={searchValue}
         onChangeText={onSearch}
         placeholder={placeholder}
-        style={[styles.inputContainer, {width: visibleAddBtn ? '80%' : '100%'}]}
+        style={[styles.inputContainer, {width: visibleAddBtn ? '86%' : '100%'}]}
         inlineImageLeft="search"
         inlineImagePadding={20}
         placeholderTextColor={colors.darkGray}
+        autoFocus={autoFocus}
       />
       {!isAndroid && searchIcon()}
       {visibleAddBtn && addButton()}
@@ -52,9 +59,9 @@ const Search = ({
 const styles = RN.StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-evenly',
     margin: 20,
-    marginHorizontal: isAndroid ? 0 : 0,
+    marginHorizontal: 0,
   },
   inputContainer: {
     borderWidth: 1,
@@ -62,15 +69,16 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.lightGray,
     paddingLeft: isAndroid ? 10 : 30,
     paddingVertical: isAndroid ? 10 : 14,
-    // width: '80%',
     color: colors.textPrimary,
     borderRadius: 8,
     tintColor: colors.gray,
   },
   buttonContainer: {
     backgroundColor: colors.purple,
-    padding: 10,
+    padding: 12,
+    marginLeft: 8,
     borderRadius: 50,
+    justifyContent: 'center',
   },
 });
 export default Search;

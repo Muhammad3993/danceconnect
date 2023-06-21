@@ -4,7 +4,9 @@ import {
   selectFollowingCommunities,
   selectIsLoadingWithFollow,
   selectIsSaveChanges,
+  selectJoinedCommunitites,
   selectLoadingInCreateCommunity,
+  selectManagingCommunities,
 } from '../store/selectors/communitiesSelector';
 import {
   cancelFollowedCommunityRequestAction,
@@ -26,20 +28,14 @@ export const useCommunities = () => {
   const userId = useSelector(selectUserUid);
   const isSaveChanges = useSelector(selectIsSaveChanges);
 
-  const joinedCommunities =
-    communitiesData?.filter(
-      (item: any) =>
-        item?.followers?.length > 0 &&
-        item?.followers?.find((user: any) => user.userUid === userId),
-    ) ?? [];
+  const managingCommunity = selectManagingCommunities(userId);
 
-  const managingCommunity = communitiesData?.filter(
-    (item: any) => item?.creatorUid === userId,
-  );
+  const joinedCommunities = selectJoinedCommunitites(userId);
+
   const create = ({
     name,
     description,
-    country,
+    // country,
     location,
     categories,
     images,
@@ -48,7 +44,7 @@ export const useCommunities = () => {
       createCommunityRequestAction({
         name,
         description,
-        country,
+        // country,
         location,
         categories,
         images,

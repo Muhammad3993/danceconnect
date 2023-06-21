@@ -1,11 +1,28 @@
-import {all, call, put, select, take, takeLatest} from 'redux-saga/effects';
+import {
+  all,
+  call,
+  debounce,
+  put,
+  select,
+  take,
+  takeLatest,
+} from 'redux-saga/effects';
 import {selectUserUid} from '../selectors/registrationSelector';
-import {createEvent, getEventByUid, getEvents, joinEvent} from '../../api/functions';
+import {
+  changeInformationEvent,
+  createEvent,
+  getEventByUid,
+  getEvents,
+  joinEvent,
+} from '../../api/functions';
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 // import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {EVENT} from '../actionTypes/eventActionTypes';
 import {
+  changeInformationEventFailAction,
+  changeInformationEventSuccessAction,
+  changeInformationValueAction,
   createEventFailAction,
   createEventSuccessAction,
   getEventByIdFailAction,
@@ -97,38 +114,41 @@ function* createEventRequest(action: any) {
   const {
     name,
     description,
-    country,
+    // country,
     location,
     categories,
     images,
     eventDate,
     place,
+    typeEvent,
     communityUid,
   } = action?.payload;
   try {
     const creatorUid = yield select(selectUserUid);
-    yield call(
+    const response = yield call(
       createEvent,
       name,
       description,
-      country,
+      // country,
       location,
       creatorUid,
       categories,
       images,
       eventDate,
       place,
+      typeEvent,
       communityUid,
     );
+    console.log('createEventRequest', response);
     yield put(createEventSuccessAction());
-    // navigationRef.current?.dispatch(
-    //   CommonActions.navigate({
-    //     name: 'Events',
-    //     params: {
-    //       createdCommunity: true,
-    //     },
-    //   }),
-    // );
+    navigationRef.current?.dispatch(
+      CommonActions.navigate({
+        name: 'Events',
+        params: {
+          createdCommunity: true,
+        },
+      }),
+    );
     // yield put(getCommunitiesRequestAction());
   } catch (error) {
     console.log('createCommunityRequest error', error);
@@ -136,52 +156,39 @@ function* createEventRequest(action: any) {
   }
 }
 
-// function* getEventByIdRequest(action: any) {
-//   const {communityUid} = action?.payload;
-//   try {
-//     yield put(
-//       getCommunityByIdSuccessAction({
-//         communityByIdData: yield call(getCommunityByUid, communityUid),
-//       }),
-//     );
-//   } catch (error) {
-//     console.log('er', error);
-//     yield put(getCommunityByIdFailAction(error));
-//   }
-// }
-
-//   function* changeInformation(action: any) {
-//     const {
-//       name,
-//       description,
-//       country,
-//       location,
-//       communityUid,
-//       categories,
-//       images,
-//       followers,
-//     } = action?.payload;
-//     try {
-//       yield call(
-//         changeInformationCommunity,
-//         name,
-//         description,
-//         country,
-//         location,
-//         communityUid,
-//         followers,
-//         categories,
-//         images,
-//       );
-//       // console.log('changeInformation', action.payload);
-//       yield put(changeInformationCommunitySuccessAction());
-//       yield put(getCommunitiesRequestAction());
-//       // yield put(getCommunityByIdRequestAction({communityUid: communityUid}));
-//       yield put(changeInformationValueAction());
-//     } catch (error) {
-//       yield put(cancelFollowedCommunityFailAction());
-//     }
-//   }
+function* changeInformation(action: any) {
+  const {
+    name,
+    description,
+    // country,
+    location,
+    categories,
+    images,
+    eventDate,
+    place,
+    typeEvent,
+    eventUid,
+  } = action.payload;
+  try {
+    yield call(
+      changeInformationEvent,
+      name,
+      description,
+      // country,
+      location,
+      categories,
+      images,
+      eventDate,
+      place,
+      typeEvent,
+      eventUid,
+    );
+    yield put(changeInformationEventSuccessAction());
+    yield put(changeInformationValueAction());
+  } catch (er) {
+    yield put(changeInformationEventFailAction());
+  }
+}
 
 //   function* removeCommunityRequest(action: any) {
 //     try {
@@ -198,25 +205,9 @@ function* eventSaga() {
   yield takeLatest(EVENT.GET_EVENTS_REQUEST, getEventsRequest);
   yield takeLatest(EVENT.GET_EVENT_BY_ID_REQUEST, getEventForCommunity);
   yield takeLatest(EVENT.START_ATTEND_EVENT_REQUEST, attendEvent);
-  // yield takeLatest(COMMUNITIES.GET_DATA_REQUEST, getCommunitiesRequest);
-  // yield takeLatest(COMMUNITIES.CREATE_REQUEST, createCommunityRequest);
-  // yield debounce(2000, COMMUNITIES.CREATE_SUCCESS, getCommunitiesRequest);
-  // yield takeLatest(
-  //   COMMUNITIES.START_FOLLOWING_REQUEST,
-  //   startFollowingCommunity,
-  // );
-  // yield takeLatest(
-  //   COMMUNITIES.CANCEL_FOLLOWING_REQUEST,
-  //   cancelFollowingCommunity,
-  // );
-  // yield takeLatest(
-  //   COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_REQUEST,
-  //   changeInformation,
-  // );
-  // yield takeLatest(
-  //   COMMUNITIES.REMOVE_COMMUNITY_REQUEST,
-  //   removeCommunityRequest,
-  // );
+  yield takeLatest(EVENT.CHANGE_INFORMATION_EVENT_REQUEST, changeInformation);
+  // yield debounce(1000, AUTHORIZATION_WITH_EMAIL.REQUEST, getEvents);
+  // yield debounce(1000, AUTHORIZATION_WITH_GOOGLE.REQUEST, getEvents);
 }
 
 export default eventSaga;

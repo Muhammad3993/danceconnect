@@ -1,0 +1,3 @@
+export enum APP_STATE {
+  SET_LOADING = 'APP_STATE/SET_LOADING',
+}

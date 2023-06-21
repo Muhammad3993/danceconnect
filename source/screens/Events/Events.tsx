@@ -1,32 +1,34 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import useEvents from '../../hooks/useEvents';
-import EventCard from '../../components/eventCard';
-import sotrtBy from 'lodash.sortby';
 import Search from '../../components/search';
 import moment from 'moment';
-import useRegistration from '../../hooks/useRegistration';
 import {isAndroid} from '../../utils/constants';
-import FiltersBottom from '../../components/bottomFilters';
+import {useProfile} from '../../hooks/useProfile';
+import UpcommingTab from './tabs/upcoming';
+import AttentingTab from './tabs/attenting';
+import ManagingTab from './tabs/managing';
+import PassingTab from './tabs/passed';
 
 const TABS = ['Upcoming', 'Attending', 'Managing', 'Passed'];
 
 const EventsScreen = () => {
-  const {getEvents, eventList, loadingEvents, loadingAttend} = useEvents();
+  const {
+    getEvents,
+    eventList,
+    loadingEvents,
+    loadingAttend,
+    managingEvents,
+    attentingsEvents,
+    passingEvents,
+  } = useEvents();
 
   const [currentTab, setCurrentTab] = useState(TABS[0]);
-  const [displayedData, setDisplayedData] = useState(eventList);
-  const [openingFilters, setOpeningFilters] = useState(false);
-  const [addedStyles, setAddedStyles] = useState<string[]>(
-    new Array(0).fill(''),
-  );
-  const [eventsCountValue, setEventsCountValue] = useState(
-    displayedData?.length ?? 0,
-  );
-  const {userUid} = useRegistration();
 
   const [searchValue, onSearch] = useState('');
+  const {userCountry, userLocation} = useProfile();
+  const [communititesSearch, setCommunitiesSearch] = useState<string[]>([]);
 
   useEffect(() => {
     getEvents();
@@ -36,20 +38,6 @@ const EventsScreen = () => {
     onPressTab(TABS[0]);
   }, []);
 
-  const onPressTab = (value: string) => {
-    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    setCurrentTab(value);
-  };
-  useEffect(() => {
-    setDisplayedData(upcomingEvents);
-  }, [eventList?.length]);
-
-  const onClear = () => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    setAddedStyles([]);
-    setDisplayedData(upcomingEvents);
-  };
-
   const upcomingEvents = eventList
     ?.filter(
       (ev: any) =>
@@ -58,75 +46,107 @@ const EventsScreen = () => {
     )
     .map((item: any) => item);
 
-  const managingEvents = eventList
-    .filter(
-      (ev: any) =>
-        ev.creatorUid === userUid &&
-        moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >
-          moment(new Date()).format('YYYY-MM-DD'),
-    )
-    .map((item: any) => item);
+  const onChangeTextSearch = useCallback(
+    (value: string) => {
+      onSearch(value);
+      if (currentTab === 'Upcoming') {
+        const search = upcomingEvents.filter((item: any) => {
+          const itemData = `${item.categories?.map((m: any) =>
+            m.toLowerCase(),
+          )} ${item?.name?.toLowerCase()}`;
+          const textData = value?.toLowerCase();
+          return itemData.indexOf(textData) > -1;
+        });
+        setCommunitiesSearch(search);
+      }
+      if (currentTab === 'Attending') {
+        const searchJoin = attentingsEvents.filter((item: any) => {
+          const itemData = `${item.categories?.map((m: any) =>
+            m.toLowerCase(),
+          )} ${item?.name?.toLowerCase()}`;
+          const textData = value?.toLowerCase();
+          return itemData.indexOf(textData) > -1;
+        });
+        setCommunitiesSearch(searchJoin);
+      }
+      if (currentTab === 'Managing') {
+        const searchManaging = managingEvents.filter((item: any) => {
+          const itemData = `${item.categories?.map((m: any) =>
+            m.toLowerCase(),
+          )} ${item?.name?.toLowerCase()}`;
+          const textData = value?.toLowerCase();
+          return itemData.indexOf(textData) > -1;
+        });
+        setCommunitiesSearch(searchManaging);
+      }
+      if (currentTab === 'Passing') {
+        const searchPassed = passingEvents.filter((item: any) => {
+          const itemData = `${item.categories?.map((m: any) =>
+            m.toLowerCase(),
+          )} ${item?.name?.toLowerCase()}`;
+          const textData = value?.toLowerCase();
+          return itemData.indexOf(textData) > -1;
+        });
+        setCommunitiesSearch(searchPassed);
+      }
+    },
+    [
+      currentTab,
+      upcomingEvents,
+      attentingsEvents,
+      managingEvents,
+      passingEvents,
+    ],
+  );
 
-  useEffect(() => {
-    switch (currentTab) {
-      case 'Upcoming':
-        return setDisplayedData(upcomingEvents);
-      case 'Attending':
-        const attendingEvents =
-          eventList
-            ?.filter(
-              (item: any) =>
-                item?.attendedPeople?.length > 0 &&
-                item?.attendedPeople?.find(
-                  (user: any) => user.userUid === userUid,
-                ),
-            )
-            .map((item: any) => item) ?? [];
-        return setDisplayedData(attendingEvents);
-      case 'Managing':
-        return setDisplayedData(managingEvents);
-      case 'Passed':
-        const passedEvents = eventList
-          ?.filter(
-            (item: any) =>
-              moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
-              moment(new Date()).format('YYYY-MM-DD'),
-          )
-          .map((item: any) => item);
-        return setDisplayedData(passedEvents);
-      default:
-        return setDisplayedData(upcomingEvents);
-    }
-  }, [currentTab]);
-  const renderEmpty = () => {
-    return (
-      <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There is no events yet</RN.Text>
-      </RN.View>
-    );
-  };
-
-  const onChangeTextSearch = (value: string) => {
-    const search = displayedData.filter((item: any) => {
-      const itemData = `${item.categories?.map(m =>
-        m.toLowerCase(),
-      )} ${item?.name?.toLowerCase()}`;
-      const textData = value.toLowerCase();
-      // console.log(itemData, textData);
-      return itemData.indexOf(textData) > -1;
-    });
-    setDisplayedData(search);
-    setEventsCountValue(displayedData?.length ?? 0);
-    onSearch(value);
-  };
-  useMemo(() => {
+  const onPressTab = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    setEventsCountValue(displayedData?.length ?? 0);
-  }, [displayedData?.length]);
+    if (searchValue?.length) {
+      RN.Keyboard.dismiss();
+      setCommunitiesSearch([]);
+      onSearch('');
+      setCurrentTab(value);
+    } else {
+      setCurrentTab(value);
+    }
+  };
+
   const renderHeader = () => {
+    const renderTab = ({item}: any) => {
+      return (
+        <RN.TouchableOpacity
+          onPress={() => onPressTab(item)}
+          style={[
+            styles.itemTabContainer,
+            {
+              borderBottomWidth: currentTab === item ? 3 : 0,
+              marginBottom: -1,
+              paddingHorizontal: 16,
+              paddingBottom: 8,
+            },
+          ]}>
+          <RN.Text
+            style={[
+              styles.itemTabText,
+              {
+                color: currentTab === item ? colors.purple : colors.darkGray,
+              },
+            ]}>
+            {item}
+          </RN.Text>
+        </RN.TouchableOpacity>
+      );
+    };
     return (
       <>
         <RN.View style={{marginHorizontal: 20}}>
+          <RN.View style={styles.userLocationWrapper}>
+            <RN.Image
+              source={{uri: 'locate'}}
+              style={{height: 16, width: 16}}
+            />
+            <RN.Text style={styles.userLocationText}>{userCountry}</RN.Text>
+          </RN.View>
           <Search
             onSearch={onChangeTextSearch}
             searchValue={searchValue}
@@ -134,39 +154,15 @@ const EventsScreen = () => {
             visibleAddBtn={false}
           />
         </RN.View>
-        <RN.ScrollView
-          style={styles.tabsWrapper}
-          horizontal
-          showsHorizontalScrollIndicator={false}>
-          {TABS.map((item: string, index: number) => {
-            return (
-              <RN.TouchableOpacity
-                onPress={() => onPressTab(item)}
-                key={index}
-                style={[
-                  styles.itemTabContainer,
-                  {
-                    borderBottomWidth: currentTab === item ? 3 : 0,
-                    marginBottom: -1,
-                    paddingHorizontal: 16,
-                    paddingBottom: 8,
-                  },
-                ]}>
-                <RN.Text
-                  style={[
-                    styles.itemTabText,
-                    {
-                      color:
-                        currentTab === item ? colors.purple : colors.darkGray,
-                    },
-                  ]}>
-                  {item}
-                </RN.Text>
-              </RN.TouchableOpacity>
-            );
-          })}
-        </RN.ScrollView>
-        {renderFilters()}
+        <RN.View style={styles.tabsWrapper}>
+          <RN.FlatList
+            data={TABS}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderTab}
+            horizontal
+          />
+        </RN.View>
       </>
     );
   };
@@ -177,81 +173,54 @@ const EventsScreen = () => {
       </RN.View>
     );
   };
-  const renderFilters = () => {
-    return (
-      <>
-        {currentTab !== 'Upcoming' && <RN.View style={{marginBottom: 14}} />}
-        {currentTab === 'Upcoming' && (
-          <RN.View style={styles.filterWrapper}>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Text
-                style={
-                  styles.eventsLength
-                }>{`${eventsCountValue} events found`}</RN.Text>
-            </RN.View>
-            <RN.TouchableOpacity
-              style={styles.filterBtn}
-              onPress={() => setOpeningFilters(true)}>
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Image
-                  source={{uri: 'filter'}}
-                  style={{height: 16, width: 16, marginRight: 8}}
-                />
-              </RN.View>
-              <RN.Text style={styles.filterText}>Filters</RN.Text>
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Image
-                  source={{uri: 'downlight'}}
-                  style={{height: 16, width: 16, marginLeft: 4, marginTop: 4}}
-                />
-              </RN.View>
-            </RN.TouchableOpacity>
-          </RN.View>
-        )}
-      </>
-    );
-  };
-  const onFilter = () => {
-    const data = eventList.filter((item: any) =>
-      item?.categories?.some((ai: any) => addedStyles.includes(ai)),
-    );
-    setDisplayedData(data);
-    if (!addedStyles?.length) {
-      setDisplayedData(eventList);
-    }
-    setEventsCountValue(displayedData?.length ?? 0);
-  };
 
-  const renderItem = (item: any) => {
-    return <EventCard item={item?.item} key={item.index} />;
-  };
-  const renderFlat = () => {
-    return (
-      <RN.FlatList
-        showsVerticalScrollIndicator={false}
-        data={sotrtBy(displayedData, 'eventDate.startDate')}
-        renderItem={renderItem}
-        ListHeaderComponent={renderHeader()}
-        keyExtractor={(item, _index) => `${item}${_index}`}
-        ListEmptyComponent={renderEmpty()}
-      />
-    );
-  };
+  const renderWrapper = useCallback(() => {
+    switch (currentTab) {
+      case 'All':
+        return (
+          <UpcommingTab
+            searchValue={searchValue}
+            communititesSearch={communititesSearch}
+          />
+        );
+
+      case 'Attending':
+        return (
+          <AttentingTab
+            searchValue={searchValue}
+            communititesSearch={communititesSearch}
+          />
+        );
+
+      case 'Managing':
+        return (
+          <ManagingTab
+            searchValue={searchValue}
+            communititesSearch={communititesSearch}
+          />
+        );
+      case 'Passed':
+        return (
+          <PassingTab
+            searchValue={searchValue}
+            communititesSearch={communititesSearch}
+          />
+        );
+      default:
+        return (
+          <UpcommingTab
+            searchValue={searchValue}
+            communititesSearch={communititesSearch}
+          />
+        );
+    }
+  }, [currentTab, communititesSearch, searchValue]);
+
   return (
     <RN.SafeAreaView style={styles.container}>
-      {/* {renderHeader()} */}
+      {renderHeader()}
       {loadingEvents && !loadingAttend && renderLoading()}
-      {eventList?.length > 0 && renderFlat()}
-
-      {openingFilters && (
-        <FiltersBottom
-          onClose={() => setOpeningFilters(false)}
-          selectedStyles={addedStyles}
-          setSelectedStyles={setAddedStyles}
-          onClear={onClear}
-          onFilter={onFilter}
-        />
-      )}
+      {!loadingEvents && renderWrapper()}
     </RN.SafeAreaView>
   );
 };
@@ -261,10 +230,21 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     paddingTop: isAndroid ? 0 : 40,
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
   },
   nameContainer: {
     flexDirection: 'row',
+  },
+  userLocationWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 8,
+  },
+  userLocationText: {
+    paddingLeft: 8,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
   name: {
     fontSize: 24,
@@ -277,12 +257,11 @@ const styles = RN.StyleSheet.create({
     paddingHorizontal: 16,
   },
   tabsWrapper: {
-    // flexDirection: 'row',
-    // justifyContent: 'space-around',
+    flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: colors.gray,
     // marginBottom: 14,
-    // paddingHorizontal: 14,
+    paddingHorizontal: 14,
   },
   itemTabContainer: {
     borderBottomWidth: 1,
@@ -293,7 +272,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 16,
     lineHeight: 28.2,
     // letterSpacing: 0.2,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     fontWeight: '500',
     textAlign: 'center',
   },

@@ -4,10 +4,33 @@ import useRegistration from '../hooks/useRegistration';
 import {Button} from '../components/Button';
 import {useProfile} from '../hooks/useProfile';
 import colors from '../utils/colors';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {uploadImgProfile} from '../api/functions';
 
 const ProfileScreen = () => {
   const {logout} = useRegistration();
-  const {userName, userImgUrl} = useProfile();
+  const {userName, userImgUrl, getCurrentUser} = useProfile();
+  const {userUid} = useRegistration();
+
+  const onChooseImage = async () => {
+    let options = {
+      mediaType: 'image',
+      maxWidth: 1300,
+      maxHeight: 1550,
+      quality: 1,
+      includeBase64: true,
+    };
+    launchImageLibrary(options, response => {
+      if (response.assets) {
+        console.log(response.assets);
+        uploadImgProfile(userUid, response.assets[0]);
+        // setImages([...images, response?.assets[0]]);
+      } else {
+        console.log('cancel');
+      }
+    });
+    getCurrentUser();
+  };
 
   useEffect(() => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -16,14 +39,19 @@ const ProfileScreen = () => {
   return (
     <RN.View style={styles.container}>
       <RN.View style={styles.nameContainer}>
-        {userImgUrl && (
-          <RN.View style={{justifyContent: 'center'}}>
-            <RN.Image
-              source={{uri: userImgUrl}}
-              style={{height: 56, width: 56, borderRadius: 50}}
-            />
-          </RN.View>
-        )}
+        <RN.TouchableOpacity
+          style={{justifyContent: 'center'}}
+          onPress={onChooseImage}>
+          <RN.Image
+            source={
+              userImgUrl
+                ? {uri: 'data:image/png;base64,' + userImgUrl?.base64}
+                : require('../assets/images/defaultuser.png')
+            }
+            style={{height: 56, width: 56, borderRadius: 50}}
+            defaultSource={require('../assets/images/defaultuser.png')}
+          />
+        </RN.TouchableOpacity>
         <RN.Text style={styles.name}>{`Hello, ${userName} 👋 `}</RN.Text>
       </RN.View>
       <RN.View style={{justifyContent: 'flex-end', paddingBottom: 30}}>

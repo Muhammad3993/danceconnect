@@ -9,6 +9,7 @@ import {useProfile} from '../../hooks/useProfile';
 import {Button} from '../../components/Button';
 import useEvents from '../../hooks/useEvents';
 import useRegistration from '../../hooks/useRegistration';
+import {SCREEN_WIDTH} from '../../utils/constants';
 
 const EventScreen = () => {
   const routeProps = useRoute();
@@ -19,23 +20,21 @@ const EventScreen = () => {
   const {userById, getUser} = useProfile();
   const [images, setImages] = useState([]);
   const [openingDescription, setOpeningDescription] = useState(false);
-  const [desc, setDesc] = useState();
   const {userUid} = useRegistration();
+  const [unFolloweOpen, setUnFollowOpen] = useState(false);
 
   const {loadingAttend, attendEvent, eventList} = useEvents();
-  const [loading, setLoading] = useState(false);
   const isPassedEvent =
-    moment(data.eventDate?.startDate).format('YYYY-MM-DD') <
+    moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
     moment(new Date()).format('YYYY-MM-DD');
   const isJoined =
     displayedData?.attendedPeople?.find(
       (user: any) => user.userUid === userUid,
     ) ?? false;
-  console.log(displayedData);
+  const isAdmin = data?.creatorUid === userUid;
 
   const onPressShowText = () => {
-    setOpeningDescription(true);
-    setDesc(displayedData?.description);
+    setOpeningDescription(v => !v);
   };
 
   useEffect(() => {
@@ -47,11 +46,11 @@ const EventScreen = () => {
         // console.log(snapshot.val());
         // const imgs = snapshot.val()?.images;
         setImages(snapshot.val()?.images);
-        setDesc(
-          snapshot.val()?.description?.length > 170
-            ? snapshot.val()?.description?.slice(0, 140) + '...'
-            : snapshot.val()?.description,
-        );
+        // setDesc(
+        //   snapshot.val()?.description?.length > 170
+        //     ? snapshot.val()?.description?.slice(0, 140) + '...'
+        //     : snapshot.val()?.description,
+        // );
         // getEvents();
         // getEventById(snapshot.val()?.events);
       });
@@ -59,18 +58,11 @@ const EventScreen = () => {
     return () =>
       database().ref(`events/${data.eventUid}`).off('value', onValueChange);
   }, [data.eventUid]);
-  //   console.log('userById', userById, displayedData.creatorUid);
+
   useEffect(() => {
     getUser(displayedData?.creatorUid);
   }, [displayedData?.creatorUid]);
 
-  //   useMemo(() => {
-  //     if (loadingAttend) {
-  //       setLoading(true);
-  //     } else {
-  //       setLoading(false);
-  //     }
-  //   }, [loadingAttend]);
   const onPressAttend = () => {
     attendEvent({
       communityUid: displayedData?.communityUid,
@@ -78,7 +70,9 @@ const EventScreen = () => {
       eventUid: displayedData?.eventUid,
     });
   };
-
+  const onPressEditEvent = () => {
+    navigation.navigate('EditEvent', displayedData);
+  };
   const header = () => {
     return (
       <>
@@ -87,6 +81,33 @@ const EventScreen = () => {
           onPress={() => navigation.goBack()}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.TouchableOpacity>
+        {!isAdmin && (
+          <RN.TouchableOpacity
+            style={styles.moreIconContainer}
+            onPress={() => setUnFollowOpen(v => !v)}>
+            <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
+          </RN.TouchableOpacity>
+        )}
+        {isAdmin && !isPassedEvent && (
+          <RN.TouchableOpacity
+            style={styles.settingIconContainer}
+            onPress={onPressEditEvent}>
+            <RN.Image source={{uri: 'setting'}} style={styles.backIcon} />
+          </RN.TouchableOpacity>
+        )}
+        {isJoined && unFolloweOpen && (
+          <RN.TouchableOpacity
+            style={styles.unFollowContainer}
+            onPress={onPressAttend}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image
+                source={{uri: 'closesquare'}}
+                style={{height: 20, width: 20}}
+              />
+            </RN.View>
+            <RN.Text style={styles.unFollowText}>{'Un-attend'}</RN.Text>
+          </RN.TouchableOpacity>
+        )}
       </>
     );
   };
@@ -111,10 +132,17 @@ const EventScreen = () => {
           horizontal
           style={styles.scrollTags}
           showsHorizontalScrollIndicator={false}>
+          {displayedData?.typeEvent && (
+            <RN.View style={styles.typeEventContainer}>
+              <RN.Text style={{color: colors.white}}>
+                {displayedData?.typeEvent}
+              </RN.Text>
+            </RN.View>
+          )}
           {displayedData?.categories?.map((item: string) => {
             return (
               <RN.View style={styles.tagItem}>
-                <RN.Text style={{color: colors.white}}>{item}</RN.Text>
+                <RN.Text style={{color: colors.purple}}>{item}</RN.Text>
               </RN.View>
             );
           })}
@@ -126,8 +154,10 @@ const EventScreen = () => {
   const renderEventDate = () => {
     return (
       <RN.View style={styles.eventDateContainer}>
-        <RN.View style={styles.calendarWrapper}>
-          <RN.Image source={{uri: 'calendar'}} style={styles.calendarIcon} />
+        <RN.View style={{justifyContent: 'center'}}>
+          <RN.View style={styles.calendarWrapper}>
+            <RN.Image source={{uri: 'calendar'}} style={styles.calendarIcon} />
+          </RN.View>
         </RN.View>
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Text style={styles.eventDateText}>
@@ -140,57 +170,142 @@ const EventScreen = () => {
                 : ''
             } • ${moment(displayedData?.eventDate?.time).format('HH:mm')}`}
           </RN.Text>
+          <RN.Text style={{color: colors.darkGray}}>{`GMT ${moment(
+            displayedData?.eventDate?.time,
+          ).format('Z')}`}</RN.Text>
         </RN.View>
       </RN.View>
     );
   };
+  const onOpenMaps = () => {
+    const url = RN.Platform.select({
+      ios: `maps:0,0?q=${displayedData?.place}`,
+      android: `geo:0,0?q=${displayedData?.place}`,
+    });
+
+    RN.Linking.openURL(url);
+  };
   const renderOrganizer = () => {
     return (
-      <RN.View style={styles.organizerContainer}>
-        <RN.View style={{flexDirection: 'row'}}>
-          <RN.Image
-            source={
-              userById?.auth_data
-                ? {uri: userById?.auth_data?.photoURL}
-                : require('../../assets/images/defaultuser.png')
-            }
-            style={styles.organizerImg}
-          />
-          <RN.View style={{justifyContent: 'center'}}>
-            <RN.Text style={styles.organizerName}>
-              {userById?.auth_data?.displayName ?? userById?.name}
-            </RN.Text>
-            <RN.Text style={styles.organizer}>Organizer</RN.Text>
-          </RN.View>
-        </RN.View>
+      <>
         <RN.TouchableOpacity
-          style={isPassedEvent ? styles.contactBtnDisabled : styles.contactBtn}
-          disabled={isPassedEvent}>
-          <RN.Text
-            style={[
-              styles.contactText,
-              {color: isPassedEvent ? colors.darkGray : colors.purple},
-            ]}>
-            Contact
-          </RN.Text>
+          style={styles.mapInfoContainer}
+          onPress={onOpenMaps}>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.View
+                style={{
+                  backgroundColor: colors.transparentPurple,
+                  padding: 10,
+                  borderRadius: 100,
+                }}>
+                <RN.Image
+                  source={{uri: 'locate'}}
+                  style={{height: 20, width: 20, tintColor: colors.purple}}
+                />
+              </RN.View>
+            </RN.View>
+            <RN.View
+              style={{justifyContent: 'center', maxWidth: SCREEN_WIDTH / 1.8}}>
+              <RN.Text numberOfLines={1} style={styles.locateText}>
+                {displayedData?.place}
+              </RN.Text>
+              <RN.Text style={{color: colors.darkGray, paddingLeft: 12}}>
+                {displayedData?.location}
+              </RN.Text>
+            </RN.View>
+          </RN.View>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text style={styles.seeMapsText}>Maps</RN.Text>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.View
+                style={{
+                  transform: [{rotate: '180deg'}],
+                  height: 14,
+                  width: 16,
+                }}>
+                <RN.Image
+                  source={{uri: 'backicon'}}
+                  style={{height: 14, width: 16, tintColor: colors.purple}}
+                />
+              </RN.View>
+            </RN.View>
+          </RN.View>
         </RN.TouchableOpacity>
-      </RN.View>
+        <RN.View style={styles.organizerContainer}>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.Image
+              source={
+                userById?.profileImg
+                  ? {
+                      uri:
+                        'data:image/png;base64,' + userById?.profileImg?.base64,
+                    }
+                  : require('../../assets/images/defaultuser.png')
+              }
+              style={styles.organizerImg}
+            />
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text style={styles.organizerName}>
+                {userById?.auth_data?.displayName ?? userById?.name}
+              </RN.Text>
+              <RN.Text style={styles.organizer}>Organizer</RN.Text>
+            </RN.View>
+          </RN.View>
+          {!isAdmin && (
+            <RN.TouchableOpacity
+              style={
+                isPassedEvent ? styles.contactBtnDisabled : styles.contactBtn
+              }
+              disabled={isPassedEvent}>
+              <RN.Text
+                style={[
+                  styles.contactText,
+                  {color: isPassedEvent ? colors.darkGray : colors.purple},
+                ]}>
+                Contact
+              </RN.Text>
+            </RN.TouchableOpacity>
+          )}
+        </RN.View>
+      </>
     );
   };
   const renderDescription = () => {
     return (
       <RN.View style={styles.descWrapper}>
         <RN.Text style={styles.aboutText}>About this event</RN.Text>
-        <RN.Text style={styles.titleDesc}>{desc}</RN.Text>
-        {!openingDescription && desc?.length > 40 && (
+        <RN.Text
+          numberOfLines={
+            openingDescription ? displayedData?.description?.length : 3
+          }
+          style={styles.titleDesc}>
+          {displayedData?.description}
+        </RN.Text>
+        {displayedData?.description?.length > 40 && (
           <RN.TouchableOpacity
             onPress={onPressShowText}
+            activeOpacity={0.7}
             style={styles.showWrapper}>
-            <RN.Text style={styles.showMoreText}>Show more</RN.Text>
-            <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text style={styles.showMoreText}>{`${
+              openingDescription ? 'Show Less' : 'Show More'
+            }`}</RN.Text>
+            <RN.View
+              style={{
+                justifyContent: 'center',
+              }}>
               <RN.Image
                 source={{uri: 'downlight'}}
-                style={styles.arrowDownIcon}
+                style={[
+                  {
+                    transform: [
+                      {rotate: openingDescription ? '180deg' : '0deg'},
+                    ],
+                  },
+                  styles.arrowDownIcon,
+                ]}
               />
             </RN.View>
           </RN.TouchableOpacity>
@@ -208,29 +323,6 @@ const EventScreen = () => {
         buttonStyle={styles.attendBtn}
       />
     );
-    // return (
-    //   <RN.View>
-    //     {isJoined ? (
-    //       <RN.View style={styles.joinedContainer}>
-    //         <RN.View style={{justifyContent: 'center'}}>
-    //           <RN.Image
-    //             source={{uri: 'tick'}}
-    //             style={{height: 18, width: 18}}
-    //           />
-    //         </RN.View>
-    //         <RN.Text style={styles.joinedText}>{'Going'}</RN.Text>
-    //       </RN.View>
-    //     ) : (
-    //       <Button
-    //         title="Attend"
-    //         disabled={!isPassedEvent}
-    //         isLoading={loading}
-    //         onPress={onPressAttend}
-    //         buttonStyle={styles.attendBtn}
-    //       />
-    //     )}
-    //   </RN.View>
-    // );
   };
   return (
     <RN.ScrollView style={styles.container}>
@@ -241,32 +333,6 @@ const EventScreen = () => {
       {renderOrganizer()}
       {!isJoined && renderAttendBtn()}
       {renderDescription()}
-      {/* {renderTitle()}
-      {!isAdmin ? (
-        <RN.View style={styles.btnJoin}>
-          <Button
-            onPress={onPressJoin}
-            iconName={isJoined && 'chat'}
-            disabled
-            // isLoading={loadingFollow}
-            buttonStyle={isJoined && styles.btnMessage}
-            title={isJoined ? 'Message Community' : 'Join Community'}
-          />
-        </RN.View>
-      ) : (
-        <RN.View style={styles.btnJoin}>
-          <Button
-            onPress={() =>
-              navigation.navigate('CreateEvent', {communityUid: data.id})
-            }
-            disabled
-            // isLoading={isLoadingWithFollow}
-            title={'Create Event'}
-          />
-        </RN.View>
-      )}
-      {eventsDataById?.length > 0 && renderTabs()}
-      {renderEvents()} */}
     </RN.ScrollView>
   );
 };
@@ -274,6 +340,34 @@ const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  typeEventContainer: {
+    backgroundColor: colors.purple,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 4,
+    marginRight: 4,
+  },
+  seeMapsText: {
+    color: colors.purple,
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 22.4,
+    marginRight: 6,
+  },
+  locateText: {
+    fontSize: 18,
+    lineHeight: 22.4,
+    fontWeight: '700',
+    // paddingVertical: 20,
+    marginLeft: 12,
+    color: colors.textPrimary,
+  },
+  mapInfoContainer: {
+    marginHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 14,
   },
   descWrapper: {
     paddingHorizontal: 24,
@@ -335,8 +429,8 @@ const styles = RN.StyleSheet.create({
     fontWeight: '700',
   },
   organizerImg: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     borderRadius: 100,
     marginRight: 16,
   },
@@ -350,7 +444,11 @@ const styles = RN.StyleSheet.create({
   eventDateContainer: {
     marginHorizontal: 22,
     flexDirection: 'row',
-    marginVertical: 40,
+    marginTop: 10,
+    marginBottom: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.gray,
+    paddingTop: 12,
   },
   eventDateText: {
     color: colors.textPrimary,
@@ -360,12 +458,12 @@ const styles = RN.StyleSheet.create({
     fontSize: 18,
   },
   calendarIcon: {
-    height: 20,
-    width: 20,
+    height: 18,
+    width: 18,
     tintColor: colors.purple,
   },
   calendarWrapper: {
-    padding: 16,
+    padding: 10,
     backgroundColor: colors.transparentPurple,
     marginRight: 12,
     borderRadius: 50,
@@ -382,6 +480,18 @@ const styles = RN.StyleSheet.create({
     borderRadius: 50,
     top: 24,
   },
+  moreIconContainer: {
+    padding: 8,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    zIndex: 2,
+    right: 0,
+    margin: 12,
+    marginHorizontal: 24,
+    borderRadius: 50,
+    top: 24,
+  },
   backIcon: {
     height: 22,
     width: 26,
@@ -393,11 +503,13 @@ const styles = RN.StyleSheet.create({
     zIndex: 1,
   },
   tagItem: {
-    backgroundColor: colors.purple,
-    paddingVertical: 5,
+    backgroundColor: colors.white,
+    paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 4,
     marginRight: 4,
+    borderWidth: 1,
+    borderColor: colors.purple,
   },
   scrollTags: {
     paddingHorizontal: 24,
@@ -441,6 +553,36 @@ const styles = RN.StyleSheet.create({
     // fontSize: 12,
     marginVertical: 28,
     marginHorizontal: 24,
+  },
+  settingIconContainer: {
+    padding: 8,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    zIndex: 2,
+    right: 0,
+    margin: 12,
+    marginHorizontal: 24,
+    borderRadius: 50,
+    top: 24,
+  },
+  unFollowContainer: {
+    backgroundColor: colors.white,
+    flexDirection: 'row',
+    position: 'absolute',
+    zIndex: 3,
+    right: 26,
+    top: 80,
+    borderRadius: 8,
+    padding: 16,
+  },
+  unFollowText: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    lineHeight: 19.6,
+    letterSpacing: 0.2,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
 export default EventScreen;

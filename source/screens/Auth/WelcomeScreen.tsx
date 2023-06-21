@@ -8,12 +8,14 @@ import AuthButton from '../../components/authBtn';
 import colors from '../../utils/colors';
 import useRegistration from '../../hooks/useRegistration';
 import {SCREEN_HEIGHT} from '../../utils/constants';
+import useAppStateHook from '../../hooks/useAppState';
 
 const WeclomeScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
   const btns = authButtons.slice(0, 3);
   const lastBtn = authButtons[authButtons.length - 1];
   const {authorizationWithGoogle, userUid, isUserExists} = useRegistration();
+  const {setLoading} = useAppStateHook();
 
   const onPressLogin = () => {
     navigation.navigate('AUTH');
@@ -28,7 +30,8 @@ const WeclomeScreen = (): JSX.Element => {
     console.log('isUserExists', isUserExists);
   }, [userUid, navigation, isUserExists]);
   const onPressSocial = (iconName: string) => {
-    console.log('on press', iconName);
+    // console.log('on press', iconName);
+    setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
     }

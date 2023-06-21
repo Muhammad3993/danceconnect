@@ -5,7 +5,7 @@ import colors from '../utils/colors';
 
 type InputProp = {
   value: string;
-  onChange: (value: string) => {};
+  onChange: (value: string) => void;
   placeholder: string;
   keyboardType?: RN.KeyboardTypeOptions;
   secureText?: boolean;
@@ -149,9 +149,8 @@ export const Input = ({
 const styles = RN.StyleSheet.create({
   container: {
     borderWidth: 1,
-    paddingVertical: 19,
     borderRadius: 8,
-    paddingHorizontal: 16,
+    padding: 16,
     // paddingLeft: 46,
     color: colors.textPrimary,
     fontSize: 16,

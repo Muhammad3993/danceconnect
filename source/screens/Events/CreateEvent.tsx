@@ -5,30 +5,46 @@ import colors from '../../utils/colors';
 import {Button} from '../../components/Button';
 import {Input} from '../../components/input';
 import CategorySelector from '../../components/catregorySelector';
-import {dataDanceCategory, locationData} from '../../utils/constants';
+import {
+  dataDanceCategory,
+  isAndroid,
+  locationData,
+  statusBarHeight,
+} from '../../utils/constants';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useCommunities} from '../../hooks/useCommunitites';
 import LocationSelection from '../../components/locationSelection';
 import BottomCalendar from '../../components/bottomCalendar';
 import moment from 'moment';
 import useEvents from '../../hooks/useEvents';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {getConstantsFromFirebase} from '../../api/functions';
+import FindCity from '../../components/findCity';
+import FindPlace from '../../components/findPlace';
+import { useProfile } from '../../hooks/useProfile';
 
+interface city {
+  structured_formatting: {
+    main_text: '';
+  };
+  terms: [{offset: 0; value: ''}, {offset: 1; value: ''}];
+}
 const CreateEvent = () => {
   const navigation = useNavigation();
   const routeParams = useRoute();
-  const {communityUid} = routeParams.params;
+  const {communityData} = routeParams.params;
   const {isLoading} = useCommunities();
+  const {individualStyles} = useProfile();
   const goBackBtn = () => {
     navigation.goBack();
   };
+
+  // console.log('communityData', communityData);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [visibleFooter, setVisibleFooter] = useState(true);
   const [isErrorName, setIsErrorName] = useState(false);
   const [isDescriptionError, setIsDescriptionError] = useState(false);
-  const [country, selectedCountry] = useState('');
-  const [city, selectedCity] = useState('');
-  const [place, selectedPlace] = useState('');
   const [openCalendar, setOpenCalendar] = useState(false);
   const [time, setTime] = useState(new Date().getTime());
   const [startDate, setStartDate] = useState(null);
@@ -41,11 +57,21 @@ const CreateEvent = () => {
     current: description?.length,
     maxSymbols: 350,
   });
-  const [addedStyles, setAddedStyles] = useState<string[]>(
-    new Array(0).fill(''),
-  );
-  const [images, setImages] = useState(new Array(0).fill(''));
+  const [addedStyles, setAddedStyles] = useState<string[]>(individualStyles);
+  const [eventTypes, setEventTypes] = useState([]);
 
+  const [openPlace, setOpenPlace] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<string>('');
+  const [openLocation, setOpenLocation] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<city>(
+    communityData?.location,
+  );
+
+  const [images, setImages] = useState(new Array(0).fill(''));
+  const [typeEvent, setTypeEvent] = useState(eventTypes[0]);
+  useEffect(() => {
+    getConstantsFromFirebase().then(dc => setEventTypes(dc.typesEvents));
+  }, []);
   const {createEvent} = useEvents();
   const onChoosheDanceStyle = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -68,6 +94,7 @@ const CreateEvent = () => {
     setImages(filter);
   };
 
+  // console.log(selectedLocation)
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsDescriptionError(false);
@@ -82,6 +109,14 @@ const CreateEvent = () => {
       startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
       endDate: endDate ?? moment(new Date()).format('YYYY-MM-DD'),
     };
+    const locationEdt =
+      selectedLocation?.structured_formatting?.main_text?.length > 0
+        ? selectedLocation?.structured_formatting?.main_text +
+          ', ' +
+          (selectedLocation?.structured_formatting?.main_text?.length > 0
+            ? selectedLocation?.terms[1].value
+            : '')
+        : communityData?.location;
     if (name?.length <= 0) {
       setIsErrorName(true);
     } else if (description?.length <= 0) {
@@ -90,16 +125,17 @@ const CreateEvent = () => {
       createEvent({
         name: name,
         description: description,
-        country: country,
-        location: city,
+        // country: country,
+        location: locationEdt,
         categories: addedStyles,
         images: images,
-        place: place,
-        communityUid: communityUid,
+        place: selectedPlace,
+        communityUid: communityData?.id,
         eventDate: eventDate,
+        typeEvent: typeEvent,
       });
       setTimeout(() => {
-        goBackBtn();
+        // goBackBtn();
         onClear();
       }, 2000);
     }
@@ -226,6 +262,52 @@ const CreateEvent = () => {
     );
   };
 
+  const onSelectType = (value: string) => {
+    setTypeEvent(value);
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  };
+  const renderTypeEvent = () => {
+    return (
+      <RN.View style={{paddingVertical: 14, paddingTop: 6}}>
+        <RN.View style={styles.nameTitle}>
+          <RN.Text style={styles.title}>Choose Event Type</RN.Text>
+        </RN.View>
+        <RN.View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginHorizontal: 10,
+          }}>
+          {eventTypes.map((type: string, idx: number) => {
+            return (
+              <RN.TouchableOpacity
+                key={idx}
+                onPress={() => onSelectType(type)}
+                style={[
+                  styles.openedTypeEventContainer,
+                  {
+                    borderColor:
+                      type === typeEvent ? colors.orange : colors.gray,
+                  },
+                ]}>
+                <RN.Text
+                  style={[
+                    styles.openedTypeText,
+                    {
+                      color:
+                        type === typeEvent ? colors.orange : colors.darkGray,
+                    },
+                  ]}>
+                  {type}
+                </RN.Text>
+              </RN.TouchableOpacity>
+            );
+          })}
+        </RN.View>
+      </RN.View>
+    );
+  };
+
   const renderNameCommunity = () => {
     return (
       <RN.View>
@@ -259,7 +341,7 @@ const CreateEvent = () => {
   };
   const renderChooseCategory = () => {
     return (
-      <RN.View>
+      <RN.View style={{paddingVertical: 14, paddingBottom: 0}}>
         <RN.View style={styles.nameTitle}>
           <RN.Text style={styles.title}>
             Choose Category
@@ -336,7 +418,10 @@ const CreateEvent = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Upload Cover Image</RN.Text>
+          <RN.Text style={styles.title}>
+            Upload Cover Image
+            <RN.Text style={styles.countMaxSymbols}> (Optional)</RN.Text>
+          </RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
           What picture is better to put here?
@@ -442,43 +527,102 @@ const CreateEvent = () => {
       </RN.View>
     );
   };
+  // console.log('communityData', communityData);
   return (
-    <RN.KeyboardAvoidingView behavior="padding" style={styles.container}>
-      <RN.SafeAreaView style={styles.container}>
-        {renderHeader()}
-        <RN.ScrollView>
-          {renderCreateHeader()}
-          {renderNameCommunity()}
-          {renderChooseCategory()}
-          {renderDescription()}
-          {renderEventDates()}
-          {renderChooseImage()}
-          <LocationSelection
-            data={locationData}
-            onChooseCountry={selectedCountry}
-            onChooseCity={selectedCity}
-            selectedCity={city}
-            selectedCountry={country}
-            onChoosePlace={selectedPlace}
-            selectedPlace={place}
-            // isEvent
-          />
-          <RN.View style={{paddingBottom: 40}} />
-        </RN.ScrollView>
-        {visibleFooter && renderFooter()}
-        {openCalendar && (
-          <BottomCalendar
-            onClose={() => setOpenCalendar(false)}
-            end={endDate}
-            start={startDate}
-            time={time}
-            setTime={setTime}
-            setStart={setStartDate}
-            setEnd={setEndDate}
-          />
-        )}
-      </RN.SafeAreaView>
-    </RN.KeyboardAvoidingView>
+    <>
+      {renderHeader()}
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid
+        style={{backgroundColor: colors.white}}
+        extraScrollHeight={isAndroid ? 0 : 90}
+        showsVerticalScrollIndicator={false}
+        // contentContainerStyle={styles.content}
+      >
+        <RN.SafeAreaView style={styles.container}>
+          <RN.ScrollView>
+            {renderCreateHeader()}
+            {renderNameCommunity()}
+            {renderTypeEvent()}
+            {renderChooseCategory()}
+            {renderDescription()}
+            {renderEventDates()}
+            {renderChooseImage()}
+            <RN.Text style={styles.placeholderTitle}>City</RN.Text>
+            <RN.TouchableOpacity
+              onPress={() => setOpenLocation(true)}
+              style={styles.selectLocationBtn}>
+              <RN.Text style={styles.locationText}>
+                {selectedLocation?.structured_formatting?.main_text?.length > 0
+                  ? `${
+                      selectedLocation?.structured_formatting?.main_text +
+                      ', ' +
+                      selectedLocation?.terms[1]?.value
+                    }`
+                  : communityData?.location}
+              </RN.Text>
+
+              <RN.View
+                style={{
+                  justifyContent: 'center',
+                }}>
+                <RN.Image
+                  source={{uri: 'arrowdown'}}
+                  style={{height: 20, width: 20}}
+                />
+              </RN.View>
+            </RN.TouchableOpacity>
+
+            <RN.Text style={styles.placeholderTitle}>Place</RN.Text>
+            <RN.TouchableOpacity
+              onPress={() => setOpenPlace(true)}
+              style={styles.selectLocationBtn}>
+              <RN.Text style={styles.locationText}>
+                {selectedPlace?.length > 0
+                  ? `${selectedPlace}`
+                  : 'Choose place'}
+              </RN.Text>
+              <RN.View
+                style={{
+                  justifyContent: 'center',
+                }}>
+                <RN.Image
+                  source={{uri: 'arrowdown'}}
+                  style={{height: 20, width: 20}}
+                />
+              </RN.View>
+            </RN.TouchableOpacity>
+          </RN.ScrollView>
+        </RN.SafeAreaView>
+      </KeyboardAwareScrollView>
+      {openCalendar && (
+        <BottomCalendar
+          onClose={() => setOpenCalendar(false)}
+          end={endDate}
+          start={startDate}
+          time={time}
+          setTime={setTime}
+          setStart={setStartDate}
+          setEnd={setEndDate}
+        />
+      )}
+      {openLocation && (
+        <FindCity
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+          onClosed={() => setOpenLocation(false)}
+        />
+      )}
+      {openPlace && (
+        <FindPlace
+          selectedPlace={selectedPlace}
+          setSelectedPlace={setSelectedPlace}
+          onClosed={() => setOpenPlace(false)}
+          crntCity={selectedLocation}
+        />
+      )}
+      {visibleFooter && renderFooter()}
+    </>
   );
 };
 const styles = RN.StyleSheet.create({
@@ -486,6 +630,65 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     paddingTop: 24,
+  },
+  selectLocationBtn: {
+    marginHorizontal: 20,
+    marginVertical: 14,
+    backgroundColor: colors.lightGray,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: colors.grayTransparent,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+  },
+  locationText: {
+    paddingVertical: 16,
+    fontSize: 16,
+    lineHeight: 22.4,
+    letterSpacing: 0.2,
+    color: colors.textPrimary,
+  },
+  placeholderTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22.4,
+    paddingHorizontal: 24,
+    color: colors.textPrimary,
+  },
+  openedTypeEventContainer: {
+    // backgroundColor: colors.lightGray,
+    // marginHorizontal: 20,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 100,
+    marginTop: 8,
+    marginLeft: 8,
+  },
+  typeEventContainer: {
+    backgroundColor: colors.lightGray,
+    marginHorizontal: 20,
+    // marginBottom: 16,
+    marginTop: 8,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  openedTypeText: {
+    // color: colors.textPrimary,
+    lineHeight: 22.4,
+    fontSize: 16,
+    paddingVertical: 4,
+  },
+  typeEventText: {
+    color: colors.textPrimary,
+    lineHeight: 22.4,
+    fontSize: 16,
+    paddingVertical: 17,
   },
   iconHeader: {
     height: 20,
@@ -495,6 +698,9 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+    paddingTop: statusBarHeight,
+    paddingBottom: 8,
+    backgroundColor: colors.white,
   },
   createWrapper: {
     backgroundColor: colors.lightPurple,
@@ -540,7 +746,8 @@ const styles = RN.StyleSheet.create({
     paddingHorizontal: 14,
     borderTopColor: colors.gray,
     borderTopWidth: 1,
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.white,
+    paddingBottom: 8,
   },
   title: {
     fontSize: 16,

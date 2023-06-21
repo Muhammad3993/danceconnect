@@ -14,9 +14,46 @@ export const searchCities = async (
   countyName: string,
   countyCode: string,
   searchString: string,
+  typeSearch?: string,
 ) => {
   const response = await axios.get(
-    `${googleUrl}key=${GOOGLE_API_KEY}&address=${countyName}&types=(cities)&components=country:${countyCode}&input=${searchString}`,
+    `${googleUrl}key=${GOOGLE_API_KEY}&address=${countyName}&types=${typeSearch}&components=country:${countyCode}&input=${searchString}`,
+  );
+  return response.data?.predictions;
+};
+
+export const searchPlaces = async (
+  currentCity: string,
+  cityName: string,
+  searchString: string,
+) => {
+  const response = await axios.get(
+    `${googleUrl}key=${GOOGLE_API_KEY}&language=en&address=${currentCity}&types=(cities)&components=country:USA&input=${cityName} ${searchString}`,
+  );
+
+  return response.data?.predictions;
+};
+
+export const searchPlacesInEvent = async (
+  cityName: string,
+  searchString: string,
+) => {
+  const response = await axios.get(
+    `${googleUrl}key=${GOOGLE_API_KEY}&language=en&types=establishment&components=country:USA&input=${cityName} ${searchString}`,
+  );
+
+  return response.data?.predictions;
+};
+export const searchStateOfUSA = async (searchString: string) => {
+  const response = await axios.get(
+    `${googleUrl}key=${GOOGLE_API_KEY}&types=administrative_area_level_1&&components=country:USA&input=${searchString}&language=en`,
+  );
+  return response?.data?.predictions;
+};
+
+export const searchCity = async (searchString: string) => {
+  const response = await axios.get(
+    `${googleUrl}key=${GOOGLE_API_KEY}&types=(cities)&components=country:USA&input=${searchString}&language=en`,
   );
   return response.data?.predictions;
 };

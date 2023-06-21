@@ -516,6 +516,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = danceConnect/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Dance.Connect;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -547,6 +548,7 @@
 				DEVELOPMENT_TEAM = 7M34Y2529U;
 				INFOPLIST_FILE = danceConnect/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Dance.Connect;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

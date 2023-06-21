@@ -9,6 +9,7 @@ import store, {persistor} from './source/store';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {isAndroid} from './source/utils/constants';
+import FullLoading from './source/components/fullLoading';
 
 const App = () => {
   useEffect(() => {
@@ -28,6 +29,7 @@ const App = () => {
       <ReduxProvider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <StatusBar barStyle={statusBarContent} />
+          <FullLoading />
           <AppNavigator />
         </PersistGate>
       </ReduxProvider>

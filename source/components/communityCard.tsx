@@ -6,7 +6,7 @@ import {useCommunities} from '../hooks/useCommunitites';
 import {useProfile} from '../hooks/useProfile';
 import {useNavigation} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
-import { isAndroid } from '../utils/constants';
+import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
 
 type props = {
   item: any;
@@ -148,10 +148,14 @@ const CommunityCard = ({item}: any) => {
         onPress={goToCommunity}
         style={styles.headerItemContainer}
         activeOpacity={0.7}>
-        <RN.View style={{maxWidth: '80%'}}>
+        <RN.View style={{maxWidth: SCREEN_WIDTH / 1.5}}>
           {displayedData?.categories && renderTags(displayedData?.categories)}
-          <RN.Text style={styles.itemTitle}>{title}</RN.Text>
-          <RN.Text style={styles.itemDesc}>{description}</RN.Text>
+          <RN.Text numberOfLines={1} style={styles.itemTitle}>
+            {displayedData?.name}
+          </RN.Text>
+          <RN.Text numberOfLines={2} style={styles.itemDesc}>
+            {displayedData?.description}
+          </RN.Text>
         </RN.View>
         <RN.Image
           defaultSource={require('../assets/images/default.jpeg')}
@@ -207,7 +211,7 @@ const styles = RN.StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 12,
     marginBottom: 16,
-    marginHorizontal: isAndroid ? 0 : 20,
+    marginHorizontal: isAndroid ? 0 : 10,
   },
   joinBtn: {
     backgroundColor: colors.orange,

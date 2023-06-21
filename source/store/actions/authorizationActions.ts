@@ -18,6 +18,7 @@ type registrationParams = {
   role?: '';
   uid?: '';
   isUserExists?: boolean;
+  individualStyles?: string[];
 };
 export const registrationWithEmailRequest = ({
   email,
@@ -37,6 +38,7 @@ export const setRegistrationDataRequestAction = ({
   country,
   location,
   role,
+  individualStyles,
 }: registrationParams) => ({
   type: REGISTRATION_WITH_EMAIL.SET_DATA_REQUEST,
   payload: {
@@ -46,6 +48,7 @@ export const setRegistrationDataRequestAction = ({
     country: country,
     location: location,
     role: role,
+    individualStyles: individualStyles,
   },
 });
 export const setRegistrationDataSuccessAction = ({
@@ -55,6 +58,7 @@ export const setRegistrationDataSuccessAction = ({
   country,
   location,
   role,
+  individualStyles,
 }: registrationParams) => ({
   type: REGISTRATION_WITH_EMAIL.SET_DATA_SUCCESS,
   payload: {
@@ -64,6 +68,7 @@ export const setRegistrationDataSuccessAction = ({
     country: country,
     location: location,
     role: role,
+    individualStyles: individualStyles,
   },
 });
 export const setRegistrationDataFailAction = {

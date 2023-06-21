@@ -16,7 +16,7 @@ import RegistraionScreen from '../screens/Auth/Registration';
 import AuthorizationScreen from '../screens/Auth/Autorization';
 import useRegistration from '../hooks/useRegistration';
 import HomeScreen from '../screens/Home';
-import Board from '../screens/Auth/Board';
+import Board from '../screens/Auth/Board1';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import colors from '../utils/colors';
 import BottomTabs from '../components/bottomTabs';
@@ -28,6 +28,9 @@ import CommunityScreen from '../screens/Community/CommunityScreen';
 import EditCommunity from '../screens/Community/EditCommunity';
 import CreateEvent from '../screens/Events/CreateEvent';
 import EventScreen from '../screens/Events/EventScreen';
+import EditEvent from '../screens/Events/EditEvent';
+import FiltersBottomForEvents from '../components/bottomFiltersEvents';
+import {Host} from 'react-native-portalize';
 
 // const RootStack = createStackNavigator<RootStackNavigationParamList>();
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
@@ -36,6 +39,7 @@ const Tabs = createBottomTabNavigator();
 
 const CommunityStack = createStackNavigator();
 const EventsStack = createStackNavigator();
+const HomeStack = createStackNavigator();
 const CommunityNavigator = () => {
   return (
     <CommunityStack.Navigator
@@ -56,6 +60,7 @@ const CommunityNavigator = () => {
       <CommunityStack.Screen name="EditCommunity" component={EditCommunity} />
       <CommunityStack.Screen name="CreateEvent" component={CreateEvent} />
       <CommunityStack.Screen name="EventScreen" component={EventScreen} />
+      <EventsStack.Screen name="EditEvent" component={EditEvent} />
     </CommunityStack.Navigator>
   );
 };
@@ -67,7 +72,23 @@ const EventsNavigator = () => {
       <EventsStack.Screen name="Events" component={EventsScreen} />
       <EventsStack.Screen name="CreateEvent" component={CreateEvent} />
       <EventsStack.Screen name="EventScreen" component={EventScreen} />
+      <EventsStack.Screen name="EditEvent" component={EditEvent} />
+      {/* <EventsStack.Screen
+        name="Filters"
+        component={FiltersBottomForEvents}
+        options={{presentation: 'transparentModal'}}
+      /> */}
     </EventsStack.Navigator>
+  );
+};
+const HomeNavigator = () => {
+  return (
+    <HomeStack.Navigator
+      initialRouteName="Home"
+      screenOptions={{headerShown: false, gestureEnabled: false}}>
+      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="EventScreen" component={EventScreen} />
+    </HomeStack.Navigator>
   );
 };
 const TabsNavigator = () => {
@@ -89,11 +110,14 @@ const TabsNavigator = () => {
           if (routeName === 'CreateEvent') {
             return {display: 'none'};
           }
+          if (routeName === 'EditEvent') {
+            return {display: 'none'};
+          }
           return {display: 'flex'};
         })(route),
       })}
       tabBar={props => <BottomTabs {...props} />}>
-      <Tabs.Screen name="Home" component={HomeScreen} />
+      <Tabs.Screen name="Home" component={HomeNavigator} />
       <Tabs.Screen name="Communities" component={CommunityNavigator} />
       <Tabs.Screen name="Events" component={EventsNavigator} />
       <Tabs.Screen name="Profile" component={ProfileScreen} />
@@ -115,11 +139,13 @@ const AuthNavigor = () => {
 };
 const MainNavigator = () => {
   return (
-    <MainStack.Navigator
-      screenOptions={{headerShown: false, gestureEnabled: false}}>
-      <MainStack.Screen name={'TABS'} component={TabsNavigator} />
-      <MainStack.Screen name={'HOME'} component={HomeScreen} />
-    </MainStack.Navigator>
+    <Host>
+      <MainStack.Navigator
+        screenOptions={{headerShown: false, gestureEnabled: false}}>
+        <MainStack.Screen name={'TABS'} component={TabsNavigator} />
+        <MainStack.Screen name={'HOME'} component={HomeScreen} />
+      </MainStack.Navigator>
+    </Host>
   );
 };
 const AppNavigator = () => {

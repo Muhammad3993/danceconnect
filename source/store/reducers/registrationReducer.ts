@@ -21,6 +21,7 @@ export type registrationAction = {
     role?: string;
     isRegistrationsSuccess?: boolean;
     isUserExists?: boolean;
+    individualStyles?: string[];
   };
 };
 
@@ -91,6 +92,7 @@ export default (
         country: action?.payload?.country,
         location: action?.payload?.location,
         role: action?.payload?.role,
+        individualStyles: action?.payload?.individualStyles,
       };
     case REGISTRATION_WITH_EMAIL.SET_DATA_SUCCESS:
       return {
