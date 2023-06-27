@@ -6,6 +6,7 @@ import {useProfile} from '../hooks/useProfile';
 import colors from '../utils/colors';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {uploadImgProfile} from '../api/functions';
+import {SCREEN_WIDTH} from '../utils/constants';
 
 const ProfileScreen = () => {
   const {logout} = useRegistration();
@@ -52,7 +53,9 @@ const ProfileScreen = () => {
             defaultSource={require('../assets/images/defaultuser.png')}
           />
         </RN.TouchableOpacity>
-        <RN.Text style={styles.name}>{`Hello, ${userName} 👋 `}</RN.Text>
+        <RN.Text
+          numberOfLines={2}
+          style={styles.name}>{`Hello, ${userName} 👋 `}</RN.Text>
       </RN.View>
       <RN.View style={{justifyContent: 'flex-end', paddingBottom: 30}}>
         <Button title="Logout" onPress={logout} disabled={true} />
@@ -82,6 +85,7 @@ const styles = RN.StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 40,
     paddingHorizontal: 16,
+    maxWidth: SCREEN_WIDTH - 100,
   },
 });
 

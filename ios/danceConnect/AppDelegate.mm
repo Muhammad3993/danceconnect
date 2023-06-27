@@ -6,7 +6,6 @@
 #import <RNSplashScreen.h>
 #import <React/RCTAppSetupUtils.h>
 #import <Firebase.h>
-#import <GoogleMaps/GoogleMaps.h>
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
@@ -34,7 +33,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [FIRApp configure];
-  [GMSServices provideAPIKey:@"AIzaSyAaMUmA9rKPazM7tBeEEelzUuonq4hrxUk"];
+//  [GMSServices provideAPIKey:@"AIzaSyAaMUmA9rKPazM7tBeEEelzUuonq4hrxUk"];
   RCTAppSetupPrepareApp(application);
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];

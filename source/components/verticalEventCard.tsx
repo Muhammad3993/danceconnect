@@ -53,7 +53,7 @@ const VerticalCard = ({data, eventsLength}: props) => {
       activeOpacity={0.7}>
       <RN.Image
         source={
-          data?.images[0]?.base64
+          data?.images
             ? {uri: 'data:image/png;base64,' + data?.images[0]?.base64}
             : require('../assets/images/default.jpeg')
         }
@@ -182,6 +182,7 @@ const styles = RN.StyleSheet.create({
   },
   imgStyle: {
     height: 200,
+    maxWidth: SCREEN_WIDTH - 60,
     borderRadius: 8,
   },
   attendBtn: {

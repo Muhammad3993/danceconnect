@@ -10,6 +10,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {isAndroid} from './source/utils/constants';
 import FullLoading from './source/components/fullLoading';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const App = () => {
   useEffect(() => {
@@ -25,15 +26,17 @@ const App = () => {
   LogBox.ignoreAllLogs();
   const statusBarContent = isAndroid ? 'light-content' : 'dark-content';
   return (
-    <SafeAreaView style={styles.container}>
-      <ReduxProvider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <StatusBar barStyle={statusBarContent} />
-          <FullLoading />
-          <AppNavigator />
-        </PersistGate>
-      </ReduxProvider>
-    </SafeAreaView>
+    <GestureHandlerRootView style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <ReduxProvider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <StatusBar barStyle={statusBarContent} />
+            <FullLoading />
+            <AppNavigator />
+          </PersistGate>
+        </ReduxProvider>
+      </SafeAreaView>
+      </GestureHandlerRootView>
   );
 };
 

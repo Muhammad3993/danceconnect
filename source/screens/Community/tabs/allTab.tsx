@@ -5,7 +5,7 @@ import CommunityCard from '../../../components/communityCard';
 import {isAndroid} from '../../../utils/constants';
 import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
-import {useProfile} from '../../../hooks/useProfile';
+import useAppStateHook from '../../../hooks/useAppState';
 
 type props = {
   communititesSearch: string[];
@@ -14,15 +14,18 @@ type props = {
 
 const AllTab = ({communititesSearch, searchValue}: props) => {
   const {communitiesData} = useCommunities();
-  const {userCountry} = useProfile();
+  const {currentCity} = useAppStateHook();
 
   const [communitites, setCommunitites] = useState(
-    communitiesData?.filter(i =>
-      i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
-    ),
+    communitiesData
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
-  const [communityLocation, setCommunityLocation] = useState(userCountry);
 
   const [addedStyles, setAddedStyles] = useState<string[]>(
     new Array(0).fill(''),
@@ -33,13 +36,24 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
       setCommunitites(communititesSearch);
     }
   }, [communititesSearch, searchValue]);
+  useEffect(() => {
+    setCommunitites(
+      communitiesData
+        ?.filter(i =>
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        )
+        .map(ev => ev),
+    );
+  }, [currentCity]);
 
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
       communitiesData?.filter(i =>
-        i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+        i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
       ),
     );
   };
@@ -49,16 +63,10 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
         item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );
       setCommunitites(data);
-    } else if (communityLocation?.length > 0) {
-      setCommunitites(
-        communitiesData?.filter(i =>
-          i?.location?.toLowerCase().includes(communityLocation.toLowerCase()),
-        ),
-      );
     } else {
       setCommunitites(
         communitiesData?.filter(i =>
-          i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
         ),
       );
     }
@@ -126,8 +134,6 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
         setSelectedStyles={setAddedStyles}
         onClear={onClear}
         onFilter={onFilter}
-        setCommunityLocation={setCommunityLocation}
-        communityLocation={communityLocation}
       />
     </>
   );

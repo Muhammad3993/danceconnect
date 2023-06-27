@@ -3,7 +3,7 @@ import * as RN from 'react-native';
 import colors from '../utils/colors';
 import moment from 'moment';
 import {Button} from './Button';
-import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
+import {SCREEN_WIDTH} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import database from '@react-native-firebase/database';
 import useRegistration from '../hooks/useRegistration';
@@ -11,9 +11,6 @@ import {useNavigation} from '@react-navigation/native';
 import {getImgsAttendedPeopleToEvent} from '../api/functions';
 import {minWeekDay} from '../utils/helpers';
 
-// let minWeekDay = moment.updateLocale('en', {
-//   weekdaysMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-// });
 type props = {
   item?: any;
 };
@@ -196,7 +193,6 @@ const EventCard = ({item}: props) => {
     );
   };
 
-  // console.log('eventData?.typeEvent', eventData?.attendedPeople);
   return (
     <RN.TouchableOpacity
       style={styles.container}
@@ -233,15 +229,7 @@ const EventCard = ({item}: props) => {
           />
         </RN.View>
       </RN.View>
-      <RN.View
-        style={[
-          styles.placeContainer,
-          {
-            justifyContent:
-              eventData?.attendedPeople?.length > 1 ? 'flex-start' : 'flex-end',
-          },
-        ]}>
-        {eventData?.attendedPeople?.length > 1 && renderAttendedImgs()}
+      <RN.View style={styles.placeContainer}>
         {displayedPlaceText?.length > 0 && (
           <RN.View style={styles.placeWrapper}>
             <RN.View style={{justifyContent: 'center'}}>
@@ -250,11 +238,14 @@ const EventCard = ({item}: props) => {
                 style={{height: 16, width: 16}}
               />
             </RN.View>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Text style={styles.placeName}>{displayedPlaceText}</RN.Text>
+            <RN.View style={{justifyContent: 'center', maxWidth: SCREEN_WIDTH / 1.8}}>
+              <RN.Text numberOfLines={1} style={styles.placeName}>
+                {eventData?.place}
+              </RN.Text>
             </RN.View>
           </RN.View>
         )}
+        {eventData?.attendedPeople?.length > 1 && renderAttendedImgs()}
       </RN.View>
       <RN.View style={styles.footerContainer}>
         {renderTags(eventData?.categories)}
@@ -305,7 +296,6 @@ const styles = RN.StyleSheet.create({
   },
   placeWrapper: {
     flexDirection: 'row',
-    paddingLeft: 30,
   },
   footerContainer: {
     flexDirection: 'row',
@@ -317,7 +307,7 @@ const styles = RN.StyleSheet.create({
   },
   placeContainer: {
     flexDirection: 'row',
-    // justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     marginTop: 8,
   },
   tagsContainer: {

@@ -4,12 +4,11 @@ import useEvents from '../../../hooks/useEvents';
 import sotrtBy from 'lodash.sortby';
 import EventCard from '../../../components/eventCard';
 import colors from '../../../utils/colors';
-import {SCREEN_HEIGHT, isAndroid} from '../../../utils/constants';
+import {SCREEN_HEIGHT} from '../../../utils/constants';
 import FiltersBottomForEvents from '../../../components/bottomFiltersEvents';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
-import {useNavigation} from '@react-navigation/native';
-import {useProfile} from '../../../hooks/useProfile';
+import useAppStateHook from '../../../hooks/useAppState';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -18,14 +17,17 @@ type props = {
 };
 const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   const {upcomingEvents} = useEvents();
-  const {userCountry} = useProfile();
+  const {currentCity} = useAppStateHook();
   const [events, setEvents] = useState(
-    upcomingEvents?.filter(i =>
-      i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
-    ),
+    upcomingEvents
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
-  const [eventLocation, setEventLocation] = useState('');
   const [eventType, setEventType] = useState('All');
   const [eventDate, setEventDate] = useState();
   const [filtersBorderColor, setFiltersBorderColor] = useState(colors.gray);
@@ -50,39 +52,48 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     }
   }, [eventsSearch, searchValue]);
 
+  useEffect(() => {
+    const locationData = upcomingEvents
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev);
+    setEvents(locationData);
+  }, [currentCity]);
+
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
-    setEventLocation('');
     setEventType('All');
+    setFiltersBorderColor(colors.gray);
     setEvents(
-      upcomingEvents?.filter(i =>
-        i?.location?.toLowerCase().indexOf(userCountry.toLowerCase()),
-      ),
+      upcomingEvents
+        ?.filter(i =>
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        )
+        .map(ev => ev),
     );
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = upcomingEvents.filter((item: any) =>
+      const data = events.filter((item: any) =>
         item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );
       setEvents(data);
       setFiltersBorderColor(colors.orange);
     } else if (eventType !== 'All') {
-      const evData = upcomingEvents?.filter((item: any) =>
-        item?.typeEvent?.includes(eventType?.name),
-      );
-      setEvents(evData);
-      setFiltersBorderColor(colors.orange);
-    } else if (eventLocation?.length > 0) {
-      const locationData = upcomingEvents
-        ?.filter(i =>
+      const evData = upcomingEvents?.filter(
+        i =>
           i?.location
             ?.toLowerCase()
-            .includes(eventLocation?.toLowerCase().substring(0, 5)),
-        )
-        .map(ev => ev);
-      setEvents(locationData);
+            .includes(currentCity?.toLowerCase().substring(0, 5)) &&
+          i?.typeEvent === eventType,
+      );
+      setEvents(evData);
       setFiltersBorderColor(colors.orange);
     } else if (
       eventDate !== null &&
@@ -95,7 +106,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
         const date = d.format('YYYY-MM-DD');
         return date;
       });
-      const findDate = upcomingEvents?.filter((it: any) =>
+      const findDate = events?.filter((it: any) =>
         dayEntries?.includes(it?.eventDate?.startDate),
       );
       setEvents(findDate);
@@ -103,7 +114,9 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     } else {
       setEvents(
         upcomingEvents?.filter(i =>
-          i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity.toLowerCase().substring(0, 5)),
         ),
       );
       setFiltersBorderColor(colors.gray);
@@ -161,8 +174,6 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
         setSelectedStyles={setAddedStyles}
         onClear={onClear}
         onFilter={onFilter}
-        eventLocation={eventLocation}
-        setEventLocation={setEventLocation}
         eventType={eventType}
         setEventType={setEventType}
         eventDate={eventDate}

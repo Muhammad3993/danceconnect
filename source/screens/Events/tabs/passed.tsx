@@ -4,11 +4,11 @@ import useEvents from '../../../hooks/useEvents';
 import sotrtBy from 'lodash.sortby';
 import EventCard from '../../../components/eventCard';
 import colors from '../../../utils/colors';
-import {SCREEN_HEIGHT, isAndroid} from '../../../utils/constants';
+import {SCREEN_HEIGHT} from '../../../utils/constants';
 import FiltersBottomForEvents from '../../../components/bottomFiltersEvents';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
-import {useProfile} from '../../../hooks/useProfile';
+import useAppStateHook from '../../../hooks/useAppState';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -17,14 +17,17 @@ type props = {
 };
 const PassingTab = ({searchValue, eventsSearch}: props) => {
   const {passingEvents} = useEvents();
-  const {userCountry} = useProfile();
+  const {currentCity} = useAppStateHook();
   const [events, setEvents] = useState(
-    passingEvents?.filter(i =>
-      i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
-    ),
+    passingEvents
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
-  const [eventLocation, setEventLocation] = useState('');
   const [eventType, setEventType] = useState('All');
   const [eventDate, setEventDate] = useState();
 
@@ -45,37 +48,46 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
     }
   }, [eventsSearch, searchValue]);
 
+  useEffect(() => {
+    const locationData = passingEvents
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev);
+    setEvents(locationData);
+  }, [currentCity]);
+
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
-    setEventLocation('');
     setEventType('All');
     setEvents(
-      passingEvents?.filter(i =>
-        i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
-      ),
+      passingEvents
+        ?.filter(i =>
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        )
+        .map(ev => ev),
     );
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = passingEvents.filter((item: any) =>
+      const data = events.filter((item: any) =>
         item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );
       setEvents(data);
     } else if (eventType !== 'All') {
-      const evData = passingEvents?.filter((item: any) =>
-        item?.typeEvent?.includes(eventType?.name),
-      );
-      setEvents(evData);
-    } else if (eventLocation?.length > 0) {
-      const locationData = passingEvents
-        ?.filter(i =>
+      const evData = passingEvents?.filter(
+        i =>
           i?.location
             ?.toLowerCase()
-            .includes(eventLocation?.toLowerCase().substring(0, 5)),
-        )
-        .map(ev => ev);
-      setEvents(locationData);
+            .includes(currentCity?.toLowerCase().substring(0, 5)) &&
+          i?.typeEvent === eventType,
+      );
+      setEvents(evData);
     } else if (
       eventDate !== null &&
       eventDate?.start !== null &&
@@ -87,14 +99,16 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
         const date = d.format('YYYY-MM-DD');
         return date;
       });
-      const findDate = passingEvents?.filter((it: any) =>
+      const findDate = events?.filter((it: any) =>
         dayEntries?.includes(it?.eventDate?.startDate),
       );
       setEvents(findDate);
     } else {
       setEvents(
         passingEvents?.filter(i =>
-          i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity.toLowerCase().substring(0, 5)),
         ),
       );
     }
@@ -151,8 +165,6 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
         setSelectedStyles={setAddedStyles}
         onClear={onClear}
         onFilter={onFilter}
-        eventLocation={eventLocation}
-        setEventLocation={setEventLocation}
         eventType={eventType}
         setEventType={setEventType}
         eventDate={eventDate}

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import * as RN from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import CategorySelector from './catregorySelector';
@@ -6,8 +6,6 @@ import {dataDanceCategory} from '../utils/constants';
 import colors from '../utils/colors';
 import {Button} from './Button';
 import {Portal} from 'react-native-portalize';
-import { useProfile } from '../hooks/useProfile';
-import FindCity from './findCity';
 
 type props = {
   onClose: () => void;
@@ -17,7 +15,6 @@ type props = {
   onFilter: () => void;
   setCommunityLocation: () => void;
   onOpening?: boolean;
-  communityLocation?: string;
 };
 const FiltersBottom = ({
   onClose,
@@ -25,20 +22,10 @@ const FiltersBottom = ({
   setSelectedStyles,
   onClear,
   onFilter,
-  setCommunityLocation,
-  communityLocation,
   onOpening,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
 
-  const {userCountry} = useProfile();
-  const [openLocation, setOpenLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<string>(communityLocation);
-
-  const onChooseLocation = (value) => {
-    setSelectedLocation(value);
-    setCommunityLocation(value);
-  };
   const onChoosheDanceStyle = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const isAvailable = selectedStyles?.includes(value);
@@ -47,8 +34,6 @@ const FiltersBottom = ({
     } else {
       setSelectedStyles([...selectedStyles, value]);
     }
-    setSelectedLocation(userCountry);
-    setCommunityLocation(userCountry);
   };
   const onPressDeleteItem = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -57,8 +42,6 @@ const FiltersBottom = ({
   };
 
   const onPressClear = () => {
-    setSelectedLocation(userCountry);
-    setCommunityLocation(userCountry);
     onClear();
   }
   const onOpen = () => {
@@ -142,29 +125,6 @@ const FiltersBottom = ({
           <RN.View>
             {renderHeader()}
             {line()}
-            <RN.TouchableOpacity
-              style={styles.selectorContainer}
-              onPress={() => setOpenLocation(true)}>
-              <RN.View>
-                <RN.Text style={styles.selectorTitle}>Location</RN.Text>
-                <RN.View style={styles.userLocationWrapper}>
-                  <RN.Image
-                    source={{uri: 'locate'}}
-                    style={{height: 16, width: 16}}
-                  />
-                  <RN.Text style={styles.userLocationText}>
-                    {selectedLocation}
-                  </RN.Text>
-                </RN.View>
-              </RN.View>
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Image
-                  source={{uri: 'arrowright'}}
-                  style={{height: 16, width: 16, tintColor: colors.black}}
-                />
-              </RN.View>
-            </RN.TouchableOpacity>
-            {line()}
             <RN.View style={styles.nameTitle}>
               <RN.Text style={styles.title}>Choose Dance Style</RN.Text>
             </RN.View>
@@ -203,15 +163,6 @@ const FiltersBottom = ({
             {renderFooter()}
           </RN.View>
         </Modalize>
-        {openLocation && (
-          <FindCity
-            selectedLocation={selectedLocation}
-            setSelectedLocation={value =>
-              onChooseLocation(value?.structured_formatting?.main_text)
-            }
-            onClosed={() => setOpenLocation(false)}
-          />
-        )}
       </Portal>
     </>
   );

@@ -5,11 +5,12 @@ import useEvents from '../../hooks/useEvents';
 import Search from '../../components/search';
 import moment from 'moment';
 import {isAndroid} from '../../utils/constants';
-import {useProfile} from '../../hooks/useProfile';
 import UpcommingTab from './tabs/upcoming';
 import AttentingTab from './tabs/attenting';
 import ManagingTab from './tabs/managing';
 import PassingTab from './tabs/passed';
+import useAppStateHook from '../../hooks/useAppState';
+import CitySelector from '../../components/citySelector';
 
 const TABS = ['Upcoming', 'Attending', 'Managing', 'Passed'];
 
@@ -27,7 +28,8 @@ const EventsScreen = () => {
   const [currentTab, setCurrentTab] = useState(TABS[0]);
 
   const [searchValue, onSearch] = useState('');
-  const {userCountry, userLocation} = useProfile();
+  const [openModal, setOpenModal] = useState(false);
+  const {currentCity, onChoosedCity} = useAppStateHook();
   const [communititesSearch, setCommunitiesSearch] = useState<string[]>([]);
 
   useEffect(() => {
@@ -140,13 +142,19 @@ const EventsScreen = () => {
     return (
       <>
         <RN.View style={{marginHorizontal: 20}}>
-          <RN.View style={styles.userLocationWrapper}>
+          <RN.TouchableOpacity
+            style={styles.userLocationWrapper}
+            onPress={() => setOpenModal(true)}>
             <RN.Image
               source={{uri: 'locate'}}
               style={{height: 16, width: 16}}
             />
-            <RN.Text style={styles.userLocationText}>{userCountry}</RN.Text>
-          </RN.View>
+            <RN.Text style={styles.userLocationText}>{currentCity}</RN.Text>
+            <RN.Image
+              source={{uri: 'downlight'}}
+              style={{height: 16, width: 16, marginLeft: 6}}
+            />
+          </RN.TouchableOpacity>
           <Search
             onSearch={onChangeTextSearch}
             searchValue={searchValue}
@@ -221,6 +229,11 @@ const EventsScreen = () => {
       {renderHeader()}
       {loadingEvents && !loadingAttend && renderLoading()}
       {!loadingEvents && renderWrapper()}
+      <CitySelector
+        opening={openModal}
+        onClose={() => setOpenModal(false)}
+        onChoosedCity={onChoosedCity}
+      />
     </RN.SafeAreaView>
   );
 };
@@ -237,8 +250,14 @@ const styles = RN.StyleSheet.create({
   },
   userLocationWrapper: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    paddingTop: 8,
+    justifyContent: 'space-around',
+    alignSelf: 'center',
+    backgroundColor: '#FBFBFB',
+    padding: 8,
+    borderRadius: 8,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#CDCDCD',
   },
   userLocationText: {
     paddingLeft: 8,

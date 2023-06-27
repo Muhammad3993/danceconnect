@@ -10,6 +10,7 @@ import {Button} from '../../components/Button';
 import useEvents from '../../hooks/useEvents';
 import useRegistration from '../../hooks/useRegistration';
 import {SCREEN_WIDTH} from '../../utils/constants';
+import SkeletonEventScreen from '../../components/skeleton/EventScreen-Skeleton';
 
 const EventScreen = () => {
   const routeProps = useRoute();
@@ -32,27 +33,27 @@ const EventScreen = () => {
       (user: any) => user.userUid === userUid,
     ) ?? false;
   const isAdmin = data?.creatorUid === userUid;
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (userById?.name?.length > 0) {
+        setLoading(false);
+      }
+    }, 3500);
+    return () => clearTimeout(timer);
+  }, [userById?.name?.length]);
 
   const onPressShowText = () => {
     setOpeningDescription(v => !v);
   };
 
   useEffect(() => {
-    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const onValueChange = database()
       .ref(`events/${data.eventUid}`)
       .on('value', snapshot => {
         setDisplayedData(snapshot.val());
-        // console.log(snapshot.val());
-        // const imgs = snapshot.val()?.images;
         setImages(snapshot.val()?.images);
-        // setDesc(
-        //   snapshot.val()?.description?.length > 170
-        //     ? snapshot.val()?.description?.slice(0, 140) + '...'
-        //     : snapshot.val()?.description,
-        // );
-        // getEvents();
-        // getEventById(snapshot.val()?.events);
       });
 
     return () =>
@@ -324,6 +325,13 @@ const EventScreen = () => {
       />
     );
   };
+  useEffect(() => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
+  }, [loading]);
+
+  if (loading) {
+    return <SkeletonEventScreen />;
+  }
   return (
     <RN.ScrollView style={styles.container}>
       {header()}
@@ -432,7 +440,7 @@ const styles = RN.StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 100,
-    marginRight: 16,
+    marginRight: 10,
   },
   organizer: {
     color: colors.darkGray,

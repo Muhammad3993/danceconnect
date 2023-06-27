@@ -8,6 +8,8 @@ import Search from '../../components/search';
 import ManagingTab from './tabs/managingTab';
 import JoinTab from './tabs/joinedTab';
 import AllTab from './tabs/allTab';
+import useAppStateHook from '../../hooks/useAppState';
+import CitySelector from '../../components/citySelector';
 
 const TABS = ['All', 'Joined', 'Managing'];
 
@@ -25,7 +27,9 @@ const CommunitiesScreen = () => {
   const [searchValue, onSearch] = useState('');
   const [currentTab, setCurrentTab] = useState(TABS[0]);
   const [communititesSearch, setCommunitiesSearch] = useState<string[]>([]);
-  const {userCountry, userLocation} = useProfile();
+
+  const [openModal, setOpenModal] = useState(false);
+  const {currentCity, onChoosedCity} = useAppStateHook();
 
   const removedCommunity =
     (routeProps.params?.removedCommunity ||
@@ -105,13 +109,19 @@ const CommunitiesScreen = () => {
     return (
       <>
         <RN.View style={{paddingHorizontal: 20}}>
-          <RN.View style={styles.userLocationWrapper}>
+          <RN.TouchableOpacity
+            style={styles.userLocationWrapper}
+            onPress={() => setOpenModal(true)}>
             <RN.Image
               source={{uri: 'locate'}}
               style={{height: 16, width: 16}}
             />
-            <RN.Text style={styles.userLocationText}>{userCountry}</RN.Text>
-          </RN.View>
+            <RN.Text style={styles.userLocationText}>{currentCity}</RN.Text>
+            <RN.Image
+              source={{uri: 'downlight'}}
+              style={{height: 16, width: 16, marginLeft: 6}}
+            />
+          </RN.TouchableOpacity>
           <Search
             onSearch={onChangeTextSearch}
             searchValue={searchValue}
@@ -190,6 +200,11 @@ const CommunitiesScreen = () => {
       {renderHeader()}
       {isLoading && !isLoadingWithFollow && renderLoading()}
       {renderWrapper()}
+      <CitySelector
+        opening={openModal}
+        onClose={() => setOpenModal(false)}
+        onChoosedCity={onChoosedCity}
+      />
     </RN.SafeAreaView>
   );
 };
@@ -203,8 +218,14 @@ const styles = RN.StyleSheet.create({
   },
   userLocationWrapper: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    paddingTop: 8,
+    justifyContent: 'space-around',
+    alignSelf: 'center',
+    backgroundColor: '#FBFBFB',
+    padding: 8,
+    borderRadius: 8,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#CDCDCD',
   },
   userLocationText: {
     paddingLeft: 8,

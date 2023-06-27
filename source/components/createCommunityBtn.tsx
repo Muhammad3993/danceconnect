@@ -23,7 +23,7 @@ const CreateCommunityButton = ({onPress}: props) => {
           <RN.Image source={{uri: 'plus'}} style={styles.plusIcon} />
         </RN.View>
       </RN.View>
-      <RN.View style={{marginLeft: -10}}>
+      <RN.View style={{marginLeft: -10, justifyContent: 'center'}}>
         <RN.Text style={styles.title}>Start a new community</RN.Text>
         <RN.Text style={styles.description}>
           to create and manage your own events

@@ -8,7 +8,8 @@ import {SCREEN_HEIGHT, isAndroid} from '../../../utils/constants';
 import FiltersBottomForEvents from '../../../components/bottomFiltersEvents';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
-import { useProfile } from '../../../hooks/useProfile';
+import {useProfile} from '../../../hooks/useProfile';
+import useAppStateHook from '../../../hooks/useAppState';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -18,10 +19,15 @@ type props = {
 const AttentingTab = ({searchValue, eventsSearch}: props) => {
   const {attentingsEvents} = useEvents();
   const {userCountry} = useProfile();
+  const {currentCity} = useAppStateHook();
   const [events, setEvents] = useState(
-    attentingsEvents?.filter(i =>
-      i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
-    ),
+    attentingsEvents
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
   const [eventLocation, setEventLocation] = useState('');
@@ -45,37 +51,46 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
     }
   }, [eventsSearch, searchValue]);
 
+  useEffect(() => {
+    const locationData = attentingsEvents
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev);
+    setEvents(locationData);
+  }, [currentCity]);
+
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
-    setEventLocation('');
     setEventType('All');
     setEvents(
-      attentingsEvents?.filter(i =>
-        i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
-      ),
+      attentingsEvents
+        ?.filter(i =>
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        )
+        .map(ev => ev),
     );
   };
   const onFilter = () => {
     if (addedStyles && addedStyles?.length > 0) {
-      const data = attentingsEvents.filter((item: any) =>
+      const data = events.filter((item: any) =>
         item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );
       setEvents(data);
-    } else if (eventType && eventType !== 'All') {
-      const evData = attentingsEvents?.filter((item: any) =>
-        item?.typeEvent?.includes(eventType?.name),
-      );
-      return setEvents(evData);
-    } else if (eventLocation && eventLocation?.length > 0) {
-      const locationData = attentingsEvents
-        ?.filter(i =>
+    } else if (eventType !== 'All') {
+      const evData = attentingsEvents?.filter(
+        i =>
           i?.location
             ?.toLowerCase()
-            .includes(eventLocation?.toLowerCase().substring(0, 5)),
-        )
-        .map(ev => ev);
-      setEvents(locationData);
+            .includes(currentCity?.toLowerCase().substring(0, 5)) &&
+          i?.typeEvent === eventType,
+      );
+      return setEvents(evData);
     } else if (
       eventDate !== null &&
       eventDate?.start !== null &&
@@ -87,14 +102,16 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
         const date = d.format('YYYY-MM-DD');
         return date;
       });
-      const findDate = attentingsEvents?.filter((it: any) =>
+      const findDate = events?.filter((it: any) =>
         dayEntries?.includes(it?.eventDate?.startDate),
       );
       setEvents(findDate);
     } else {
       setEvents(
         attentingsEvents?.filter(i =>
-          i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity.toLowerCase().substring(0, 5)),
         ),
       );
     }
@@ -151,8 +168,6 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
         setSelectedStyles={setAddedStyles}
         onClear={onClear}
         onFilter={onFilter}
-        eventLocation={eventLocation}
-        setEventLocation={setEventLocation}
         eventType={eventType}
         setEventType={setEventType}
         eventDate={eventDate}

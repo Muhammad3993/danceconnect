@@ -7,6 +7,7 @@ import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useProfile} from '../../../hooks/useProfile';
+import useAppStateHook from '../../../hooks/useAppState';
 
 type props = {
   communititesSearch: string[];
@@ -16,15 +17,18 @@ type props = {
 const JoinTab = ({communititesSearch, searchValue}: props) => {
   const navigation = useNavigation();
   const {joinedCommunities} = useCommunities();
-  const {userCountry} = useProfile();
+  const {currentCity} = useAppStateHook();
+
   const [communitites, setCommunitites] = useState(
-    joinedCommunities?.filter(i =>
-      i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
-    ),
+    joinedCommunities
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
-
-  const [communityLocation, setCommunityLocation] = useState(userCountry);
 
   const [addedStyles, setAddedStyles] = useState<string[]>(
     new Array(0).fill(''),
@@ -35,13 +39,24 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
       setCommunitites(communititesSearch);
     }
   }, [communititesSearch, searchValue]);
+  useEffect(() => {
+    setCommunitites(
+      joinedCommunities
+        ?.filter(i =>
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        )
+        .map(ev => ev),
+    );
+  }, [currentCity]);
 
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
       joinedCommunities?.filter(i =>
-        i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+        i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
       ),
     );
   };
@@ -51,16 +66,10 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
         item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );
       setCommunitites(data);
-    } else if (communityLocation?.length > 0) {
-      setCommunitites(
-        joinedCommunities?.filter(i =>
-          i?.location?.toLowerCase().includes(communityLocation.toLowerCase()),
-        ),
-      );
     } else {
       setCommunitites(
         joinedCommunities?.filter(i =>
-          i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
         ),
       );
     }
@@ -135,8 +144,6 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
         setSelectedStyles={setAddedStyles}
         onClear={onClear}
         onFilter={onFilter}
-        setCommunityLocation={setCommunityLocation}
-        communityLocation={communityLocation}
       />
     </>
   );

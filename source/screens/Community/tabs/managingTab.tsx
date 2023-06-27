@@ -6,7 +6,7 @@ import {isAndroid} from '../../../utils/constants';
 import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import { useProfile } from '../../../hooks/useProfile';
+import useAppStateHook from '../../../hooks/useAppState';
 
 type props = {
   communititesSearch: string[];
@@ -15,15 +15,18 @@ type props = {
 
 const ManagingTab = ({communititesSearch, searchValue}: props) => {
   const navigation = useNavigation();
-  const {userCountry} = useProfile();
   const {managingCommunity} = useCommunities();
+  const {currentCity} = useAppStateHook();
 
   const [communitites, setCommunitites] = useState(
-    managingCommunity?.filter(i =>
-      i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
-    ),
+    managingCommunity
+      ?.filter(i =>
+        i?.location
+          ?.toLowerCase()
+          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      )
+      .map(ev => ev),
   );
-  const [communityLocation, setCommunityLocation] = useState(userCountry);
   const [openingFilters, setOpeningFilters] = useState(false);
 
   const [addedStyles, setAddedStyles] = useState<string[]>(
@@ -34,13 +37,24 @@ const ManagingTab = ({communititesSearch, searchValue}: props) => {
       setCommunitites(communititesSearch);
     }
   }, [communititesSearch, searchValue]);
+  useEffect(() => {
+    setCommunitites(
+      managingCommunity
+        ?.filter(i =>
+          i?.location
+            ?.toLowerCase()
+            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        )
+        .map(ev => ev),
+    );
+  }, [currentCity]);
 
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
       managingCommunity?.filter(i =>
-        i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+        i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
       ),
     );
   };
@@ -50,16 +64,10 @@ const ManagingTab = ({communititesSearch, searchValue}: props) => {
         item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );
       setCommunitites(data);
-    } else if (communityLocation?.length > 0) {
-      setCommunitites(
-        managingCommunity?.filter(i =>
-          i?.location?.toLowerCase().includes(communityLocation.toLowerCase()),
-        ),
-      );
     } else {
       setCommunitites(
         managingCommunity?.filter(i =>
-          i?.location?.toLowerCase().includes(userCountry.toLowerCase()),
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
         ),
       );
     }
@@ -134,8 +142,6 @@ const ManagingTab = ({communititesSearch, searchValue}: props) => {
         setSelectedStyles={setAddedStyles}
         onClear={onClear}
         onFilter={onFilter}
-        setCommunityLocation={setCommunityLocation}
-        communityLocation={communityLocation}
       />
     </>
   );

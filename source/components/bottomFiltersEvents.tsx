@@ -2,26 +2,14 @@ import React, {useEffect, useRef, useState} from 'react';
 import * as RN from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import CategorySelector from './catregorySelector';
-import {
-  dataDanceCategory,
-  statusBarHeight,
-  typesEvent,
-} from '../utils/constants';
+import {dataDanceCategory} from '../utils/constants';
 import colors from '../utils/colors';
 import {Button} from './Button';
-import {useProfile} from '../hooks/useProfile';
 import moment from 'moment';
 import BottomCalendarForEvents from './bottomCalendarForEvents';
 import {Portal} from 'react-native-portalize';
 import {getConstantsFromFirebase} from '../api/functions';
-import FindCity from './findCity';
 
-interface city {
-  structured_formatting: {
-    main_text: '';
-  };
-  terms: [{offset: 0; value: ''}, {offset: 1; value: ''}];
-}
 type props = {
   onClose: () => void;
   selectedStyles: string[];
@@ -33,8 +21,6 @@ type props = {
   setShowPassed?: () => void;
   eventType?: string;
   setEventType?: () => {};
-  eventLocation?: string;
-  setEventLocation: () => void;
   eventDate?: object;
   setEventDate?: () => {};
   onOpening?: boolean;
@@ -48,11 +34,9 @@ const FiltersBottomForEvents = ({
   currentTab,
   showPassed,
   setShowPassed = () => {},
-  eventLocation,
   eventDate,
   eventType,
   setEventType = () => {},
-  setEventLocation = () => {},
   setEventDate = () => {},
   onOpening,
 }: props) => {
@@ -64,12 +48,9 @@ const FiltersBottomForEvents = ({
 
   const typesEventData = ['All', ...eventTypes];
   const [choosedType, setChoosedType] = useState(eventType ?? 'All');
-  const {userCountry} = useProfile();
   const [startDate, setStartDate] = useState(eventDate?.start ?? null);
   const [endDate, setEndDate] = useState(eventDate?.end ?? null);
   const handleStyle = {height: 3, width: 38};
-  const [openLocation, setOpenLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<string>(userCountry);
 
   useEffect(() => {
     getConstantsFromFirebase().then(dc => setEventTypes(dc.typesEvents));
@@ -107,15 +88,10 @@ const FiltersBottomForEvents = ({
     setEndDate(null);
     setStartDate(null);
     setSelectedStyles([]);
-    setSelectedLocation(userCountry);
-    setEventLocation(userCountry);
     setEventDate(null);
     onClear();
   };
-  const onChooseLocation = (value) => {
-    setSelectedLocation(value);
-    setEventLocation(value);
-  }
+
   const onPressFilter = () => {
     // console.log(selectedLocation);
     modalizeRef.current?.close();
@@ -123,8 +99,7 @@ const FiltersBottomForEvents = ({
       selectedStyles.length > 0 ||
       choosedType !== 'All' ||
       startDate !== null ||
-      endDate !== null ||
-      selectedLocation?.length > 0
+      endDate !== null
     ) {
       onFilter();
     } else {
@@ -305,10 +280,6 @@ const FiltersBottomForEvents = ({
     );
   };
 
-  const onPressLocationOpen = () => {
-    setOpenLocation(true);
-  };
-
   useEffect(() => {
     if (startDate !== null) {
       setEventDate({start: startDate, end: endDate});
@@ -429,29 +400,6 @@ const FiltersBottomForEvents = ({
             {line()}
             <RN.TouchableOpacity
               style={styles.selectorContainer}
-              onPress={onPressLocationOpen}>
-              <RN.View>
-                <RN.Text style={styles.selectorTitle}>Location</RN.Text>
-                <RN.View style={styles.userLocationWrapper}>
-                  <RN.Image
-                    source={{uri: 'locate'}}
-                    style={{height: 16, width: 16}}
-                  />
-                  <RN.Text style={styles.userLocationText}>
-                    {selectedLocation}
-                  </RN.Text>
-                </RN.View>
-              </RN.View>
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Image
-                  source={{uri: 'arrowright'}}
-                  style={{height: 16, width: 16, tintColor: colors.black}}
-                />
-              </RN.View>
-            </RN.TouchableOpacity>
-            {line()}
-            <RN.TouchableOpacity
-              style={styles.selectorContainer}
               onPress={() => dateModalizeRef?.current?.open()}>
               <RN.View>
                 <RN.Text style={styles.selectorTitle}>Date</RN.Text>
@@ -513,15 +461,6 @@ const FiltersBottomForEvents = ({
         </Modalize>
         {renderSelectStyle()}
         {renderCalendar()}
-        {openLocation && (
-          <FindCity
-            selectedLocation={selectedLocation}
-            setSelectedLocation={value =>
-              onChooseLocation(value?.structured_formatting?.main_text)
-            }
-            onClosed={() => setOpenLocation(false)}
-          />
-        )}
       </Portal>
     </>
   );

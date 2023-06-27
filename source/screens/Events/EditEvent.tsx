@@ -110,7 +110,7 @@ const EditEvent = () => {
   }, [isErrorName, isDescriptionError]);
   // console.log(selectedLocation)
   const onPressSaveChanges = () => {
-    const eventDate = {
+    const eventDateEd = {
       time: time,
       startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
       endDate: endDate ?? moment(new Date()).format('YYYY-MM-DD'),
@@ -135,7 +135,7 @@ const EditEvent = () => {
         location: locationEdt,
         categories: addedStyles,
         images: imgs,
-        eventDate: eventDate,
+        eventDate: eventDateEd,
         place: selectedPlace,
         eventUid: eventUid,
         typeEvent: typeEventEdit,

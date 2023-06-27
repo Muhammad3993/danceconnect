@@ -2,7 +2,6 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
-import {SCREEN_WIDTH} from '../../utils/constants';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {useCommunities} from '../../hooks/useCommunitites';
@@ -14,6 +13,7 @@ import EventCard from '../../components/eventCard';
 import sotrtBy from 'lodash.sortby';
 import moment from 'moment';
 import Carousel from '../../components/carousel';
+import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
 
 const CommunityScreen = () => {
   const routeProps = useRoute();
@@ -39,6 +39,14 @@ const CommunityScreen = () => {
   } = useEvents();
   const [currentTab, setCurrentTab] = useState(TABS[0]);
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const upcomingEvents =
     eventsDataById?.filter(
@@ -374,17 +382,17 @@ const CommunityScreen = () => {
       </>
     );
   };
+  useEffect(() => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
+  }, [loading]);
+
+  if (loading) {
+    return <SkeletonCommunityScreen />;
+  }
+
   return (
     <RN.ScrollView style={styles.container}>
       {header()}
-      {/* <RN.Image
-        source={
-          displayedData?.images?.length > 0
-            ? {uri: 'data:image/png;base64,' + displayedData?.images[0]?.base64}
-            : require('../../assets/images/default.jpeg')
-        }
-        style={{height: 350, width: SCREEN_WIDTH}}
-      /> */}
       <Carousel items={displayedData?.images} />
       {renderTitle()}
       {renderMapInfoOrganizer()}

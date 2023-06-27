@@ -76,21 +76,28 @@ const BottomCalendar = ({
   }, []);
 
   const onPressSetTime = () => {
-    // onTimePicker(time);
     setOpeningTime(v => !v);
   };
   const onTimePicker = (times: any) => {
-    // console.log(moment(times?.getTime()).format('HH:mm'));
-
-    // const timeSelect = isAndroid ? new Date(times).getTime() : times?.timestamp;
-    // setValue(times);
-    setTime(times?.getTime());
+    if (isAndroid) {
+      setTime(times?.getTime());
+    } else {
+      setTime(times?.nativeEvent?.timestamp);
+    }
   };
 
   const renderTimePickerIOS = () => {
     return (
       <>
-        <DateTimePicker onChange={onTimePicker} />
+        <DateTimePicker
+          value={new Date(time)}
+          onChange={onTimePicker}
+          mode="time"
+          display="spinner"
+          locale="en-ES"
+          minuteInterval={15}
+          textColor={colors.textPrimary}
+        />
         <RN.View style={{marginBottom: 18}}>
           <Button
             disabled

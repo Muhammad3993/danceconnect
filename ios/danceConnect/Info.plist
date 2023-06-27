@@ -25,9 +25,11 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLIconFile</key>
+			<string>logo</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.510785169210-2jkaoa7h4b3dhrdccgqv0oee2nlns9vu</string>
+				<string>com.googleusercontent.apps.510785169210-tfjjn0dsov6rv1qeu5t068p3aar5aqdp</string>
 			</array>
 		</dict>
 	</array>
@@ -46,8 +48,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To install images in the community and events, allow the application access to photos</string>
+	<!-- <key>NSLocationWhenInUseUsageDescription</key> -->
+	<!-- <string>To more accurately determine your location for the display of the community</string> -->
 	<key>UIAppFonts</key>
 	<array>
 		<string>Mulish-Regular.ttf</string>

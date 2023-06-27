@@ -5,6 +5,7 @@ export type appStateAction = {
   type: string;
   payload: {
     onLoading: boolean;
+    currentCity: string;
   };
 };
 
@@ -14,6 +15,11 @@ export default (state = appStateInitialState, action: appStateAction) => {
       return {
         ...state,
         onLoading: action.payload.onLoading,
+      };
+    case APP_STATE.SET_CITY:
+      return {
+        ...state,
+        currentCity: action.payload.currentCity,
       };
     default:
       return state;

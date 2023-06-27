@@ -36,7 +36,7 @@ import {
   getCommunitiesRequestAction,
 } from '../actions/communityActions';
 import {getEventsRequestAction} from '../actions/eventActions';
-import {setLoadingAction} from '../actions/appStateActions';
+import {choosedCityAction, setLoadingAction} from '../actions/appStateActions';
 
 function* registrationEmail(action: any) {
   try {
@@ -122,6 +122,7 @@ function* logoutUser() {
     yield put(logoutSuccess());
     yield put(clearUserDataInStorage());
     yield put(clearCommunititesData());
+    yield put(choosedCityAction({currentCity: ''}));
   } catch (error) {
     yield put(logoutFail(error));
   }
