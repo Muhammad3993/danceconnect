@@ -132,8 +132,6 @@ const CreateCommunity = () => {
   const onChooseImage = async () => {
     let options = {
       mediaType: 'image',
-      maxWidth: 1300,
-      maxHeight: 1550,
       quality: 1,
       includeBase64: true,
     };
@@ -188,12 +186,12 @@ const CreateCommunity = () => {
   const renderFooter = () => {
     return (
       <RN.View style={styles.footerWrapper}>
-        <Button
+        {/* <Button
           title="Clear All"
           disabled
           buttonStyle={styles.clearBtn}
           onPress={onClear}
-        />
+        /> */}
         <Button
           title="Create Community"
           disabled
@@ -555,11 +553,11 @@ const styles = RN.StyleSheet.create({
   },
   createBtn: {
     marginVertical: 14,
-    paddingHorizontal: 24,
+    // paddingHorizontal: 24,
   },
   footerWrapper: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    // flexDirection: 'row',
+    // justifyContent: 'space-around',
     paddingHorizontal: 14,
     borderTopColor: colors.gray,
     borderTopWidth: 1,

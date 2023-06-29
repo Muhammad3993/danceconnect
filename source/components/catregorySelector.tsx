@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
-import {getConstantsFromFirebase} from '../api/functions';
-
+import useAppStateHook from '../hooks/useAppState';
 interface itemProp {
   title: string;
   id: number;
@@ -20,15 +19,18 @@ const CategorySelector = ({
   addedStyles,
 }: selectopProps) => {
   const [currentIndex, setCurrentIndex] = useState(null);
-  const [danceStyles, setDanceStyles] = useState([]);
+  const {danceStyles, getDanceStyles} = useAppStateHook();
+  const [dStyles, setDStyles] = useState(danceStyles);
 
+  useEffect(() => {
+    getDanceStyles();
+    setDStyles(danceStyles);
+  }, [danceStyles?.length]);
   const onSelectItem = (key: React.SetStateAction<null>) => {
     setCurrentIndex(key === currentIndex ? null : key);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   };
-  useEffect(() => {
-    getConstantsFromFirebase().then(dc => setDanceStyles(dc.danceStyles));
-  }, []);
+
   const renderStyles = (items: any[]) => {
     return (
       <>
@@ -92,7 +94,7 @@ const CategorySelector = ({
   return (
     <RN.View style={styles.mainContainer}>
       <RN.FlatList
-        data={Object.values(danceStyles)}
+        data={Object.values(dStyles)}
         renderItem={item => renderItem(item)}
         keyExtractor={(item, index) => `${item}-${index}`}
       />

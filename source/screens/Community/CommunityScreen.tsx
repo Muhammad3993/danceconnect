@@ -14,6 +14,7 @@ import sotrtBy from 'lodash.sortby';
 import moment from 'moment';
 import Carousel from '../../components/carousel';
 import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
+import { statusBarHeight } from '../../utils/constants';
 
 const CommunityScreen = () => {
   const routeProps = useRoute();
@@ -542,7 +543,7 @@ const styles = RN.StyleSheet.create({
     margin: 12,
     marginHorizontal: 24,
     borderRadius: 50,
-    top: 24,
+    top: statusBarHeight + 14,
   },
   moreIconContainer: {
     padding: 8,
@@ -554,7 +555,7 @@ const styles = RN.StyleSheet.create({
     margin: 12,
     marginHorizontal: 24,
     borderRadius: 50,
-    top: 24,
+    top: statusBarHeight + 14,
   },
   settingIconContainer: {
     padding: 8,
@@ -566,7 +567,7 @@ const styles = RN.StyleSheet.create({
     margin: 12,
     marginHorizontal: 24,
     borderRadius: 50,
-    top: 24,
+    top: statusBarHeight + 14,
   },
   backIcon: {
     height: 22,
@@ -639,7 +640,7 @@ const styles = RN.StyleSheet.create({
     position: 'absolute',
     zIndex: 3,
     right: 26,
-    top: 80,
+    top: statusBarHeight + 80,
     borderRadius: 8,
     padding: 16,
   },

@@ -15,6 +15,7 @@ type InputProp = {
   maxLength?: number;
   multiLine?: boolean;
   autoComplete?: string;
+  autoFocus?: boolean;
 };
 
 export const Input = ({
@@ -29,6 +30,7 @@ export const Input = ({
   maxLength,
   multiLine = false,
   autoComplete,
+  autoFocus = false,
 }: InputProp) => {
   const [backgroundColor, setBackgroundColor] = useState(colors.lightGray);
   const [borderColor, setBorderColor] = useState(colors.gray);
@@ -138,6 +140,7 @@ export const Input = ({
         onBlur={onBlur}
         multiline={multiLine}
         autoComplete={autoComplete}
+        autoFocus={autoFocus}
       />
 
       {secureText && renderRightIcon()}

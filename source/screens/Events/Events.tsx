@@ -227,8 +227,8 @@ const EventsScreen = () => {
   return (
     <RN.SafeAreaView style={styles.container}>
       {renderHeader()}
-      {loadingEvents && !loadingAttend && renderLoading()}
-      {!loadingEvents && renderWrapper()}
+      {/* {loadingEvents && !loadingAttend && renderLoading()} */}
+      {renderWrapper()}
       <CitySelector
         opening={openModal}
         onClose={() => setOpenModal(false)}

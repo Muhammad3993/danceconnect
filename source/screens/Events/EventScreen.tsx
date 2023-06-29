@@ -9,7 +9,7 @@ import {useProfile} from '../../hooks/useProfile';
 import {Button} from '../../components/Button';
 import useEvents from '../../hooks/useEvents';
 import useRegistration from '../../hooks/useRegistration';
-import {SCREEN_WIDTH} from '../../utils/constants';
+import {SCREEN_WIDTH, statusBarHeight} from '../../utils/constants';
 import SkeletonEventScreen from '../../components/skeleton/EventScreen-Skeleton';
 
 const EventScreen = () => {
@@ -173,7 +173,10 @@ const EventScreen = () => {
           </RN.Text>
           <RN.Text style={{color: colors.darkGray}}>{`GMT ${moment(
             displayedData?.eventDate?.time,
-          ).format('Z')}`}</RN.Text>
+          )
+            .format('Z')
+            ?.replaceAll('0', '')
+            ?.replace(':', '')}`}</RN.Text>
         </RN.View>
       </RN.View>
     );
@@ -486,7 +489,7 @@ const styles = RN.StyleSheet.create({
     margin: 12,
     marginHorizontal: 24,
     borderRadius: 50,
-    top: 24,
+    top: statusBarHeight + 8,
   },
   moreIconContainer: {
     padding: 8,
@@ -498,7 +501,7 @@ const styles = RN.StyleSheet.create({
     margin: 12,
     marginHorizontal: 24,
     borderRadius: 50,
-    top: 24,
+    top: statusBarHeight + 8,
   },
   backIcon: {
     height: 22,
@@ -572,7 +575,7 @@ const styles = RN.StyleSheet.create({
     margin: 12,
     marginHorizontal: 24,
     borderRadius: 50,
-    top: 24,
+    top: statusBarHeight + 8,
   },
   unFollowContainer: {
     backgroundColor: colors.white,
@@ -580,7 +583,7 @@ const styles = RN.StyleSheet.create({
     position: 'absolute',
     zIndex: 3,
     right: 26,
-    top: 80,
+    top: statusBarHeight + 80,
     borderRadius: 8,
     padding: 16,
   },

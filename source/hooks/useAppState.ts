@@ -1,10 +1,13 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
   selectCurrentCity,
+  selectDanceStyles,
+  selectEventTypes,
   selectLoading,
 } from '../store/selectors/appStateSelector';
 import {
   choosedCityAction,
+  getDanceStylesAction,
   setLoadingAction,
 } from '../store/actions/appStateActions';
 import {useEffect} from 'react';
@@ -15,6 +18,8 @@ const useAppStateHook = () => {
   const onLoading = useSelector(selectLoading);
   const currentCity = useSelector(selectCurrentCity);
   const userCountry = useSelector(getUserCountry);
+  const danceStyles = useSelector(selectDanceStyles);
+  const eventTypes = useSelector(selectEventTypes);
 
   useEffect(() => {
     if (!currentCity?.length) {
@@ -30,11 +35,18 @@ const useAppStateHook = () => {
   const setLoading = (load: boolean) => {
     dispatch(setLoadingAction({onLoading: load}));
   };
+  const getDanceStyles = () => {
+    dispatch(getDanceStylesAction());
+  };
+
   return {
     onLoading,
     setLoading,
     currentCity,
     onChoosedCity,
+    danceStyles,
+    eventTypes,
+    getDanceStyles,
   };
 };
 export default useAppStateHook;

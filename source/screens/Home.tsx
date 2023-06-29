@@ -9,17 +9,18 @@ import useEvents from '../hooks/useEvents';
 import EventCard from '../components/eventCard';
 import EmptyContainer from '../components/emptyCommunitiesMain';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {getConstantsFromFirebase} from '../api/functions';
 import {ScrollView} from 'react-native-gesture-handler';
 import database from '@react-native-firebase/database';
 import VerticalCard from '../components/verticalEventCard';
 import moment from 'moment';
+import useAppStateHook from '../hooks/useAppState';
 
 const HomeScreen = () => {
-  const {userImgUrl, individualStyles} = useProfile();
+  const {userImgUrl, individualStyles, getCurrentUser} = useProfile();
   const {userUid} = useRegistration();
   const navigation = useNavigation();
-  const [tabs, setTabs] = useState([]);
+  const {eventTypes, getDanceStyles} = useAppStateHook();
+  const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
   const {attendEventWithUserUid, loadingEvents, getEvents, eventList} =
     useEvents();
@@ -29,8 +30,13 @@ const HomeScreen = () => {
 
   const [maybeEvents, setMaybeEvents] = useState([]);
   useEffect(() => {
-    getConstantsFromFirebase().then(dc => setTabs(['All', ...dc.typesEvents]));
+    setTabs(['All', ...eventTypes]);
+  }, [eventTypes?.length]);
+
+  useEffect(() => {
+    getDanceStyles();
     setCurrentTab('All');
+    getCurrentUser();
     setEvents(attendEventWithUserUid);
   }, []);
 

@@ -96,8 +96,6 @@ const EditCommunity = () => {
   const onChooseImage = async () => {
     let options = {
       mediaType: 'image',
-      maxWidth: 1300,
-      maxHeight: 1550,
       quality: 1,
       includeBase64: true,
     };

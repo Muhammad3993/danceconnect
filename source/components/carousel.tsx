@@ -115,12 +115,12 @@ const Carousel = ({items}: any) => {
 
 const styles = StyleSheet.create({
   slide: {
-    height: 350,
-    width: SCREEN_WIDTH,
+    height: 450,
+    // width: SCREEN_WIDTH,
   },
   slideImage: {
     width: SCREEN_WIDTH,
-    height: 350,
+    height: 450,
   },
   pagination: {
     justifyContent: 'flex-end',

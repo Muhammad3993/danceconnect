@@ -8,4 +8,10 @@ export default {
   userData: null,
   userUid: '',
   userByIdData: null,
+  name: '',
+  gender: '',
+  profileImg: {},
+  newPassword: '',
+  changePasswordSuccess: false,
+  changePasswordErrors: null,
 };

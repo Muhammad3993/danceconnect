@@ -11,9 +11,14 @@ import useAppStateHook from '../../../hooks/useAppState';
 type props = {
   communititesSearch: string[];
   searchValue: string;
+  removedCommunity: boolean | null;
 };
 
-const ManagingTab = ({communititesSearch, searchValue}: props) => {
+const ManagingTab = ({
+  communititesSearch,
+  searchValue,
+  removedCommunity,
+}: props) => {
   const navigation = useNavigation();
   const {managingCommunity} = useCommunities();
   const {currentCity} = useAppStateHook();
@@ -41,13 +46,11 @@ const ManagingTab = ({communititesSearch, searchValue}: props) => {
     setCommunitites(
       managingCommunity
         ?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)),
+          i?.location?.toLowerCase().includes(currentCity?.toLowerCase()),
         )
         .map(ev => ev),
     );
-  }, [currentCity]);
+  }, [currentCity, removedCommunity]);
 
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -83,7 +86,7 @@ const ManagingTab = ({communititesSearch, searchValue}: props) => {
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There is no community yet</RN.Text>
+        <RN.Text style={styles.emptyText}>There are no community yet</RN.Text>
       </RN.View>
     );
   };

@@ -8,18 +8,16 @@ import CategorySelector from '../../components/catregorySelector';
 import {
   dataDanceCategory,
   isAndroid,
-  locationData,
   statusBarHeight,
-  typesEvent,
 } from '../../utils/constants';
 import {launchImageLibrary} from 'react-native-image-picker';
 import BottomCalendar from '../../components/bottomCalendar';
 import moment from 'moment';
 import useEvents from '../../hooks/useEvents';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {getConstantsFromFirebase} from '../../api/functions';
 import FindCity from '../../components/findCity';
 import FindPlace from '../../components/findPlace';
+import useAppStateHook from '../../hooks/useAppState';
 interface city {
   structured_formatting: {
     main_text: '';
@@ -61,7 +59,8 @@ const EditEvent = () => {
   const [time, setTime] = useState(new Date().getTime());
   const [startDate, setStartDate] = useState(eventDate?.startDate);
   const [endDate, setEndDate] = useState(eventDate?.endDate);
-  const [eventTypes, setEventTypes] = useState([]);
+  const {eventTypes} = useAppStateHook();
+
   const [openPlace, setOpenPlace] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<string>(place ?? '');
   const [openLocation, setOpenLocation] = useState(false);
@@ -77,9 +76,7 @@ const EditEvent = () => {
   const [addedStyles, setAddedStyles] = useState<string[]>(categories);
   const [imgs, setImages] = useState(images);
   const [typeEventEdit, setTypeEvent] = useState(typeEvent);
-  useEffect(() => {
-    getConstantsFromFirebase().then(dc => setEventTypes(dc.typesEvents));
-  }, []);
+
   const onChoosheDanceStyle = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const isAvailable = addedStyles?.includes(value);

@@ -24,3 +24,7 @@ export const userDanceStyles = (state: IRootState) =>
   state?.registration?.individualStyles?.length > 0
     ? state?.registration?.individualStyles
     : state?.profile?.userData?.individualStyles;
+export const isSuccessResetPassword = (state: IRootState) =>
+  state.profile?.changePasswordSuccess ?? false;
+export const changePasswordErrors = (state: IRootState) =>
+  state.profile?.changePasswordErrors ?? null;

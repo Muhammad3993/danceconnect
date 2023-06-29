@@ -9,7 +9,6 @@ import {
   AuthStackNavigationParamList,
   MainStackNavigationParamList,
   navigationRef,
-  // RootStackNavigationParamList,
 } from './types';
 import WeclomeScreen from '../screens/Auth/WelcomeScreen';
 import RegistraionScreen from '../screens/Auth/Registration';
@@ -20,7 +19,7 @@ import Board from '../screens/Auth/Board';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import colors from '../utils/colors';
 import BottomTabs from '../components/bottomTabs';
-import ProfileScreen from '../screens/Profile';
+import ProfileScreen from '../screens/Profile/Profile';
 import CommunitiesScreen from '../screens/Community/Communities';
 import EventsScreen from '../screens/Events/Events';
 import CreateCommunity from '../screens/Community/CreateCommunity';
@@ -30,6 +29,8 @@ import CreateEvent from '../screens/Events/CreateEvent';
 import EventScreen from '../screens/Events/EventScreen';
 import EditEvent from '../screens/Events/EditEvent';
 import {Host} from 'react-native-portalize';
+import DanceStylesProfile from '../screens/Profile/EditDanceStylesProfile';
+import ChangeProfile from '../screens/Profile/ChangeProfile';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -38,6 +39,7 @@ const Tabs = createBottomTabNavigator();
 const CommunityStack = createStackNavigator();
 const EventsStack = createStackNavigator();
 const HomeStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 const CommunityNavigator = () => {
   return (
     <CommunityStack.Navigator
@@ -71,11 +73,6 @@ const EventsNavigator = () => {
       <EventsStack.Screen name="CreateEvent" component={CreateEvent} />
       <EventsStack.Screen name="EventScreen" component={EventScreen} />
       <EventsStack.Screen name="EditEvent" component={EditEvent} />
-      {/* <EventsStack.Screen
-        name="Filters"
-        component={FiltersBottomForEvents}
-        options={{presentation: 'transparentModal'}}
-      /> */}
     </EventsStack.Navigator>
   );
 };
@@ -87,6 +84,20 @@ const HomeNavigator = () => {
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="EventScreen" component={EventScreen} />
     </HomeStack.Navigator>
+  );
+};
+const ProfileNavigator = () => {
+  return (
+    <ProfileStack.Navigator
+      initialRouteName="Profile"
+      screenOptions={{headerShown: false, gestureEnabled: false}}>
+      <ProfileStack.Screen name="Profile" component={ProfileScreen} />
+      <ProfileStack.Screen
+        name="ProfileDanceStyles"
+        component={DanceStylesProfile}
+      />
+      <ProfileStack.Screen name="ChangeProfile" component={ChangeProfile} />
+    </ProfileStack.Navigator>
   );
 };
 const TabsNavigator = () => {
@@ -111,6 +122,12 @@ const TabsNavigator = () => {
           if (routeName === 'EditEvent') {
             return {display: 'none'};
           }
+          if (routeName === 'ChangeProfile') {
+            return {display: 'none'};
+          }
+          if (routeName === 'ProfileDanceStyles') {
+            return {display: 'none'};
+          }
           return {display: 'flex'};
         })(route),
       })}
@@ -118,7 +135,7 @@ const TabsNavigator = () => {
       <Tabs.Screen name="Home" component={HomeNavigator} />
       <Tabs.Screen name="Communities" component={CommunityNavigator} />
       <Tabs.Screen name="Events" component={EventsNavigator} />
-      <Tabs.Screen name="Profile" component={ProfileScreen} />
+      <Tabs.Screen name="Profile" component={ProfileNavigator} />
     </Tabs.Navigator>
   );
 };

@@ -37,10 +37,13 @@ const rootState = {
 const rootPersistConfig = {
   key: 'keyOfStore',
   storage: AsyncStorage,
-  timeout: null,
+  timeout: 3600000,
   // blacklist: ['communities'],
 };
-let middleware = applyMiddleware(sagaMiddleware, loggerMiddleware);
+let middleware = applyMiddleware(sagaMiddleware);
+if (__DEV__) {
+  middleware = applyMiddleware(sagaMiddleware, loggerMiddleware);
+}
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);
 const store = createStore(persistedReducer, rootState, middleware);
 sagaMiddleware.run(rootSaga);

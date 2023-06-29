@@ -8,7 +8,7 @@ import {Button} from './Button';
 import moment from 'moment';
 import BottomCalendarForEvents from './bottomCalendarForEvents';
 import {Portal} from 'react-native-portalize';
-import {getConstantsFromFirebase} from '../api/functions';
+import useAppStateHook from '../hooks/useAppState';
 
 type props = {
   onClose: () => void;
@@ -43,8 +43,7 @@ const FiltersBottomForEvents = ({
   const modalizeRef = useRef<Modalize>(null);
   const danceStyleModalizeRef = useRef<Modalize>(null);
   const dateModalizeRef = useRef<Modalize>(null);
-
-  const [eventTypes, setEventTypes] = useState([]);
+  const {eventTypes} = useAppStateHook();
 
   const typesEventData = ['All', ...eventTypes];
   const [choosedType, setChoosedType] = useState(eventType ?? 'All');
@@ -53,7 +52,6 @@ const FiltersBottomForEvents = ({
   const handleStyle = {height: 3, width: 38};
 
   useEffect(() => {
-    getConstantsFromFirebase().then(dc => setEventTypes(dc.typesEvents));
     setChoosedType('All');
   }, []);
   const onChoosheDanceStyle = (value: string) => {
@@ -281,10 +279,10 @@ const FiltersBottomForEvents = ({
   };
 
   useEffect(() => {
-    if (startDate !== null) {
+    if (startDate?.start !== null) {
       setEventDate({start: startDate, end: endDate});
     }
-    // console.log('useEffect', startDate, endDate);
+    // console.log('useEffect', startDate, endDate, endDate?.end);
   }, [startDate, endDate]);
 
   const renderCalendar = () => {
@@ -327,7 +325,7 @@ const FiltersBottomForEvents = ({
         // modalStyle={{marginTop: statusBarHeight * 2}}
         HeaderComponent={headerDate()}>
         <BottomCalendarForEvents
-          onClose={onPressBack}
+          onClose={() => dateModalizeRef?.current?.close()}
           end={endDate}
           start={startDate}
           setStart={setStartDate}
@@ -337,7 +335,7 @@ const FiltersBottomForEvents = ({
     );
   };
 
-  const onPressCleareDate = () => {
+  const onPressClearDate = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setStartDate(null);
     setEndDate(null);
@@ -406,15 +404,18 @@ const FiltersBottomForEvents = ({
                 {startDate !== null && startDate?.start !== null && (
                   <RN.TouchableOpacity
                     style={styles.selectedDateWrapper}
-                    onPress={onPressCleareDate}>
+                    onPress={onPressClearDate}>
                     <RN.Text
                       style={[styles.userLocationText, {color: colors.orange}]}>
                       {`${
                         startDate !== null &&
                         moment(startDate).format('DD.MM.YYYY')
                       }${
-                        endDate !== null &&
-                        '-' + moment(endDate).format('DD.MM.YYYY')
+                        endDate !== null
+                          ? '-' + moment(endDate).format('DD.MM.YYYY')
+                          : endDate?.end !== undefined
+                          ? '-' + moment(endDate).format('DD.MM.YYYY')
+                          : ''
                       }`}
                     </RN.Text>
                     <RN.View style={{justifyContent: 'center'}}>

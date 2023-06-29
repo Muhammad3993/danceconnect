@@ -14,6 +14,12 @@ export type profileAction = {
     isLoading: false;
     userUid?: '';
     userByIdData?: null;
+    name?: string;
+    gender?: string;
+    profileImg?: object;
+    newPassword?: string;
+    changePasswordSuccess?: boolean;
+    changePasswordErrors?: null;
   };
 };
 
@@ -55,6 +61,47 @@ export default (state = profileInitialState, action: profileAction) => {
       return {
         ...state,
         userByIdData: null,
+      };
+    case PROFILE.CHANGE_DATA_REQUEST:
+      return {
+        ...state,
+        name: action.payload?.name,
+        gender: action.payload?.gender,
+        profileImg: action.payload?.profileImg,
+      };
+    case PROFILE.CHANGE_DATA_SUCCESS:
+      return {
+        ...state,
+        name: '',
+        gender: '',
+        profileImg: {},
+      };
+    case PROFILE.CHANGE_DATA_FAIL:
+      return {
+        ...state,
+        name: '',
+        gender: '',
+        profileImg: {},
+      };
+    case PROFILE.CHANGE_PASSWORD_REQUEST:
+      return {
+        ...state,
+        newPassword: action.payload?.newPassword,
+        changePasswordErrors: null,
+      };
+    case PROFILE.CHANGE_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        newPassword: '',
+        changePasswordSuccess: action.payload?.changePasswordSuccess,
+        changePasswordErrors: null,
+      };
+    case PROFILE.CHANGE_PASSWORD_FAIL:
+      return {
+        ...state,
+        newPassword: '',
+        changePasswordSuccess: action.payload?.changePasswordSuccess,
+        changePasswordErrors: action.payload?.changePasswordErrors,
       };
     default:
       return state;

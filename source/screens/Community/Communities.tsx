@@ -48,16 +48,16 @@ const CommunitiesScreen = () => {
     }
   };
 
-  // console.log('removedCommunity', removedCommunity);
+  // console.log('removedCommunity', removedCommunity, routeProps, navigation);
   useEffect(() => {
     if (removedCommunity) {
-      getCommunitites();
       onPressTab('Managing');
+      getCommunitites();
     }
   }, [removedCommunity]);
 
   useEffect(() => {
-    getCommunitites();
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
   const onChangeTextSearch = useCallback(
@@ -182,6 +182,7 @@ const CommunitiesScreen = () => {
           <ManagingTab
             searchValue={searchValue}
             communititesSearch={communititesSearch}
+            removedCommunity={removedCommunity}
           />
         );
 
@@ -193,12 +194,12 @@ const CommunitiesScreen = () => {
           />
         );
     }
-  }, [currentTab, communititesSearch, searchValue]);
+  }, [currentTab, communititesSearch, searchValue, removedCommunity]);
 
   return (
     <RN.SafeAreaView style={styles.container}>
       {renderHeader()}
-      {isLoading && !isLoadingWithFollow && renderLoading()}
+      {/* {isLoading && !isLoadingWithFollow && renderLoading()} */}
       {renderWrapper()}
       <CitySelector
         opening={openModal}

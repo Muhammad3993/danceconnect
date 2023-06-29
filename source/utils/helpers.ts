@@ -58,6 +58,12 @@ export const setErrors = (valueError: string) => {
     };
   }
 
+  if (valueError?.includes('auth/requires-recent-login')) {
+    return {
+      message: 'Log in again before retrying this request.',
+      type: ['password'],
+    };
+  }
   return '';
 };
 

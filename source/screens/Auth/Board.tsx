@@ -20,7 +20,7 @@ interface city {
 const Board = () => {
   const [crntSlide, setCrntSlide] = useState(0);
   const {userName, isRegistrationsSuccess, setUserData} = useRegistration();
-  const {onChoosedCity} = useAppStateHook();
+  const {onChoosedCity, getDanceStyles} = useAppStateHook();
   const [name, setName] = useState<string>(userName);
   const [gender, setGender] = useState();
   const [country, setCountry] = useState('');
@@ -30,6 +30,9 @@ const Board = () => {
   const [selectedLocation, setSelectedLocation] = useState<city>(Object);
   const navigation = useNavigation<AuthStackNavigationParamList>();
 
+  useEffect(() => {
+    getDanceStyles();
+  }, []);
   const onPressRole = (item: any) => {
     const filter = role.filter(itm => itm !== item);
     if (role?.includes(item)) {

@@ -10,6 +10,7 @@ import useRegistration from '../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
 import {getImgsAttendedPeopleToEvent} from '../api/functions';
 import {minWeekDay} from '../utils/helpers';
+import SkeletonEventCard from './skeleton/eventCard-Skeleton';
 
 type props = {
   item?: any;
@@ -21,10 +22,11 @@ const EventCard = ({item}: props) => {
 
   const {userUid} = useRegistration();
   const isPassedEvent =
-    moment(data.eventDate?.startDate).format('YYYY-MM-DD') <
-    moment.utc(new Date()).format('YYYY-MM-DD');
+    moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
+    moment(new Date()).format('YYYY-MM-DD');
   const {loadingAttend, attendEvent, eventsDataById, eventList} = useEvents();
   const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(false);
   const [crntIndex, setCrntIndex] = useState(null);
   const index = eventsDataById?.findIndex(
     (itm: any) => itm.eventUid === data.id,
@@ -50,6 +52,7 @@ const EventCard = ({item}: props) => {
   };
 
   useEffect(() => {
+    setLoadingData(true);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const onValueChange = database()
       .ref(`events/${data?.eventUid}`)
@@ -60,18 +63,12 @@ const EventCard = ({item}: props) => {
           ?.attendedPeople?.map(i => i.userUid)
           .slice(0, 3);
         getImgsAttendedPeopleToEvent(ids).then(imgs => setAttendedImgs(imgs));
+        setLoadingData(false);
       });
 
     return () =>
       database().ref(`events/${data?.eventUid}`).off('value', onValueChange);
   }, [data.communityUid, data?.eventUid]);
-
-  // useEffect(() => {
-  //   const ids = data?.attendedPeople?.map(i => i.userUid).slice(0, 3);
-  //   getImgsAttendedPeopleToEvent(ids).then(imgs => setAttendedImgs(imgs));
-  //   // console.log(ids);
-  // }, []);
-  // console.log(attendedImgs);
 
   const renderTags = (tags: string[]) => {
     return (
@@ -192,7 +189,13 @@ const EventCard = ({item}: props) => {
       </RN.View>
     );
   };
-
+  if (loadingData) {
+    return (
+      <RN.View style={{marginTop: 16}}>
+        <SkeletonEventCard />
+      </RN.View>
+    );
+  }
   return (
     <RN.TouchableOpacity
       style={styles.container}
@@ -238,7 +241,8 @@ const EventCard = ({item}: props) => {
                 style={{height: 16, width: 16}}
               />
             </RN.View>
-            <RN.View style={{justifyContent: 'center', maxWidth: SCREEN_WIDTH / 1.8}}>
+            <RN.View
+              style={{justifyContent: 'center', maxWidth: SCREEN_WIDTH / 1.8}}>
               <RN.Text numberOfLines={1} style={styles.placeName}>
                 {eventData?.place}
               </RN.Text>

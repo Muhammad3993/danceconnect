@@ -113,9 +113,10 @@ const BottomCalendarForEvents = ({
   };
 
   const onPressFinished = () => {
-    // console.log('onPressFinished', startDate, endDate)
     setStart(startDate);
+    setStartDate(startDate);
     setEnd(endDate);
+    setEndDate(endDate);
     onClose();
     // onClosed();
   };

@@ -35,6 +35,7 @@ import {
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
+import {setLoadingAction} from '../actions/appStateActions';
 
 function* getCommunitiesRequest() {
   try {
@@ -71,6 +72,7 @@ function* createCommunityRequest(action: any) {
     action?.payload;
   try {
     const creatorUid = yield select(selectUserUid);
+    yield put(setLoadingAction({onLoading: true}));
     yield call(
       createCommunity,
       name,
@@ -82,18 +84,16 @@ function* createCommunityRequest(action: any) {
       images,
     );
     yield put(createCommunitySuccessAction());
-    setTimeout(() => {
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'CommunitiesMain',
-          params: {
-            createdCommunity: true,
-          },
-        }),
-      );
-    }, 500);
-
+    navigationRef.current?.dispatch(
+      CommonActions.navigate({
+        name: 'CommunitiesMain',
+        params: {
+          createdCommunity: true,
+        },
+      }),
+    );
     yield put(getCommunitiesRequestAction());
+    yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     console.log('createCommunityRequest error', error);
     yield put(createCommunityFailAction(error));
@@ -170,19 +170,19 @@ function* changeInformation(action: any) {
 
 function* removeCommunityRequest(action: any) {
   try {
+    yield put(setLoadingAction({onLoading: true}));
     yield call(removeCommunity, action?.payload?.uid);
     yield put(removeCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
-    setTimeout(() => {
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'CommunitiesMain',
-          params: {
-            removedCommunity: true,
-          },
-        }),
-      );
-    }, 500);
+    navigationRef.current?.dispatch(
+      CommonActions.navigate({
+        name: 'CommunitiesMain',
+        params: {
+          removedCommunity: true,
+        },
+      }),
+    );
+    yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     yield put(removeCommunityFailAction());
   }

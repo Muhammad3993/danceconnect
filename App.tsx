@@ -36,7 +36,7 @@ const App = () => {
           </PersistGate>
         </ReduxProvider>
       </SafeAreaView>
-      </GestureHandlerRootView>
+    </GestureHandlerRootView>
   );
 };
 

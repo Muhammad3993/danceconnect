@@ -1,15 +1,33 @@
 import {call, debounce, put, select, takeLatest} from 'redux-saga/effects';
 import {PROFILE} from '../actionTypes/profileActionTypes';
 import {
+  changePasswordFailAction,
+  changePasswordSuccessAction,
+  changeUserDanceStylesFailAction,
+  changeUserDanceStylesSuccessAction,
+  changeUserInformationFailAction,
+  changeUserInformationRequestAction,
+  changeUserInformationSuccessAction,
   getUserByIdFailAction,
   getUserByIdSuccessAction,
   getUserDataFailAction,
+  getUserDataRequestAction,
   getuserDataSuccessAction,
 } from '../actions/profileActions';
 import {selectUserUid} from '../selectors/registrationSelector';
-import {getUserData, getUserDataById} from '../../api/functions';
+import {
+  changeProfileInformation,
+  changeUserDanceStyles,
+  changeUserPassword,
+  getUserData,
+  getUserDataById,
+} from '../../api/functions';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {getEventsRequestAction} from '../actions/eventActions';
+import {setLoadingAction} from '../actions/appStateActions';
+import {navigationRef} from '../../navigation/types';
+import {CommonActions} from '@react-navigation/native';
+import {setErrors} from '../../utils/helpers';
 
 function* getUserDataRequest() {
   try {
@@ -40,9 +58,115 @@ function* getUserByIdRequest(action: any) {
     yield put(getUserByIdFailAction());
   }
 }
+function* changeInformation(action: {
+  name: string;
+  gender: string;
+  profileImg: object;
+}) {
+  const {name, gender, profileImg} = action?.payload;
+  try {
+    yield put(setLoadingAction({onLoading: true}));
+    yield call(changeProfileInformation, name, gender, profileImg);
+    yield put(changeUserInformationSuccessAction());
+    yield put(getUserDataRequestAction());
+    yield put(setLoadingAction({onLoading: false}));
+    navigationRef.current?.dispatch(
+      CommonActions.navigate({
+        name: 'Profile',
+      }),
+    );
+  } catch (error) {
+    yield put(setLoadingAction({onLoading: false}));
+    yield put(changeUserInformationFailAction());
+  }
+}
+function* changeDanceStyles(action: {danceStyles: string[]}) {
+  const {danceStyles} = action?.payload;
+  try {
+    yield put(setLoadingAction({onLoading: true}));
+    yield call(changeUserDanceStyles, danceStyles);
+    yield put(changeUserDanceStylesSuccessAction());
+    yield put(getUserDataRequestAction());
+    yield put(setLoadingAction({onLoading: false}));
+    navigationRef.current?.dispatch(
+      CommonActions.navigate({
+        name: 'Profile',
+      }),
+    );
+  } catch (error) {
+    yield put(setLoadingAction({onLoading: false}));
+    yield put(changeUserDanceStylesFailAction());
+  }
+}
+function* setNewPassword(action: {
+  newPassword: string;
+  changePasswordSuccess: boolean;
+}) {
+  // const {newPassword} = action?.payload;
+  // const response = yield call(changeUserPassword, newPassword);
+  // yield put(setLoadingAction({onLoading: true}));
+  // if (response) {
+  //   yield put(
+  //     changePasswordFailAction({
+  //       changePasswordErrors: setErrors(response?.toString()),
+  //       changePasswordSuccess: false,
+  //     }),
+  //   );
+  //   yield put(setLoadingAction({onLoading: false}));
+  // }
+
+  // changePasswordSuccessAction({
+  //   changePasswordSuccess: true,
+  // });
+  // yield put(setLoadingAction({onLoading: false}));
+  // console.log(response);
+  try {
+    const {newPassword} = action?.payload;
+    yield put(setLoadingAction({onLoading: true}));
+    const response = yield call(changeUserPassword, newPassword);
+    // yield put(
+    //   changePasswordSuccessAction({
+    //     changePasswordSuccess: yield call(changeUserPassword, newPassword)
+    //       ? true
+    //       : false,
+    //   }),
+    // );
+    // console.log(response);
+    if (response) {
+      yield put(
+        changePasswordFailAction({
+          changePasswordSuccess: false,
+          changePasswordErrors: setErrors(response?.toString()),
+        }),
+      );
+      yield put(setLoadingAction({onLoading: false}));
+    } else {
+      yield put(
+        changePasswordSuccessAction({
+          changePasswordSuccess: true,
+        }),
+      );
+    }
+
+    // console.log('setNewPassword', response);
+    yield put(setLoadingAction({onLoading: false}));
+  } catch (error) {
+    console.log('setNewPassword', error);
+    yield put(
+      changePasswordFailAction({
+        changePasswordSuccess: false,
+        changePasswordErrors: setErrors(error?.toString()),
+      }),
+    );
+    yield put(setLoadingAction({onLoading: false}));
+  }
+}
 function* profileSaga() {
   yield takeLatest(PROFILE.GET_DATA_REQUEST, getUserDataRequest);
   yield takeLatest(PROFILE.GET_USER_BY_ID_REQUEST, getUserByIdRequest);
+  yield takeLatest(PROFILE.CHANGE_DATA_REQUEST, changeInformation);
+  yield takeLatest(PROFILE.CHANGE_DANCE_STYLES_REQUEST, changeDanceStyles);
+  yield takeLatest(PROFILE.CHANGE_PASSWORD_REQUEST, setNewPassword);
 }
 
 export default profileSaga;

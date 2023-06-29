@@ -7,6 +7,7 @@ import {useProfile} from '../hooks/useProfile';
 import {useNavigation} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
+import SkeletonCommunityCard from './skeleton/communityCard-Skeleton';
 
 type props = {
   item: any;
@@ -31,17 +32,20 @@ const CommunityCard = ({item}: any) => {
   const isFollowed = isFollowedCurrentCommunity(data?.id);
   const [crntIndex, setCrntIndex] = useState(null);
   const [displayedData, setDisplayedData] = useState();
+  const [loadData, setLoadData] = useState(false);
   const index = communitiesData?.findIndex((itm: any) => itm.id === data.id);
 
   const goToCommunity = () => {
     navigation.navigate('CommunityScreen', {data});
   };
   useEffect(() => {
+    setLoadData(true);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const onValueChange = database()
       .ref(`community/${data?.id}`)
       .on('value', snapshot => {
         setDisplayedData(snapshot.val());
+        setLoadData(false);
       });
 
     return () =>
@@ -142,6 +146,15 @@ const CommunityCard = ({item}: any) => {
       userImg: userImgUrl,
     });
   };
+  if (loadData) {
+    return (
+      <>
+        <RN.View style={{marginBottom: 16}}>
+          <SkeletonCommunityCard />
+        </RN.View>
+      </>
+    );
+  }
   return (
     <RN.View style={styles.itemContainer}>
       <RN.TouchableOpacity

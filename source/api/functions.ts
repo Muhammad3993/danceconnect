@@ -32,15 +32,6 @@ export const getImgsAttendedPeopleToEvent = async (ids: string[]) => {
   return Object.values(images);
 };
 
-export const uploadImgProfile = async (uid: string, img: object) => {
-  return database()
-    .ref(`users/${uid}`)
-    .update({
-      profileImg: img,
-    })
-    .then();
-};
-
 export const getConstantsFromFirebase = async () => {
   const constants = await firebase.database().ref('appConstants').once('value');
   return constants.val();
@@ -342,46 +333,52 @@ export const createEvent = async (
           return [...events, refNewEvent.key];
         })
         .then();
-      // getUserData(creatorUid).then((userData: any) => {
-      //   const communities: string[] = userData.myComunitiesIds ?? [];
-      //   // console.log('getUserData', userData);
-      //   database()
-      //     .ref(`users/${creatorUid}`)
-      //     .update({
-      //       myEvents: [...communities, refNewEvent.key],
-      //     })
-      //     .then();
-      // });
-      // await refEventsUser
-      //   .transaction(events => {
-      //     return [...events, refNewEvent.key];
-      //   })
-      //   .then();
-      // await refEventsCommunity
-      //   .transaction(events => {
-      //     return [...events, refNewEvent.key];
-      //   })
-      //   .then();
-      // console.log('createCommunity', newCommunity.key);
-      // return response;
     });
 };
-/**
- * refEventsCommunity (`community/${communityUid}/events`)
- * refEventsUser (`users/${userUid}/manageEvents`)
- * refEvent = analog fn createCommunity
- *
- * refEventsCommunity.transaction(events => {
- *    return [...events, eventUid]
- * });
- * .then(transaction => {
- *      return transaction.snapshot.val();
- * });
- **************
- * * refEventsUser.transaction(events => {
- *    return [...events, eventUid]
- * });
- * .then(transaction => {
- *      return transaction.snapshot.val();
- * });
- */
+
+export const changeProfileInformation = async (
+  name: string,
+  gender: string,
+  userImage: object,
+) => {
+  const userUid = firebase.auth().currentUser?.uid;
+  const userRef = database().ref(`users/${userUid}`);
+  return userRef
+    .update({
+      name: name,
+      gender: gender,
+      profileImg: userImage,
+    })
+    .then();
+};
+export const changeUserDanceStyles = async (danceStyles: string[]) => {
+  const userUid = firebase.auth().currentUser?.uid;
+  const userRef = database().ref(`users/${userUid}`);
+  return userRef
+    .update({
+      individualStyles: danceStyles,
+    })
+    .then();
+};
+export const changeUserPassword = async (newPassword: string) => {
+  const user = firebase.auth().currentUser;
+  return user
+    .updatePassword(newPassword)
+    .then(res => {
+      // console.log('changeUserPassword success', res);
+      return res;
+    })
+    .catch(er => {
+      // console.log('changeUserPassword function err', er?.message);
+      return er;
+    });
+};
+export const setUserCountry = async (country: string) => {
+  const userUid = firebase.auth().currentUser?.uid;
+  const userRef = database().ref(`users/${userUid}`);
+  return userRef
+    .update({
+      country: country,
+    })
+    .then();
+};

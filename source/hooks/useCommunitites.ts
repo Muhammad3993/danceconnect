@@ -28,8 +28,14 @@ export const useCommunities = () => {
   const userId = useSelector(selectUserUid);
   const isSaveChanges = useSelector(selectIsSaveChanges);
 
-  const managingCommunity = selectManagingCommunities(userId);
+  // const managingCommunity = selectManagingCommunities(userId);
 
+  const managingCommunity = useSelector(state => {
+    const initialData = state?.communities?.dataCommunities;
+    const filter =
+      initialData?.filter((item: any) => item?.creatorUid === userId) ?? [];
+    return filter;
+  });
   const joinedCommunities = selectJoinedCommunitites(userId);
 
   const create = ({

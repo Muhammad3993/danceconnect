@@ -42,7 +42,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There is no events yet</RN.Text>
+        <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
       </RN.View>
     );
   };
