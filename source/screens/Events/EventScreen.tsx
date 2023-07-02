@@ -258,7 +258,7 @@ const EventScreen = () => {
               <RN.Text style={styles.organizer}>Organizer</RN.Text>
             </RN.View>
           </RN.View>
-          {!isAdmin && (
+          {/* {!isAdmin && (
             <RN.TouchableOpacity
               style={
                 isPassedEvent ? styles.contactBtnDisabled : styles.contactBtn
@@ -272,7 +272,7 @@ const EventScreen = () => {
                 Contact
               </RN.Text>
             </RN.TouchableOpacity>
-          )}
+          )} */}
         </RN.View>
       </>
     );

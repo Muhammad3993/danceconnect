@@ -18,13 +18,14 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   const navigation = useNavigation();
   const {joinedCommunities} = useCommunities();
   const {currentCity} = useAppStateHook();
+  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
   const [communitites, setCommunitites] = useState(
     joinedCommunities
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev),
   );
@@ -42,10 +43,10 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   useEffect(() => {
     setCommunitites(
       joinedCommunities
-        ?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         )
         .map(ev => ev),
     );
@@ -68,8 +69,10 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
       setCommunitites(data);
     } else {
       setCommunitites(
-        joinedCommunities?.filter(i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
+        joinedCommunities?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         ),
       );
     }

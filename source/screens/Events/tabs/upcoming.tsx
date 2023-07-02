@@ -18,12 +18,14 @@ type props = {
 const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   const {upcomingEvents} = useEvents();
   const {currentCity} = useAppStateHook();
+  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
+
   const [events, setEvents] = useState(
     upcomingEvents
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev),
   );
@@ -54,10 +56,10 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
 
   useEffect(() => {
     const locationData = upcomingEvents
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev);
     setEvents(locationData);
@@ -70,10 +72,10 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     setFiltersBorderColor(colors.gray);
     setEvents(
       upcomingEvents
-        ?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         )
         .map(ev => ev),
     );
@@ -88,9 +90,8 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     } else if (eventType !== 'All') {
       const evData = upcomingEvents?.filter(
         i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)) &&
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry &&
           i?.typeEvent === eventType,
       );
       setEvents(evData);
@@ -113,10 +114,10 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
       setFiltersBorderColor(colors.orange);
     } else {
       setEvents(
-        upcomingEvents?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity.toLowerCase().substring(0, 5)),
+        upcomingEvents?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         ),
       );
       setFiltersBorderColor(colors.gray);

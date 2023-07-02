@@ -14,7 +14,7 @@ import sotrtBy from 'lodash.sortby';
 import moment from 'moment';
 import Carousel from '../../components/carousel';
 import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
-import { statusBarHeight } from '../../utils/constants';
+import {statusBarHeight} from '../../utils/constants';
 
 const CommunityScreen = () => {
   const routeProps = useRoute();
@@ -374,11 +374,11 @@ const CommunityScreen = () => {
               <RN.Text style={styles.organizer}>Organizer</RN.Text>
             </RN.View>
           </RN.View>
-          {!isAdmin && (
+          {/* {!isAdmin && (
             <RN.TouchableOpacity style={styles.contactBtn}>
               <RN.Text style={styles.contactText}>Contact</RN.Text>
             </RN.TouchableOpacity>
-          )}
+          )} */}
         </RN.View>
       </>
     );
@@ -397,7 +397,31 @@ const CommunityScreen = () => {
       <Carousel items={displayedData?.images} />
       {renderTitle()}
       {renderMapInfoOrganizer()}
-      {!isAdmin ? (
+      {!isAdmin && !isJoined && (
+        <RN.View style={styles.btnJoin}>
+          <Button
+            onPress={onPressJoin}
+            // iconName={isJoined && 'chat'}
+            disabled
+            // isLoading={loadingFollow}
+            buttonStyle={isJoined && styles.btnMessage}
+            title={'Join Community'}
+          />
+        </RN.View>
+      )}
+      {isAdmin && (
+        <RN.View style={styles.btnJoin}>
+          <Button
+            onPress={() =>
+              navigation.navigate('CreateEvent', {communityData: data})
+            }
+            disabled
+            // isLoading={isLoadingWithFollow}
+            title={'Create Event'}
+          />
+        </RN.View>
+      )}
+      {/* {!isAdmin ? (
         <RN.View style={styles.btnJoin}>
           <Button
             onPress={onPressJoin}
@@ -419,7 +443,7 @@ const CommunityScreen = () => {
             title={'Create Event'}
           />
         </RN.View>
-      )}
+      )} */}
       {eventsDataById?.length > 0 && renderTabs()}
       {renderEvents()}
     </RN.ScrollView>

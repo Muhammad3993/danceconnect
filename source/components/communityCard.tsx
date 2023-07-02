@@ -38,6 +38,7 @@ const CommunityCard = ({item}: any) => {
   const goToCommunity = () => {
     navigation.navigate('CommunityScreen', {data});
   };
+  // console.log(data);
   useEffect(() => {
     setLoadData(true);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);

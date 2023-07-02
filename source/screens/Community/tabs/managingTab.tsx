@@ -22,13 +22,14 @@ const ManagingTab = ({
   const navigation = useNavigation();
   const {managingCommunity} = useCommunities();
   const {currentCity} = useAppStateHook();
+  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
   const [communitites, setCommunitites] = useState(
     managingCommunity
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev),
   );
@@ -45,8 +46,10 @@ const ManagingTab = ({
   useEffect(() => {
     setCommunitites(
       managingCommunity
-        ?.filter(i =>
-          i?.location?.toLowerCase().includes(currentCity?.toLowerCase()),
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         )
         .map(ev => ev),
     );
@@ -69,8 +72,10 @@ const ManagingTab = ({
       setCommunitites(data);
     } else {
       setCommunitites(
-        managingCommunity?.filter(i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
+        managingCommunity?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         ),
       );
     }

@@ -6,6 +6,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 // import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import {config, credentials} from './configFB';
+import {removeCommunity, removeEvent} from './functions';
 export const onAppleButtonPress = async () => {
   try {
     const appleAuthRequestResponse = await appleAuth.performRequest({
@@ -131,9 +132,34 @@ export const logout = async () => {
 };
 
 export const removeAccount = async () => {
-  // const user = auth().currentUser;
-  firebase.auth().currentUser?.delete();
-  // return user?.delete().then();
+  const userUid = firebase.auth().currentUser?.uid;
+  const userValues = await firebase
+    .database()
+    .ref(`users/${userUid}`)
+    .once('value');
+  const userCommunities = userValues?.val()?.myComunitiesIds;
+  const userEvents = userValues?.val()?.events;
+  if (userCommunities?.length > 0) {
+    userCommunities.forEach((communityId: string) => {
+      removeCommunity(communityId)
+        .then()
+        .finally(() => {
+          if (userEvents?.length > 0) {
+            userEvents.forEach((eventId: string) => {
+              removeEvent(eventId)
+                .then()
+                .finally(async () => {
+                  await database().ref(`users/${userUid}`).remove();
+                  firebase.auth().currentUser?.delete();
+                });
+            });
+          }
+        });
+    });
+  } else {
+    await database().ref(`users/${userUid}`).remove();
+    firebase.auth().currentUser?.delete();
+  }
 };
 
 export const initializeFB = async () => {

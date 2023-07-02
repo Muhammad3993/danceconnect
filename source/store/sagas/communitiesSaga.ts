@@ -36,20 +36,40 @@ import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {setLoadingAction} from '../actions/appStateActions';
-
+import {getMinInfoCommunities} from '../../api/communities';
+type minimalInformation = {
+  name: string;
+  description: string;
+  categories?: string[];
+  images?: string[];
+  followers?: string[];
+  location: string;
+  id: string;
+};
 function* getCommunitiesRequest() {
   try {
-    const data = yield call(getCommunities);
+    const data = yield call(getMinInfoCommunities);
     // console.log('getCommunitiesRequest', Object.values(data), data);
+    const communities = data?.map((community: minimalInformation) => {
+      return {
+        name: community.name,
+        description: community.description,
+        categories: community?.categories,
+        images: community?.images,
+        followers: community?.followers,
+        location: community.location,
+        id: community.id,
+      };
+    });
     yield put(
       getCommunitiesSuccessAction({
-        dataCommunities: Object.values(data),
+        dataCommunities: communities,
       }),
     );
     const userUid = yield select(selectUserUid);
 
     const followingCommunities: string[] =
-      Object.values(data)
+      data
         .map(item => item)
         ?.filter(
           item =>
@@ -64,6 +84,7 @@ function* getCommunitiesRequest() {
       }),
     );
   } catch (error: any) {
+    console.log('getCommunitites', error);
     yield put(getCommunitiesFailAction(error));
   }
 }

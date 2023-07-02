@@ -114,3 +114,9 @@ export const changePasswordFailAction = ({
     changePasswordErrors: changePasswordErrors,
   },
 });
+export const clearChangePassData = ({changePasswordSuccess}: userParams) => ({
+  type: PROFILE.CHANGE_PASSWORD_CLEAR,
+  payload: {
+    changePasswordSuccess: changePasswordSuccess,
+  },
+});

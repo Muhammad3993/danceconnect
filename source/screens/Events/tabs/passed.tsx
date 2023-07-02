@@ -18,12 +18,14 @@ type props = {
 const PassingTab = ({searchValue, eventsSearch}: props) => {
   const {passingEvents} = useEvents();
   const {currentCity} = useAppStateHook();
+  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
+
   const [events, setEvents] = useState(
     passingEvents
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev),
   );
@@ -50,10 +52,10 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
 
   useEffect(() => {
     const locationData = passingEvents
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev);
     setEvents(locationData);
@@ -65,10 +67,10 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
     setEventType('All');
     setEvents(
       passingEvents
-        ?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         )
         .map(ev => ev),
     );
@@ -82,9 +84,8 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
     } else if (eventType !== 'All') {
       const evData = passingEvents?.filter(
         i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)) &&
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry &&
           i?.typeEvent === eventType,
       );
       setEvents(evData);
@@ -105,10 +106,10 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
       setEvents(findDate);
     } else {
       setEvents(
-        passingEvents?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity.toLowerCase().substring(0, 5)),
+        passingEvents?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         ),
       );
     }

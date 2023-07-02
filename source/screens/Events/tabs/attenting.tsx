@@ -18,19 +18,19 @@ type props = {
 };
 const AttentingTab = ({searchValue, eventsSearch}: props) => {
   const {attentingsEvents} = useEvents();
-  const {userCountry} = useProfile();
   const {currentCity} = useAppStateHook();
+  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
+
   const [events, setEvents] = useState(
     attentingsEvents
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
-  const [eventLocation, setEventLocation] = useState('');
   const [eventType, setEventType] = useState('All');
   const [eventDate, setEventDate] = useState();
 
@@ -53,10 +53,10 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
 
   useEffect(() => {
     const locationData = attentingsEvents
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev);
     setEvents(locationData);
@@ -68,10 +68,10 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
     setEventType('All');
     setEvents(
       attentingsEvents
-        ?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         )
         .map(ev => ev),
     );
@@ -85,12 +85,11 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
     } else if (eventType !== 'All') {
       const evData = attentingsEvents?.filter(
         i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)) &&
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry &&
           i?.typeEvent === eventType,
       );
-      return setEvents(evData);
+      setEvents(evData);
     } else if (
       eventDate !== null &&
       eventDate?.start !== null &&
@@ -108,10 +107,10 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
       setEvents(findDate);
     } else {
       setEvents(
-        attentingsEvents?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity.toLowerCase().substring(0, 5)),
+        attentingsEvents?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         ),
       );
     }

@@ -6,6 +6,7 @@ import {isAndroid} from '../../../utils/constants';
 import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import useAppStateHook from '../../../hooks/useAppState';
+// import { getCommunitiesWithMongo } from '../../../api/serverRequests';
 
 type props = {
   communititesSearch: string[];
@@ -16,33 +17,35 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
   const {communitiesData} = useCommunities();
   const {currentCity} = useAppStateHook();
 
+  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
   const [communitites, setCommunitites] = useState(
     communitiesData
-      ?.filter(i =>
-        i?.location
-          ?.toLowerCase()
-          .includes(currentCity?.toLowerCase().substring(0, 5)),
+      ?.filter(
+        i =>
+          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
       )
       .map(ev => ev),
   );
+  // const [communitites, setCommunitites] = useState();
   const [openingFilters, setOpeningFilters] = useState(false);
 
   const [addedStyles, setAddedStyles] = useState<string[]>(
     new Array(0).fill(''),
   );
-
   useEffect(() => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
     }
   }, [communititesSearch, searchValue]);
   useEffect(() => {
+    // getCommunitiesWithMongo().then(res => setCommunitites(res));
     setCommunitites(
       communitiesData
-        ?.filter(i =>
-          i?.location
-            ?.toLowerCase()
-            .includes(currentCity?.toLowerCase().substring(0, 5)),
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         )
         .map(ev => ev),
     );
@@ -65,8 +68,10 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
       setCommunitites(data);
     } else {
       setCommunitites(
-        communitiesData?.filter(i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
+        communitiesData?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
         ),
       );
     }
@@ -81,7 +86,7 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
   };
 
   const renderItemCommunity = useCallback((item: any) => {
-    return <CommunityCard item={item} key={item.index + item.item.id} />;
+    return <CommunityCard item={item} key={item.index} />;
   }, []);
   const renderFilters = () => {
     return (

@@ -10,6 +10,7 @@ import {Button} from '../../components/Button';
 import FindCity from '../../components/findCity';
 import CategorySelector from '../../components/catregorySelector';
 import useAppStateHook from '../../hooks/useAppState';
+// import { createUser } from '../../api/serverRequests';
 
 interface city {
   structured_formatting: {
@@ -53,6 +54,16 @@ const Board = () => {
       ', ' +
       selectedLocation?.terms[1].value;
     onChoosedCity(selectedLocation);
+    // const data = {
+    //   email: 'y.balaev@yandex.com',
+    //   password: 'qwerty123',
+    //   userName: name,
+    //   userGender: gender?.title,
+    //   userCountry: location,
+    //   userRole: role,
+    //   individualStyles: addedStyles,
+    // };
+    // createUser(data);
     setUserData(name, gender?.title, location, country, role, addedStyles);
   };
 

@@ -28,6 +28,7 @@ import {
 import {userExists} from '../../api/functions';
 import {setErrors} from '../../utils/helpers';
 import {
+  clearChangePassData,
   clearUserDataInStorage,
   getUserDataRequestAction,
 } from '../actions/profileActions';
@@ -120,6 +121,7 @@ function* logoutUser() {
   try {
     yield call(logout);
     yield put(logoutSuccess());
+    yield put(clearChangePassData({changePasswordSuccess: false}));
     yield put(clearUserDataInStorage());
     yield put(clearCommunititesData());
     yield put(choosedCityAction({currentCity: ''}));

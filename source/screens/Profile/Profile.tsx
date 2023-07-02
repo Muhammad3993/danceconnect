@@ -3,12 +3,15 @@ import * as RN from 'react-native';
 import useRegistration from '../../hooks/useRegistration';
 import {useProfile} from '../../hooks/useProfile';
 import colors from '../../utils/colors';
-import {SCREEN_WIDTH, statusBarHeight} from '../../utils/constants';
+import {
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  statusBarHeight,
+} from '../../utils/constants';
 import database from '@react-native-firebase/database';
 import {useCommunities} from '../../hooks/useCommunitites';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import {navigationRef} from '../../navigation/types';
-import {firebase} from '@react-native-firebase/auth';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {Input} from '../../components/input';
@@ -16,6 +19,11 @@ import {Button} from '../../components/Button';
 import FindCity from '../../components/findCity';
 import {setUserCountry} from '../../api/functions';
 import useAppStateHook from '../../hooks/useAppState';
+import {removeAccount} from '../../api/authSocial';
+import {useDispatch} from 'react-redux';
+import {logoutSuccess} from '../../store/actions/authorizationActions';
+// import axios from 'axios';
+// import { createUser } from '../../api/serverRequests';
 
 const ProfileScreen = () => {
   const {logout} = useRegistration();
@@ -28,7 +36,7 @@ const ProfileScreen = () => {
     errorsWithChangePassword,
   } = useProfile();
   const {onChoosedCity} = useAppStateHook();
-
+  const dispatch = useDispatch();
   const {managingCommunity} = useCommunities();
   const navigation = useNavigation();
   const [userData, setUserData] = useState();
@@ -40,6 +48,26 @@ const ProfileScreen = () => {
 
   const logoutRefModalize = useRef<Modalize>(null);
   const changePassRefModalize = useRef<Modalize>(null);
+  const successChangePassRefModalize = useRef<Modalize>(null);
+  const deleteAccountModazile = useRef<Modalize>(null);
+
+  // const onPressAuth = () => {
+  //   // const data = {
+  //   //   email: 'y.balaev@ya.ru',
+  //   //   password: 'qwerty123',
+  //   //   fullName: 'Yanis Balaev',
+  //   //   mobile_phone: '12314',
+  //   // };
+  //   const data = {
+  //     mobile_phone: '+79817770964',
+  //     fullName: 'Yanis Balaev',
+  //     email: 'y.balaev@yandex.ru',
+  //     password: 'qwerty123',
+  //   };
+
+  //   createUser(data);
+  // };
+
   useEffect(() => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const onValueChange = database()
@@ -57,6 +85,7 @@ const ProfileScreen = () => {
   useEffect(() => {
     if (isSuccessChangePassword) {
       changePassRefModalize?.current?.close();
+      successChangePassRefModalize?.current?.open();
       // RN.Alert.alert('Please, log in again');
     }
   }, [isSuccessChangePassword]);
@@ -75,11 +104,7 @@ const ProfileScreen = () => {
   const onPressChangePassword = () => {
     onChangePassword(newPassword);
   };
-  // console.log(
-  //   'onPressChangePassword',
-  //   isSuccessChangePassword,
-  //   errorsWithChangePassword,
-  // );
+
   const onPressCommunities = () => {
     // navigationRef.current?.dispatch(
     //   CommonActions.reset({
@@ -120,6 +145,12 @@ const ProfileScreen = () => {
     onChoosedCity(value);
     setSelectedLocation(value);
     setUserCountry(country);
+  };
+
+  const onPressDeleteAccount = () => {
+    deleteAccountModazile.current?.close();
+    removeAccount();
+    dispatch(logoutSuccess());
   };
 
   useEffect(() => {
@@ -219,8 +250,7 @@ const ProfileScreen = () => {
           </RN.TouchableOpacity>
           <RN.TouchableOpacity
             style={styles.listItemWrapper}
-            onPress={() => changePassRefModalize?.current?.open()}
-            disabled>
+            onPress={() => changePassRefModalize?.current?.open()}>
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'shield'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
@@ -255,7 +285,9 @@ const ProfileScreen = () => {
             </RN.View>
           </RN.TouchableOpacity>
 
-          <RN.TouchableOpacity style={styles.listItemWrapper} disabled>
+          <RN.TouchableOpacity
+            style={styles.listItemWrapper}
+            onPress={() => deleteAccountModazile.current?.open()}>
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'basket'}} style={styles.logoutIcon} />
               <RN.View style={{justifyContent: 'center'}}>
@@ -294,7 +326,10 @@ const ProfileScreen = () => {
           modalStyle={{marginTop: statusBarHeight * 2}}>
           <RN.TouchableOpacity
             style={styles.closeIconWrapper}
-            onPress={() => changePassRefModalize?.current?.close()}>
+            onPress={() => {
+              changePassRefModalize?.current?.close();
+              setNewPassword('');
+            }}>
             <RN.Image source={{uri: 'close'}} style={{height: 24, width: 24}} />
           </RN.TouchableOpacity>
           <RN.Text style={styles.newPasswordTitle}>
@@ -302,7 +337,7 @@ const ProfileScreen = () => {
           </RN.Text>
           <RN.View style={styles.inputPasswordInput}>
             <Input
-              value={newPassword}
+              value={newPassword?.toLowerCase()}
               onChange={setNewPassword}
               placeholder="Enter your new password"
               autoFocus
@@ -329,6 +364,57 @@ const ProfileScreen = () => {
           />
         </Portal>
       )}
+      <Portal>
+        <Modalize
+          withHandle={false}
+          adjustToContentHeight
+          closeOnOverlayTap={false}
+          panGestureEnabled={false}
+          modalStyle={styles.modalContainer}
+          ref={successChangePassRefModalize}>
+          <RN.View style={{paddingTop: 14}} />
+          <RN.Text style={styles.changePasswordSuccessTitle}>
+            Your password is successfully changed, please log in again
+          </RN.Text>
+          <RN.View style={styles.tickContainer}>
+            <RN.Image style={styles.tickIcon} source={{uri: 'tick'}} />
+          </RN.View>
+          <RN.TouchableOpacity
+            style={styles.changePasswordSuccessBtn}
+            onPress={logout}>
+            <RN.Text style={styles.logoutText}>Logout</RN.Text>
+          </RN.TouchableOpacity>
+        </Modalize>
+      </Portal>
+      <Portal>
+        <Modalize
+          withHandle={false}
+          adjustToContentHeight
+          closeOnOverlayTap={false}
+          panGestureEnabled={false}
+          modalStyle={styles.modalContainer}
+          ref={deleteAccountModazile}>
+          <RN.Text style={styles.deleteAccountTitle}>
+            Do you really want to delete your account?
+          </RN.Text>
+          <RN.Text style={styles.deleteAccountDesc}>
+            All your created communities and events will also be deleted
+          </RN.Text>
+          <RN.View
+            style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            <RN.TouchableOpacity
+              style={styles.deleteAccountBtnCancel}
+              onPress={() => deleteAccountModazile?.current?.close()}>
+              <RN.Text style={styles.deleteTextCancel}>Cancel</RN.Text>
+            </RN.TouchableOpacity>
+            <RN.TouchableOpacity
+              style={styles.deleteAccountBtn}
+              onPress={onPressDeleteAccount}>
+              <RN.Text style={styles.deleteText}>Yes, delete</RN.Text>
+            </RN.TouchableOpacity>
+          </RN.View>
+        </Modalize>
+      </Portal>
     </>
   );
 };
@@ -339,6 +425,88 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
     paddingTop: statusBarHeight * 2,
     paddingHorizontal: 24,
+  },
+  deleteText: {
+    paddingHorizontal: 34,
+    fontSize: 18,
+    lineHeight: 22.4,
+    color: colors.white,
+    textAlign: 'center',
+    paddingVertical: 14,
+    fontWeight: '600',
+  },
+  deleteTextCancel: {
+    paddingHorizontal: 34,
+    fontSize: 18,
+    lineHeight: 22.4,
+    color: colors.white,
+    textAlign: 'center',
+    paddingVertical: 14,
+    fontWeight: '600',
+  },
+  deleteAccountBtnCancel: {
+    borderRadius: 100,
+    backgroundColor: colors.orange,
+    marginVertical: 22,
+    marginTop: 0,
+  },
+  deleteAccountBtn: {
+    borderRadius: 100,
+    backgroundColor: colors.redError,
+    marginVertical: 22,
+    marginTop: 0,
+    justifyContent: 'center',
+  },
+  deleteAccountTitle: {
+    textAlign: 'center',
+    padding: 18,
+    fontSize: 22,
+    lineHeight: 24.6,
+    fontWeight: '600',
+    paddingTop: 34,
+    color: colors.textPrimary,
+  },
+  deleteAccountDesc: {
+    textAlign: 'center',
+    padding: 18,
+    fontSize: 18,
+    lineHeight: 24.6,
+    paddingTop: 0,
+    color: colors.textPrimary,
+  },
+  tickContainer: {
+    backgroundColor: colors.orange,
+    alignSelf: 'center',
+    margin: 22,
+    padding: 14,
+    borderRadius: 100,
+  },
+  tickIcon: {
+    height: 40,
+    width: 40,
+    tintColor: colors.white,
+  },
+  modalContainer: {
+    position: 'absolute',
+    right: 20,
+    left: 20,
+    bottom: '35%',
+    borderRadius: 12,
+  },
+  changePasswordSuccessBtn: {
+    borderRadius: 100,
+    backgroundColor: colors.orange,
+    marginHorizontal: 24,
+    marginVertical: 22,
+    marginTop: 0,
+  },
+  changePasswordSuccessTitle: {
+    textAlign: 'center',
+    paddingTop: 18,
+    fontSize: 22,
+    lineHeight: 24.6,
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
   errorMessage: {
     marginTop: -14,
@@ -360,6 +528,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 22,
     lineHeight: 24.6,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   logoutModalWrapper: {
     flexDirection: 'row',
@@ -372,6 +541,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 22,
     lineHeight: 24.6,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   logoutBtn: {
     borderRadius: 100,
@@ -417,6 +587,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 24,
     fontFamily: 'Mulish-Regular',
     paddingLeft: 20,
+    color: colors.textPrimary,
   },
   userEmail: {
     fontSize: 16,
