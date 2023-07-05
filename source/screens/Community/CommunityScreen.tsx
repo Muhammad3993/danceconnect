@@ -390,7 +390,6 @@ const CommunityScreen = () => {
   if (loading) {
     return <SkeletonCommunityScreen />;
   }
-
   return (
     <RN.ScrollView style={styles.container}>
       {header()}

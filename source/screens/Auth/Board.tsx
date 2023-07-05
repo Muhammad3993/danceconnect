@@ -232,7 +232,8 @@ const Board = () => {
             disabled={
               name.length > 0 &&
               selectedLocation?.structured_formatting?.main_text?.length > 0 &&
-              role?.length > 0
+              role?.length > 0 &&
+              gender?.title?.length > 0
             }
           />
         </RN.View>

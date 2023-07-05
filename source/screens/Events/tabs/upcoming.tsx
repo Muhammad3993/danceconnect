@@ -31,7 +31,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   );
   const [openingFilters, setOpeningFilters] = useState(false);
   const [eventType, setEventType] = useState('All');
-  const [eventDate, setEventDate] = useState();
+  const [eventDate, setEventDate] = useState({start: null, end: null});
   const [filtersBorderColor, setFiltersBorderColor] = useState(colors.gray);
 
   const [addedStyles, setAddedStyles] = useState<string[]>(
@@ -53,21 +53,26 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
       setEvents(eventsSearch);
     }
   }, [eventsSearch, searchValue]);
+  useEffect(() => {
+    setEvents(
+      upcomingEvents
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+        )
+        .map(ev => ev),
+    );
+  }, [upcomingEvents.length]);
 
   useEffect(() => {
-    const locationData = upcomingEvents
-      ?.filter(
-        i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-      )
-      .map(ev => ev);
-    setEvents(locationData);
+    onClear();
   }, [currentCity]);
 
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
+    setEventDate({start: null, end: null});
     setEventType('All');
     setFiltersBorderColor(colors.gray);
     setEvents(
@@ -82,8 +87,12 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = events.filter((item: any) =>
-        item?.categories?.some((ai: any) => addedStyles.includes(ai)),
+      const data = events.filter(
+        (item: any) =>
+          item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
+          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          item?.location?.substr(item?.location?.length - 2) ===
+            lastSymUserCountry,
       );
       setEvents(data);
       setFiltersBorderColor(colors.orange);
@@ -102,15 +111,24 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
       eventDate?.start?.start !== null
     ) {
       const range = moment().range(eventDate?.start, eventDate?.end);
-      const days = Array.from(range.by('days'));
-      const dayEntries = days.map((d, index) => {
-        const date = d.format('YYYY-MM-DD');
-        return date;
-      });
-      const findDate = events?.filter((it: any) =>
-        dayEntries?.includes(it?.eventDate?.startDate),
-      );
-      setEvents(findDate);
+      if (!eventDate.end) {
+        const day = moment(eventDate?.start).format('YYYY-MM-DD');
+        const findDate = events?.filter(
+          (it: any) => it?.eventDate?.startDate === day,
+        );
+        setEvents(findDate);
+      } else {
+        const days = Array.from(range.by('days'));
+        const dayEntries = days.map((d, index) => {
+          const date = d.format('YYYY-MM-DD');
+          return date;
+        });
+        const findDate = events?.filter((it: any) =>
+          dayEntries?.includes(it?.eventDate?.startDate),
+        );
+        setEvents(findDate);
+      }
+
       setFiltersBorderColor(colors.orange);
     } else {
       setEvents(
@@ -179,6 +197,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
         setEventType={setEventType}
         eventDate={eventDate}
         setEventDate={setEventDate}
+        currentCity={currentCity}
       />
     </>
   );

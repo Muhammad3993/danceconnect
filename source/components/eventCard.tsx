@@ -21,9 +21,7 @@ const EventCard = ({item}: props) => {
   const navigation = useNavigation();
 
   const {userUid} = useRegistration();
-  const isPassedEvent =
-    moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
-    moment(new Date()).format('YYYY-MM-DD');
+  const isPassedEvent = eventData?.eventDate?.time < new Date().getTime();
   const {loadingAttend, attendEvent, eventsDataById, eventList} = useEvents();
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(false);

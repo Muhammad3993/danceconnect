@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -31,10 +31,7 @@ const CommunitiesScreen = () => {
   const [openModal, setOpenModal] = useState(false);
   const {currentCity, onChoosedCity} = useAppStateHook();
 
-  const removedCommunity =
-    (routeProps.params?.removedCommunity ||
-      routeProps.params?.createdCommunity) ??
-    null;
+  const removedCommunity = routeProps.params?.removedCommunity ?? null;
 
   const onPressTab = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -42,17 +39,15 @@ const CommunitiesScreen = () => {
       RN.Keyboard.dismiss();
       setCommunitiesSearch([]);
       onSearch('');
-      setCurrentTab(value);
-    } else {
-      setCurrentTab(value);
     }
+    setCurrentTab(value);
   };
 
-  // console.log('removedCommunity', removedCommunity, routeProps, navigation);
-  useEffect(() => {
+  // console.log('removedCommunity', removedCommunity, routeProps);
+  useMemo(() => {
     if (removedCommunity) {
       onPressTab('Managing');
-      getCommunitites();
+      // getCommunitites();
     }
   }, [removedCommunity]);
 

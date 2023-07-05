@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import useEvents from '../../hooks/useEvents';
@@ -11,6 +11,7 @@ import ManagingTab from './tabs/managing';
 import PassingTab from './tabs/passed';
 import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
+import { useRoute } from '@react-navigation/native';
 
 const TABS = ['Upcoming', 'Attending', 'Managing', 'Passed'];
 
@@ -24,6 +25,7 @@ const EventsScreen = () => {
     attentingsEvents,
     passingEvents,
   } = useEvents();
+  const routeProps = useRoute();
 
   const [currentTab, setCurrentTab] = useState(TABS[0]);
 
@@ -31,6 +33,8 @@ const EventsScreen = () => {
   const [openModal, setOpenModal] = useState(false);
   const {currentCity, onChoosedCity} = useAppStateHook();
   const [communititesSearch, setCommunitiesSearch] = useState<string[]>([]);
+  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
+  const createdEvent = routeProps.params?.createdEvent ?? null;
 
   useEffect(() => {
     getEvents();
@@ -40,11 +44,20 @@ const EventsScreen = () => {
     onPressTab(TABS[0]);
   }, []);
 
+  useMemo(() => {
+    if (createdEvent) {
+      onPressTab('Managing');
+      // getCommunitites();
+    }
+  }, [createdEvent]);
+
   const upcomingEvents = eventList
     ?.filter(
       (ev: any) =>
-        moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >=
-        moment(new Date()).format('YYYY-MM-DD'),
+        moment(ev.eventDate?.time).format('YYYY-MM-DD') >=
+          moment(new Date()).format('YYYY-MM-DD') &&
+        ev?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+        ev?.location?.substr(ev?.location?.length - 2) === lastSymUserCountry,
     )
     .map((item: any) => item);
 
@@ -107,10 +120,8 @@ const EventsScreen = () => {
       RN.Keyboard.dismiss();
       setCommunitiesSearch([]);
       onSearch('');
-      setCurrentTab(value);
-    } else {
-      setCurrentTab(value);
     }
+    setCurrentTab(value);
   };
 
   const renderHeader = () => {
@@ -184,11 +195,11 @@ const EventsScreen = () => {
 
   const renderWrapper = useCallback(() => {
     switch (currentTab) {
-      case 'All':
+      case 'Upcomming':
         return (
           <UpcommingTab
             searchValue={searchValue}
-            communititesSearch={communititesSearch}
+            eventsSearch={communititesSearch}
           />
         );
 
@@ -196,7 +207,7 @@ const EventsScreen = () => {
         return (
           <AttentingTab
             searchValue={searchValue}
-            communititesSearch={communititesSearch}
+            eventsSearch={communititesSearch}
           />
         );
 
@@ -204,21 +215,21 @@ const EventsScreen = () => {
         return (
           <ManagingTab
             searchValue={searchValue}
-            communititesSearch={communititesSearch}
+            eventsSearch={communititesSearch}
           />
         );
       case 'Passed':
         return (
           <PassingTab
             searchValue={searchValue}
-            communititesSearch={communititesSearch}
+            eventsSearch={communititesSearch}
           />
         );
       default:
         return (
           <UpcommingTab
             searchValue={searchValue}
-            communititesSearch={communititesSearch}
+            eventsSearch={communititesSearch}
           />
         );
     }

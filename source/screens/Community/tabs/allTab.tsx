@@ -50,7 +50,17 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
         .map(ev => ev),
     );
   }, [currentCity]);
-
+  useEffect(() => {
+    setCommunitites(
+      communitiesData
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+        )
+        .map(ev => ev),
+    );
+  }, [communitiesData.length]);
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
@@ -62,8 +72,12 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = communitiesData.filter((item: any) =>
-        item?.categories?.some((ai: any) => addedStyles.includes(ai)),
+      const data = communitiesData.filter(
+        (item: any) =>
+          item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
+          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          item?.location?.substr(item?.location?.length - 2) ===
+            lastSymUserCountry,
       );
       setCommunitites(data);
     } else {

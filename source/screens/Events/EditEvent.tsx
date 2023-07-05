@@ -56,7 +56,7 @@ const EditEvent = () => {
   const [isErrorName, setIsErrorName] = useState(false);
   const [isDescriptionError, setIsDescriptionError] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
-  const [time, setTime] = useState(new Date().getTime());
+  const [time, setTime] = useState(eventDate?.time);
   const [startDate, setStartDate] = useState(eventDate?.startDate);
   const [endDate, setEndDate] = useState(eventDate?.endDate);
   const {eventTypes} = useAppStateHook();

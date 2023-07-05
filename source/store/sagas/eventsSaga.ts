@@ -125,7 +125,7 @@ function* createEventRequest(action: any) {
   } = action?.payload;
   try {
     const creatorUid = yield select(selectUserUid);
-    const response = yield call(
+    yield call(
       createEvent,
       name,
       description,
@@ -139,13 +139,13 @@ function* createEventRequest(action: any) {
       typeEvent,
       communityUid,
     );
-    console.log('createEventRequest', response);
     yield put(createEventSuccessAction());
+    yield put(getEventsRequestAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
         name: 'Events',
         params: {
-          createdCommunity: true,
+          createdEvent: true,
         },
       }),
     );

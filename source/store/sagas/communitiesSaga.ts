@@ -1,16 +1,8 @@
-import {
-  call,
-  debounce,
-  put,
-  select,
-  take,
-  takeLatest,
-} from 'redux-saga/effects';
+import {call, put, select, takeLatest} from 'redux-saga/effects';
 import {selectUserUid} from '../selectors/registrationSelector';
 import {
   changeInformationCommunity,
   createCommunity,
-  getCommunities,
   getCommunityByUid,
   joinCommunity,
   removeCommunity,
@@ -30,13 +22,13 @@ import {
   removeCommunityFailAction,
   removeCommunitySuccessAction,
   startFollowedCommunityFailAction,
-  startFollowedCommunitySuccessAction,
 } from '../actions/communityActions';
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {setLoadingAction} from '../actions/appStateActions';
 import {getMinInfoCommunities} from '../../api/communities';
+import {getUserDataRequestAction} from '../actions/profileActions';
 type minimalInformation = {
   name: string;
   description: string;
@@ -50,39 +42,39 @@ function* getCommunitiesRequest() {
   try {
     const data = yield call(getMinInfoCommunities);
     // console.log('getCommunitiesRequest', Object.values(data), data);
-    const communities = data?.map((community: minimalInformation) => {
-      return {
-        name: community.name,
-        description: community.description,
-        categories: community?.categories,
-        images: community?.images,
-        followers: community?.followers,
-        location: community.location,
-        id: community.id,
-      };
-    });
+    // const communities = data?.map((community: minimalInformation) => {
+    //   return {
+    //     name: community.name,
+    //     description: community.description,
+    //     categories: community?.categories,
+    //     images: community?.images,
+    //     followers: community?.followers,
+    //     location: community.location,
+    //     id: community.id,
+    //   };
+    // });
     yield put(
       getCommunitiesSuccessAction({
-        dataCommunities: communities,
+        dataCommunities: data,
       }),
     );
-    const userUid = yield select(selectUserUid);
+    // const userUid = yield select(selectUserUid);
 
-    const followingCommunities: string[] =
-      data
-        .map(item => item)
-        ?.filter(
-          item =>
-            item?.followers?.length > 0 &&
-            item?.followers?.find(item => item?.userUid === userUid),
-        )
-        ?.map(item => item.id) ?? [];
+    // const followingCommunities: string[] =
+    //   data
+    //     .map(item => item)
+    //     ?.filter(
+    //       item =>
+    //         item?.followers?.length > 0 &&
+    //         item?.followers?.find(item => item?.userUid === userUid),
+    //     )
+    //     ?.map(item => item.id) ?? [];
 
-    yield put(
-      startFollowedCommunitySuccessAction({
-        followingCommunities: followingCommunities,
-      }),
-    );
+    // yield put(
+    //   startFollowedCommunitySuccessAction({
+    //     followingCommunities: followingCommunities,
+    //   }),
+    // );
   } catch (error: any) {
     console.log('getCommunitites', error);
     yield put(getCommunitiesFailAction(error));
@@ -105,15 +97,15 @@ function* createCommunityRequest(action: any) {
       images,
     );
     yield put(createCommunitySuccessAction());
+    yield put(getCommunitiesRequestAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
         name: 'CommunitiesMain',
         params: {
-          createdCommunity: true,
+          removedCommunity: true,
         },
       }),
     );
-    yield put(getCommunitiesRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     console.log('createCommunityRequest error', error);
@@ -126,6 +118,7 @@ function* startFollowingCommunity(action: any) {
   try {
     yield call(joinCommunity, communityUid, userUid, userImg);
     yield put(getCommunitiesRequestAction());
+    yield put(getUserDataRequestAction());
     // yield put(getCommunityByIdRequestAction(communityUid));
   } catch (error) {
     console.log('startFollowingCommunity', error);

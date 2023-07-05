@@ -63,8 +63,12 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = joinedCommunities.filter((item: any) =>
-        item?.categories?.some((ai: any) => addedStyles.includes(ai)),
+      const data = joinedCommunities.filter(
+        (item: any) =>
+          item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
+          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          item?.location?.substr(item?.location?.length - 2) ===
+            lastSymUserCountry,
       );
       setCommunitites(data);
     } else {

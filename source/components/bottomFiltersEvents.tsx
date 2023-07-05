@@ -19,11 +19,12 @@ type props = {
   currentTab?: string;
   showPassed?: boolean;
   setShowPassed?: () => void;
-  eventType?: string;
+  eventType: string;
   setEventType?: () => {};
   eventDate?: object;
   setEventDate?: () => {};
   onOpening?: boolean;
+  currentCity: string;
 };
 const FiltersBottomForEvents = ({
   onClose,
@@ -34,11 +35,12 @@ const FiltersBottomForEvents = ({
   currentTab,
   showPassed,
   setShowPassed = () => {},
-  eventDate,
+  eventDate = {start: null, end: null},
   eventType,
   setEventType = () => {},
   setEventDate = () => {},
   onOpening,
+  currentCity,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
   const danceStyleModalizeRef = useRef<Modalize>(null);
@@ -54,6 +56,16 @@ const FiltersBottomForEvents = ({
   useEffect(() => {
     setChoosedType('All');
   }, []);
+  useEffect(() => {
+    setEventDate();
+    setStartDate(null);
+    setEndDate(null);
+  }, [currentCity]);
+
+  useEffect(() => {
+    setChoosedType(eventType);
+  }, [eventType]);
+
   const onChoosheDanceStyle = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const isAvailable = selectedStyles?.includes(value);
@@ -86,12 +98,11 @@ const FiltersBottomForEvents = ({
     setEndDate(null);
     setStartDate(null);
     setSelectedStyles([]);
-    setEventDate(null);
+    setEventDate();
     onClear();
   };
 
   const onPressFilter = () => {
-    // console.log(selectedLocation);
     modalizeRef.current?.close();
     if (
       selectedStyles.length > 0 ||
@@ -281,15 +292,19 @@ const FiltersBottomForEvents = ({
   useEffect(() => {
     if (startDate?.start !== null) {
       setEventDate({start: startDate, end: endDate});
+    } else {
+      setEventDate();
+      setStartDate(null);
+      setEndDate(null);
     }
-    // console.log('useEffect', startDate, endDate, endDate?.end);
+    console.log('useEffect', startDate, endDate, endDate?.end);
   }, [startDate, endDate]);
 
   const renderCalendar = () => {
     const onPressBack = () => {
       setStartDate(null);
       setEndDate(null);
-      setEventDate(null);
+      setEventDate();
       dateModalizeRef?.current?.close();
     };
     const onCancel = () => {
@@ -321,8 +336,8 @@ const FiltersBottomForEvents = ({
         handlePosition="inside"
         handleStyle={handleStyle}
         ref={dateModalizeRef}
+        closeOnOverlayTap={false}
         adjustToContentHeight
-        // modalStyle={{marginTop: statusBarHeight * 2}}
         HeaderComponent={headerDate()}>
         <BottomCalendarForEvents
           onClose={() => dateModalizeRef?.current?.close()}
@@ -339,7 +354,7 @@ const FiltersBottomForEvents = ({
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setStartDate(null);
     setEndDate(null);
-    setEventDate(null);
+    setEventDate();
   };
 
   return (
@@ -358,7 +373,7 @@ const FiltersBottomForEvents = ({
           <RN.View>
             {renderHeader()}
             {line()}
-            {currentTab === 'Managing' && (
+            {/* {currentTab === 'Managing' && (
               <>
                 <RN.View style={styles.showPassedEventsContainer}>
                   <RN.Text style={styles.showPassedText}>
@@ -386,7 +401,7 @@ const FiltersBottomForEvents = ({
                 </RN.View>
                 {line()}
               </>
-            )}
+            )} */}
             <RN.View style={styles.selectorContainer}>
               <RN.View>
                 <RN.Text style={[styles.selectorTitle, {marginBottom: -8}]}>

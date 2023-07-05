@@ -2,6 +2,7 @@
 import React, {useLayoutEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
+import { isAndroid } from '../utils/constants';
 
 type InputProp = {
   value: string;
@@ -172,7 +173,7 @@ const styles = RN.StyleSheet.create({
   leftIconWrapper: {
     position: 'absolute',
     zIndex: 2,
-    top: 22,
+    top: isAndroid ? 22 : 18,
     paddingLeft: 16,
   },
   rightIconWrapper: {

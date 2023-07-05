@@ -25,9 +25,11 @@ const EventScreen = () => {
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
 
   const {loadingAttend, attendEvent, eventList} = useEvents();
-  const isPassedEvent =
-    moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
-    moment(new Date()).format('YYYY-MM-DD');
+  // const isPassedEvent =
+  //   moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
+  //   moment(new Date()).format('YYYY-MM-DD');
+  const isPassedEvent = displayedData?.eventDate?.time < new Date().getTime();
+
   const isJoined =
     displayedData?.attendedPeople?.find(
       (user: any) => user.userUid === userUid,

@@ -64,6 +64,7 @@ const CreateEvent = () => {
   const [selectedLocation, setSelectedLocation] = useState<city>(
     communityData?.location,
   );
+  const [isErrorPlace, setIsErrorPlace] = useState(false);
 
   const [images, setImages] = useState(new Array(0).fill(''));
   const [typeEvent, setTypeEvent] = useState(eventTypes[0]);
@@ -89,20 +90,20 @@ const CreateEvent = () => {
     setImages(filter);
   };
 
-  // console.log(selectedLocation)
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsDescriptionError(false);
       setIsErrorName(false);
+      setIsErrorPlace(false);
     }, 3000);
     return clearTimeout(timer);
-  }, [isErrorName, isDescriptionError]);
+  }, [isErrorName, isDescriptionError, isErrorPlace]);
 
   const onPressCreate = () => {
     const eventDate = {
       time: time,
       startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
-      endDate: endDate ?? moment(new Date()).format('YYYY-MM-DD'),
+      endDate: endDate ?? null,
     };
     const locationEdt =
       selectedLocation?.structured_formatting?.main_text?.length > 0
@@ -116,6 +117,8 @@ const CreateEvent = () => {
       setIsErrorName(true);
     } else if (description?.length <= 0) {
       setIsDescriptionError(true);
+    } else if (selectedPlace?.length <= 0) {
+      setIsErrorPlace(true);
     } else {
       createEvent({
         name: name,
@@ -212,12 +215,12 @@ const CreateEvent = () => {
   const renderFooter = () => {
     return (
       <RN.View style={styles.footerWrapper}>
-        <Button
+        {/* <Button
           title="Clear All"
           disabled
           buttonStyle={styles.clearBtn}
           onPress={onClear}
-        />
+        /> */}
         <Button
           title="Create Event"
           disabled
@@ -570,8 +573,17 @@ const CreateEvent = () => {
 
             <RN.Text style={styles.placeholderTitle}>Place</RN.Text>
             <RN.TouchableOpacity
-              onPress={() => setOpenPlace(true)}
-              style={styles.selectLocationBtn}>
+              onPress={() => {
+                setIsErrorPlace(false);
+                setOpenPlace(true);
+              }}
+              style={[
+                styles.selectLocationBtn,
+                {
+                  borderColor: isErrorPlace ? colors.redError : 'transparent',
+                  borderWidth: isErrorPlace ? 1 : 0,
+                },
+              ]}>
               <RN.Text style={styles.locationText}>
                 {selectedPlace?.length > 0
                   ? `${selectedPlace}`
@@ -733,11 +745,11 @@ const styles = RN.StyleSheet.create({
   },
   createBtn: {
     marginVertical: 14,
-    paddingHorizontal: 24,
+    // paddingHorizontal: 24,
   },
   footerWrapper: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    // flexDirection: 'row',
+    // justifyContent: 'space-around',
     paddingHorizontal: 14,
     borderTopColor: colors.gray,
     borderTopWidth: 1,
