@@ -14,6 +14,7 @@ export type registrationAction = {
     password?: string;
     errors: string | object;
     currentUser?: undefined;
+    token?: string;
     name?: string;
     gender: string;
     country?: string;
@@ -57,6 +58,7 @@ export default (
         isRegistrationsSuccess: true,
         currentUser: action.payload?.currentUser,
         isUserExists: action.payload?.isUserExists,
+        token: action.payload?.token,
       };
     case REGISTRATION_WITH_EMAIL.FAIL:
       return {

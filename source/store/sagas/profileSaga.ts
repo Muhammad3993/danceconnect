@@ -162,7 +162,7 @@ function* setNewPassword(action: {
   }
 }
 function* profileSaga() {
-  yield takeLatest(PROFILE.GET_DATA_REQUEST, getUserDataRequest);
+  // yield takeLatest(PROFILE.GET_DATA_REQUEST, getUserDataRequest);
   yield takeLatest(PROFILE.GET_USER_BY_ID_REQUEST, getUserByIdRequest);
   yield takeLatest(PROFILE.CHANGE_DATA_REQUEST, changeInformation);
   yield takeLatest(PROFILE.CHANGE_DANCE_STYLES_REQUEST, changeDanceStyles);

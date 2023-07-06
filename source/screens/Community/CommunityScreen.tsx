@@ -26,7 +26,7 @@ const CommunityScreen = () => {
   const {data}: any = routeProps.params;
   const {_id} = data;
   // const _id = '64a558e4a6ac588333e736d4';
-  const isAdmin = userUid === data?.creatorUid;
+  const isAdmin = userUid === data?.creator?.uid;
   const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
   const {remove, getCommunity, communityData, loadingById} =
     useCommunityById(_id);
@@ -47,6 +47,7 @@ const CommunityScreen = () => {
   useEffect(() => {
     getCommunity();
   }, []);
+  console.log('eve', events);
 
   // const upcomingEvents =
   //   eventsDataById?.filter(
@@ -54,7 +55,7 @@ const CommunityScreen = () => {
   //       moment(item.eventDate?.startDate).format('YYYY-MM-DD') >=
   //       moment(new Date()).format('YYYY-MM-DD'),
   //   ) ?? [];
-  const [desc, setDesc] = useState();
+  const [desc, setDesc] = useState(data.description);
   // useEffect(() => {
   //   getUser(displayedData?.creatorUid);
   // }, [displayedData?.creatorUid]);
@@ -81,12 +82,12 @@ const CommunityScreen = () => {
   //   return () => database().ref(`community/${id}`).off('value', onValueChange);
   // }, [id]);
 
-  // useMemo(() => {
-  //   setEvents(upcomingEvents);
-  // }, [eventsDataById?.length]);
+  useMemo(() => {
+    setEvents(communityData?.eventsC);
+  }, [communityData?.eventsC?.length]);
   const onPressShowText = () => {
     setOpeningDescription(true);
-    setDesc(communityData?.description);
+    setDesc(data?.description);
   };
   const onPressEditCommunity = () => {
     navigation.navigate('EditCommunity', communityData);
@@ -125,13 +126,13 @@ const CommunityScreen = () => {
       <RN.View
         style={[
           styles.tagsContainer,
-          {marginTop: communityData?.images?.length > 0 ? -50 : -10},
+          {marginTop: data?.images?.length > 0 ? -50 : -10},
         ]}>
         <RN.ScrollView
           horizontal
           style={styles.scrollTags}
           showsHorizontalScrollIndicator={false}>
-          {communityData?.categories?.map((item: string) => {
+          {data?.categories?.map((item: string) => {
             return (
               <RN.View style={styles.tagItem}>
                 <RN.Text style={{color: colors.white}}>{item}</RN.Text>
@@ -148,7 +149,7 @@ const CommunityScreen = () => {
       <>
         <RN.TouchableOpacity
           style={styles.backIconContainer}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate('CommunitiesMain')}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.TouchableOpacity>
         {isAdmin && (
@@ -271,29 +272,29 @@ const CommunityScreen = () => {
     );
   };
   const renderEvents = () => {
-    if (loadingEvents) {
+    if (loadingById) {
       return <RN.ActivityIndicator size={'small'} color={colors.orange} />;
     }
-    if (currentTab === 'Passed' && !passedEvents?.length) {
-      return (
-        <RN.View style={styles.passedEventsContainer}>
-          <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
-            {isAdmin
-              ? 'You don`t have any past events yet'
-              : 'There are no past events yet'}
-          </RN.Text>
-        </RN.View>
-      );
-    }
-    if (!events?.length && eventsDataById?.length > 0) {
-      return (
-        <RN.View style={styles.passedEventsContainer}>
-          <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
-            There are no events yet
-          </RN.Text>
-        </RN.View>
-      );
-    }
+    // if (currentTab === 'Passed' && !passedEvents?.length) {
+    //   return (
+    //     <RN.View style={styles.passedEventsContainer}>
+    //       <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
+    //         {isAdmin
+    //           ? 'You don`t have any past events yet'
+    //           : 'There are no past events yet'}
+    //       </RN.Text>
+    //     </RN.View>
+    //   );
+    // }
+    // if (!events?.length && eventsDataById?.length > 0) {
+    //   return (
+    //     <RN.View style={styles.passedEventsContainer}>
+    //       <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
+    //         There are no events yet
+    //       </RN.Text>
+    //     </RN.View>
+    //   );
+    // }
     return (
       <>
         {events?.length > 0 &&
@@ -305,8 +306,8 @@ const CommunityScreen = () => {
   };
   const onOpenMaps = () => {
     const url = RN.Platform.select({
-      ios: `maps:0,0?q=${communityData?.location}`,
-      android: `geo:0,0?q=${communityData?.location}`,
+      ios: `maps:0,0?q=${data?.location}`,
+      android: `geo:0,0?q=${data?.location}`,
     });
 
     RN.Linking.openURL(url);
@@ -331,8 +332,7 @@ const CommunityScreen = () => {
                 />
               </RN.View>
             </RN.View>
-            <RN.Text
-              style={styles.locateText}>{`${communityData?.location}`}</RN.Text>
+            <RN.Text style={styles.locateText}>{`${data?.location}`}</RN.Text>
           </RN.View>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.View style={{justifyContent: 'center'}}>
@@ -357,11 +357,10 @@ const CommunityScreen = () => {
           <RN.View style={{flexDirection: 'row'}}>
             <RN.Image
               source={
-                communityData?.creator?.image
+                data?.creator?.image
                   ? {
                       uri:
-                        'data:image/png;base64,' +
-                        communityData?.creator?.image?.base64,
+                        'data:image/png;base64,' + data?.creator?.image?.base64,
                     }
                   : require('../../assets/images/defaultuser.png')
               }
@@ -369,7 +368,7 @@ const CommunityScreen = () => {
             />
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.organizerName}>
-                {communityData?.creator?.name}
+                {data?.creator?.name}
               </RN.Text>
               <RN.Text style={styles.organizer}>Organizer</RN.Text>
             </RN.View>
@@ -387,14 +386,14 @@ const CommunityScreen = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
   }, []);
 
-  if (loadingById) {
-    return <SkeletonCommunityScreen />;
-  }
+  // if (loadingById) {
+  //   return <SkeletonCommunityScreen />;
+  // }
 
   return (
     <RN.ScrollView style={styles.container}>
       {header()}
-      <Carousel items={communityData?.images} />
+      <Carousel items={data?.images} />
       {renderTitle()}
       {renderMapInfoOrganizer()}
       {!isAdmin && !isJoined && (
@@ -413,7 +412,7 @@ const CommunityScreen = () => {
         <RN.View style={styles.btnJoin}>
           <Button
             onPress={() =>
-              navigation.navigate('CreateEvent', {communityData: communityData})
+              navigation.navigate('CreateEvent', {communityData: data})
             }
             disabled
             // isLoading={isLoadingWithFollow}
@@ -444,8 +443,8 @@ const CommunityScreen = () => {
           />
         </RN.View>
       )} */}
-      {/* {eventsDataById?.length > 0 && renderTabs()} */}
-      {/* {renderEvents()} */}
+      {events?.length > 0 && renderTabs()}
+      {renderEvents()}
     </RN.ScrollView>
   );
 };

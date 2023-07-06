@@ -33,14 +33,15 @@ import {
   startAttendEventFailAction,
   startAttendEventSuccessAction,
 } from '../actions/eventActions';
+import {createEventWithMongo, getEventsWithMongo} from '../../api/serverRequests';
 
 function* getEventsRequest() {
   try {
-    const data = yield call(getEvents);
+    const data = yield call(getEventsWithMongo);
     // console.log('getCommunitiesRequest', Object.values(data), data);
     yield put(
       getEventsSuccessAction({
-        eventsList: Object.values(data),
+        eventsList: data,
       }),
     );
     // const userUid = yield select(selectUserUid);
@@ -125,20 +126,20 @@ function* createEventRequest(action: any) {
   } = action?.payload;
   try {
     const creatorUid = yield select(selectUserUid);
-    const response = yield call(
-      createEvent,
-      name,
-      description,
+    const data = {
+      title: name,
+      description: description,
       // country,
-      location,
-      creatorUid,
-      categories,
-      images,
-      eventDate,
-      place,
-      typeEvent,
-      communityUid,
-    );
+      location: location,
+      // creatorUid,
+      categories: categories,
+      images: images,
+      eventDate: eventDate,
+      place: place,
+      typeEvent: typeEvent,
+      communityUid: communityUid,
+    };
+    const response = yield call(createEventWithMongo, data);
     console.log('createEventRequest', response);
     yield put(createEventSuccessAction());
     navigationRef.current?.dispatch(

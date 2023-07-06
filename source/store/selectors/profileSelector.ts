@@ -15,15 +15,13 @@ export const getUserByIdData = (state: IRootState) =>
   state?.profile?.userByIdData ?? null;
 
 export const getUserCountry = (state: IRootState) =>
-  state?.registration?.currentUser?.country;
+  state?.registration?.currentUser?.userCountry;
 
 export const getUserLocation = (state: IRootState) =>
   state?.profile?.userData?.location ?? state?.registration?.location;
 
 export const userDanceStyles = (state: IRootState) =>
-  state?.registration?.individualStyles?.length > 0
-    ? state?.registration?.individualStyles
-    : state?.profile?.userData?.individualStyles;
+  state?.registration?.currentUser?.individualStyles ?? [];
 export const isSuccessResetPassword = (state: IRootState) =>
   state.profile?.changePasswordSuccess ?? false;
 export const changePasswordErrors = (state: IRootState) =>

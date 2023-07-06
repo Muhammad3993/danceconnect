@@ -14,12 +14,14 @@ import database from '@react-native-firebase/database';
 import VerticalCard from '../components/verticalEventCard';
 import moment from 'moment';
 import useAppStateHook from '../hooks/useAppState';
+import {useCommunities} from '../hooks/useCommunitites';
 
 const HomeScreen = () => {
   const {userImgUrl, individualStyles, getCurrentUser} = useProfile();
   const {userUid} = useRegistration();
   const navigation = useNavigation();
   const {eventTypes, getDanceStyles} = useAppStateHook();
+  const {getCommunitites} = useCommunities();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
   const {attendEventWithUserUid, loadingEvents, getEvents, eventList} =
@@ -36,7 +38,7 @@ const HomeScreen = () => {
   useEffect(() => {
     getDanceStyles();
     setCurrentTab('All');
-    getCurrentUser();
+    getCommunitites();
     setEvents(attendEventWithUserUid);
   }, []);
 
@@ -63,7 +65,7 @@ const HomeScreen = () => {
       return () => database().ref('events/').off('value', onValueChange);
     }, []),
   );
-// console.log(individualStyles);
+  // console.log(individualStyles);
   useFocusEffect(
     useCallback(() => {
       const onValueChange = database()

@@ -39,6 +39,7 @@ import {setLoadingAction} from '../actions/appStateActions';
 import {getMinInfoCommunities} from '../../api/communities';
 import {
   createCommunityWithMongo,
+  deleteCommunityById,
   getCommunitiesWithMongo,
   getCommunityById,
 } from '../../api/serverRequests';
@@ -104,8 +105,7 @@ function* createCommunityRequest(action: any) {
       // country,
       location: location,
       // creatorUid,
-      categories: ['Jazz'],
-      // categories: categories,
+      categories: categories,
       images: images,
     };
     const response = yield call(createCommunityWithMongo, data);
@@ -199,7 +199,7 @@ function* changeInformation(action: any) {
 function* removeCommunityRequest(action: any) {
   try {
     yield put(setLoadingAction({onLoading: true}));
-    yield call(removeCommunity, action?.payload?.uid);
+    yield call(deleteCommunityById, action?.payload?.uid);
     yield put(removeCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
     navigationRef.current?.dispatch(

@@ -39,21 +39,19 @@ import {
 import {getEventsRequestAction} from '../actions/eventActions';
 import {choosedCityAction, setLoadingAction} from '../actions/appStateActions';
 import {createUser, login} from '../../api/serverRequests';
-import axios from 'axios';
 
 function* registrationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
     const data = action.payload;
     const response = yield call(createUser, data);
-    console.log(password, response, action.payload);
     if (response.status === 200) {
       const auth = yield call(login, email, password);
-      axios.defaults.headers.common.Authorization = `Bearer ${auth?.data?.accessToken}`;
       yield put(
         registrationWithEmailSuccess({
           currentUser: auth?.data?.user?.user,
           isUserExists: true,
+          token: auth?.data?.accessToken,
         }),
       );
     }
@@ -72,13 +70,13 @@ function* authorizationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
     const auth = yield call(login, email, password);
-      axios.defaults.headers.common.Authorization = `Bearer ${auth?.data?.accessToken}`;
-      yield put(
-        registrationWithEmailSuccess({
-          currentUser: auth?.data?.user,
-          isUserExists: true,
-        }),
-      );
+    yield put(
+      registrationWithEmailSuccess({
+        currentUser: auth?.data?.user,
+        isUserExists: true,
+        token: auth?.data?.accessToken,
+      }),
+    );
     // const userCredentials = yield call(logInWithEmail, email, password);
     // const {uid} = userCredentials?._user;
     // yield put(getCommunitiesRequestAction());
@@ -151,11 +149,11 @@ function* authWthGoogle() {
     const response = yield call(signWithGoogle);
     console.log('authWthGoogle saga', response._user);
     const {uid} = response?._user;
-    const exists = yield call(userExists, uid);
+    // const exists = yield call(userExists, uid);
     yield put(
       authWithGoogleSuccess({
         currentUser: response._user,
-        isUserExists: exists,
+        isUserExists: true,
       }),
     );
     yield put(getUserDataRequestAction());

@@ -28,7 +28,7 @@ const CommunityCard = ({item}: any) => {
   const [countFollowers, setCountFollowers] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const isMyCommunity = userUid === data?.creatorUid;
+  const isMyCommunity = userUid === data?.creator?.uid;
   const isFollowed = isFollowedCurrentCommunity(data?.id);
   const [crntIndex, setCrntIndex] = useState(null);
   const [displayedData, setDisplayedData] = useState();

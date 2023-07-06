@@ -11,6 +11,7 @@ type registrationParams = {
   password?: string;
   errors?: string | unknown | undefined | {};
   currentUser?: null;
+  token?: string;
   name?: '';
   gender?: '';
   country?: '';
@@ -91,11 +92,13 @@ export const setRegistrationDataFailAction = {
 export const registrationWithEmailSuccess = ({
   currentUser,
   isUserExists,
+  token,
 }: registrationParams) => ({
   type: REGISTRATION_WITH_EMAIL.SUCCESS,
   payload: {
     currentUser: currentUser,
     isUserExists: isUserExists,
+    token: token,
   },
 });
 export const registrationWithEmailFail = (error: registrationParams) => ({

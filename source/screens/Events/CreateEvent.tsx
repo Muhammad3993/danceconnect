@@ -125,7 +125,7 @@ const CreateEvent = () => {
         categories: addedStyles,
         images: images,
         place: selectedPlace,
-        communityUid: communityData?.id,
+        communityUid: communityData?._id,
         eventDate: eventDate,
         typeEvent: typeEvent,
       });

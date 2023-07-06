@@ -15,6 +15,7 @@ import eventsReducer from './reducers/eventsReducer';
 import eventsInitialState from './initialState/eventsInitialState';
 import appStateInitialState from './initialState/appStateInitialState';
 import appStateReducer from './reducers/appStateReducer';
+import {saveAuthToken} from '../api/serverRequests';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
@@ -40,9 +41,9 @@ const rootPersistConfig = {
   timeout: 3600000,
   // blacklist: ['communities'],
 };
-let middleware = applyMiddleware(sagaMiddleware);
+let middleware = applyMiddleware(sagaMiddleware, saveAuthToken);
 if (__DEV__) {
-  middleware = applyMiddleware(sagaMiddleware, loggerMiddleware);
+  middleware = applyMiddleware(sagaMiddleware, loggerMiddleware, saveAuthToken);
 }
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);
 const store = createStore(persistedReducer, rootState, middleware);

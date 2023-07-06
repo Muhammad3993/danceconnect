@@ -17,7 +17,8 @@ type props = {
 };
 const EventCard = ({item}: props) => {
   const data = item;
-  const [eventData, setEventData] = useState();
+  // console.log(data);
+  const [eventData, setEventData] = useState(data);
   const navigation = useNavigation();
 
   const {userUid} = useRegistration();
@@ -51,24 +52,24 @@ const EventCard = ({item}: props) => {
     navigation.navigate('EventScreen', {data});
   };
 
-  useEffect(() => {
-    setLoadingData(true);
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    const onValueChange = database()
-      .ref(`events/${data?.eventUid}`)
-      .on('value', snapshot => {
-        setEventData(snapshot.val());
-        const ids = snapshot
-          .val()
-          ?.attendedPeople?.map(i => i.userUid)
-          .slice(0, 3);
-        getImgsAttendedPeopleToEvent(ids).then(imgs => setAttendedImgs(imgs));
-        setLoadingData(false);
-      });
+  // useEffect(() => {
+  //   setLoadingData(true);
+  //   RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  //   const onValueChange = database()
+  //     .ref(`events/${data?.eventUid}`)
+  //     .on('value', snapshot => {
+  //       setEventData(snapshot.val());
+  //       const ids = snapshot
+  //         .val()
+  //         ?.attendedPeople?.map(i => i.userUid)
+  //         .slice(0, 3);
+  //       getImgsAttendedPeopleToEvent(ids).then(imgs => setAttendedImgs(imgs));
+  //       setLoadingData(false);
+  //     });
 
-    return () =>
-      database().ref(`events/${data?.eventUid}`).off('value', onValueChange);
-  }, [data.communityUid, data?.eventUid]);
+  //   return () =>
+  //     database().ref(`events/${data?.eventUid}`).off('value', onValueChange);
+  // }, [data.communityUid, data?.eventUid]);
 
   const renderTags = (tags: string[]) => {
     return (
@@ -210,7 +211,7 @@ const EventCard = ({item}: props) => {
           </RN.View>
           <RN.View>
             <RN.Text numberOfLines={2} style={styles.nameEvent}>
-              {eventData?.name}
+              {eventData?.title}
             </RN.Text>
             <RN.Text numberOfLines={2} style={styles.description}>
               {eventData?.description}
