@@ -166,6 +166,7 @@ const MainNavigator = () => {
 const AppNavigator = () => {
   const {isUserExists} = useRegistration();
   const routeNameRef = React.useRef();
+  console.log('isUserExists', isUserExists);
   // const navigationRef = React.useRef();
   return (
     <NavigationContainer

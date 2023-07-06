@@ -37,6 +37,11 @@ import {CommonActions} from '@react-navigation/native';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {setLoadingAction} from '../actions/appStateActions';
 import {getMinInfoCommunities} from '../../api/communities';
+import {
+  createCommunityWithMongo,
+  getCommunitiesWithMongo,
+  getCommunityById,
+} from '../../api/serverRequests';
 type minimalInformation = {
   name: string;
   description: string;
@@ -48,68 +53,69 @@ type minimalInformation = {
 };
 function* getCommunitiesRequest() {
   try {
-    const data = yield call(getMinInfoCommunities);
+    const data = yield call(getCommunitiesWithMongo);
     // console.log('getCommunitiesRequest', Object.values(data), data);
-    const communities = data?.map((community: minimalInformation) => {
-      return {
-        name: community.name,
-        description: community.description,
-        categories: community?.categories,
-        images: community?.images,
-        followers: community?.followers,
-        location: community.location,
-        id: community.id,
-      };
-    });
+    // const communities = data?.map((community: minimalInformation) => {
+    //   return {
+    //     name: community.name,
+    //     description: community.description,
+    //     categories: community?.categories,
+    //     images: community?.images,
+    //     followers: community?.followers,
+    //     location: community.location,
+    //     id: community.id,
+    //   };
+    // });
     yield put(
       getCommunitiesSuccessAction({
-        dataCommunities: communities,
+        dataCommunities: data,
       }),
     );
-    const userUid = yield select(selectUserUid);
+    // const userUid = yield select(selectUserUid);
 
-    const followingCommunities: string[] =
-      data
-        .map(item => item)
-        ?.filter(
-          item =>
-            item?.followers?.length > 0 &&
-            item?.followers?.find(item => item?.userUid === userUid),
-        )
-        ?.map(item => item.id) ?? [];
+    // const followingCommunities: string[] =
+    //   data
+    //     .map(item => item)
+    //     ?.filter(
+    //       item =>
+    //         item?.followers?.length > 0 &&
+    //         item?.followers?.find(item => item?.userUid === userUid),
+    //     )
+    //     ?.map(item => item.id) ?? [];
 
-    yield put(
-      startFollowedCommunitySuccessAction({
-        followingCommunities: followingCommunities,
-      }),
-    );
+    // yield put(
+    //   startFollowedCommunitySuccessAction({
+    //     followingCommunities: followingCommunities,
+    //   }),
+    // );
   } catch (error: any) {
     console.log('getCommunitites', error);
     yield put(getCommunitiesFailAction(error));
   }
 }
 function* createCommunityRequest(action: any) {
-  const {name, description, country, location, categories, images} =
-    action?.payload;
+  const {name, description, location, categories, images} = action?.payload;
   try {
-    const creatorUid = yield select(selectUserUid);
+    // const creatorUid = yield select(selectUserUid);
     yield put(setLoadingAction({onLoading: true}));
-    yield call(
-      createCommunity,
-      name,
-      description,
+    const data = {
+      title: name,
+      description: description,
       // country,
-      location,
-      creatorUid,
-      categories,
-      images,
-    );
+      location: location,
+      // creatorUid,
+      categories: ['Jazz'],
+      // categories: categories,
+      images: images,
+    };
+    const response = yield call(createCommunityWithMongo, data);
+    console.log('createCommunityRequest', response);
     yield put(createCommunitySuccessAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
-        name: 'CommunitiesMain',
+        name: 'CommunityScreen',
         params: {
-          createdCommunity: true,
+          data: response,
         },
       }),
     );
@@ -145,10 +151,11 @@ function* cancelFollowingCommunity(action: any) {
 
 function* getCommunityByIdRequest(action: any) {
   const {communityUid} = action?.payload;
+  console.log(action.payload);
   try {
     yield put(
       getCommunityByIdSuccessAction({
-        communityByIdData: yield call(getCommunityByUid, communityUid),
+        communityByIdData: yield call(getCommunityById, communityUid),
       }),
     );
   } catch (error) {

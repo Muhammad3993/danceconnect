@@ -24,14 +24,16 @@ const CommunityScreen = () => {
   const {startFollowed} = useCommunities();
 
   const {data}: any = routeProps.params;
-  const {id} = data;
+  const {_id} = data;
+  // const _id = '64a558e4a6ac588333e736d4';
   const isAdmin = userUid === data?.creatorUid;
   const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
-  const {remove} = useCommunityById(id);
+  const {remove, getCommunity, communityData, loadingById} =
+    useCommunityById(_id);
   const [isJoined, setJoined] = useState();
   const [openingDescription, setOpeningDescription] = useState(false);
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
-  const [displayedData, setDisplayedData] = useState();
+  const [displayedData, setDisplayedData] = useState(communityData);
   const {
     getEventById,
     eventsDataById,
@@ -43,54 +45,51 @@ const CommunityScreen = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 4500);
-    return () => clearTimeout(timer);
+    getCommunity();
   }, []);
 
-  const upcomingEvents =
-    eventsDataById?.filter(
-      (item: {eventDate: {startDate: Date}}) =>
-        moment(item.eventDate?.startDate).format('YYYY-MM-DD') >=
-        moment(new Date()).format('YYYY-MM-DD'),
-    ) ?? [];
+  // const upcomingEvents =
+  //   eventsDataById?.filter(
+  //     (item: {eventDate: {startDate: Date}}) =>
+  //       moment(item.eventDate?.startDate).format('YYYY-MM-DD') >=
+  //       moment(new Date()).format('YYYY-MM-DD'),
+  //   ) ?? [];
   const [desc, setDesc] = useState();
-  useEffect(() => {
-    getUser(displayedData?.creatorUid);
-  }, [displayedData?.creatorUid]);
-  const passedEvents = eventsDataById?.filter(
-    (item: any) =>
-      moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
-      moment(new Date()).format('YYYY-MM-DD'),
-  );
-  useEffect(() => {
-    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    const onValueChange = database()
-      .ref(`community/${id}`)
-      .on('value', snapshot => {
-        setDisplayedData(snapshot.val());
-        setDesc(
-          snapshot.val()?.description?.length > 70
-            ? snapshot.val()?.description?.slice(0, 40) + '...'
-            : snapshot.val()?.description,
-        );
-        // getEvents();
-        getEventById(snapshot.val()?.events);
-      });
+  // useEffect(() => {
+  //   getUser(displayedData?.creatorUid);
+  // }, [displayedData?.creatorUid]);
+  // const passedEvents = eventsDataById?.filter(
+  //   (item: any) =>
+  //     moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
+  //     moment(new Date()).format('YYYY-MM-DD'),
+  // );
+  // useEffect(() => {
+  //   // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  //   const onValueChange = database()
+  //     .ref(`community/${id}`)
+  //     .on('value', snapshot => {
+  //       setDisplayedData(snapshot.val());
+  //       setDesc(
+  //         snapshot.val()?.description?.length > 70
+  //           ? snapshot.val()?.description?.slice(0, 40) + '...'
+  //           : snapshot.val()?.description,
+  //       );
+  //       // getEvents();
+  //       getEventById(snapshot.val()?.events);
+  //     });
 
-    return () => database().ref(`community/${id}`).off('value', onValueChange);
-  }, [id]);
+  //   return () => database().ref(`community/${id}`).off('value', onValueChange);
+  // }, [id]);
 
-  useMemo(() => {
-    setEvents(upcomingEvents);
-  }, [eventsDataById?.length]);
+  // useMemo(() => {
+  //   setEvents(upcomingEvents);
+  // }, [eventsDataById?.length]);
   const onPressShowText = () => {
     setOpeningDescription(true);
-    setDesc(displayedData?.description);
+    setDesc(communityData?.description);
   };
   const onPressEditCommunity = () => {
-    navigation.navigate('EditCommunity', displayedData);
+    navigation.navigate('EditCommunity', communityData);
   };
 
   const onPressJoin = () => {
@@ -115,24 +114,24 @@ const CommunityScreen = () => {
     remove();
     // navigation.navigate('CommunitiesMain', {removedCommunity: true});
   };
-  useMemo(() => {
-    setJoined(
-      displayedData?.followers?.map(item => item.userUid)?.includes(userUid),
-    );
-  }, [displayedData?.followers, userUid]);
+  // useMemo(() => {
+  //   setJoined(
+  //     displayedData?.followers?.map(item => item.userUid)?.includes(userUid),
+  //   );
+  // }, [displayedData?.followers, userUid]);
 
   const renderTags = () => {
     return (
       <RN.View
         style={[
           styles.tagsContainer,
-          {marginTop: displayedData?.images?.length > 0 ? -50 : -10},
+          {marginTop: communityData?.images?.length > 0 ? -50 : -10},
         ]}>
         <RN.ScrollView
           horizontal
           style={styles.scrollTags}
           showsHorizontalScrollIndicator={false}>
-          {displayedData?.categories?.map((item: string) => {
+          {communityData?.categories?.map((item: string) => {
             return (
               <RN.View style={styles.tagItem}>
                 <RN.Text style={{color: colors.white}}>{item}</RN.Text>
@@ -198,7 +197,7 @@ const CommunityScreen = () => {
       <>
         {renderTags()}
         <RN.View style={styles.titleContainer}>
-          <RN.Text style={styles.titleName}>{displayedData?.name}</RN.Text>
+          <RN.Text style={styles.titleName}>{communityData?.title}</RN.Text>
           <RN.Text style={styles.titleDesc}>{desc}</RN.Text>
           {!openingDescription && desc?.length > 40 && (
             <RN.TouchableOpacity
@@ -218,18 +217,18 @@ const CommunityScreen = () => {
     );
   };
 
-  useEffect(() => {
-    switch (currentTab) {
-      case 'Upcoming Events':
-        return setEvents(upcomingEvents);
-      case 'Attending':
-        return setEvents(attendingEventsForCommunity);
-      case 'Passed':
-        return setEvents(passedEvents);
-      default:
-        return setEvents(upcomingEvents);
-    }
-  }, [currentTab]);
+  // useEffect(() => {
+  //   switch (currentTab) {
+  //     case 'Upcoming Events':
+  //       return setEvents(upcomingEvents);
+  //     case 'Attending':
+  //       return setEvents(attendingEventsForCommunity);
+  //     case 'Passed':
+  //       return setEvents(passedEvents);
+  //     default:
+  //       return setEvents(upcomingEvents);
+  //   }
+  // }, [currentTab]);
   const onPressTab = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setCurrentTab(value);
@@ -306,8 +305,8 @@ const CommunityScreen = () => {
   };
   const onOpenMaps = () => {
     const url = RN.Platform.select({
-      ios: `maps:0,0?q=${displayedData?.location}`,
-      android: `geo:0,0?q=${displayedData?.location}`,
+      ios: `maps:0,0?q=${communityData?.location}`,
+      android: `geo:0,0?q=${communityData?.location}`,
     });
 
     RN.Linking.openURL(url);
@@ -333,7 +332,7 @@ const CommunityScreen = () => {
               </RN.View>
             </RN.View>
             <RN.Text
-              style={styles.locateText}>{`${displayedData?.location}`}</RN.Text>
+              style={styles.locateText}>{`${communityData?.location}`}</RN.Text>
           </RN.View>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.View style={{justifyContent: 'center'}}>
@@ -358,10 +357,11 @@ const CommunityScreen = () => {
           <RN.View style={{flexDirection: 'row'}}>
             <RN.Image
               source={
-                userById?.profileImg
+                communityData?.creator?.image
                   ? {
                       uri:
-                        'data:image/png;base64,' + userById?.profileImg?.base64,
+                        'data:image/png;base64,' +
+                        communityData?.creator?.image?.base64,
                     }
                   : require('../../assets/images/defaultuser.png')
               }
@@ -369,7 +369,7 @@ const CommunityScreen = () => {
             />
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.organizerName}>
-                {userById?.auth_data?.displayName ?? userById?.name}
+                {communityData?.creator?.name}
               </RN.Text>
               <RN.Text style={styles.organizer}>Organizer</RN.Text>
             </RN.View>
@@ -385,16 +385,16 @@ const CommunityScreen = () => {
   };
   useEffect(() => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
-  }, [loading]);
+  }, []);
 
-  if (loading) {
+  if (loadingById) {
     return <SkeletonCommunityScreen />;
   }
 
   return (
     <RN.ScrollView style={styles.container}>
       {header()}
-      <Carousel items={displayedData?.images} />
+      <Carousel items={communityData?.images} />
       {renderTitle()}
       {renderMapInfoOrganizer()}
       {!isAdmin && !isJoined && (
@@ -413,7 +413,7 @@ const CommunityScreen = () => {
         <RN.View style={styles.btnJoin}>
           <Button
             onPress={() =>
-              navigation.navigate('CreateEvent', {communityData: data})
+              navigation.navigate('CreateEvent', {communityData: communityData})
             }
             disabled
             // isLoading={isLoadingWithFollow}
@@ -444,8 +444,8 @@ const CommunityScreen = () => {
           />
         </RN.View>
       )} */}
-      {eventsDataById?.length > 0 && renderTabs()}
-      {renderEvents()}
+      {/* {eventsDataById?.length > 0 && renderTabs()} */}
+      {/* {renderEvents()} */}
     </RN.ScrollView>
   );
 };

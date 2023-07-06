@@ -40,7 +40,7 @@ const ProfileScreen = () => {
   const {managingCommunity} = useCommunities();
   const navigation = useNavigation();
   const [userData, setUserData] = useState();
-  const {userUid} = useRegistration();
+  const {userUid, currentUser} = useRegistration();
   const [newPassword, setNewPassword] = useState('');
   const [visibleError, setVisibleError] = useState(false);
   const [openLocation, setOpenLocation] = useState(false);
@@ -173,10 +173,10 @@ const ProfileScreen = () => {
           />
           <RN.View style={{maxWidth: SCREEN_WIDTH - 100}}>
             <RN.Text numberOfLines={1} style={styles.userName}>
-              {userName}
+              {currentUser?.userName}
             </RN.Text>
             <RN.Text numberOfLines={1} style={styles.userEmail}>
-              {userData?.auth_data?.email}
+              {currentUser?.email}
             </RN.Text>
             <RN.TouchableOpacity
               style={styles.editProfileBtn}
@@ -242,7 +242,7 @@ const ProfileScreen = () => {
             <RN.View style={{flexDirection: 'row'}}>
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.locationText}>
-                  {userData?.country}
+                  {currentUser?.userCountry}
                 </RN.Text>
               </RN.View>
               <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />

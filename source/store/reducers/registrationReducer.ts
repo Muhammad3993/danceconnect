@@ -21,6 +21,10 @@ export type registrationAction = {
     role?: string;
     isRegistrationsSuccess?: boolean;
     isUserExists?: boolean;
+    userName?: string;
+    userGender?: string;
+    userCountry?: string;
+    userRole?: string[];
     individualStyles?: string[];
   };
 };
@@ -35,17 +39,24 @@ export default (
         ...state,
         email: action.payload?.email,
         password: action.payload?.password,
+        userName: action.payload?.userName,
+        userGender: action.payload?.userGender,
+        userCountry: action.payload?.userCountry,
+        userRole: action.payload?.userRole,
+        individualStyles: action.payload?.individualStyles,
         isLoading: true,
         isAuthorized: false,
       };
     case REGISTRATION_WITH_EMAIL.SUCCESS:
       return {
         ...state,
-        email: action.payload?.currentUser?.email,
+        // email: action.payload?.currentUser?.email,
         // password: action.payload?.password,
         isLoading: false,
-        isAuthorized: false,
+        isAuthorized: true,
+        isRegistrationsSuccess: true,
         currentUser: action.payload?.currentUser,
+        isUserExists: action.payload?.isUserExists,
       };
     case REGISTRATION_WITH_EMAIL.FAIL:
       return {
@@ -74,6 +85,7 @@ export default (
         isAuthorized: true,
         currentUser: action.payload?.currentUser,
         isUserExists: action.payload?.isUserExists,
+        isRegistrationsSuccess: true,
       };
     case AUTHORIZATION_WITH_EMAIL.FAIL:
       return {

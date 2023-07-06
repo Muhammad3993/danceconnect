@@ -163,21 +163,20 @@ const CommunityCard = ({item}: any) => {
         style={styles.headerItemContainer}
         activeOpacity={0.7}>
         <RN.View style={{maxWidth: SCREEN_WIDTH / 1.5}}>
-          {displayedData?.categories && renderTags(displayedData?.categories)}
+          {data?.categories && renderTags(data?.categories)}
           <RN.Text numberOfLines={1} style={styles.itemTitle}>
-            {displayedData?.name}
+            {data?.title}
           </RN.Text>
           <RN.Text numberOfLines={2} style={styles.itemDesc}>
-            {displayedData?.description}
+            {data?.description}
           </RN.Text>
         </RN.View>
         <RN.Image
           defaultSource={require('../assets/images/default.jpeg')}
           source={
-            displayedData?.images?.length > 0
+            data?.images?.length > 0
               ? {
-                  uri:
-                    'data:image/png;base64,' + displayedData?.images[0]?.base64,
+                  uri: 'data:image/png;base64,' + data?.images[0]?.base64,
                 }
               : require('../assets/images/default.jpeg')
           }

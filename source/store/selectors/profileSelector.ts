@@ -15,7 +15,7 @@ export const getUserByIdData = (state: IRootState) =>
   state?.profile?.userByIdData ?? null;
 
 export const getUserCountry = (state: IRootState) =>
-  state?.profile?.userData?.country ?? state?.registration?.country;
+  state?.registration?.currentUser?.country;
 
 export const getUserLocation = (state: IRootState) =>
   state?.profile?.userData?.location ?? state?.registration?.location;

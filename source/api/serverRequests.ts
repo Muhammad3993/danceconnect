@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
+const apiUrl = 'http://localhost:3000';
+// const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
 
 type user = {
   email: string;
@@ -26,7 +27,7 @@ export const login = async (email: string, password: string) => {
     const response = await axios.post(`${apiUrl}/auth/`, {
       data_auth: data_auth,
     });
-    console.log('response', response);
+    console.log('login', response);
     return response;
   } catch (er) {
     return console.log('er', er);
@@ -35,9 +36,10 @@ export const login = async (email: string, password: string) => {
 export const createUser = async (data: user) => {
   try {
     const response = await axios.post(`${apiUrl}/users/`, {data: data});
-    console.log('response', response);
-    const {email, password} = data;
-    login(email, password).then();
+    console.log('createUser', response);
+    // const {email, password} = data;
+    // login(email, password).then();
+    return response;
   } catch (er) {
     return console.log('er', er);
   }
@@ -50,5 +52,21 @@ export const getCommunitiesWithMongo = async () => {
     return response?.data?.data;
   } catch (er) {
     return console.log('er', er);
+  }
+};
+export const createCommunityWithMongo = async (data: object) => {
+  try {
+    const response = await axios.post(`${apiUrl}/communities`, {data: data});
+    return response.data;
+  } catch (error) {
+    return console.log('createCommunityWithMongo er', error);
+  }
+};
+export const getCommunityById = async (id: string) => {
+  try {
+    const response = await axios.get(`${apiUrl}/communities/${id}`);
+    return response.data;
+  } catch (error) {
+    return console.log('createCommunityWithMongo er', error);
   }
 };

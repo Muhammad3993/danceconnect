@@ -9,7 +9,7 @@ import {
 type registrationParams = {
   email?: string;
   password?: string;
-  errors: string | unknown | undefined | {};
+  errors?: string | unknown | undefined | {};
   currentUser?: null;
   name?: '';
   gender?: '';
@@ -18,16 +18,30 @@ type registrationParams = {
   role?: '';
   uid?: '';
   isUserExists?: boolean;
+  userName?: string;
+  userGender?: string;
+  userCountry?: string;
+  userRole?: string[];
   individualStyles?: string[];
 };
 export const registrationWithEmailRequest = ({
   email,
   password,
+  userName,
+  userGender,
+  userCountry,
+  userRole,
+  individualStyles,
 }: registrationParams) => ({
   type: REGISTRATION_WITH_EMAIL.REQUEST,
   payload: {
     email: email,
     password: password,
+    userName: userName,
+    userGender: userGender,
+    userCountry: userCountry,
+    userRole: userRole,
+    individualStyles: individualStyles,
   },
 });
 
@@ -76,10 +90,12 @@ export const setRegistrationDataFailAction = {
 };
 export const registrationWithEmailSuccess = ({
   currentUser,
+  isUserExists,
 }: registrationParams) => ({
   type: REGISTRATION_WITH_EMAIL.SUCCESS,
   payload: {
-    currentUser,
+    currentUser: currentUser,
+    isUserExists: isUserExists,
   },
 });
 export const registrationWithEmailFail = (error: registrationParams) => ({

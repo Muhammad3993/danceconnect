@@ -38,20 +38,29 @@ import {
 } from '../actions/communityActions';
 import {getEventsRequestAction} from '../actions/eventActions';
 import {choosedCityAction, setLoadingAction} from '../actions/appStateActions';
+import {createUser, login} from '../../api/serverRequests';
+import axios from 'axios';
 
 function* registrationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
-    const userCredentials = yield call(sinUpWithEmail, email, password);
-    const {uid} = userCredentials?._user;
-    const exists = yield call(userExists, uid);
+    const data = action.payload;
+    const response = yield call(createUser, data);
+    console.log(password, response, action.payload);
+    if (response.status === 200) {
+      const auth = yield call(login, email, password);
+      axios.defaults.headers.common.Authorization = `Bearer ${auth?.data?.accessToken}`;
+      yield put(
+        registrationWithEmailSuccess({
+          currentUser: auth?.data?.user?.user,
+          isUserExists: true,
+        }),
+      );
+    }
+    // const userCredentials = yield call(sinUpWithEmail, email, password);
+    // const {uid} = userCredentials?._user;
+    // const exists = yield call(userExists, uid);
 
-    yield put(
-      registrationWithEmailSuccess({
-        currentUser: userCredentials._user,
-        isUserExists: exists,
-      }),
-    );
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('registrationWithEmailFail error', error);
@@ -62,20 +71,28 @@ function* registrationEmail(action: any) {
 function* authorizationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
-    const userCredentials = yield call(logInWithEmail, email, password);
-    const {uid} = userCredentials?._user;
+    const auth = yield call(login, email, password);
+      axios.defaults.headers.common.Authorization = `Bearer ${auth?.data?.accessToken}`;
+      yield put(
+        registrationWithEmailSuccess({
+          currentUser: auth?.data?.user,
+          isUserExists: true,
+        }),
+      );
+    // const userCredentials = yield call(logInWithEmail, email, password);
+    // const {uid} = userCredentials?._user;
     // yield put(getCommunitiesRequestAction());
     yield put(getEventsRequestAction());
     // const userData = yield call(getUserData, uid);
     // console.log('authorizationEmail', userData);
-    const exists = yield call(userExists, uid);
-    yield put(
-      authorizationWithEmailSuccess({
-        currentUser: userCredentials._user,
-        isUserExists: exists,
-      }),
-    );
-    yield put(getUserDataRequestAction());
+    // const exists = yield call(userExists, uid);
+    // yield put(
+    //   authorizationWithEmailSuccess({
+    //     currentUser: userCredentials._user,
+    //     isUserExists: exists,
+    //   }),
+    // );
+    // yield put(getUserDataRequestAction());
     yield put(getCommunitiesRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
@@ -119,7 +136,7 @@ function* registrationSetData(action: any) {
 
 function* logoutUser() {
   try {
-    yield call(logout);
+    // yield call(logout);
     yield put(logoutSuccess());
     yield put(clearChangePassData({changePasswordSuccess: false}));
     yield put(clearUserDataInStorage());

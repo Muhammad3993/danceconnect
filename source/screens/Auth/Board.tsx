@@ -3,13 +3,14 @@ import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import useRegistration from '../../hooks/useRegistration';
 import {AuthStackNavigationParamList} from '../../navigation/types';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {genders, isAndroid, roles} from '../../utils/constants';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import FindCity from '../../components/findCity';
 import CategorySelector from '../../components/catregorySelector';
 import useAppStateHook from '../../hooks/useAppState';
+import { createUser } from '../../api/serverRequests';
 // import { createUser } from '../../api/serverRequests';
 
 interface city {
@@ -20,7 +21,8 @@ interface city {
 }
 const Board = () => {
   const [crntSlide, setCrntSlide] = useState(0);
-  const {userName, isRegistrationsSuccess, setUserData} = useRegistration();
+  const routeProps = useRoute();
+  const {userName, saveEmail, pass, isRegistrationsSuccess, registration} = useRegistration();
   const {onChoosedCity, getDanceStyles} = useAppStateHook();
   const [name, setName] = useState<string>(userName);
   const [gender, setGender] = useState();
@@ -31,6 +33,7 @@ const Board = () => {
   const [selectedLocation, setSelectedLocation] = useState<city>(Object);
   const navigation = useNavigation<AuthStackNavigationParamList>();
 
+  // console.log(routeProps);
   useEffect(() => {
     getDanceStyles();
   }, []);
@@ -54,17 +57,17 @@ const Board = () => {
       ', ' +
       selectedLocation?.terms[1].value;
     onChoosedCity(selectedLocation);
-    // const data = {
-    //   email: 'y.balaev@yandex.com',
-    //   password: 'qwerty123',
-    //   userName: name,
-    //   userGender: gender?.title,
-    //   userCountry: location,
-    //   userRole: role,
-    //   individualStyles: addedStyles,
-    // };
+    const data = {
+      email: routeProps?.params?.email,
+      password: routeProps?.params?.password,
+      userName: name,
+      userGender: gender?.title,
+      userCountry: location,
+      userRole: role,
+      individualStyles: addedStyles,
+    };
     // createUser(data);
-    setUserData(name, gender?.title, location, country, role, addedStyles);
+    registration(data);
   };
 
   const onChangeSlide = (value: number) => {

@@ -87,8 +87,9 @@ const RegistraionScreen = (): JSX.Element => {
   }, [userUid, navigation, isUserExists]);
 
   const onPressSignUp = () => {
-    setLoading(true);
-    registration(email, password);
+    // setLoading(true);
+    navigation.navigate('ONBOARDING', {email, password});
+      // registration(email, password);
   };
 
   const renderBackButton = () => {
