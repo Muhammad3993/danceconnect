@@ -10,8 +10,6 @@ import {Button} from '../../components/Button';
 import FindCity from '../../components/findCity';
 import CategorySelector from '../../components/catregorySelector';
 import useAppStateHook from '../../hooks/useAppState';
-import { createUser } from '../../api/serverRequests';
-// import { createUser } from '../../api/serverRequests';
 
 interface city {
   structured_formatting: {
@@ -22,11 +20,11 @@ interface city {
 const Board = () => {
   const [crntSlide, setCrntSlide] = useState(0);
   const routeProps = useRoute();
-  const {userName, saveEmail, pass, isRegistrationsSuccess, registration} = useRegistration();
+  const {userName, saveEmail, isRegistrationsSuccess, registration, userUid} =
+    useRegistration();
   const {onChoosedCity, getDanceStyles} = useAppStateHook();
   const [name, setName] = useState<string>(userName);
   const [gender, setGender] = useState();
-  const [country, setCountry] = useState('');
   const [role, setRole] = useState<string[]>(new Array(0).fill(''));
   const [addedStyles, setAddedStyles] = useState<string[]>([]);
   const [openLocation, setOpenLocation] = useState(false);
@@ -58,8 +56,8 @@ const Board = () => {
       selectedLocation?.terms[1].value;
     onChoosedCity(selectedLocation);
     const data = {
-      email: routeProps?.params?.email,
-      password: routeProps?.params?.password,
+      email: routeProps?.params?.email ?? saveEmail,
+      password: routeProps?.params?.password ?? userUid,
       userName: name,
       userGender: gender?.title,
       userCountry: location,

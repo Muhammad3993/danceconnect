@@ -12,7 +12,7 @@ export const selectUser = (state: IRootState) =>
 export const selectUserUid = (state: IRootState) =>
   state.registration?.currentUser?._id ?? '';
 export const selectEmailUser = (state: IRootState) =>
-  state.registration?.email ?? '';
+  state.registration?.currentUser?.email ?? '';
   export const selectPasswordUser = (state: IRootState) =>
     state.registration?.password ?? '';
 

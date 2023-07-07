@@ -77,6 +77,7 @@ const RegistraionScreen = (): JSX.Element => {
       authorizationWithGoogle();
     }
   };
+  // console.log(userUid, isUserExists)
   useEffect(() => {
     if (userUid && !isUserExists) {
       navigation.navigate('ONBOARDING');

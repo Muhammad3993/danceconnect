@@ -49,6 +49,15 @@ export const createUser = async (data: user) => {
   }
 };
 
+export const userExists = async (uid: string) => {
+  try {
+    const response = await axios.get(`${apiUrl}/users/${uid}`);
+    console.log('userExists', response);
+    return response?.data?.data;
+  } catch (er) {
+    return console.log('er', er);
+  }
+};
 export const getCommunitiesWithMongo = async () => {
   try {
     const response = await axios.get(`${apiUrl}/communities/`);

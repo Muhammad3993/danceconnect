@@ -25,7 +25,6 @@ import {
   setRegistrationDataFailAction,
   setRegistrationDataSuccessAction,
 } from '../actions/authorizationActions';
-import {userExists} from '../../api/functions';
 import {setErrors} from '../../utils/helpers';
 import {
   clearChangePassData,
@@ -38,7 +37,7 @@ import {
 } from '../actions/communityActions';
 import {getEventsRequestAction} from '../actions/eventActions';
 import {choosedCityAction, setLoadingAction} from '../actions/appStateActions';
-import {createUser, login} from '../../api/serverRequests';
+import {createUser, login, userExists} from '../../api/serverRequests';
 
 function* registrationEmail(action: any) {
   try {
@@ -134,7 +133,7 @@ function* registrationSetData(action: any) {
 
 function* logoutUser() {
   try {
-    // yield call(logout);
+    yield call(logout);
     yield put(logoutSuccess());
     yield put(clearChangePassData({changePasswordSuccess: false}));
     yield put(clearUserDataInStorage());
@@ -147,19 +146,19 @@ function* logoutUser() {
 function* authWthGoogle() {
   try {
     const response = yield call(signWithGoogle);
-    console.log('authWthGoogle saga', response._user);
     const {uid} = response?._user;
-    // const exists = yield call(userExists, uid);
-    yield put(
-      authWithGoogleSuccess({
-        currentUser: response._user,
-        isUserExists: true,
-      }),
-    );
-    yield put(getUserDataRequestAction());
-    yield put(getCommunitiesRequestAction());
-    yield put(getEventsRequestAction());
-    yield put(setLoadingAction({onLoading: false}));
+    const exists = yield call(userExists, uid);
+    console.log('authWthGoogle saga', exists);
+    // yield put(
+    //   authWithGoogleSuccess({
+    //     currentUser: {...response._user, _id: response?._user?.uid},
+    //     isUserExists: exists,
+    //   }),
+    // );
+    // yield put(getUserDataRequestAction());
+    // yield put(getCommunitiesRequestAction());
+    // yield put(getEventsRequestAction());
+    // yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('authWthGoogle error', error);
     yield put(authWithGoogleFail(setErrors(error?.toString())));
