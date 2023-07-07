@@ -178,6 +178,8 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 12,
     paddingHorizontal: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray,
   },
   headerText: {
     color: colors.textPrimary,

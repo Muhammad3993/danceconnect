@@ -144,14 +144,14 @@ const AuthorizationScreen = (): JSX.Element => {
               onPress={onPressLogin}
               isLoading={isLoading}
             />
-            <RN.TouchableOpacity
+            {/* <RN.TouchableOpacity
               disabled={email?.length <= 0}
               style={styles.recoveryPasswordBtn}
               onPress={resetPassword}>
               <RN.Text style={styles.recoveryPasswordText}>
                 Forgot the password?
               </RN.Text>
-            </RN.TouchableOpacity>
+            </RN.TouchableOpacity> */}
             <RN.View style={styles.linesWrapper}>
               <RN.View style={styles.line} />
               <RN.Text style={styles.or}>or continue with</RN.Text>
