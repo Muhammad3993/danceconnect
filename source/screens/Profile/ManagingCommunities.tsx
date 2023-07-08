@@ -25,7 +25,7 @@ const ManagingCommunities = () => {
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no community yet</RN.Text>
+        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
       </RN.View>
     );
   };

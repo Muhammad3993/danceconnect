@@ -27,7 +27,7 @@ const HomeScreen = () => {
   const [events, setEvents] = useState(
     !loadingEvents && attendEventWithUserUid,
   );
-
+ ≠
   const [maybeEvents, setMaybeEvents] = useState([]);
   useEffect(() => {
     setTabs(['All', ...eventTypes]);
@@ -39,22 +39,24 @@ const HomeScreen = () => {
     getCurrentUser();
     setEvents(attendEventWithUserUid);
   }, []);
-
+  // Get events for the current tab and filter out those that have already been attending or are 
   useFocusEffect(
     useCallback(() => {
       const onValueChange = database()
         .ref('events/')
         .on('value', snapshot => {
-          const array = Object.values(snapshot.val());
-          const attendedPeople = array?.filter(
-            i =>
-              i?.attendedPeople?.find(
-                (user: any) => user.userUid === userUid,
-              ) &&
-              moment(i.eventDate?.startDate).format('YYYY-MM-DD') >
-                moment(new Date()).format('YYYY-MM-DD'),
-          );
-          setEvents(attendedPeople);
+          if (snapshot?.val()?.length > 0) {
+            const array = Object.values(snapshot.val());
+            const attendedPeople = array?.filter(
+              i =>
+                i?.attendedPeople?.find(
+                  (user: any) => user.userUid === userUid,
+                ) &&
+                moment(i.eventDate?.startDate).format('YYYY-MM-DD') >
+                  moment(new Date()).format('YYYY-MM-DD'),
+            );
+            setEvents(attendedPeople);
+          }
         });
       RN.LayoutAnimation.configureNext(
         RN.LayoutAnimation.Presets.easeInEaseOut,
@@ -63,7 +65,7 @@ const HomeScreen = () => {
       return () => database().ref('events/').off('value', onValueChange);
     }, []),
   );
-// console.log(individualStyles);
+  // console.log(individualStyles);
   useFocusEffect(
     useCallback(() => {
       const onValueChange = database()

@@ -144,7 +144,15 @@ const RegistraionScreen = (): JSX.Element => {
               <RN.Text style={styles.or}>or continue with</RN.Text>
               <RN.View style={styles.line} />
             </RN.View>
-            <RN.View style={styles.btnsWrapper}>
+            <RN.View style={{paddingTop: 24}}>
+              <AuthButton
+                title={authButtons[0].title}
+                icon={authButtons[0].icon}
+                key={authButtons[0].key}
+                navigateTo={authButtons[0].navigateTo}
+              />
+            </RN.View>
+            {/* <RN.View style={styles.btnsWrapper}>
               {btns?.map(btn => {
                 return (
                   <AuthButton
@@ -155,7 +163,7 @@ const RegistraionScreen = (): JSX.Element => {
                   />
                 );
               })}
-            </RN.View>
+            </RN.View> */}
           </RN.View>
 
           <RN.View style={styles.bottomWrapper}>
@@ -165,6 +173,19 @@ const RegistraionScreen = (): JSX.Element => {
             <RN.TouchableOpacity onPress={onPressLogin}>
               <RN.Text style={styles.logInText}>Log in</RN.Text>
             </RN.TouchableOpacity>
+          </RN.View>
+          <RN.View style={{paddingHorizontal: 20}}>
+            <RN.Text style={styles.licenceText}>
+              By registering in the application, you agree to the
+              <RN.Text
+                style={styles.licenceTextOrange}
+                onPress={() =>
+                  RN.Linking.openURL('https://www.danceconnect.online/terms')
+                }>
+                {' '}
+                terms and conditions
+              </RN.Text>
+            </RN.Text>
           </RN.View>
         </RN.ScrollView>
       </RN.KeyboardAvoidingView>
@@ -176,6 +197,20 @@ const styles = RN.StyleSheet.create({
   safeArea: {
     backgroundColor: colors.white,
     flex: 1,
+  },
+  licenceText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '400',
+    color: colors.darkGray,
+    fontFamily: 'Mulish',
+    textAlign: 'center',
+    marginHorizontal: 40,
+  },
+  licenceTextOrange: {
+    color: colors.orange,
+    fontSize: 14,
+    lineHeight: 20,
   },
   icon: {
     height: 20,
