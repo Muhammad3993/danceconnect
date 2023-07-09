@@ -110,7 +110,7 @@ const EditEvent = () => {
     const eventDateEd = {
       time: time,
       startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
-      endDate: endDate ?? moment(new Date()).format('YYYY-MM-DD'),
+      endDate: endDate ?? null,
     };
     const locationEdt =
       selectedLocation?.structured_formatting?.main_text?.length > 0
@@ -409,6 +409,7 @@ const EditEvent = () => {
       </RN.View>
     );
   };
+  console.log('endDate', endDate);
   const renderEventDates = () => {
     return (
       <RN.View>
@@ -432,11 +433,7 @@ const EditEvent = () => {
                   startDate === null
                     ? moment(Date.now()).format('MMMM Do')
                     : moment(startDate).format('MMMM Do')
-                }${
-                  endDate !== null
-                    ? ' - ' + moment(endDate).format('MMMM Do')
-                    : ''
-                }`}
+                }${endDate ? ' - ' + moment(endDate).format('MMMM Do') : ''}`}
               </RN.Text>
               <RN.Text style={styles.dateEventText}>
                 {moment(time).format('HH:mm')}

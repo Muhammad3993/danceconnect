@@ -16,7 +16,8 @@ import moment from 'moment';
 import useAppStateHook from '../hooks/useAppState';
 
 const HomeScreen = () => {
-  const {userImgUrl, individualStyles, getCurrentUser} = useProfile();
+  const {userImgUrl, individualStyles, getCurrentUser, userCommunities} =
+    useProfile();
   const {userUid} = useRegistration();
   const navigation = useNavigation();
   const {eventTypes, getDanceStyles} = useAppStateHook();
@@ -27,8 +28,8 @@ const HomeScreen = () => {
   const [events, setEvents] = useState(
     !loadingEvents && attendEventWithUserUid,
   );
- ≠
-  const [maybeEvents, setMaybeEvents] = useState([]);
+
+  // const [maybeEvents, setMaybeEvents] = useState([]);
   useEffect(() => {
     setTabs(['All', ...eventTypes]);
   }, [eventTypes?.length]);
@@ -37,9 +38,30 @@ const HomeScreen = () => {
     getDanceStyles();
     setCurrentTab('All');
     getCurrentUser();
-    setEvents(attendEventWithUserUid);
+    setEvents(
+      attendEventWithUserUid?.concat(
+        eventList?.filter((event: {communityUid: string}) =>
+          userCommunities?.includes(event?.communityUid),
+        ),
+      ),
+    );
   }, []);
-  // Get events for the current tab and filter out those that have already been attending or are 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getEvents();
+      setEvents(
+        attendEventWithUserUid?.concat(
+          eventList?.filter((event: {communityUid: string}) =>
+            userCommunities?.includes(event?.communityUid),
+          ),
+        ),
+      );
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [attendEventWithUserUid, eventList, navigation, userCommunities]);
+  // Get events for the current tab and filter out those that have already been attending or are
   useFocusEffect(
     useCallback(() => {
       const onValueChange = database()
@@ -55,7 +77,13 @@ const HomeScreen = () => {
                 moment(i.eventDate?.startDate).format('YYYY-MM-DD') >
                   moment(new Date()).format('YYYY-MM-DD'),
             );
-            setEvents(attendedPeople);
+            setEvents(
+              attendedPeople?.concat(
+                eventList?.filter((event: {communityUid: string}) =>
+                  userCommunities?.includes(event?.communityUid),
+                ),
+              ),
+            );
           }
         });
       RN.LayoutAnimation.configureNext(
@@ -63,41 +91,41 @@ const HomeScreen = () => {
       );
 
       return () => database().ref('events/').off('value', onValueChange);
-    }, []),
+    }, [eventList, userCommunities, userUid]),
   );
   // console.log(individualStyles);
-  useFocusEffect(
-    useCallback(() => {
-      const onValueChange = database()
-        .ref(`users/${userUid}/goingEvent`)
-        .on('value', snapshot => {
-          if (snapshot?.val() !== null) {
-            const array = Object.values(snapshot?.val());
-            setMaybeEvents(
-              eventList?.filter(
-                ev =>
-                  !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
-              ),
-            );
-          } else {
-            const ev = eventList?.filter(
-              event =>
-                event?.categories?.some(st => individualStyles?.includes(st)) &&
-                event?.creatorUid !== userUid,
-            );
-            setMaybeEvents(ev);
-          }
-        });
-      RN.LayoutAnimation.configureNext(
-        RN.LayoutAnimation.Presets.easeInEaseOut,
-      );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const onValueChange = database()
+  //       .ref(`users/${userUid}/goingEvent`)
+  //       .on('value', snapshot => {
+  //         if (snapshot?.val() !== null) {
+  //           const array = Object.values(snapshot?.val());
+  //           setMaybeEvents(
+  //             eventList?.filter(
+  //               ev =>
+  //                 !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
+  //             ),
+  //           );
+  //         } else {
+  //           const ev = eventList?.filter(
+  //             event =>
+  //               event?.categories?.some(st => individualStyles?.includes(st)) &&
+  //               event?.creatorUid !== userUid,
+  //           );
+  //           setMaybeEvents(ev);
+  //         }
+  //       });
+  //     RN.LayoutAnimation.configureNext(
+  //       RN.LayoutAnimation.Presets.easeInEaseOut,
+  //     );
 
-      return () =>
-        database()
-          .ref(`users/${userUid}/goingEvent`)
-          .off('value', onValueChange);
-    }, [eventList, events, individualStyles, userUid]),
-  );
+  //     return () =>
+  //       database()
+  //         .ref(`users/${userUid}/goingEvent`)
+  //         .off('value', onValueChange);
+  //   }, [eventList, events, individualStyles, userUid]),
+  // );
 
   const goToCommunities = () => navigation.navigate('Communities');
   useEffect(() => {
@@ -108,12 +136,24 @@ const HomeScreen = () => {
     setCurrentTab(value);
     if (value === 'All') {
       getEvents();
-      setEvents(attendEventWithUserUid);
+      setEvents(
+        attendEventWithUserUid?.concat(
+          eventList?.filter((event: {communityUid: string}) =>
+            userCommunities?.includes(event?.communityUid),
+          ),
+        ),
+      );
     } else {
       setEvents(
-        attendEventWithUserUid?.filter((event: any) =>
-          event?.typeEvent?.includes(value),
-        ),
+        attendEventWithUserUid
+          ?.filter((event: any) => event?.typeEvent?.includes(value))
+          .concat(
+            eventList?.filter(
+              (event: {communityUid: string}) =>
+                userCommunities?.includes(event?.communityUid) &&
+                event?.typeEvent?.includes(value),
+            ),
+          ),
       );
     }
   };
@@ -178,7 +218,7 @@ const HomeScreen = () => {
     <RN.View style={styles.container}>
       {renderHeader()}
       <ScrollView showsVerticalScrollIndicator={false}>
-        {maybeEvents?.length > 0 && (
+        {/* {maybeEvents?.length > 0 && (
           <RN.View style={styles.interestedWrapper}>
             <RN.Text style={styles.interestedText}>
               You might be interested
@@ -189,7 +229,7 @@ const HomeScreen = () => {
               ))}
             </ScrollView>
           </RN.View>
-        )}
+        )} */}
         <RN.View
           style={{
             padding: 16,

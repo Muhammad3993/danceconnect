@@ -29,6 +29,7 @@ export const useProfile = () => {
   const individualStyles = useSelector(userDanceStyles);
   const isSuccessChangePassword = useSelector(isSuccessResetPassword);
   const errorsWithChangePassword = useSelector(changePasswordErrors);
+  const userCommunities = user?.joinedCommunities;
 
   const getCurrentUser = () => {
     dispatch(getUserDataRequestAction());
@@ -74,5 +75,6 @@ export const useProfile = () => {
     isSuccessChangePassword,
     onChangePassword,
     errorsWithChangePassword,
+    userCommunities,
   };
 };

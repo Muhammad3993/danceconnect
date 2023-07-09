@@ -45,14 +45,14 @@ const CommunityScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 4500);
+    }, 3500);
     return () => clearTimeout(timer);
   }, []);
 
   const upcomingEvents =
     eventsDataById?.filter(
       (item: {eventDate: {startDate: Date}}) =>
-        moment(item.eventDate?.startDate).format('YYYY-MM-DD') >=
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >=
         moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
   const [desc, setDesc] = useState();
@@ -61,7 +61,7 @@ const CommunityScreen = () => {
   }, [displayedData?.creatorUid]);
   const passedEvents = eventsDataById?.filter(
     (item: any) =>
-      moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
+      moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
       moment(new Date()).format('YYYY-MM-DD'),
   );
   useEffect(() => {

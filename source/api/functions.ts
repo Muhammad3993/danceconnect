@@ -96,7 +96,36 @@ export const getCommunities = async () => {
 };
 
 export const removeCommunity = async (uid: string) => {
-  await database().ref(`community/${uid}`).remove();
+  const userUid = firebase.auth().currentUser?.uid;
+  const userValues = await firebase
+    .database()
+    .ref(`users/${userUid}`)
+    .once('value');
+  const userCommunities = userValues?.val()?.myComunitiesIds;
+  const userEvents = userValues?.val()?.events;
+  if (userCommunities?.length > 0) {
+    database()
+      .ref(`community/${uid}`)
+      .remove()
+      .then()
+      .finally(() => {
+        if (userEvents?.length > 0) {
+          userEvents.forEach((eventId: string) => {
+            removeEvent(eventId)
+              .then()
+              .finally(async () => {
+                await database().ref(`users/${userUid}`).remove();
+                firebase.auth().currentUser?.delete();
+              });
+          });
+        }
+      });
+  } else {
+    await database().ref(`users/${userUid}`).remove();
+    firebase.auth().currentUser?.delete();
+  }
+
+  // await database().ref(`community/${uid}`).remove();
 };
 export const removeEvent = async (uid: string) => {
   await database().ref(`events/${uid}`).remove();

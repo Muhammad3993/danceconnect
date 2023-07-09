@@ -44,7 +44,7 @@ const CreateEvent = () => {
   const [isErrorName, setIsErrorName] = useState(false);
   const [isDescriptionError, setIsDescriptionError] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
-  const [time, setTime] = useState(new Date().getTime());
+  const [time, setTime] = useState();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [countNameSymbols, setCountNameSymbols] = useState({

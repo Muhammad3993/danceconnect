@@ -27,7 +27,7 @@ const EventCard = ({item}: props) => {
   const [loadingData, setLoadingData] = useState(false);
   const [crntIndex, setCrntIndex] = useState(null);
   const index = eventsDataById?.findIndex(
-    (itm: any) => itm.eventUid === data.id,
+    (itm: any) => itm?.eventUid === data.id,
   );
 
   const isJoined = eventData?.attendedPeople?.find(
