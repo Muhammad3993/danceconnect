@@ -13,14 +13,15 @@ export const selectUserUid = (state: IRootState) =>
   state.registration?.currentUser?._id ?? '';
 export const selectEmailUser = (state: IRootState) =>
   state.registration?.currentUser?.email ?? '';
-  export const selectPasswordUser = (state: IRootState) =>
-    state.registration?.password ?? '';
+export const selectPasswordUser = (state: IRootState) =>
+  state.registration?.password ?? '';
 
 export const selectIsSuccessRegistration = (state: IRootState) =>
   state.registration?.isRegistrationsSuccess ?? false;
 
 export const selectUserName = (state: IRootState) =>
-  state.registration?.name ?? '';
+  state.registration?.currentUser?.displayName ??
+  state.registration?.currentUser?.userName;
 
 export const selectUserExist = (state: IRootState) =>
   state?.registration?.isUserExists ?? false;

@@ -79,7 +79,7 @@ const Board = () => {
         RN.LayoutAnimation.Presets.easeInEaseOut,
       );
     } else {
-      return null;
+      return navigation.navigate('WELCOME');
     }
   };
 
@@ -231,7 +231,7 @@ const Board = () => {
             title="Next"
             onPress={() => onChangeSlide(1)}
             disabled={
-              name.length > 0 &&
+              name?.length > 0 &&
               selectedLocation?.structured_formatting?.main_text?.length > 0 &&
               role?.length > 0
             }

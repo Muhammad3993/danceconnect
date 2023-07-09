@@ -11,6 +11,7 @@ import colors from '../../utils/colors';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import useAppStateHook from '../../hooks/useAppState';
+import {userExists} from '../../api/serverRequests';
 
 const RegistraionScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
@@ -18,6 +19,7 @@ const RegistraionScreen = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const {isErrors, clearErrors} = useRegistration();
+  const [errorExist, setErrorExist] = useState('');
   const errorViewHeight = new RN.Animated.Value(0);
   const {setLoading} = useAppStateHook();
 
@@ -44,31 +46,34 @@ const RegistraionScreen = (): JSX.Element => {
 
   useEffect(() => {
     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    if (isErrors?.message?.length > 0) {
-      RN.Animated.timing(errorViewHeight, {
-        duration: 1000,
-        toValue: 1,
-        easing: RN.Easing.ease,
-        useNativeDriver: false,
-      }).start();
-    }
-  }, [clearErrors, errorViewHeight, isErrors]);
+    // if (isErrors?.message?.length > 0) {
+    //   RN.Animated.timing(errorViewHeight, {
+    //     duration: 1000,
+    //     toValue: 1,
+    //     easing: RN.Easing.ease,
+    //     useNativeDriver: false,
+    //   }).start();
+    // }
+    setTimeout(() => {
+      setErrorExist('');
+    }, 3000);
+  }, [errorExist]);
 
-  useEffect(() => {
-    if (isErrors?.message?.length > 0) {
-      setTimeout(() => {
-        RN.Animated.timing(errorViewHeight, {
-          duration: 1000,
-          toValue: 0,
-          useNativeDriver: false,
-          easing: RN.Easing.ease,
-        }).start();
-      }, 4000);
-      setTimeout(() => {
-        clearErrors();
-      }, 5000);
-    }
-  }, [clearErrors, errorViewHeight, isErrors]);
+  // useEffect(() => {
+  //   if (isErrors?.message?.length > 0) {
+  //     setTimeout(() => {
+  //       RN.Animated.timing(errorViewHeight, {
+  //         duration: 1000,
+  //         toValue: 0,
+  //         useNativeDriver: false,
+  //         easing: RN.Easing.ease,
+  //       }).start();
+  //     }, 4000);
+  //     setTimeout(() => {
+  //       clearErrors();
+  //     }, 5000);
+  //   }
+  // }, [clearErrors, errorViewHeight, isErrors]);
 
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
@@ -89,8 +94,18 @@ const RegistraionScreen = (): JSX.Element => {
 
   const onPressSignUp = () => {
     // setLoading(true);
-    navigation.navigate('ONBOARDING', {email, password});
-      // registration(email, password);
+    userExists(email).then(res => {
+      if (!res.length) {
+        navigation.navigate('ONBOARDING', {email, password});
+      } else {
+        setErrorExist('User already exist');
+      }
+    });
+    // if (isExist) {
+    //   console.log('isExist', isExist)
+    // }
+    //   console.log('isExist', isExist)
+    // registration(email, password);
   };
 
   const renderBackButton = () => {
@@ -119,15 +134,13 @@ const RegistraionScreen = (): JSX.Element => {
               keyboardType="email-address"
               iconName="inbox"
             />
-            {isErrors?.message?.length > 0 && (
+            {errorExist?.length > 0 && (
               <RN.View style={styles.errorMessage}>
-                <RN.Text style={styles.errorMessageText}>
-                  {isErrors?.message}
-                </RN.Text>
+                <RN.Text style={styles.errorMessageText}>{errorExist}</RN.Text>
               </RN.View>
             )}
             <Input
-              isErrorBorder={isErrors?.type?.includes('password')}
+              isErrorBorder={errorExist?.length > 0}
               value={password}
               onChange={(v: string) => setPassword(v)}
               placeholder="Password"

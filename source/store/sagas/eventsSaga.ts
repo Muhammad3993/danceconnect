@@ -144,9 +144,9 @@ function* createEventRequest(action: any) {
     yield put(createEventSuccessAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
-        name: 'Events',
+        name: 'EventScreen',
         params: {
-          createdCommunity: true,
+          data: response,
         },
       }),
     );

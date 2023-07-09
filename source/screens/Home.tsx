@@ -42,29 +42,29 @@ const HomeScreen = () => {
     setEvents(attendEventWithUserUid);
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      const onValueChange = database()
-        .ref('events/')
-        .on('value', snapshot => {
-          const array = Object.values(snapshot.val());
-          const attendedPeople = array?.filter(
-            i =>
-              i?.attendedPeople?.find(
-                (user: any) => user.userUid === userUid,
-              ) &&
-              moment(i.eventDate?.startDate).format('YYYY-MM-DD') >
-                moment(new Date()).format('YYYY-MM-DD'),
-          );
-          setEvents(attendedPeople);
-        });
-      RN.LayoutAnimation.configureNext(
-        RN.LayoutAnimation.Presets.easeInEaseOut,
-      );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const onValueChange = database()
+  //       .ref('events/')
+  //       .on('value', snapshot => {
+  //         const array = Object.values(snapshot.val());
+  //         const attendedPeople = array?.filter(
+  //           i =>
+  //             i?.attendedPeople?.find(
+  //               (user: any) => user.userUid === userUid,
+  //             ) &&
+  //             moment(i.eventDate?.startDate).format('YYYY-MM-DD') >
+  //               moment(new Date()).format('YYYY-MM-DD'),
+  //         );
+  //         setEvents(attendedPeople);
+  //       });
+  //     RN.LayoutAnimation.configureNext(
+  //       RN.LayoutAnimation.Presets.easeInEaseOut,
+  //     );
 
-      return () => database().ref('events/').off('value', onValueChange);
-    }, []),
-  );
+  //     return () => database().ref('events/').off('value', onValueChange);
+  //   }, []),
+  // );
   // console.log(individualStyles);
   useFocusEffect(
     useCallback(() => {

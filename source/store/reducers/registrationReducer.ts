@@ -135,6 +135,7 @@ export default (
         name: action.payload?.currentUser?.displayName,
         isAuthorized: false,
         isUserExists: action.payload?.isUserExists,
+        token: action.payload?.token,
         errors: null,
       };
     case AUTHORIZATION_WITH_GOOGLE.FAIL:

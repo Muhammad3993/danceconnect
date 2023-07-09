@@ -7,14 +7,16 @@ import colors from '../../utils/colors';
 import {useProfile} from '../../hooks/useProfile';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
+import useRegistration from '../../hooks/useRegistration';
 
 const ChangeProfile = () => {
   const navigation = useNavigation();
-  const {userImgUrl, userName, user, onChange} = useProfile();
+  const {userImgUrl, user, onChange} = useProfile();
+  const {userName, currentUser} = useRegistration();
   const [userImg, setUserImg] = useState(userImgUrl ?? '');
   const [changeName, setChangeName] = useState(userName);
   const [openGenders, setOpenGenders] = useState(false);
-  const [choosedGender, setGender] = useState(user?.gender);
+  const [choosedGender, setGender] = useState(currentUser?.userGender);
 
   const onBack = () => {
     navigation.goBack();

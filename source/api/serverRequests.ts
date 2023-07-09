@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  AUTHORIZATION_WITH_GOOGLE,
   LOGOUT,
   REGISTRATION_WITH_EMAIL,
 } from '../store/actionTypes/authorizationActionTypes';
@@ -34,7 +35,8 @@ export const login = async (email: string, password: string) => {
     console.log('login', response);
     return response;
   } catch (er) {
-    return console.log('er', er);
+    console.log('er login', er);
+    return er;
   }
 };
 export const createUser = async (data: user) => {
@@ -48,12 +50,23 @@ export const createUser = async (data: user) => {
     return console.log('er', er);
   }
 };
-
-export const userExists = async (uid: string) => {
+export const deleteUser = async (id: string) => {
   try {
-    const response = await axios.get(`${apiUrl}/users/${uid}`);
-    console.log('userExists', response);
-    return response?.data?.data;
+    const response = await axios.delete(`${apiUrl}/users/${id}`);
+    console.log('delete user', response);
+    // const {email, password} = data;
+    // login(email, password).then();
+    return response;
+  } catch (er) {
+    return console.log('er', er);
+  }
+};
+
+export const userExists = async (email: string) => {
+  try {
+    const response = await axios.get(`${apiUrl}/user/${email}`);
+    console.log('userExists response', response);
+    return response?.data?.user ?? null;
   } catch (er) {
     return console.log('er', er);
   }
@@ -115,6 +128,9 @@ export const saveAuthToken =
       axios.defaults.headers.common.Authorization = `Bearer ${token}`;
     }
     if (action.type === REGISTRATION_WITH_EMAIL.SUCCESS) {
+      axios.defaults.headers.common.Authorization = `Bearer ${action.payload?.token}`;
+    }
+    if (action.type === AUTHORIZATION_WITH_GOOGLE.SUCCESS) {
       axios.defaults.headers.common.Authorization = `Bearer ${action.payload?.token}`;
     }
     if (

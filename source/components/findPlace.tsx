@@ -28,7 +28,7 @@ const FindPlace = ({
   const [findPlace, setFindPlices] = useState([]);
   const handleStyle = {height: 3, width: 38};
 
-  console.log(crntCity?.structured_formatting?.main_text);
+  // console.log(crntCity?.structured_formatting?.main_text);
   useEffect(() => {
     modalizeRef?.current?.open();
   }, []);

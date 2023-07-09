@@ -37,18 +37,20 @@ import {
 } from '../actions/communityActions';
 import {getEventsRequestAction} from '../actions/eventActions';
 import {choosedCityAction, setLoadingAction} from '../actions/appStateActions';
-import {createUser, login, userExists} from '../../api/serverRequests';
+import {createUser, login} from '../../api/serverRequests';
+import { firebase } from '@react-native-firebase/database';
 
 function* registrationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
     const data = action.payload;
     const response = yield call(createUser, data);
+    console.log('registrationEmail', response);
     if (response.status === 200) {
       const auth = yield call(login, email, password);
       yield put(
         registrationWithEmailSuccess({
-          currentUser: auth?.data?.user?.user,
+          currentUser: auth?.data?.user?.user ?? auth?.data?.user,
           isUserExists: true,
           token: auth?.data?.accessToken,
         }),
@@ -133,7 +135,10 @@ function* registrationSetData(action: any) {
 
 function* logoutUser() {
   try {
-    yield call(logout);
+    const user = firebase.auth().currentUser?._user;
+    if (user) {
+      yield call(logout);
+    }
     yield put(logoutSuccess());
     yield put(clearChangePassData({changePasswordSuccess: false}));
     yield put(clearUserDataInStorage());
@@ -146,21 +151,50 @@ function* logoutUser() {
 function* authWthGoogle() {
   try {
     const response = yield call(signWithGoogle);
+    console.log('authWthGoogle response', response);
     const {uid} = response?._user;
-    const exists = yield call(userExists, uid);
-    console.log('authWthGoogle saga', exists);
+    const auth = yield call(login, response?._user?.email, uid);
+    console.log('authWthGoogle auth', auth);
+    // if (auth?.status === 200) {
+
     // yield put(
-    //   authWithGoogleSuccess({
-    //     currentUser: {...response._user, _id: response?._user?.uid},
-    //     isUserExists: exists,
+    //   registrationWithEmailSuccess({
+    //     currentUser: auth?.data?.user,
+    //     isUserExists: true,
+    //     token: auth?.data?.accessToken,
     //   }),
     // );
+    // }
+    if (auth?.response?.status === 404 || auth?.response?.status === 400) {
+      yield put(
+        registrationWithEmailSuccess({
+          // currentUser: auth?.data?.user?.user,
+          currentUser: {...response._user, _id: response?._user?.uid},
+          isUserExists: false,
+          // token: auth?.data?.accessToken,
+        }),
+      );
+    }
+    if (auth?.status === 200) {
+      yield put(
+        authWithGoogleSuccess({
+          currentUser: {...auth?.data?.user, _id: auth?.data?.id},
+          isUserExists: true,
+          token: auth?.data?.accessToken,
+        }),
+      );
+    }
+
+    // const exists = yield call(userExists, uid);
+    // console.log('authWthGoogle saga', auth, response);
+
     // yield put(getUserDataRequestAction());
     // yield put(getCommunitiesRequestAction());
     // yield put(getEventsRequestAction());
     // yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('authWthGoogle error', error);
+
     yield put(authWithGoogleFail(setErrors(error?.toString())));
     yield put(setLoadingAction({onLoading: false}));
   }

@@ -156,11 +156,13 @@ export const authWithGoogleRequest = () => ({
 export const authWithGoogleSuccess = ({
   currentUser,
   isUserExists,
+  token,
 }: registrationParams) => ({
   type: AUTHORIZATION_WITH_GOOGLE.SUCCESS,
   payload: {
     currentUser: currentUser,
     isUserExists: isUserExists,
+    token: token,
   },
 });
 export const authWithGoogleFail = (error: registrationParams) => ({

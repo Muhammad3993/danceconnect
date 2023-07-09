@@ -17,7 +17,7 @@ const EventScreen = () => {
   const navigation = useNavigation();
   const {data}: any = routeProps.params;
 
-  const [displayedData, setDisplayedData] = useState();
+  const [displayedData, setDisplayedData] = useState(data);
   const {userById, getUser} = useProfile();
   const [images, setImages] = useState([]);
   const [openingDescription, setOpeningDescription] = useState(false);
@@ -60,9 +60,9 @@ const EventScreen = () => {
       database().ref(`events/${data.eventUid}`).off('value', onValueChange);
   }, [data.eventUid]);
 
-  useEffect(() => {
-    getUser(displayedData?.creatorUid);
-  }, [displayedData?.creatorUid]);
+  // useEffect(() => {
+  //   getUser(displayedData?.creatorUid);
+  // }, [displayedData?.creatorUid]);
 
   const onPressAttend = () => {
     attendEvent({
@@ -332,9 +332,9 @@ const EventScreen = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
   }, [loading]);
 
-  if (loading) {
-    return <SkeletonEventScreen />;
-  }
+  // if (loading) {
+  //   return <SkeletonEventScreen />;
+  // }
   return (
     <RN.ScrollView style={styles.container}>
       {header()}

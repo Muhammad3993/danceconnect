@@ -22,6 +22,7 @@ import useAppStateHook from '../../hooks/useAppState';
 import {removeAccount} from '../../api/authSocial';
 import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
+import { deleteUser } from '../../api/serverRequests';
 // import axios from 'axios';
 // import { createUser } from '../../api/serverRequests';
 
@@ -149,6 +150,7 @@ const ProfileScreen = () => {
 
   const onPressDeleteAccount = () => {
     deleteAccountModazile.current?.close();
+    deleteUser(userUid);
     removeAccount();
     dispatch(logoutSuccess());
   };

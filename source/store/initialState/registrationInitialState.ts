@@ -13,4 +13,5 @@ export default {
   isRegistrationsSuccess: false,
   isUserExists: false,
   individualStyles: [],
+  token: '',
 };
