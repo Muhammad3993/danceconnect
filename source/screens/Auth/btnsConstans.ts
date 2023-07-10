@@ -10,13 +10,13 @@ export const authButtons = [
     title: 'Continue with Google',
     icon: 'google',
   },
-  // {
-  //   key: 1,
-  //   title: 'Continue with Apple',
-  //   icon: 'apple',
-  //   onPress: () => onAppleButtonPress(),
-  //   isAvailable: false,
-  // },
+  {
+    key: 1,
+    title: 'Continue with Apple',
+    icon: 'apple',
+    onPress: () => onAppleButtonPress(),
+    isAvailable: true,
+  },
   // {
   //   key: 2,
   //   title: 'Continue with Facebook',

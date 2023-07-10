@@ -12,9 +12,14 @@ import useAppStateHook from '../../hooks/useAppState';
 
 const WeclomeScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
-  const btns = authButtons.slice(0, 1);
+  const btns = authButtons.slice(0, 2);
   const lastBtn = authButtons[authButtons.length - 1];
-  const {authorizationWithGoogle, userUid, isUserExists} = useRegistration();
+  const {
+    authorizationWithGoogle,
+    userUid,
+    isUserExists,
+    authorizationWithApple,
+  } = useRegistration();
   const {setLoading} = useAppStateHook();
 
   const onPressLogin = () => {
@@ -34,6 +39,9 @@ const WeclomeScreen = (): JSX.Element => {
     setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
+    }
+    if (iconName === 'apple') {
+      authorizationWithApple();
     }
   };
   return (

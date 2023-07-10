@@ -1,5 +1,6 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  authWithAppleRequest,
   authWithGoogleRequest,
   authorizationWithEmailRequest,
   clearSignErrorRequest,
@@ -44,6 +45,9 @@ const useRegistration = () => {
   const authorizationWithGoogle = () => {
     dispatch(authWithGoogleRequest());
   };
+  const authorizationWithApple = () => {
+    dispatch(authWithAppleRequest());
+  };
 
   const clearErrors = () => {
     dispatch(clearSignErrorRequest());
@@ -86,6 +90,7 @@ const useRegistration = () => {
     isUserExists,
     isErrors,
     clearErrors,
+    authorizationWithApple,
   };
 };
 

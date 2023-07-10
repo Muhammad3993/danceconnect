@@ -31,6 +31,7 @@ const AuthorizationScreen = (): JSX.Element => {
   const [password, setPassword] = useState<string>('');
   const {setLoading} = useAppStateHook();
   const errorViewHeight = new RN.Animated.Value(0);
+  const btns = authButtons.slice(0, 2);
 
   const translateY = errorViewHeight.interpolate({
     inputRange: [0, 1],
@@ -159,16 +160,16 @@ const AuthorizationScreen = (): JSX.Element => {
               <RN.Text style={styles.or}>or continue with</RN.Text>
               <RN.View style={styles.line} />
             </RN.View>
-            <RN.View style={{paddingTop: 24}}>
+            {/* <RN.View style={{paddingTop: 24}}>
               <AuthButton
                 title={authButtons[0].title}
                 icon={authButtons[0].icon}
                 key={authButtons[0].key}
                 navigateTo={authButtons[0].navigateTo}
               />
-            </RN.View>
+            </RN.View> */}
 
-            {/* <RN.View style={styles.btnsWrapper}>
+            <RN.View style={styles.btnsWrapper}>
               {btns?.map(btn => {
                 return (
                   <AuthButton
@@ -179,7 +180,7 @@ const AuthorizationScreen = (): JSX.Element => {
                   />
                 );
               })}
-            </RN.View> */}
+            </RN.View>
           </RN.View>
 
           <RN.View style={styles.bottomWrapper}>
