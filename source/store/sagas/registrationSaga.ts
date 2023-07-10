@@ -38,7 +38,7 @@ import {
 import {getEventsRequestAction} from '../actions/eventActions';
 import {choosedCityAction, setLoadingAction} from '../actions/appStateActions';
 import {createUser, login} from '../../api/serverRequests';
-import { firebase } from '@react-native-firebase/database';
+import {firebase} from '@react-native-firebase/database';
 
 function* registrationEmail(action: any) {
   try {
@@ -71,13 +71,21 @@ function* authorizationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
     const auth = yield call(login, email, password);
-    yield put(
-      registrationWithEmailSuccess({
-        currentUser: auth?.data?.user,
-        isUserExists: true,
-        token: auth?.data?.accessToken,
-      }),
-    );
+    if (auth?.response?.status !== 200) {
+      yield put(
+        authorizationWithEmailFail(setErrors(auth?.response?.data?.message)),
+      );
+    }
+    if (auth?.status === 200) {
+      yield put(
+        registrationWithEmailSuccess({
+          currentUser: auth?.data?.user,
+          isUserExists: true,
+          token: auth?.data?.accessToken,
+        }),
+      );
+    }
+
     // const userCredentials = yield call(logInWithEmail, email, password);
     // const {uid} = userCredentials?._user;
     // yield put(getCommunitiesRequestAction());

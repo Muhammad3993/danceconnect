@@ -29,20 +29,18 @@ const EventScreen = () => {
     moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
     moment(new Date()).format('YYYY-MM-DD');
   const isJoined =
-    displayedData?.attendedPeople?.find(
-      (user: any) => user.userUid === userUid,
-    ) ?? false;
-  const isAdmin = data?.creatorUid === userUid;
+    data?.attendedPeople?.find((user: any) => user.uid === userUid) ?? false;
+  const isAdmin = data?.creator?.uid === userUid;
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (userById?.name?.length > 0) {
-        setLoading(false);
-      }
-    }, 3500);
-    return () => clearTimeout(timer);
-  }, [userById?.name?.length]);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     if (userById?.name?.length > 0) {
+  //       setLoading(false);
+  //     }
+  //   }, 3500);
+  //   return () => clearTimeout(timer);
+  // }, [userById?.name?.length]);
 
   const onPressShowText = () => {
     setOpeningDescription(v => !v);
@@ -117,7 +115,7 @@ const EventScreen = () => {
       <>
         {renderTags()}
         <RN.View style={styles.titleContainer}>
-          <RN.Text style={styles.titleName}>{displayedData?.name}</RN.Text>
+          <RN.Text style={styles.titleName}>{data?.title}</RN.Text>
         </RN.View>
       </>
     );
@@ -127,20 +125,18 @@ const EventScreen = () => {
       <RN.View
         style={[
           styles.tagsContainer,
-          {marginTop: images?.length > 0 ? -50 : -10},
+          {marginTop: data?.images?.length > 0 ? -50 : -10},
         ]}>
         <RN.ScrollView
           horizontal
           style={styles.scrollTags}
           showsHorizontalScrollIndicator={false}>
-          {displayedData?.typeEvent && (
+          {data?.typeEvent && (
             <RN.View style={styles.typeEventContainer}>
-              <RN.Text style={{color: colors.white}}>
-                {displayedData?.typeEvent}
-              </RN.Text>
+              <RN.Text style={{color: colors.white}}>{data?.typeEvent}</RN.Text>
             </RN.View>
           )}
-          {displayedData?.categories?.map((item: string) => {
+          {data?.categories?.map((item: string) => {
             return (
               <RN.View style={styles.tagItem}>
                 <RN.Text style={{color: colors.purple}}>{item}</RN.Text>
@@ -162,17 +158,16 @@ const EventScreen = () => {
         </RN.View>
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Text style={styles.eventDateText}>
-            {`${moment(displayedData?.eventDate?.startDate).format(
-              'ddd',
-            )}, ${moment(displayedData?.eventDate?.startDate).format('MMM D')}${
-              displayedData?.eventDate?.endDate
-                ? ' - ' +
-                  moment(displayedData?.eventDate?.endDate).format('MMM D')
+            {`${moment(data?.eventDate?.startDate).format('ddd')}, ${moment(
+              data?.eventDate?.startDate,
+            ).format('MMM D')}${
+              data?.eventDate?.endDate
+                ? ' - ' + moment(data?.eventDate?.endDate).format('MMM D')
                 : ''
-            } • ${moment(displayedData?.eventDate?.time).format('HH:mm')}`}
+            } • ${moment(data?.eventDate?.time).format('HH:mm')}`}
           </RN.Text>
           <RN.Text style={{color: colors.darkGray}}>{`GMT ${moment(
-            displayedData?.eventDate?.time,
+            data?.eventDate?.time,
           )
             .format('Z')
             ?.replaceAll('0', '')
@@ -183,8 +178,8 @@ const EventScreen = () => {
   };
   const onOpenMaps = () => {
     const url = RN.Platform.select({
-      ios: `maps:0,0?q=${displayedData?.place}`,
-      android: `geo:0,0?q=${displayedData?.place}`,
+      ios: `maps:0,0?q=${data.place}`,
+      android: `geo:0,0?q=${data.place}`,
     });
 
     RN.Linking.openURL(url);
@@ -212,10 +207,10 @@ const EventScreen = () => {
             <RN.View
               style={{justifyContent: 'center', maxWidth: SCREEN_WIDTH / 1.8}}>
               <RN.Text numberOfLines={1} style={styles.locateText}>
-                {displayedData?.place}
+                {data?.place}
               </RN.Text>
               <RN.Text style={{color: colors.darkGray, paddingLeft: 12}}>
-                {displayedData?.location}
+                {data?.location}
               </RN.Text>
             </RN.View>
           </RN.View>
@@ -242,10 +237,10 @@ const EventScreen = () => {
           <RN.View style={{flexDirection: 'row'}}>
             <RN.Image
               source={
-                userById?.profileImg
+                data?.creator?.image
                   ? {
                       uri:
-                        'data:image/png;base64,' + userById?.profileImg?.base64,
+                        'data:image/png;base64,' + data?.creator?.image.base64,
                     }
                   : require('../../assets/images/defaultuser.png')
               }
@@ -253,7 +248,7 @@ const EventScreen = () => {
             />
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.organizerName}>
-                {userById?.auth_data?.displayName ?? userById?.name}
+                {data?.creator?.name}
               </RN.Text>
               <RN.Text style={styles.organizer}>Organizer</RN.Text>
             </RN.View>
@@ -282,13 +277,11 @@ const EventScreen = () => {
       <RN.View style={styles.descWrapper}>
         <RN.Text style={styles.aboutText}>About this event</RN.Text>
         <RN.Text
-          numberOfLines={
-            openingDescription ? displayedData?.description?.length : 3
-          }
+          numberOfLines={openingDescription ? data?.description?.length : 3}
           style={styles.titleDesc}>
-          {displayedData?.description}
+          {data?.description}
         </RN.Text>
-        {displayedData?.description?.length > 40 && (
+        {data?.description?.length > 40 && (
           <RN.TouchableOpacity
             onPress={onPressShowText}
             activeOpacity={0.7}
@@ -338,7 +331,7 @@ const EventScreen = () => {
   return (
     <RN.ScrollView style={styles.container}>
       {header()}
-      <Carousel items={images} />
+      <Carousel items={data?.images} />
       {renderTitle()}
       {renderEventDate()}
       {renderOrganizer()}
@@ -383,7 +376,6 @@ const styles = RN.StyleSheet.create({
   descWrapper: {
     paddingHorizontal: 24,
     marginVertical: 20,
-    marginTop: 12,
   },
   aboutText: {
     fontSize: 20,

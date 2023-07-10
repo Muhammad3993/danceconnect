@@ -64,6 +64,12 @@ export const setErrors = (valueError: string) => {
       type: ['password'],
     };
   }
+  if (valueError?.includes('Invalid e-mail or password')) {
+    return {
+      message: 'Invalid e-mail or password',
+      type: ['email', 'password'],
+    };
+  }
   return '';
 };
 

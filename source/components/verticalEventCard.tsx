@@ -87,7 +87,7 @@ const VerticalCard = ({data, eventsLength}: props) => {
           </RN.View>
         )}
       </RN.ScrollView>
-      <RN.Text style={styles.title}>{data?.name}</RN.Text>
+      <RN.Text style={styles.title}>{data?.title}</RN.Text>
       <RN.View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <RN.View>
           <RN.View style={styles.dateEventContainer}>

@@ -47,7 +47,6 @@ const CommunityScreen = () => {
   useEffect(() => {
     getCommunity();
   }, []);
-  console.log('eve', events);
 
   // const upcomingEvents =
   //   eventsDataById?.filter(

@@ -82,7 +82,13 @@ const BottomCalendar = ({
     if (isAndroid) {
       setTime(times?.getTime());
     } else {
-      setTime(times?.nativeEvent?.timestamp);
+      const timeSting = moment(times?.nativeEvent?.timestamp).format('HH:mm');
+      const hours = Number(timeSting?.slice(0, 2));
+      const minutes = Number(timeSting?.slice(3, 5));
+      const endTime = new Date(startDate).setHours(hours, minutes);
+      setTime(endTime);
+
+      // setTime(times?.nativeEvent?.timestamp);
     }
   };
 
