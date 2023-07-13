@@ -14,7 +14,7 @@ import useAppStateHook from '../../hooks/useAppState';
 
 const RegistraionScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
-  const btns = authButtons.slice(0, 3);
+  const btns = authButtons.slice(0, 2);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const {isErrors, clearErrors} = useRegistration();
@@ -33,6 +33,7 @@ const RegistraionScreen = (): JSX.Element => {
     userUid,
     authorizationWithGoogle,
     isUserExists,
+    authorizationWithApple,
   } = useRegistration();
   const onPressLogin = () => {
     navigation.navigate('AUTH');
@@ -75,6 +76,9 @@ const RegistraionScreen = (): JSX.Element => {
     setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
+    }
+    if (iconName === 'apple') {
+      authorizationWithApple();
     }
   };
   useEffect(() => {
@@ -144,15 +148,15 @@ const RegistraionScreen = (): JSX.Element => {
               <RN.Text style={styles.or}>or continue with</RN.Text>
               <RN.View style={styles.line} />
             </RN.View>
-            <RN.View style={{paddingTop: 24}}>
+            {/* <RN.View style={{paddingTop: 24}}>
               <AuthButton
                 title={authButtons[0].title}
                 icon={authButtons[0].icon}
                 key={authButtons[0].key}
                 navigateTo={authButtons[0].navigateTo}
               />
-            </RN.View>
-            {/* <RN.View style={styles.btnsWrapper}>
+            </RN.View> */}
+            <RN.View style={styles.btnsWrapper}>
               {btns?.map(btn => {
                 return (
                   <AuthButton
@@ -163,7 +167,7 @@ const RegistraionScreen = (): JSX.Element => {
                   />
                 );
               })}
-            </RN.View> */}
+            </RN.View>
           </RN.View>
 
           <RN.View style={styles.bottomWrapper}>

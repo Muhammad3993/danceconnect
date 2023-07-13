@@ -26,6 +26,7 @@ const AuthorizationScreen = (): JSX.Element => {
     authorizationWithGoogle,
     isErrors,
     clearErrors,
+    authorizationWithApple,
   } = useRegistration();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -79,6 +80,9 @@ const AuthorizationScreen = (): JSX.Element => {
     setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
+    }
+    if (iconName === 'apple') {
+      authorizationWithApple();
     }
   };
   const resetPassword = () => {

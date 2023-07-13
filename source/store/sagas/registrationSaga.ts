@@ -159,12 +159,17 @@ function* authWthApple() {
   try {
     const response = yield call(onAppleButtonPress);
     console.log('authWthApple saga', response);
+    let name = response?.user?.displayName;
+    if (response?.user?.displayName === 'null null') {
+      name = '';
+    }
     const user = {
-      uid: response?.user?.uid,
+      uid: response?.user?._user?.uid,
       email: response?.additionalUserInfo?.profile?.email,
+      username: name,
     };
     // const {uid} = response?._user;
-    const exists = yield call(userExists, response?.user?.uid);
+    const exists = yield call(userExists, response?.user?._user.uid);
     yield put(
       authWithAppleSuccess({
         currentUser: user,

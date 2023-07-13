@@ -141,7 +141,7 @@ export default (
         isLoading: false,
         currentUser: action.payload?.currentUser,
         email: action?.payload?.currentUser?.email,
-        name: action.payload?.currentUser?.displayName,
+        name: action.payload?.currentUser?.username,
         isAuthorized: false,
         isUserExists: action.payload?.isUserExists,
         errors: null,
