@@ -28,15 +28,23 @@ const FindPlace = ({
   const [findPlace, setFindPlices] = useState([]);
   const handleStyle = {height: 3, width: 38};
 
-  console.log(crntCity?.structured_formatting?.main_text);
+  // console.log(crntCity);
   useEffect(() => {
     modalizeRef?.current?.open();
   }, []);
 
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
+    let country = '';
+    if (crntCity === 'Singapore, Singapore') {
+      country = 'SG';
+    } else if (crntCity === 'Indonesia, Bali') {
+      country = 'IDN';
+    } else {
+      country = 'USA';
+    }
     const city = crntCity?.structured_formatting?.main_text ?? crntCity;
-    searchPlacesInEvent(city, searchValue).then((places: any) => {
+    searchPlacesInEvent(city, searchValue, country).then((places: any) => {
       // console.log(places);
       setFindPlices(places);
     });
@@ -100,9 +108,11 @@ const FindPlace = ({
                   color: colors.textPrimary,
                   lineHeight: 22.4,
                 }}>
-                {item?.structured_formatting?.main_text +
-                  ', ' +
-                  item?.terms[1]?.value}
+                {crntCity === 'Singapore, Singapore'
+                  ? item?.structured_formatting?.main_text +
+                    ', ' +
+                    item.terms[item.terms.length - 1].value
+                  : item?.description}
               </RN.Text>
             </RN.TouchableOpacity>
           );

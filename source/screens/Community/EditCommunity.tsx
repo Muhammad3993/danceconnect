@@ -15,6 +15,7 @@ import {
 import {useCommunities} from '../../hooks/useCommunitites';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import FindCity from '../../components/findCity';
+import { useProfile } from '../../hooks/useProfile';
 
 interface city {
   structured_formatting: {
@@ -25,6 +26,7 @@ interface city {
 const EditCommunity = () => {
   const routeParams = useRoute();
   const navigation = useNavigation();
+  const { userLocation } = useProfile();
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
     routeParams?.params?.id,
   );
@@ -329,7 +331,7 @@ const EditCommunity = () => {
             {renderDescription()}
             {renderChooseCategory()}
             {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>City</RN.Text>
+            <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
             <RN.TouchableOpacity
               onPress={() => setOpenLocation(true)}
               style={styles.selectLocationBtn}>

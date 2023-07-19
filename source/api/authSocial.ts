@@ -158,20 +158,14 @@ export const removeAccount = async () => {
         .finally(() => {
           if (userEvents?.length > 0) {
             userEvents.forEach((eventId: string) => {
-              removeEvent(eventId)
-                .then()
-                .finally(async () => {
-                  await database().ref(`users/${userUid}`).remove();
-                  firebase.auth().currentUser?.delete();
-                });
+              removeEvent(eventId).then();
             });
           }
         });
     });
-  } else {
-    await database().ref(`users/${userUid}`).remove();
-    firebase.auth().currentUser?.delete();
   }
+  await database().ref(`users/${userUid}`).remove();
+  firebase.auth().currentUser?.delete();
 };
 
 export const initializeFB = async () => {

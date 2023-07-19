@@ -37,9 +37,10 @@ export const searchPlaces = async (
 export const searchPlacesInEvent = async (
   cityName: string,
   searchString: string,
+  country: string,
 ) => {
   const response = await axios.get(
-    `${googleUrl}key=${GOOGLE_API_KEY}&language=en&types=establishment&components=country:USA&input=${cityName} ${searchString}`,
+    `${googleUrl}key=${GOOGLE_API_KEY}&language=en&types=establishment&components=country:${country}&input=${cityName} ${searchString}`,
   );
 
   return response.data?.predictions;

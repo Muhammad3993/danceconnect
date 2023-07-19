@@ -514,7 +514,7 @@ const EditEvent = () => {
             {renderDescription()}
             {renderEventDates()}
             {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>City</RN.Text>
+            <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
             <RN.TouchableOpacity
               onPress={() => setOpenLocation(true)}
               style={styles.selectLocationBtn}>

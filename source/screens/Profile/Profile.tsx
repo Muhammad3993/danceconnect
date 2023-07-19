@@ -34,6 +34,8 @@ const ProfileScreen = () => {
     isSuccessChangePassword,
     onChangePassword,
     errorsWithChangePassword,
+    isSocialAuth,
+    getCurrentUser,
   } = useProfile();
   const {onChoosedCity} = useAppStateHook();
   const dispatch = useDispatch();
@@ -139,12 +141,13 @@ const ProfileScreen = () => {
   };
   // console.log(selectedLocation);
   const onPressChoosedCountry = (value: any) => {
-    const country =
-      value?.structured_formatting?.main_text + ', ' + value?.terms[1].value;
-    // console.log(value);
+    // const country =
+    //   value?.structured_formatting?.main_text + ', ' + value?.terms[1].value;
+    console.log(value);
     onChoosedCity(value);
     setSelectedLocation(value);
-    setUserCountry(country);
+    setUserCountry(value);
+    getCurrentUser();
   };
 
   const onPressDeleteAccount = () => {
@@ -230,6 +233,7 @@ const ProfileScreen = () => {
             </RN.View>
           </RN.TouchableOpacity>
           <RN.View style={styles.line} />
+          {isSocialAuth && <RN.View style={{marginTop: -12}} />}
           <RN.TouchableOpacity
             style={styles.listItemWrapper}
             onPress={() => setOpenLocation(true)}>
@@ -248,19 +252,26 @@ const ProfileScreen = () => {
               <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
             </RN.View>
           </RN.TouchableOpacity>
-          <RN.TouchableOpacity
-            style={styles.listItemWrapper}
-            onPress={() => changePassRefModalize?.current?.open()}>
-            <RN.View style={{flexDirection: 'row'}}>
-              <RN.Image source={{uri: 'shield'}} style={styles.icon} />
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.listItemText}>Change password</RN.Text>
+          {isSocialAuth && <RN.View style={{marginTop: -12}} />}
+          {!isSocialAuth && (
+            <RN.TouchableOpacity
+              style={styles.listItemWrapper}
+              onPress={() => changePassRefModalize?.current?.open()}>
+              <RN.View style={{flexDirection: 'row'}}>
+                <RN.Image source={{uri: 'shield'}} style={styles.icon} />
+                <RN.View style={{justifyContent: 'center'}}>
+                  <RN.Text style={styles.listItemText}>Change password</RN.Text>
+                </RN.View>
               </RN.View>
-            </RN.View>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
-            </RN.View>
-          </RN.TouchableOpacity>
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Image
+                  source={{uri: 'arrowright'}}
+                  style={styles.iconRight}
+                />
+              </RN.View>
+            </RN.TouchableOpacity>
+          )}
+
           <RN.View style={styles.line} />
           <RN.TouchableOpacity
             style={styles.listItemWrapper}

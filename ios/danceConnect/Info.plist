@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>2.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -34,7 +34,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -50,8 +50,6 @@
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To install images in the community and events, allow the application access to photos</string>
-	<!-- <key>NSLocationWhenInUseUsageDescription</key> -->
-	<!-- <string>To more accurately determine your location for the display of the community</string> -->
 	<key>UIAppFonts</key>
 	<array>
 		<string>Mulish-Regular.ttf</string>

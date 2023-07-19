@@ -405,9 +405,26 @@ export const changeUserPassword = async (newPassword: string) => {
 export const setUserCountry = async (country: string) => {
   const userUid = firebase.auth().currentUser?.uid;
   const userRef = database().ref(`users/${userUid}`);
-  return userRef
-    .update({
-      country: country,
-    })
-    .then();
+  if (country?.includes('Bali')) {
+    return userRef
+      .update({
+        country: country,
+        location: 'Indonesia',
+      })
+      .then();
+  } else if (country?.includes('Singapore')) {
+    return userRef
+      .update({
+        country: country,
+        location: 'Singapore',
+      })
+      .then();
+  } else {
+    return userRef
+      .update({
+        country: country,
+        location: 'USA',
+      })
+      .then();
+  }
 };

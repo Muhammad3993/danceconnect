@@ -28,7 +28,7 @@ const CreateCommunity = () => {
   const goBackBtn = () => {
     navigation.navigate('CommunitiesMain');
   };
-  const {userCountry, individualStyles} = useProfile();
+  const {userCountry, individualStyles, userLocation} = useProfile();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -48,8 +48,8 @@ const CreateCommunity = () => {
   const [addedStyles, setAddedStyles] = useState<string[]>(individualStyles);
   const [images, setImages] = useState(new Array(0).fill(''));
   const [openLocation, setOpenLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<city>(Object);
-  // console.log(userCountry, selectedLocation);
+  const [selectedLocation, setSelectedLocation] = useState(userCountry);
+  // console.log('userCountry', userLocation);
   const onChoosheDanceStyle = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const isAvailable = addedStyles?.includes(value);
@@ -90,15 +90,11 @@ const CreateCommunity = () => {
           (selectedLocation?.structured_formatting?.main_text?.length > 0
             ? selectedLocation?.terms[1].value
             : '')
-        : userCountry;
+        : selectedLocation;
     if (name?.length <= 0) {
       setIsErrorName(true);
     } else if (description?.length <= 0) {
       setIsDescriptionError(true);
-    } else if (
-      selectedLocation?.structured_formatting?.main_text?.length <= 0
-    ) {
-      setIsCityError(true);
     } else {
       create({
         name: name,
@@ -434,7 +430,7 @@ const CreateCommunity = () => {
             {renderChooseCategory()}
             {renderDescription()}
             {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>City</RN.Text>
+            <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
             <RN.TouchableOpacity
               onPress={() => setOpenLocation(true)}
               style={styles.selectLocationBtn}>
@@ -445,9 +441,8 @@ const CreateCommunity = () => {
                       ', ' +
                       selectedLocation?.terms[1]?.value
                     }`
-                  : userCountry}
+                  : selectedLocation}
               </RN.Text>
-
               <RN.View
                 style={{
                   justifyContent: 'center',

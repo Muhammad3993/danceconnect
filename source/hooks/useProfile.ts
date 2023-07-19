@@ -30,7 +30,12 @@ export const useProfile = () => {
   const isSuccessChangePassword = useSelector(isSuccessResetPassword);
   const errorsWithChangePassword = useSelector(changePasswordErrors);
   const userCommunities = user?.joinedCommunities;
+  const isAuthGoogle =
+    user?.auth_data?.providerData[0]?.providerId === 'google.com';
+  const isAuthApple =
+    user?.auth_data?.providerData[0]?.providerId === 'apple.com';
 
+  const isSocialAuth = isAuthApple || isAuthGoogle;
   const getCurrentUser = () => {
     dispatch(getUserDataRequestAction());
   };
@@ -76,5 +81,6 @@ export const useProfile = () => {
     onChangePassword,
     errorsWithChangePassword,
     userCommunities,
+    isSocialAuth,
   };
 };

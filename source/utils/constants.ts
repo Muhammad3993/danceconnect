@@ -122,3 +122,22 @@ export const locationData = [
     countryCode: 'USA',
   },
 ];
+export const countries = [
+  {
+    id: 0,
+    country: 'USA',
+    countryCode: 'USA',
+  },
+  {
+    id: 1,
+    country: 'Indonesia',
+    cities: 'Bali',
+    countryCode: 'IDN',
+  },
+  {
+    id: 2,
+    country: 'Singapore',
+    cities: 'Singapore',
+    countryCode: 'SG',
+  },
+];

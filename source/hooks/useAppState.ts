@@ -28,8 +28,15 @@ const useAppStateHook = () => {
   }, []);
 
   const onChoosedCity = (city: object) => {
-    const cityStr =
-      city?.structured_formatting?.main_text + ', ' + city?.terms[1]?.value;
+    let cityStr = '';
+    if (city?.structured_formatting) {
+      cityStr =
+        city?.structured_formatting?.main_text +
+        ', ' +
+        city?.terms[1]?.value;
+    } else {
+      cityStr = city;
+    }
     dispatch(choosedCityAction({currentCity: cityStr}));
   };
   const setLoading = (load: boolean) => {

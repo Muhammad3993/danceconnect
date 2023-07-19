@@ -546,7 +546,7 @@ const CreateEvent = () => {
             {renderDescription()}
             {renderEventDates()}
             {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>City</RN.Text>
+            <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
             <RN.TouchableOpacity
               onPress={() => setOpenLocation(true)}
               style={styles.selectLocationBtn}>
@@ -557,7 +557,7 @@ const CreateEvent = () => {
                       ', ' +
                       selectedLocation?.terms[1]?.value
                     }`
-                  : communityData?.location}
+                  : selectedLocation}
               </RN.Text>
 
               <RN.View

@@ -11,7 +11,9 @@ import ManagingTab from './tabs/managing';
 import PassingTab from './tabs/passed';
 import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
-import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
+import {Portal} from 'react-native-portalize';
+import FindCity from '../../components/findCity';
 
 const TABS = ['Upcoming', 'Attending', 'Managing', 'Passed'];
 
@@ -240,11 +242,21 @@ const EventsScreen = () => {
       {renderHeader()}
       {/* {loadingEvents && !loadingAttend && renderLoading()} */}
       {renderWrapper()}
-      <CitySelector
+      {/* <CitySelector
         opening={openModal}
         onClose={() => setOpenModal(false)}
         onChoosedCity={onChoosedCity}
-      />
+      /> */}
+      {openModal && (
+        <Portal>
+          <FindCity
+            selectedLocation={currentCity}
+            setSelectedLocation={onChoosedCity}
+            onClosed={() => setOpenModal(false)}
+            communityScreen
+          />
+        </Portal>
+      )}
     </RN.SafeAreaView>
   );
 };

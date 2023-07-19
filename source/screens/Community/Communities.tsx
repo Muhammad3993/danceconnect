@@ -10,6 +10,8 @@ import JoinTab from './tabs/joinedTab';
 import AllTab from './tabs/allTab';
 import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
+import { Portal } from 'react-native-portalize';
+import FindCity from '../../components/findCity';
 
 const TABS = ['All', 'Joined', 'Managing'];
 
@@ -196,11 +198,21 @@ const CommunitiesScreen = () => {
       {renderHeader()}
       {/* {isLoading && !isLoadingWithFollow && renderLoading()} */}
       {renderWrapper()}
-      <CitySelector
+      {openModal && (
+        <Portal>
+          <FindCity
+            selectedLocation={currentCity}
+            setSelectedLocation={onChoosedCity}
+            onClosed={() => setOpenModal(false)}
+            communityScreen
+          />
+        </Portal>
+      )}
+      {/* <CitySelector
         opening={openModal}
         onClose={() => setOpenModal(false)}
         onChoosedCity={onChoosedCity}
-      />
+      /> */}
     </RN.SafeAreaView>
   );
 };
