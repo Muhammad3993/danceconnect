@@ -1,6 +1,7 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import {getConstantsFromFirebase} from '../../api/functions';
 import {
+  setCountriesAction,
   setDanceStylesAction,
   setEventTypesAction,
 } from '../actions/appStateActions';
@@ -17,6 +18,11 @@ function* getDanceStylesRequest() {
     yield put(
       setEventTypesAction({
         eventTypes: data.typesEvents,
+      }),
+    );
+    yield put(
+      setCountriesAction({
+        countries: data.countries,
       }),
     );
   } catch (error) {

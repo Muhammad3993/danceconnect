@@ -52,9 +52,9 @@ export const searchStateOfUSA = async (searchString: string) => {
   return response?.data?.predictions;
 };
 
-export const searchCity = async (searchString: string) => {
+export const searchCity = async (searchString: string, countryCode: string) => {
   const response = await axios.get(
-    `${googleUrl}key=${GOOGLE_API_KEY}&types=(cities)&components=country:USA&input=${searchString}&language=en`,
+    `${googleUrl}key=${GOOGLE_API_KEY}&types=(cities)&components=country:${countryCode}&input=${searchString}&language=en`,
   );
   return response.data?.predictions;
 };

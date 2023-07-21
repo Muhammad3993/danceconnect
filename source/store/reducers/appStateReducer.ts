@@ -8,6 +8,7 @@ export type appStateAction = {
     currentCity: string;
     danceStyles: string[];
     eventTypes: string[];
+    countries: string[];
   };
 };
 
@@ -32,6 +33,11 @@ export default (state = appStateInitialState, action: appStateAction) => {
       return {
         ...state,
         eventTypes: action.payload.eventTypes,
+      };
+    case APP_STATE.SET_COUNTRIES:
+      return {
+        ...state,
+        countries: action.payload.countries,
       };
     default:
       return state;

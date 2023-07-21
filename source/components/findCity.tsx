@@ -5,8 +5,9 @@ import Search from './search';
 import {searchCity} from '../api/cities';
 import colors from '../utils/colors';
 import {useProfile} from '../hooks/useProfile';
-import {countries} from '../utils/constants';
+// import {countries} from '../utils/constants';
 import {Button} from './Button';
+import useAppStateHook from '../hooks/useAppState';
 
 interface city {
   structured_formatting: {
@@ -16,34 +17,41 @@ interface city {
 }
 type props = {
   setSelectedLocation: (value: city) => void;
-  selectedLocation?: city;
+  // selectedLocation?: city;
   onClosed: (val: boolean) => void;
   communityScreen?: boolean;
   boardScreen?: boolean;
 };
 const FindCity = ({
   setSelectedLocation,
-  selectedLocation,
+  // selectedLocation,
   onClosed,
   communityScreen = false,
   boardScreen = false,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
   const {userLocation, getCurrentUser} = useProfile();
+  const {countries} = useAppStateHook();
   const [openCountry, setOpenCountry] = useState(false);
+  const [openLocation, setOpenLocation] = useState(false);
   const [country, setCountry] = useState(
     countries.find(c => c.country === userLocation),
   );
-  const [visibleBtn, setVisibleBtn] = useState(
-    userLocation !== 'USA' ? true : false,
-  );
+  const [crntLocation, setCrntLocation] = useState<string | string[]>();
 
   useEffect(() => {
     if (!userLocation) {
       setCountry(countries[0]);
     }
   }, []);
-  // console.log('selectedLocation', selectedLocation);
+  useEffect(() => {
+    if (country?.cities instanceof Array) {
+      setCrntLocation(country?.cities[0]?.name);
+    } else {
+      setCrntLocation(country?.cities);
+    }
+  }, []);
+  // console.log('selectedLocation', crntLocation, country?.cities);
   const [searchValue, setSearchValue] = useState<string>();
   const [findCity, setFindCity] = useState([]);
   const handleStyle = {height: 3, width: 38};
@@ -55,15 +63,18 @@ const FindCity = ({
   const onClose = () => {
     modalizeRef?.current?.close();
     onClosed(false);
-    if (country?.countryCode !== 'USA') {
-      setSelectedLocation(country?.country + ', ' + country?.cities);
+    if (!country?.availableSearchString) {
+      if (country?.cities instanceof Array) {
+        setSelectedLocation(country?.country + ', ' + crntLocation);
+      } else {
+        setSelectedLocation(country?.country + ', ' + country?.cities);
+      }
     }
     getCurrentUser();
   };
   const onChangeTextSearch = (value: string) => {
-    setVisibleBtn(false);
     setSearchValue(value);
-    searchCity(searchValue).then((places: any) => {
+    searchCity(searchValue, country?.countryCode).then((places: any) => {
       RN.LayoutAnimation.configureNext(
         RN.LayoutAnimation.Presets.easeInEaseOut,
       );
@@ -87,7 +98,6 @@ const FindCity = ({
     }
 
     RN.Keyboard.dismiss();
-    setVisibleBtn(true);
     setFindCity([]);
     setSearchValue(item?.structured_formatting?.main_text);
   };
@@ -211,6 +221,10 @@ const FindCity = ({
                   ]}
                   onPress={() => {
                     setCountry(c);
+                    // console.log(c);
+                    if (c?.cities instanceof Array) {
+                      setCrntLocation(c.cities[0]?.name);
+                    }
                     setOpenCountry(v => !v);
                     RN.LayoutAnimation.configureNext(
                       RN.LayoutAnimation.Presets.easeInEaseOut,
@@ -221,7 +235,7 @@ const FindCity = ({
               );
             })}
         </RN.View>
-        {country?.countryCode === 'USA' && (
+        {!openCountry && country?.availableSearchString && (
           <>
             <Search
               autoFocus
@@ -250,13 +264,70 @@ const FindCity = ({
             })}
           </>
         )}
-        {country?.countryCode !== 'USA' && (
+        {!openCountry && !country?.availableSearchString && (
           <>
             <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
-            <RN.View style={styles.selectLocationBtn}>
-              <RN.Text style={styles.locationText}>
-                {country?.cities ? country?.cities : country}
-              </RN.Text>
+            {country?.cities instanceof Array ? (
+              <RN.TouchableOpacity
+                style={[
+                  styles.selectLocationBtn,
+                  {
+                    borderBottomLeftRadius: openLocation ? 0 : 8,
+                    borderBottomRightRadius: openLocation ? 0 : 8,
+                  },
+                ]}
+                onPress={() => {
+                  setOpenLocation(v => !v);
+                  RN.LayoutAnimation.configureNext(
+                    RN.LayoutAnimation.Presets.easeInEaseOut,
+                  );
+                }}>
+                <RN.Text style={styles.locationText}>{crntLocation}</RN.Text>
+                <RN.View
+                  style={{
+                    justifyContent: 'center',
+                  }}>
+                  <RN.Image
+                    source={{uri: 'arrowdown'}}
+                    style={{height: 20, width: 20}}
+                  />
+                </RN.View>
+              </RN.TouchableOpacity>
+            ) : (
+              <RN.View style={styles.selectLocationBtn}>
+                <RN.Text style={styles.locationText}>
+                  {country?.cities ? country?.cities : country}
+                </RN.Text>
+              </RN.View>
+            )}
+            <RN.View style={{marginTop: -12}}>
+              {openLocation &&
+                country?.cities instanceof Array &&
+                country?.cities?.map(c => {
+                  const isLast =
+                    country?.cities[country?.cities.length - 1]?.key;
+                  return (
+                    <RN.TouchableOpacity
+                      style={[
+                        styles.selectLocationBtn,
+                        {
+                          marginVertical: 0,
+                          borderRadius: 0,
+                          borderBottomLeftRadius: isLast === c?.key ? 8 : 0,
+                          borderBottomRightRadius: isLast === c?.key ? 8 : 0,
+                        },
+                      ]}
+                      onPress={() => {
+                        setCrntLocation(c?.name);
+                        setOpenLocation(v => !v);
+                        RN.LayoutAnimation.configureNext(
+                          RN.LayoutAnimation.Presets.easeInEaseOut,
+                        );
+                      }}>
+                      <RN.Text style={styles.locationText}>{c?.name}</RN.Text>
+                    </RN.TouchableOpacity>
+                  );
+                })}
             </RN.View>
           </>
         )}

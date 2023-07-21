@@ -143,7 +143,7 @@ const ProfileScreen = () => {
   const onPressChoosedCountry = (value: any) => {
     // const country =
     //   value?.structured_formatting?.main_text + ', ' + value?.terms[1].value;
-    console.log(value);
+    // console.log(value);
     onChoosedCity(value);
     setSelectedLocation(value);
     setUserCountry(value);

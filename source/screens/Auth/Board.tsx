@@ -4,12 +4,15 @@ import colors from '../../utils/colors';
 import useRegistration from '../../hooks/useRegistration';
 import {AuthStackNavigationParamList} from '../../navigation/types';
 import {useNavigation} from '@react-navigation/native';
-import {countries, genders, isAndroid, roles} from '../../utils/constants';
+import {genders, isAndroid, roles} from '../../utils/constants';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import FindCity from '../../components/findCity';
 import CategorySelector from '../../components/catregorySelector';
 import useAppStateHook from '../../hooks/useAppState';
+import {removeAccount} from '../../api/authSocial';
+import {logoutSuccess} from '../../store/actions/authorizationActions';
+import {useDispatch} from 'react-redux';
 // import { createUser } from '../../api/serverRequests';
 
 interface city {
@@ -20,8 +23,9 @@ interface city {
 }
 const Board = () => {
   const [crntSlide, setCrntSlide] = useState(0);
+  const dispatch = useDispatch();
   const {userName, isRegistrationsSuccess, setUserData} = useRegistration();
-  const {onChoosedCity, getDanceStyles} = useAppStateHook();
+  const {onChoosedCity, getDanceStyles, countries} = useAppStateHook();
   const [name, setName] = useState<string>(userName);
   const [gender, setGender] = useState();
   const [country, setCountry] = useState();
@@ -95,7 +99,9 @@ const Board = () => {
         RN.LayoutAnimation.Presets.easeInEaseOut,
       );
     } else {
-      return null;
+      navigation.navigate('WELCOME');
+      removeAccount();
+      dispatch(logoutSuccess());
     }
   };
 
@@ -131,7 +137,7 @@ const Board = () => {
       </RN.View>
     );
   };
-// console.log('selectedLocation', selectedLocation);
+
   const fieldsSlide = () => {
     return (
       <RN.ScrollView style={styles.container}>

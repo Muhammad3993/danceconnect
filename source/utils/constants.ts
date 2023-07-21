@@ -127,17 +127,29 @@ export const countries = [
     id: 0,
     country: 'USA',
     countryCode: 'USA',
+    availableSearchString: true,
   },
   {
     id: 1,
     country: 'Indonesia',
-    cities: 'Bali',
+    cities: [
+      {
+        key: 0,
+        name: 'Bali',
+      },
+      {
+        key: 1,
+        name: 'Jakarta',
+      },
+    ],
     countryCode: 'IDN',
+    availableSearchString: false,
   },
   {
     id: 2,
     country: 'Singapore',
     cities: 'Singapore',
     countryCode: 'SG',
+    availableSearchString: false,
   },
 ];

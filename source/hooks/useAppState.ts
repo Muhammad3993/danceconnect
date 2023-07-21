@@ -1,5 +1,6 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  selectCountries,
   selectCurrentCity,
   selectDanceStyles,
   selectEventTypes,
@@ -19,6 +20,7 @@ const useAppStateHook = () => {
   const currentCity = useSelector(selectCurrentCity);
   const userCountry = useSelector(getUserCountry);
   const danceStyles = useSelector(selectDanceStyles);
+  const countries = useSelector(selectCountries);
   const eventTypes = useSelector(selectEventTypes);
 
   useEffect(() => {
@@ -31,9 +33,7 @@ const useAppStateHook = () => {
     let cityStr = '';
     if (city?.structured_formatting) {
       cityStr =
-        city?.structured_formatting?.main_text +
-        ', ' +
-        city?.terms[1]?.value;
+        city?.structured_formatting?.main_text + ', ' + city?.terms[1]?.value;
     } else {
       cityStr = city;
     }
@@ -54,6 +54,7 @@ const useAppStateHook = () => {
     danceStyles,
     eventTypes,
     getDanceStyles,
+    countries,
   };
 };
 export default useAppStateHook;

@@ -5,6 +5,7 @@ type appStateParams = {
   currentCity?: string;
   danceStyles?: string[];
   eventTypes?: string[];
+  countries?: string[];
 };
 
 export const setLoadingAction = ({onLoading}: appStateParams) => ({
@@ -35,5 +36,11 @@ export const setEventTypesAction = ({eventTypes}: appStateParams) => ({
   type: APP_STATE.SET_EVENT_TYPES,
   payload: {
     eventTypes: eventTypes,
+  },
+});
+export const setCountriesAction = ({countries}: appStateParams) => ({
+  type: APP_STATE.SET_COUNTRIES,
+  payload: {
+    countries: countries,
   },
 });
