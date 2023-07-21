@@ -29,7 +29,13 @@ export const useProfile = () => {
   const individualStyles = useSelector(userDanceStyles);
   const isSuccessChangePassword = useSelector(isSuccessResetPassword);
   const errorsWithChangePassword = useSelector(changePasswordErrors);
+  const userCommunities = user?.joinedCommunities;
+  const isAuthGoogle =
+    user?.auth_data?.providerData[0]?.providerId === 'google.com';
+  const isAuthApple =
+    user?.auth_data?.providerData[0]?.providerId === 'apple.com';
 
+  const isSocialAuth = isAuthApple || isAuthGoogle;
   const getCurrentUser = () => {
     dispatch(getUserDataRequestAction());
   };
@@ -74,5 +80,7 @@ export const useProfile = () => {
     isSuccessChangePassword,
     onChangePassword,
     errorsWithChangePassword,
+    userCommunities,
+    isSocialAuth,
   };
 };

@@ -7,3 +7,6 @@ export const selectDanceStyles = (state: IRootState) =>
   state.appState.danceStyles ?? [];
 export const selectEventTypes = (state: IRootState) =>
   state.appState.eventTypes ?? [];
+
+export const selectCountries = (state: IRootState) =>
+  state.appState.countries ?? [];

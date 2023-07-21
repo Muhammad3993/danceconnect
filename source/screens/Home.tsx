@@ -17,7 +17,8 @@ import useAppStateHook from '../hooks/useAppState';
 import {useCommunities} from '../hooks/useCommunitites';
 
 const HomeScreen = () => {
-  const {userImgUrl, individualStyles, getCurrentUser} = useProfile();
+  const {userImgUrl, individualStyles, getCurrentUser, userCommunities} =
+    useProfile();
   const {userUid} = useRegistration();
   const navigation = useNavigation();
   const {eventTypes, getDanceStyles} = useAppStateHook();
@@ -38,9 +39,26 @@ const HomeScreen = () => {
   useEffect(() => {
     getDanceStyles();
     setCurrentTab('All');
-    getCommunitites();
-    setEvents(attendEventWithUserUid);
+    getCurrentUser();
+    setEvents(
+      attendEventWithUserUid?.concat(
+        eventList?.filter((event: {communityUid: string}) =>
+          userCommunities?.includes(event?.communityUid),
+        ),
+      ),
+    );
   }, []);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getEvents();
+      setEvents(
+        attendEventWithUserUid?.concat(
+          eventList?.filter((event: {communityUid: string}) =>
+            userCommunities?.includes(event?.communityUid),
+          ),
+        ),
+      );
+    });
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -79,25 +97,48 @@ const HomeScreen = () => {
                   !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
               ),
             );
-          } else {
-            const ev = eventList?.filter(
-              event =>
-                event?.categories?.some(st => individualStyles?.includes(st)) &&
-                event?.creatorUid !== userUid,
-            );
-            setMaybeEvents(ev);
           }
         });
       RN.LayoutAnimation.configureNext(
         RN.LayoutAnimation.Presets.easeInEaseOut,
       );
 
-      return () =>
-        database()
-          .ref(`users/${userUid}/goingEvent`)
-          .off('value', onValueChange);
-    }, [eventList, events, individualStyles, userUid]),
+      return () => database().ref('events/').off('value', onValueChange);
+    }, [eventList, userCommunities, userUid]),
   );
+  // console.log(individualStyles);
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const onValueChange = database()
+  //       .ref(`users/${userUid}/goingEvent`)
+  //       .on('value', snapshot => {
+  //         if (snapshot?.val() !== null) {
+  //           const array = Object.values(snapshot?.val());
+  //           setMaybeEvents(
+  //             eventList?.filter(
+  //               ev =>
+  //                 !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
+  //             ),
+  //           );
+  //         } else {
+  //           const ev = eventList?.filter(
+  //             event =>
+  //               event?.categories?.some(st => individualStyles?.includes(st)) &&
+  //               event?.creatorUid !== userUid,
+  //           );
+  //           setMaybeEvents(ev);
+  //         }
+  //       });
+  //     RN.LayoutAnimation.configureNext(
+  //       RN.LayoutAnimation.Presets.easeInEaseOut,
+  //     );
+
+  //     return () =>
+  //       database()
+  //         .ref(`users/${userUid}/goingEvent`)
+  //         .off('value', onValueChange);
+  //   }, [eventList, events, individualStyles, userUid]),
+  // );
 
   const goToCommunities = () => navigation.navigate('Communities');
   useEffect(() => {
@@ -108,12 +149,24 @@ const HomeScreen = () => {
     setCurrentTab(value);
     if (value === 'All') {
       getEvents();
-      setEvents(attendEventWithUserUid);
+      setEvents(
+        attendEventWithUserUid?.concat(
+          eventList?.filter((event: {communityUid: string}) =>
+            userCommunities?.includes(event?.communityUid),
+          ),
+        ),
+      );
     } else {
       setEvents(
-        attendEventWithUserUid?.filter((event: any) =>
-          event?.typeEvent?.includes(value),
-        ),
+        attendEventWithUserUid
+          ?.filter((event: any) => event?.typeEvent?.includes(value))
+          .concat(
+            eventList?.filter(
+              (event: {communityUid: string}) =>
+                userCommunities?.includes(event?.communityUid) &&
+                event?.typeEvent?.includes(value),
+            ),
+          ),
       );
     }
   };
@@ -178,7 +231,7 @@ const HomeScreen = () => {
     <RN.View style={styles.container}>
       {renderHeader()}
       <ScrollView showsVerticalScrollIndicator={false}>
-        {maybeEvents?.length > 0 && (
+        {/* {maybeEvents?.length > 0 && (
           <RN.View style={styles.interestedWrapper}>
             <RN.Text style={styles.interestedText}>
               You might be interested
@@ -189,7 +242,7 @@ const HomeScreen = () => {
               ))}
             </ScrollView>
           </RN.View>
-        )}
+        )} */}
         <RN.View
           style={{
             padding: 16,

@@ -1,4 +1,5 @@
 import {
+  AUTHORIZATION_WITH_APPLE,
   AUTHORIZATION_WITH_EMAIL,
   AUTHORIZATION_WITH_GOOGLE,
   CLEAR,
@@ -167,6 +168,26 @@ export const authWithGoogleSuccess = ({
 });
 export const authWithGoogleFail = (error: registrationParams) => ({
   type: AUTHORIZATION_WITH_GOOGLE.FAIL,
+  payload: {
+    errors: error,
+  },
+});
+
+export const authWithAppleRequest = () => ({
+  type: AUTHORIZATION_WITH_APPLE.REQUEST,
+});
+export const authWithAppleSuccess = ({
+  currentUser,
+  isUserExists,
+}: registrationParams) => ({
+  type: AUTHORIZATION_WITH_APPLE.SUCCESS,
+  payload: {
+    currentUser: currentUser,
+    isUserExists: isUserExists,
+  },
+});
+export const authWithAppleFail = (error: registrationParams) => ({
+  type: AUTHORIZATION_WITH_APPLE.FAIL,
   payload: {
     errors: error,
   },

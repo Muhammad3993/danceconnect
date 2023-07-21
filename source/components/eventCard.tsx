@@ -22,15 +22,13 @@ const EventCard = ({item}: props) => {
   const navigation = useNavigation();
 
   const {userUid} = useRegistration();
-  const isPassedEvent =
-    moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
-    moment(new Date()).format('YYYY-MM-DD');
+  const isPassedEvent = eventData?.eventDate?.time < new Date().getTime();
   const {loadingAttend, attendEvent, eventsDataById, eventList} = useEvents();
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
   const [crntIndex, setCrntIndex] = useState(null);
   const index = eventsDataById?.findIndex(
-    (itm: any) => itm.eventUid === data.id,
+    (itm: any) => itm?.eventUid === data.id,
   );
 
   const isJoined = eventData?.attendedPeople?.find(

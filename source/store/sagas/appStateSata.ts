@@ -1,5 +1,6 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import {
+  setCountriesAction,
   setDanceStylesAction,
   setEventTypesAction,
 } from '../actions/appStateActions';
@@ -17,6 +18,11 @@ function* getDanceStylesRequest() {
     yield put(
       setEventTypesAction({
         eventTypes: response.data[0].typesEvents,
+      }),
+    );
+    yield put(
+      setCountriesAction({
+        countries: data.countries,
       }),
     );
   } catch (error) {

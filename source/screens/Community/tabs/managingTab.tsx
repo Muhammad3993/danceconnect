@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import {useCommunities} from '../../../hooks/useCommunitites';
 import CommunityCard from '../../../components/communityCard';
@@ -53,8 +53,20 @@ const ManagingTab = ({
         )
         .map(ev => ev),
     );
-  }, [currentCity, removedCommunity]);
+  }, [currentCity]);
 
+  useEffect(() => {
+    setCommunitites(
+      managingCommunity
+        ?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+        )
+        .map(ev => ev),
+    );
+  }, [removedCommunity, managingCommunity.length]);
+  // console.log('removedCommunity', removedCommunity);
   const onClear = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
@@ -66,8 +78,12 @@ const ManagingTab = ({
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = managingCommunity.filter((item: any) =>
-        item?.categories?.some((ai: any) => addedStyles.includes(ai)),
+      const data = managingCommunity.filter(
+        (item: any) =>
+          item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
+          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          item?.location?.substr(item?.location?.length - 2) ===
+            lastSymUserCountry,
       );
       setCommunitites(data);
     } else {
@@ -91,12 +107,16 @@ const ManagingTab = ({
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no community yet</RN.Text>
+        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
       </RN.View>
     );
   };
 
   const renderItemCommunity = useCallback((item: any) => {
+    // console.log('item.item.id', item.item.id);
+    if (!item.item.id) {
+      return null;
+    }
     return <CommunityCard item={item} key={item.index + item.item.id} />;
   }, []);
   const renderFilters = () => {

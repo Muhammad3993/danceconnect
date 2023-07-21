@@ -1,16 +1,8 @@
-import {
-  call,
-  debounce,
-  put,
-  select,
-  take,
-  takeLatest,
-} from 'redux-saga/effects';
+import {call, put, select, takeLatest} from 'redux-saga/effects';
 import {selectUserUid} from '../selectors/registrationSelector';
 import {
   changeInformationCommunity,
   createCommunity,
-  getCommunities,
   getCommunityByUid,
   joinCommunity,
   removeCommunity,
@@ -30,7 +22,6 @@ import {
   removeCommunityFailAction,
   removeCommunitySuccessAction,
   startFollowedCommunityFailAction,
-  startFollowedCommunitySuccessAction,
 } from '../actions/communityActions';
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
@@ -43,6 +34,7 @@ import {
   getCommunitiesWithMongo,
   getCommunityById,
 } from '../../api/serverRequests';
+import {getUserDataRequestAction} from '../actions/profileActions';
 type minimalInformation = {
   name: string;
   description: string;
@@ -111,6 +103,7 @@ function* createCommunityRequest(action: any) {
     const response = yield call(createCommunityWithMongo, data);
     console.log('createCommunityRequest', response);
     yield put(createCommunitySuccessAction());
+    yield put(getCommunitiesRequestAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
         name: 'CommunityScreen',
@@ -119,7 +112,6 @@ function* createCommunityRequest(action: any) {
         },
       }),
     );
-    yield put(getCommunitiesRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     console.log('createCommunityRequest error', error);
@@ -132,6 +124,7 @@ function* startFollowingCommunity(action: any) {
   try {
     yield call(joinCommunity, communityUid, userUid, userImg);
     yield put(getCommunitiesRequestAction());
+    yield put(getUserDataRequestAction());
     // yield put(getCommunityByIdRequestAction(communityUid));
   } catch (error) {
     console.log('startFollowingCommunity', error);

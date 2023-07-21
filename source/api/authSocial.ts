@@ -11,20 +11,32 @@ export const onAppleButtonPress = async () => {
   try {
     const appleAuthRequestResponse = await appleAuth.performRequest({
       requestedOperation: appleAuth.Operation.LOGIN,
-      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
     });
+    // console.log('appleAuthRequestResponse', appleAuthRequestResponse.user);
 
     if (!appleAuthRequestResponse.identityToken) {
       throw new Error('Apple Sign-In failed - no identify token returned');
     }
 
+    // const {identityToken, nonce} = appleAuthRequestResponse;
+    // const appleCredential = auth.AppleAuthProvider.credential(
+    //   identityToken,
+    //   nonce,
+    // );
+    const name = appleAuthRequestResponse.fullName;
+    const fullName = `${name?.givenName} ${name?.familyName}`;
+    // Create a Firebase credential from the response
     const {identityToken, nonce} = appleAuthRequestResponse;
     const appleCredential = auth.AppleAuthProvider.credential(
       identityToken,
       nonce,
     );
-
-    return auth().signInWithCredential(appleCredential);
+    // Sign the user in with the credential
+    const authenticate = await auth().signInWithCredential(appleCredential);
+    authenticate.user = {...authenticate.user, displayName: fullName};
+    return authenticate;
+    // return auth().signInWithCredential(appleCredential);
   } catch (error) {
     console.log(error);
   }
@@ -146,20 +158,14 @@ export const removeAccount = async () => {
         .finally(() => {
           if (userEvents?.length > 0) {
             userEvents.forEach((eventId: string) => {
-              removeEvent(eventId)
-                .then()
-                .finally(async () => {
-                  await database().ref(`users/${userUid}`).remove();
-                  firebase.auth().currentUser?.delete();
-                });
+              removeEvent(eventId).then();
             });
           }
         });
     });
-  } else {
-    await database().ref(`users/${userUid}`).remove();
-    firebase.auth().currentUser?.delete();
   }
+  await database().ref(`users/${userUid}`).remove();
+  firebase.auth().currentUser?.delete();
 };
 
 export const initializeFB = async () => {

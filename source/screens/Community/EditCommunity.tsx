@@ -15,6 +15,7 @@ import {
 import {useCommunities} from '../../hooks/useCommunitites';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import FindCity from '../../components/findCity';
+import { useProfile } from '../../hooks/useProfile';
 
 interface city {
   structured_formatting: {
@@ -25,6 +26,7 @@ interface city {
 const EditCommunity = () => {
   const routeParams = useRoute();
   const navigation = useNavigation();
+  const { userLocation } = useProfile();
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
     routeParams?.params?.id,
   );
@@ -100,10 +102,14 @@ const EditCommunity = () => {
       includeBase64: true,
     };
     launchImageLibrary(options, response => {
-      if (imgs?.length > 0) {
-        setImgs([...imgs, response?.assets[0]]);
+      if (response.assets) {
+        if (imgs?.length > 0) {
+          setImgs([...imgs, response?.assets[0]]);
+        } else {
+          setImgs([response?.assets[0]]);
+        }
       } else {
-        setImgs([response?.assets[0]]);
+        console.log('cancel');
       }
     });
   };
@@ -117,11 +123,13 @@ const EditCommunity = () => {
 
   const onPressSaveChanges = () => {
     const locationEdt =
-      selectedLocation?.structured_formatting?.main_text +
-      ', ' +
-      (selectedLocation?.structured_formatting?.main_text?.length > 0
-        ? selectedLocation?.terms[1].value
-        : '');
+      selectedLocation?.structured_formatting?.main_text?.length > 0
+        ? selectedLocation?.structured_formatting?.main_text +
+          ', ' +
+          (selectedLocation?.structured_formatting?.main_text?.length > 0
+            ? selectedLocation?.terms[1].value
+            : '')
+        : selectedLocation;
     changeInformation({
       name: title,
       description: desc,
@@ -223,7 +231,7 @@ const EditCommunity = () => {
         <RN.View style={styles.nameTitle}>
           <RN.Text style={styles.title}>Upload Cover Image</RN.Text>
         </RN.View>
-        {images?.length > 0 ? (
+        {imgs?.length > 0 ? (
           <RN.ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -323,7 +331,7 @@ const EditCommunity = () => {
             {renderDescription()}
             {renderChooseCategory()}
             {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>City</RN.Text>
+            <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
             <RN.TouchableOpacity
               onPress={() => setOpenLocation(true)}
               style={styles.selectLocationBtn}>

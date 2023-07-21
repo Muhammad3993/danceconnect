@@ -2,7 +2,7 @@ export default {
   email: '',
   password: '',
   isLoading: false,
-  isAuhtorized: false,
+  isAuthorized: false,
   errors: null,
   currentUser: null,
   name: '',

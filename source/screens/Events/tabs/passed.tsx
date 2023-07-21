@@ -65,6 +65,7 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setEventType('All');
+    setEventDate({start: null, end: null});
     setEvents(
       passingEvents
         ?.filter(
@@ -77,8 +78,12 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = events.filter((item: any) =>
-        item?.categories?.some((ai: any) => addedStyles.includes(ai)),
+      const data = events.filter(
+        (item: any) =>
+          item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
+          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          item?.location?.substr(item?.location?.length - 2) ===
+            lastSymUserCountry,
       );
       setEvents(data);
     } else if (eventType !== 'All') {
@@ -95,15 +100,23 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
       eventDate?.start?.start !== null
     ) {
       const range = moment().range(eventDate?.start, eventDate?.end);
-      const days = Array.from(range.by('days'));
-      const dayEntries = days.map((d, index) => {
-        const date = d.format('YYYY-MM-DD');
-        return date;
-      });
-      const findDate = events?.filter((it: any) =>
-        dayEntries?.includes(it?.eventDate?.startDate),
-      );
-      setEvents(findDate);
+      if (!eventDate.end) {
+        const day = moment(eventDate?.start).format('YYYY-MM-DD');
+        const findDate = events?.filter(
+          (it: any) => it?.eventDate?.startDate === day,
+        );
+        setEvents(findDate);
+      } else {
+        const days = Array.from(range.by('days'));
+        const dayEntries = days.map((d, index) => {
+          const date = d.format('YYYY-MM-DD');
+          return date;
+        });
+        const findDate = events?.filter((it: any) =>
+          dayEntries?.includes(it?.eventDate?.startDate),
+        );
+        setEvents(findDate);
+      }
     } else {
       setEvents(
         passingEvents?.filter(
@@ -170,6 +183,7 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
         setEventType={setEventType}
         eventDate={eventDate}
         setEventDate={setEventDate}
+        currentCity={currentCity}
       />
     </>
   );

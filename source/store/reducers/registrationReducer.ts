@@ -1,4 +1,5 @@
 import {
+  AUTHORIZATION_WITH_APPLE,
   AUTHORIZATION_WITH_EMAIL,
   AUTHORIZATION_WITH_GOOGLE,
   CLEAR,
@@ -139,6 +140,28 @@ export default (
         errors: null,
       };
     case AUTHORIZATION_WITH_GOOGLE.FAIL:
+      return {
+        ...state,
+        isLoading: false,
+        errors: action.payload?.errors,
+      };
+    case AUTHORIZATION_WITH_APPLE.REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case AUTHORIZATION_WITH_APPLE.SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        currentUser: action.payload?.currentUser,
+        email: action?.payload?.currentUser?.email,
+        name: action.payload?.currentUser?.username,
+        isAuthorized: false,
+        isUserExists: action.payload?.isUserExists,
+        errors: null,
+      };
+    case AUTHORIZATION_WITH_APPLE.FAIL:
       return {
         ...state,
         isLoading: false,

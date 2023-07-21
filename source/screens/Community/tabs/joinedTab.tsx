@@ -63,8 +63,12 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = joinedCommunities.filter((item: any) =>
-        item?.categories?.some((ai: any) => addedStyles.includes(ai)),
+      const data = joinedCommunities.filter(
+        (item: any) =>
+          item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
+          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+          item?.location?.substr(item?.location?.length - 2) ===
+            lastSymUserCountry,
       );
       setCommunitites(data);
     } else {
@@ -80,7 +84,7 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no community yet</RN.Text>
+        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
       </RN.View>
     );
   };

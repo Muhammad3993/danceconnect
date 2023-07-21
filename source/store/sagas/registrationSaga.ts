@@ -1,6 +1,7 @@
 import {call, debounce, put, select, takeLatest} from 'redux-saga/effects';
 
 import {
+  AUTHORIZATION_WITH_APPLE,
   AUTHORIZATION_WITH_EMAIL,
   AUTHORIZATION_WITH_GOOGLE,
   LOGOUT,
@@ -9,11 +10,14 @@ import {
 import {
   logInWithEmail,
   logout,
+  onAppleButtonPress,
   setInitialDataUser,
   signWithGoogle,
   sinUpWithEmail,
 } from '../../api/authSocial';
 import {
+  authWithAppleFail,
+  authWithAppleSuccess,
   authWithGoogleFail,
   authWithGoogleSuccess,
   authorizationWithEmailFail,
@@ -207,6 +211,37 @@ function* authWthGoogle() {
     yield put(setLoadingAction({onLoading: false}));
   }
 }
+function* authWthApple() {
+  try {
+    const response = yield call(onAppleButtonPress);
+    console.log('authWthApple saga', response);
+    let name = response?.user?.displayName;
+    if (response?.user?.displayName === 'null null') {
+      name = '';
+    }
+    const user = {
+      uid: response?.user?._user?.uid,
+      email: response?.additionalUserInfo?.profile?.email,
+      username: name,
+    };
+    // const {uid} = response?._user;
+    const exists = yield call(userExists, response?.user?._user.uid);
+    yield put(
+      authWithAppleSuccess({
+        currentUser: user,
+        isUserExists: exists,
+      }),
+    );
+    yield put(getUserDataRequestAction());
+    yield put(getCommunitiesRequestAction());
+    yield put(getEventsRequestAction());
+    yield put(setLoadingAction({onLoading: false}));
+  } catch (error: string | undefined | unknown) {
+    console.log('authWthApple error', error);
+    yield put(authWithAppleFail(setErrors(error?.toString())));
+    yield put(setLoadingAction({onLoading: false}));
+  }
+}
 function* registrationSaga() {
   yield takeLatest(REGISTRATION_WITH_EMAIL.REQUEST, registrationEmail);
   yield takeLatest(AUTHORIZATION_WITH_EMAIL.REQUEST, authorizationEmail);
@@ -215,6 +250,7 @@ function* registrationSaga() {
     registrationSetData,
   );
   yield takeLatest(AUTHORIZATION_WITH_GOOGLE.REQUEST, authWthGoogle);
+  yield takeLatest(AUTHORIZATION_WITH_APPLE.REQUEST, authWthApple);
   yield takeLatest(LOGOUT.REQUEST, logoutUser);
 }
 

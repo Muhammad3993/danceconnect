@@ -3,4 +3,5 @@ export default {
   currentCity: '',
   danceStyles: [],
   eventTypes: [],
+  countries: [],
 };

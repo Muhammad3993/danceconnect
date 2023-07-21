@@ -55,7 +55,7 @@ const BottomCalendar = ({
   end = moment().format('YYYY-MM-DD'),
   setEnd,
   setStart,
-  time,
+  time = new Date().getTime(),
   setTime,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
@@ -87,8 +87,6 @@ const BottomCalendar = ({
       const minutes = Number(timeSting?.slice(3, 5));
       const endTime = new Date(startDate).setHours(hours, minutes);
       setTime(endTime);
-
-      // setTime(times?.nativeEvent?.timestamp);
     }
   };
 
@@ -209,6 +207,12 @@ const BottomCalendar = ({
     setEnd(endDate);
     onClosed();
   };
+  const onPressClose = () => {
+    setStart(startDate);
+    setEnd(endDate);
+    modalizeRef?.current?.close('default');
+  };
+
   const renderHeader = () => {
     return (
       <RN.View
@@ -222,7 +226,7 @@ const BottomCalendar = ({
         </RN.View>
         <RN.TouchableOpacity
           style={{alignSelf: 'flex-end', marginTop: -25}}
-          onPress={() => modalizeRef?.current?.close('default')}>
+          onPress={onPressClose}>
           <RN.Image source={{uri: 'close'}} style={{height: 24, width: 24}} />
         </RN.TouchableOpacity>
       </RN.View>
@@ -233,6 +237,7 @@ const BottomCalendar = ({
       <Modalize
         ref={modalizeRef}
         onClose={onClosed}
+        closeOnOverlayTap={false}
         handlePosition="inside"
         scrollViewProps={{scrollEnabled: !openingTime && true}}
         modalStyle={styles.container}

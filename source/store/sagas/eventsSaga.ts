@@ -142,6 +142,7 @@ function* createEventRequest(action: any) {
     const response = yield call(createEventWithMongo, data);
     console.log('createEventRequest', response);
     yield put(createEventSuccessAction());
+    yield put(getEventsRequestAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
         name: 'EventScreen',

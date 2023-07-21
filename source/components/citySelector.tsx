@@ -5,6 +5,8 @@ import {Portal} from 'react-native-portalize';
 import Search from './search';
 import {searchCity} from '../api/cities';
 import colors from '../utils/colors';
+import {countries} from '../utils/constants';
+import {useProfile} from '../hooks/useProfile';
 
 type modalProps = {
   opening: boolean;
@@ -13,6 +15,7 @@ type modalProps = {
 };
 const CitySelector = ({onClose, opening, onChoosedCity}: modalProps) => {
   const modalizeRef = useRef<Modalize>(null);
+  const {userLocation} = useProfile();
   const handleStyle = {height: 3, width: 38};
   const [searchValue, setSearchValue] = useState<string>('');
   const [findCity, setFindCity] = useState([]);
@@ -70,26 +73,30 @@ const CitySelector = ({onClose, opening, onChoosedCity}: modalProps) => {
         rootStyle={styles.container}
         HeaderComponent={headerLocation()}>
         <RN.View style={{paddingHorizontal: 20}}>
-          <Search
-            autoFocus
-            onSearch={onChangeTextSearch}
-            searchValue={searchValue}
-            placeholder="Search location"
-            visibleAddBtn={false}
-          />
-          {findCity?.map((item: any) => {
-            return (
-              <RN.TouchableOpacity
-                style={{paddingVertical: 8}}
-                onPress={() => onPressLocate(item)}>
-                <RN.Text style={styles.itemText}>
-                  {item?.structured_formatting?.main_text +
-                    ', ' +
-                    item?.terms[1]?.value}
-                </RN.Text>
-              </RN.TouchableOpacity>
-            );
-          })}
+          {userLocation === 'USA' && (
+            <>
+              <Search
+                autoFocus
+                onSearch={onChangeTextSearch}
+                searchValue={searchValue}
+                placeholder="Search location"
+                visibleAddBtn={false}
+              />
+              {findCity?.map((item: any) => {
+                return (
+                  <RN.TouchableOpacity
+                    style={{paddingVertical: 8}}
+                    onPress={() => onPressLocate(item)}>
+                    <RN.Text style={styles.itemText}>
+                      {item?.structured_formatting?.main_text +
+                        ', ' +
+                        item?.terms[1]?.value}
+                    </RN.Text>
+                  </RN.TouchableOpacity>
+                );
+              })}
+            </>
+          )}
         </RN.View>
       </Modalize>
     </Portal>

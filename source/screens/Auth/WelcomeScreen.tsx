@@ -12,9 +12,14 @@ import useAppStateHook from '../../hooks/useAppState';
 
 const WeclomeScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
-  const btns = authButtons.slice(0, 3);
+  const btns = authButtons.slice(0, 2);
   const lastBtn = authButtons[authButtons.length - 1];
-  const {authorizationWithGoogle, userUid, isUserExists} = useRegistration();
+  const {
+    authorizationWithGoogle,
+    userUid,
+    isUserExists,
+    authorizationWithApple,
+  } = useRegistration();
   const {setLoading} = useAppStateHook();
 
   const onPressLogin = () => {
@@ -34,6 +39,9 @@ const WeclomeScreen = (): JSX.Element => {
     setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
+    }
+    if (iconName === 'apple') {
+      authorizationWithApple();
     }
   };
   return (
@@ -68,9 +76,15 @@ const WeclomeScreen = (): JSX.Element => {
               key={lastBtn.key}
               navigateTo={lastBtn.navigateTo}
             />
+            <RN.Text
+              style={styles.privacyP}
+              onPress={() =>
+                RN.Linking.openURL('https://www.danceconnect.online/privacy')
+              }>
+              Privacy Policy
+            </RN.Text>
           </RN.View>
         </RN.View>
-
         <RN.View style={styles.bottomWrapper}>
           <RN.Text style={styles.alreadyAccountText}>
             Already have an account?
@@ -78,6 +92,20 @@ const WeclomeScreen = (): JSX.Element => {
           <RN.TouchableOpacity onPress={onPressLogin}>
             <RN.Text style={styles.logInText}>Log in</RN.Text>
           </RN.TouchableOpacity>
+        </RN.View>
+
+        <RN.View style={{paddingHorizontal: 20}}>
+          <RN.Text style={styles.licenceText}>
+            By registering in the application, you agree to the
+            <RN.Text
+              style={styles.licenceTextOrange}
+              onPress={() =>
+                RN.Linking.openURL('https://www.danceconnect.online/terms')
+              }>
+              {' '}
+              terms and conditions
+            </RN.Text>
+          </RN.Text>
         </RN.View>
       </RN.ScrollView>
     </RN.SafeAreaView>
@@ -91,6 +119,27 @@ const styles = RN.StyleSheet.create({
     // padding: 14,
     paddingTop: 0,
     justifyContent: 'space-between',
+  },
+  privacyP: {
+    textAlign: 'center',
+    color: colors.orange,
+    fontSize: 14,
+    lineHeight: 20,
+    paddingTop: 8,
+  },
+  licenceText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '400',
+    color: colors.darkGray,
+    fontFamily: 'Mulish',
+    textAlign: 'center',
+    marginHorizontal: 40,
+  },
+  licenceTextOrange: {
+    color: colors.orange,
+    fontSize: 14,
+    lineHeight: 20,
   },
   welcome: {
     fontSize: 32,
@@ -136,7 +185,7 @@ const styles = RN.StyleSheet.create({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: 120,
+    paddingTop: 100,
     paddingBottom: 40,
   },
   alreadyAccountText: {

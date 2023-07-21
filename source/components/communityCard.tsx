@@ -24,12 +24,15 @@ const CommunityCard = ({item}: any) => {
     communitiesData,
     startFollowed,
   } = useCommunities();
-  const {userImgUrl} = useProfile();
+  const {userImgUrl, user} = useProfile();
   const [countFollowers, setCountFollowers] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const isMyCommunity = userUid === data?.creator?.uid;
-  const isFollowed = isFollowedCurrentCommunity(data?.id);
+  const isMyCommunity = userUid === data?.creatorUid;
+  const [isFollowed, setIsFollowed] = useState(
+    user?.joinedCommunities?.includes(data?.id),
+  );
+  // const isFollowed = user?.joinedCommunities?.includes(data?.id);
   const [crntIndex, setCrntIndex] = useState(null);
   const [displayedData, setDisplayedData] = useState();
   const [loadData, setLoadData] = useState(false);
@@ -38,6 +41,12 @@ const CommunityCard = ({item}: any) => {
   const goToCommunity = () => {
     navigation.navigate('CommunityScreen', {data});
   };
+  useEffect(() => {
+    setIsFollowed(
+      displayedData?.followers?.map(item => item.userUid)?.includes(userUid),
+    );
+  }, [displayedData?.followers, userUid]);
+
   // console.log(data);
   useEffect(() => {
     setLoadData(true);
@@ -51,7 +60,7 @@ const CommunityCard = ({item}: any) => {
 
     return () =>
       database().ref(`community/${data?.id}`).off('value', onValueChange);
-  }, [data.id]);
+  }, [data?.id, user?.joinedCommunities]);
   useMemo(() => {
     if (isLoadingWithFollow) {
       setLoading(true);
@@ -187,11 +196,7 @@ const CommunityCard = ({item}: any) => {
       <RN.View style={styles.footerItemContainer}>
         {renderCount()}
         <RN.View>
-          {isLoadingWithFollow &&
-          communitiesData?.findIndex((itm: any) => itm.id === data.id) ===
-            crntIndex ? (
-            <>{renderLoading()}</>
-          ) : isFollowed ? (
+          {isFollowed ? (
             <RN.View style={{flexDirection: 'row'}}>
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Image

@@ -15,7 +15,9 @@ import useAppStateHook from '../../hooks/useAppState';
 
 const AuthorizationScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
-  const btns = authButtons.slice(0, 3);
+  // const btns = authButtons[0];
+  // const lastBtn = authButtons[authButtons.length - 1];
+
   const {
     authorizaton,
     isLoading,
@@ -24,11 +26,13 @@ const AuthorizationScreen = (): JSX.Element => {
     authorizationWithGoogle,
     isErrors,
     clearErrors,
+    authorizationWithApple,
   } = useRegistration();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const {setLoading} = useAppStateHook();
   const errorViewHeight = new RN.Animated.Value(0);
+  const btns = authButtons.slice(0, 2);
 
   const translateY = errorViewHeight.interpolate({
     inputRange: [0, 1],
@@ -76,6 +80,9 @@ const AuthorizationScreen = (): JSX.Element => {
     setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
+    }
+    if (iconName === 'apple') {
+      authorizationWithApple();
     }
   };
   const resetPassword = () => {
@@ -144,19 +151,28 @@ const AuthorizationScreen = (): JSX.Element => {
               onPress={onPressLogin}
               isLoading={isLoading}
             />
-            <RN.TouchableOpacity
+            {/* <RN.TouchableOpacity
               disabled={email?.length <= 0}
               style={styles.recoveryPasswordBtn}
               onPress={resetPassword}>
               <RN.Text style={styles.recoveryPasswordText}>
                 Forgot the password?
               </RN.Text>
-            </RN.TouchableOpacity>
+            </RN.TouchableOpacity> */}
             <RN.View style={styles.linesWrapper}>
               <RN.View style={styles.line} />
               <RN.Text style={styles.or}>or continue with</RN.Text>
               <RN.View style={styles.line} />
             </RN.View>
+            {/* <RN.View style={{paddingTop: 24}}>
+              <AuthButton
+                title={authButtons[0].title}
+                icon={authButtons[0].icon}
+                key={authButtons[0].key}
+                navigateTo={authButtons[0].navigateTo}
+              />
+            </RN.View> */}
+
             <RN.View style={styles.btnsWrapper}>
               {btns?.map(btn => {
                 return (

@@ -31,6 +31,7 @@ import EditEvent from '../screens/Events/EditEvent';
 import {Host} from 'react-native-portalize';
 import DanceStylesProfile from '../screens/Profile/EditDanceStylesProfile';
 import ChangeProfile from '../screens/Profile/ChangeProfile';
+import ManagingCommunities from '../screens/Profile/ManagingCommunities';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -97,6 +98,10 @@ const ProfileNavigator = () => {
         component={DanceStylesProfile}
       />
       <ProfileStack.Screen name="ChangeProfile" component={ChangeProfile} />
+      <ProfileStack.Screen
+        name="ManagingCommunities"
+        component={ManagingCommunities}
+      />
     </ProfileStack.Navigator>
   );
 };
