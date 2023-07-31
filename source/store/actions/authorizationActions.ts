@@ -25,6 +25,7 @@ type registrationParams = {
   userCountry?: string;
   userRole?: string[];
   individualStyles?: string[];
+  authProvider?: string;
 };
 export const registrationWithEmailRequest = ({
   email,
@@ -94,12 +95,14 @@ export const registrationWithEmailSuccess = ({
   currentUser,
   isUserExists,
   token,
+  authProvider,
 }: registrationParams) => ({
   type: REGISTRATION_WITH_EMAIL.SUCCESS,
   payload: {
     currentUser: currentUser,
     isUserExists: isUserExists,
     token: token,
+    authProvider: authProvider,
   },
 });
 export const registrationWithEmailFail = (error: registrationParams) => ({
@@ -122,11 +125,13 @@ export const authorizationWithEmailRequest = ({
 export const authorizationWithEmailSuccess = ({
   currentUser,
   isUserExists,
+  authProvider,
 }: registrationParams) => ({
   type: AUTHORIZATION_WITH_EMAIL.SUCCESS,
   payload: {
     currentUser: currentUser,
     isUserExists: isUserExists,
+    authProvider: authProvider,
   },
 });
 export const authorizationWithEmailFail = (error: registrationParams) => ({
@@ -158,12 +163,14 @@ export const authWithGoogleSuccess = ({
   currentUser,
   isUserExists,
   token,
+  authProvider,
 }: registrationParams) => ({
   type: AUTHORIZATION_WITH_GOOGLE.SUCCESS,
   payload: {
     currentUser: currentUser,
     isUserExists: isUserExists,
     token: token,
+    authProvider: authProvider,
   },
 });
 export const authWithGoogleFail = (error: registrationParams) => ({

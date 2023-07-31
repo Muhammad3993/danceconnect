@@ -31,7 +31,7 @@ const App = () => {
         <ReduxProvider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <StatusBar barStyle={statusBarContent} />
-            {/* <FullLoading /> */}
+            <FullLoading />
             <AppNavigator />
           </PersistGate>
         </ReduxProvider>

@@ -3,20 +3,55 @@ import {appleAuth} from '@invertase/react-native-apple-authentication';
 import firebase from '@react-native-firebase/app';
 import database from '@react-native-firebase/database';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-
+import jwt_decode from 'jwt-decode';
 // import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import {config, credentials} from './configFB';
 import {removeCommunity, removeEvent} from './functions';
+export const logoutApple = async () => {
+  await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGOUT,
+  });
+};
 export const onAppleButtonPress = async () => {
   try {
     const appleAuthRequestResponse = await appleAuth.performRequest({
       requestedOperation: appleAuth.Operation.LOGIN,
-      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
     });
-    // console.log('appleAuthRequestResponse', appleAuthRequestResponse.user);
+    // const {identityToken, nonce} = appleAuthRequestResponse;
+    const name = appleAuthRequestResponse.fullName;
+    const fullName = `${name?.givenName} ${name?.familyName}`;
+
+    // get current authentication state for user
+    // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+    const credentialState = await appleAuth.getCredentialStateForUser(
+      appleAuthRequestResponse.user,
+    );
+    // use credentialState response to ensure the user is authenticated
+    if (credentialState === appleAuth.State.AUTHORIZED) {
+      const {email} = jwt_decode(appleAuthRequestResponse?.identityToken);
+      const data = {
+        email: email,
+        uid: appleAuthRequestResponse.nonce,
+        userName: fullName,
+        user: appleAuthRequestResponse.user,
+      };
+      return data;
+      // user is authenticated
+    }
+    // const {email, email_verified, is_private_email, sub} = jwt_decode(
+    //   appleAuthRequestResponse?.identityToken,
+    // );
+    // console.log(
+    //   'appleAuthRequestResponse',
+    //   email,
+    //   email_verified,
+    //   is_private_email,
+    //   sub,
+    // );
 
     if (!appleAuthRequestResponse.identityToken) {
-      throw new Error('Apple Sign-In failed - no identify token returned');
+      console.log('Apple Sign-In failed - no identify token returned');
     }
 
     // const {identityToken, nonce} = appleAuthRequestResponse;
@@ -24,18 +59,16 @@ export const onAppleButtonPress = async () => {
     //   identityToken,
     //   nonce,
     // );
-    const name = appleAuthRequestResponse.fullName;
-    const fullName = `${name?.givenName} ${name?.familyName}`;
-    // Create a Firebase credential from the response
-    const {identityToken, nonce} = appleAuthRequestResponse;
-    const appleCredential = auth.AppleAuthProvider.credential(
-      identityToken,
-      nonce,
-    );
-    // Sign the user in with the credential
-    const authenticate = await auth().signInWithCredential(appleCredential);
-    authenticate.user = {...authenticate.user, displayName: fullName};
-    return authenticate;
+    // // Create a Firebase credential from the response
+    // const {identityToken, nonce} = appleAuthRequestResponse;
+    // const appleCredential = auth.AppleAuthProvider.credential(
+    //   identityToken,
+    //   nonce,
+    // );
+    // // Sign the user in with the credential
+    // const authenticate = await auth().signInWithCredential(appleCredential);
+    // authenticate.user = {...authenticate.user, displayName: fullName};
+    // return authenticate;
     // return auth().signInWithCredential(appleCredential);
   } catch (error) {
     console.log(error);

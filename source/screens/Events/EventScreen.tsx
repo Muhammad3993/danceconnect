@@ -1,78 +1,69 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useMemo, useState} from 'react';
-import database from '@react-native-firebase/database';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import Carousel from '../../components/carousel';
 import moment from 'moment';
-import {useProfile} from '../../hooks/useProfile';
 import {Button} from '../../components/Button';
 import useEvents from '../../hooks/useEvents';
 import useRegistration from '../../hooks/useRegistration';
 import {SCREEN_WIDTH, statusBarHeight} from '../../utils/constants';
 import SkeletonEventScreen from '../../components/skeleton/EventScreen-Skeleton';
+import {useEventById} from '../../hooks/useEventById';
 
 const EventScreen = () => {
   const routeProps = useRoute();
   const navigation = useNavigation();
   const {data}: any = routeProps.params;
 
-  const [displayedData, setDisplayedData] = useState(data);
-  const {userById, getUser} = useProfile();
-  const [images, setImages] = useState([]);
+  const {getEvent, loadingById, eventData} = useEventById(data?.id);
   const [openingDescription, setOpeningDescription] = useState(false);
   const {userUid} = useRegistration();
+  const {attendEvent, unAttendEvent} = useEvents();
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
 
-  const {loadingAttend, attendEvent, eventList} = useEvents();
   // const isPassedEvent =
   //   moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
   //   moment(new Date()).format('YYYY-MM-DD');
-  const isPassedEvent = displayedData?.eventDate?.time < new Date().getTime();
+  const isPassedEvent = eventData?.eventDate?.time < new Date().getTime();
 
   const isJoined =
-    data?.attendedPeople?.find((user: any) => user.uid === userUid) ?? false;
-  const isAdmin = data?.creator?.uid === userUid;
-  const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     if (userById?.name?.length > 0) {
-  //       setLoading(false);
-  //     }
-  //   }, 3500);
-  //   return () => clearTimeout(timer);
-  // }, [userById?.name?.length]);
+    eventData?.attendedPeople?.find((user: any) => user.userUid === userUid) ??
+    false;
+  const isAdmin = eventData?.creator?.uid === userUid;
+  // console.log('eventData', eventData, userUid, isAdmin);
+  useEffect(() => {
+    getEvent();
+  }, []);
 
   const onPressShowText = () => {
     setOpeningDescription(v => !v);
   };
 
-  useEffect(() => {
-    const onValueChange = database()
-      .ref(`events/${data.eventUid}`)
-      .on('value', snapshot => {
-        setDisplayedData(snapshot.val());
-        setImages(snapshot.val()?.images);
-      });
+  // useEffect(() => {
+  //   const onValueChange = database()
+  //     .ref(`events/${data.eventUid}`)
+  //     .on('value', snapshot => {
+  //       seteventData(snapshot.val());
+  //       setImages(snapshot.val()?.images);
+  //     });
 
-    return () =>
-      database().ref(`events/${data.eventUid}`).off('value', onValueChange);
-  }, [data.eventUid]);
+  //   return () =>
+  //     database().ref(`events/${data.eventUid}`).off('value', onValueChange);
+  // }, [data.eventUid]);
 
   // useEffect(() => {
-  //   getUser(displayedData?.creatorUid);
-  // }, [displayedData?.creatorUid]);
+  //   getUser(eventData?.creatorUid);
+  // }, [eventData?.creatorUid]);
 
   const onPressAttend = () => {
-    attendEvent({
-      communityUid: displayedData?.communityUid,
-      userUid: userUid,
-      eventUid: displayedData?.eventUid,
-    });
+    attendEvent(eventData?.id);
+  };
+  const onPressUnSubscribe = () => {
+    unAttendEvent(eventData?.id);
   };
   const onPressEditEvent = () => {
-    navigation.navigate('EditEvent', displayedData);
+    navigation.navigate('EditEvent', eventData);
   };
   const header = () => {
     return (
@@ -99,7 +90,7 @@ const EventScreen = () => {
         {isJoined && unFolloweOpen && (
           <RN.TouchableOpacity
             style={styles.unFollowContainer}
-            onPress={onPressAttend}>
+            onPress={onPressUnSubscribe}>
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Image
                 source={{uri: 'closesquare'}}
@@ -117,7 +108,9 @@ const EventScreen = () => {
       <>
         {renderTags()}
         <RN.View style={styles.titleContainer}>
-          <RN.Text style={styles.titleName}>{data?.title}</RN.Text>
+          <RN.Text style={styles.titleName}>
+            {data?.title ?? data?.name}
+          </RN.Text>
         </RN.View>
       </>
     );
@@ -133,12 +126,14 @@ const EventScreen = () => {
           horizontal
           style={styles.scrollTags}
           showsHorizontalScrollIndicator={false}>
-          {data?.typeEvent && (
+          {eventData?.typeEvent && (
             <RN.View style={styles.typeEventContainer}>
-              <RN.Text style={{color: colors.white}}>{data?.typeEvent}</RN.Text>
+              <RN.Text style={{color: colors.white}}>
+                {eventData?.typeEvent}
+              </RN.Text>
             </RN.View>
           )}
-          {data?.categories?.map((item: string) => {
+          {eventData?.categories?.map((item: string) => {
             return (
               <RN.View style={styles.tagItem}>
                 <RN.Text style={{color: colors.purple}}>{item}</RN.Text>
@@ -160,16 +155,16 @@ const EventScreen = () => {
         </RN.View>
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Text style={styles.eventDateText}>
-            {`${moment(data?.eventDate?.startDate).format('ddd')}, ${moment(
-              data?.eventDate?.startDate,
-            ).format('MMM D')}${
-              data?.eventDate?.endDate
-                ? ' - ' + moment(data?.eventDate?.endDate).format('MMM D')
+            {`${moment(eventData?.eventDate?.startDate).format(
+              'ddd',
+            )}, ${moment(eventData?.eventDate?.startDate).format('MMM D')}${
+              eventData?.eventDate?.endDate
+                ? ' - ' + moment(eventData?.eventDate?.endDate).format('MMM D')
                 : ''
-            } • ${moment(data?.eventDate?.time).format('HH:mm')}`}
+            } • ${moment(eventData?.eventDate?.time).format('HH:mm')}`}
           </RN.Text>
           <RN.Text style={{color: colors.darkGray}}>{`GMT ${moment(
-            data?.eventDate?.time,
+            eventData?.eventDate?.time,
           )
             .format('Z')
             ?.replaceAll('0', '')
@@ -180,8 +175,8 @@ const EventScreen = () => {
   };
   const onOpenMaps = () => {
     const url = RN.Platform.select({
-      ios: `maps:0,0?q=${data.place}`,
-      android: `geo:0,0?q=${data.place}`,
+      ios: `maps:0,0?q=${eventData.place}`,
+      android: `geo:0,0?q=${eventData.place}`,
     });
 
     RN.Linking.openURL(url);
@@ -209,10 +204,10 @@ const EventScreen = () => {
             <RN.View
               style={{justifyContent: 'center', maxWidth: SCREEN_WIDTH / 1.8}}>
               <RN.Text numberOfLines={1} style={styles.locateText}>
-                {data?.place}
+                {eventData?.place}
               </RN.Text>
               <RN.Text style={{color: colors.darkGray, paddingLeft: 12}}>
-                {data?.location}
+                {eventData?.location}
               </RN.Text>
             </RN.View>
           </RN.View>
@@ -239,10 +234,11 @@ const EventScreen = () => {
           <RN.View style={{flexDirection: 'row'}}>
             <RN.Image
               source={
-                data?.creator?.image
+                eventData?.creator?.image
                   ? {
                       uri:
-                        'data:image/png;base64,' + data?.creator?.image.base64,
+                        'data:image/png;base64,' +
+                        eventData?.creator?.image.base64,
                     }
                   : require('../../assets/images/defaultuser.png')
               }
@@ -250,7 +246,7 @@ const EventScreen = () => {
             />
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.organizerName}>
-                {data?.creator?.name}
+                {eventData?.creator?.name}
               </RN.Text>
               <RN.Text style={styles.organizer}>Organizer</RN.Text>
             </RN.View>
@@ -279,11 +275,13 @@ const EventScreen = () => {
       <RN.View style={styles.descWrapper}>
         <RN.Text style={styles.aboutText}>About this event</RN.Text>
         <RN.Text
-          numberOfLines={openingDescription ? data?.description?.length : 3}
+          numberOfLines={
+            openingDescription ? eventData?.description?.length : 3
+          }
           style={styles.titleDesc}>
-          {data?.description}
+          {eventData?.description}
         </RN.Text>
-        {data?.description?.length > 40 && (
+        {eventData?.description?.length > 40 && (
           <RN.TouchableOpacity
             onPress={onPressShowText}
             activeOpacity={0.7}
@@ -323,21 +321,18 @@ const EventScreen = () => {
       />
     );
   };
-  useEffect(() => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
-  }, [loading]);
 
-  // if (loading) {
-  //   return <SkeletonEventScreen />;
-  // }
+  if (loadingById) {
+    return <SkeletonEventScreen />;
+  }
   return (
     <RN.ScrollView style={styles.container}>
       {header()}
-      <Carousel items={data?.images} />
+      <Carousel items={eventData?.images} />
       {renderTitle()}
       {renderEventDate()}
       {renderOrganizer()}
-      {!isJoined && renderAttendBtn()}
+      {!isAdmin && !isJoined && renderAttendBtn()}
       {renderDescription()}
     </RN.ScrollView>
   );

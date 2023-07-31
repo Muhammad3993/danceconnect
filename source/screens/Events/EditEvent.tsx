@@ -33,11 +33,10 @@ const EditEvent = () => {
     navigation.goBack();
   };
   const {
-    name,
     description,
     categories,
     images,
-    eventUid,
+    // eventUid,
     eventDate,
     country,
     location,
@@ -50,7 +49,9 @@ const EditEvent = () => {
     }
   }, [isSaveChanges]);
 
-  const [title, setName] = useState(name);
+  const [title, setName] = useState(
+    routeParams?.params?.title ?? routeParams?.params?.name,
+  );
   const [desc, setDescription] = useState(description);
   const [visibleFooter, setVisibleFooter] = useState(true);
   const [isErrorName, setIsErrorName] = useState(false);
@@ -66,7 +67,7 @@ const EditEvent = () => {
   const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<city>(location);
   const [countNameSymbols, setCountNameSymbols] = useState({
-    current: name?.length,
+    current: title?.length,
     maxSymbols: 100,
   });
   const [countDescSymbols, setCountDescSymbols] = useState({
@@ -134,11 +135,11 @@ const EditEvent = () => {
         images: imgs,
         eventDate: eventDateEd,
         place: selectedPlace,
-        eventUid: eventUid,
+        eventUid: routeParams?.params?._id,
         typeEvent: typeEventEdit,
       });
       setTimeout(() => {
-        goBackBtn();
+        // goBackBtn();
         onClear();
       }, 2000);
     }

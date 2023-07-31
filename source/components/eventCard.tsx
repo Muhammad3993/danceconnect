@@ -5,7 +5,6 @@ import moment from 'moment';
 import {Button} from './Button';
 import {SCREEN_WIDTH} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
-import database from '@react-native-firebase/database';
 import useRegistration from '../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
 import {getImgsAttendedPeopleToEvent} from '../api/functions';
@@ -23,17 +22,26 @@ const EventCard = ({item}: props) => {
 
   const {userUid} = useRegistration();
   const isPassedEvent = eventData?.eventDate?.time < new Date().getTime();
-  const {loadingAttend, attendEvent, eventsDataById, eventList} = useEvents();
+  const {
+    loadingAttend,
+    attendEvent,
+    eventsDataByCommunityId,
+    loadingEvents,
+    eventList,
+  } = useEvents();
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
   const [crntIndex, setCrntIndex] = useState(null);
-  const index = eventsDataById?.findIndex(
-    (itm: any) => itm?.eventUid === data.id,
+  const index = eventsDataByCommunityId?.findIndex(
+    (itm: any) => itm?.eventUid === eventData.id,
   );
 
   const isJoined = eventData?.attendedPeople?.find(
     (user: any) => user.userUid === userUid,
   );
+  const isAdmin =
+    eventData?.creator?.uid === userUid || data?.creatorUid === userUid;
+
   const dateEvent = `${String(
     minWeekDay.weekdaysMin(moment(eventData?.eventDate?.startDate)),
   ).toUpperCase()}, ${String(
@@ -50,24 +58,11 @@ const EventCard = ({item}: props) => {
     navigation.navigate('EventScreen', {data});
   };
 
-  // useEffect(() => {
-  //   setLoadingData(true);
-  //   RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  //   const onValueChange = database()
-  //     .ref(`events/${data?.eventUid}`)
-  //     .on('value', snapshot => {
-  //       setEventData(snapshot.val());
-  //       const ids = snapshot
-  //         .val()
-  //         ?.attendedPeople?.map(i => i.userUid)
-  //         .slice(0, 3);
-  //       getImgsAttendedPeopleToEvent(ids).then(imgs => setAttendedImgs(imgs));
-  //       setLoadingData(false);
-  //     });
-
-  //   return () =>
-  //     database().ref(`events/${data?.eventUid}`).off('value', onValueChange);
-  // }, [data.communityUid, data?.eventUid]);
+  useEffect(() => {
+    const ids = eventData?.attendedPeople?.map(i => i.userUid).slice(0, 3);
+    getImgsAttendedPeopleToEvent(ids).then(imgs => setAttendedImgs(imgs));
+    setLoadingData(false);
+  }, [eventData?.attendedPeople?.length]);
 
   const renderTags = (tags: string[]) => {
     return (
@@ -95,8 +90,8 @@ const EventCard = ({item}: props) => {
   const renderAttendedImgs = () => {
     const countPeople =
       eventData?.attendedPeople?.length > 3
-        ? `+${eventData?.attendedPeople?.length - 3} going`
-        : ' going';
+        ? `+${eventData?.attendedPeople?.length} going`
+        : '';
     return (
       <RN.View style={{flexDirection: 'row'}}>
         {attendedImgs.slice(0, 3)?.map((img, idx) => {
@@ -126,11 +121,12 @@ const EventCard = ({item}: props) => {
   };
   const onPressAttend = (idx: number) => {
     setCrntIndex(idx);
-    attendEvent({
-      communityUid: eventData?.communityUid,
-      userUid: userUid,
-      eventUid: eventData?.eventUid,
-    });
+    attendEvent(eventData?.id);
+    // attendEvent({
+    //   communityUid: eventData?.communityUid,
+    //   userUid: userUid,
+    //   eventUid: eventData?.eventUid,
+    // });
   };
   useMemo(() => {
     if (loadingAttend) {
@@ -188,7 +184,7 @@ const EventCard = ({item}: props) => {
       </RN.View>
     );
   };
-  if (loadingData) {
+  if (loadingEvents) {
     return (
       <RN.View style={{marginTop: 16}}>
         <SkeletonEventCard />
@@ -209,7 +205,7 @@ const EventCard = ({item}: props) => {
           </RN.View>
           <RN.View>
             <RN.Text numberOfLines={2} style={styles.nameEvent}>
-              {eventData?.title}
+              {eventData?.title ?? eventData?.name}
             </RN.Text>
             <RN.Text numberOfLines={2} style={styles.description}>
               {eventData?.description}
@@ -252,7 +248,7 @@ const EventCard = ({item}: props) => {
       </RN.View>
       <RN.View style={styles.footerContainer}>
         {renderTags(eventData?.categories)}
-        {renderAttendBtn()}
+        {!isAdmin && renderAttendBtn()}
       </RN.View>
     </RN.TouchableOpacity>
   );

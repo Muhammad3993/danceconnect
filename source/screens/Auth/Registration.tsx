@@ -78,7 +78,7 @@ const RegistraionScreen = (): JSX.Element => {
 
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
-    setLoading(true);
+    // setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
     }
@@ -98,13 +98,16 @@ const RegistraionScreen = (): JSX.Element => {
 
   const onPressSignUp = () => {
     // setLoading(true);
-    userExists(email).then(res => {
-      if (!res.length) {
-        navigation.navigate('ONBOARDING', {email, password});
-      } else {
-        setErrorExist('User already exist');
-      }
-    });
+    userExists(email)
+      .then(res => {
+        // console.log('res', res);
+        if (!res) {
+          navigation.navigate('ONBOARDING', {email, password});
+        } else {
+          setErrorExist('User already exist');
+        }
+      })
+      .catch(er => console.log(er));
     // if (isExist) {
     //   console.log('isExist', isExist)
     // }
@@ -155,7 +158,7 @@ const RegistraionScreen = (): JSX.Element => {
             <Button
               title="Sign up"
               disabled={email.length > 0 && password.length > 0}
-              onPress={() => onPressSignUp()}
+              onPress={onPressSignUp}
               isLoading={isLoading}
             />
             <RN.View style={styles.linesWrapper}>

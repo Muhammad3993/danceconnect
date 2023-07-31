@@ -117,7 +117,7 @@ const EventsScreen = () => {
   );
 
   const onPressTab = (value: string) => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     if (searchValue?.length) {
       RN.Keyboard.dismiss();
       setCommunitiesSearch([]);

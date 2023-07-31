@@ -3,6 +3,7 @@ import {PROFILE} from '../actionTypes/profileActionTypes';
 import {
   changePasswordFailAction,
   changePasswordSuccessAction,
+  changeUserCountrySuccessAction,
   changeUserDanceStylesFailAction,
   changeUserDanceStylesSuccessAction,
   changeUserInformationFailAction,
@@ -14,9 +15,13 @@ import {
   getUserDataRequestAction,
   getuserDataSuccessAction,
 } from '../actions/profileActions';
-import {selectUserUid} from '../selectors/registrationSelector';
 import {
-  changeProfileInformation,
+  selectRegistrationState,
+  selectUser,
+  selectUserUid,
+  selectorToken,
+} from '../selectors/registrationSelector';
+import {
   changeUserDanceStyles,
   changeUserPassword,
   getUserData,
@@ -28,6 +33,8 @@ import {setLoadingAction} from '../actions/appStateActions';
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {setErrors} from '../../utils/helpers';
+import {refreshPassword, updateUserById, updateUserCountry} from '../../api/serverRequests';
+import {authWithGoogleSuccess} from '../actions/authorizationActions';
 
 function* getUserDataRequest() {
   try {
@@ -49,26 +56,44 @@ function* getUserDataRequest() {
 function* getUserByIdRequest(action: any) {
   const {userUid} = action.payload;
   try {
-    yield put(
-      getUserByIdSuccessAction({
-        userByIdData: yield call(getUserDataById, userUid),
-      }),
-    );
+    // yield put(
+    //   getUserByIdSuccessAction({
+    //     userByIdData: yield call(getUserDataById, userUid),
+    //   }),
+    // );
   } catch (error) {
     yield put(getUserByIdFailAction());
   }
 }
-function* changeInformation(action: {
-  name: string;
-  gender: string;
-  profileImg: object;
-}) {
+function* changeInformation(action: any) {
   const {name, gender, profileImg} = action?.payload;
   try {
+    const data = {
+      userName: name,
+      userGender: gender,
+      userImage: profileImg,
+    };
     yield put(setLoadingAction({onLoading: true}));
-    yield call(changeProfileInformation, name, gender, profileImg);
+    const user = yield call(updateUserById, data);
+    const token = yield select(selectorToken);
+    const userData = yield select(selectRegistrationState);
+    const isAuthGoogle = userData?.authProvider === 'google';
+    const isAuthApple = userData?.authProvider === 'apple';
+    const authProvider = isAuthApple || isAuthGoogle;
+    const userInfo = {
+      ...user,
+      authProvider: authProvider,
+    };
+    yield put(
+      authWithGoogleSuccess({
+        currentUser: userInfo,
+        isUserExists: true,
+        token: token,
+      }),
+    );
+
     yield put(changeUserInformationSuccessAction());
-    yield put(getUserDataRequestAction());
+    // yield put(getUserDataRequestAction());
     yield put(setLoadingAction({onLoading: false}));
     navigationRef.current?.dispatch(
       CommonActions.navigate({
@@ -83,16 +108,67 @@ function* changeInformation(action: {
 function* changeDanceStyles(action: {danceStyles: string[]}) {
   const {danceStyles} = action?.payload;
   try {
+    const data = {
+      individualStyles: danceStyles,
+    };
     yield put(setLoadingAction({onLoading: true}));
-    yield call(changeUserDanceStyles, danceStyles);
+    const user = yield call(updateUserById, data);
+    const token = yield select(selectorToken);
+    const userData = yield select(selectRegistrationState);
+    const isAuthGoogle = userData?.authProvider === 'google';
+    const isAuthApple = userData?.authProvider === 'apple';
+    const authProvider = isAuthApple || isAuthGoogle;
+    const userInfo = {
+      ...user,
+      authProvider: authProvider,
+    };
+    yield put(
+      authWithGoogleSuccess({
+        currentUser: userInfo,
+        isUserExists: true,
+        token: token,
+      }),
+    );
     yield put(changeUserDanceStylesSuccessAction());
-    yield put(getUserDataRequestAction());
+    // yield put(getUserDataRequestAction());
     yield put(setLoadingAction({onLoading: false}));
     navigationRef.current?.dispatch(
       CommonActions.navigate({
         name: 'Profile',
       }),
     );
+  } catch (error) {
+    yield put(setLoadingAction({onLoading: false}));
+    yield put(changeUserDanceStylesFailAction());
+  }
+}
+function* changeUserCountry(action: {userCountry: string}) {
+  const {userCountry} = action?.payload;
+  try {
+    const data = {
+      userCountry: userCountry,
+    };
+    yield put(setLoadingAction({onLoading: true}));
+    yield put(getCommunitiesRequestAction());
+    const user = yield call(updateUserCountry, data);
+    const token = yield select(selectorToken);
+    const userData = yield select(selectRegistrationState);
+    const isAuthGoogle = userData?.authProvider === 'google';
+    const isAuthApple = userData?.authProvider === 'apple';
+    const authProvider = isAuthApple || isAuthGoogle;
+    const userInfo = {
+      ...user,
+      authProvider: authProvider,
+    };
+    yield put(
+      authWithGoogleSuccess({
+        currentUser: userInfo,
+        isUserExists: true,
+        token: token,
+      }),
+    );
+    yield put(setLoadingAction({onLoading: false}));
+    yield put(changeUserCountrySuccessAction());
   } catch (error) {
     yield put(setLoadingAction({onLoading: false}));
     yield put(changeUserDanceStylesFailAction());
@@ -123,7 +199,10 @@ function* setNewPassword(action: {
   try {
     const {newPassword} = action?.payload;
     yield put(setLoadingAction({onLoading: true}));
-    const response = yield call(changeUserPassword, newPassword);
+    const data = {
+      new_pass: newPassword,
+    };
+    const response = yield call(refreshPassword, data);
     // yield put(
     //   changePasswordSuccessAction({
     //     changePasswordSuccess: yield call(changeUserPassword, newPassword)
@@ -132,7 +211,7 @@ function* setNewPassword(action: {
     //   }),
     // );
     // console.log(response);
-    if (response) {
+    if (response.code !== 200) {
       yield put(
         changePasswordFailAction({
           changePasswordSuccess: false,
@@ -166,6 +245,7 @@ function* profileSaga() {
   yield takeLatest(PROFILE.GET_USER_BY_ID_REQUEST, getUserByIdRequest);
   yield takeLatest(PROFILE.CHANGE_DATA_REQUEST, changeInformation);
   yield takeLatest(PROFILE.CHANGE_DANCE_STYLES_REQUEST, changeDanceStyles);
+  yield takeLatest(PROFILE.CHANGE_USER_COUNTRY_REQUEST, changeUserCountry);
   yield takeLatest(PROFILE.CHANGE_PASSWORD_REQUEST, setNewPassword);
 }
 

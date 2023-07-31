@@ -10,7 +10,7 @@ export const selectUser = (state: IRootState) =>
   state.registration?.currentUser ?? null;
 
 export const selectUserUid = (state: IRootState) =>
-  state.registration?.currentUser?._id ?? '';
+  state.registration?.currentUser?.id ?? state.registration?.currentUser?._id;
 export const selectEmailUser = (state: IRootState) =>
   state.registration?.currentUser?.email ?? '';
 export const selectPasswordUser = (state: IRootState) =>
@@ -28,3 +28,7 @@ export const selectUserExist = (state: IRootState) =>
 
 export const selectorErrors = (state: IRootState) =>
   state?.registration?.errors ?? null;
+
+export const selectorToken = (state: IRootState) => state?.registration?.token;
+export const selectorSocialProvider = (state: IRootState) =>
+  state?.registration?.authProvider;

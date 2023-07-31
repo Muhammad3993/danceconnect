@@ -20,7 +20,10 @@ const WeclomeScreen = (): JSX.Element => {
     isUserExists,
     authorizationWithApple,
   } = useRegistration();
-  const {setLoading} = useAppStateHook();
+  const {setLoading, getDanceStyles} = useAppStateHook();
+  useEffect(() => {
+    getDanceStyles();
+  }, []);
 
   const onPressLogin = () => {
     navigation.navigate('AUTH');
@@ -32,11 +35,11 @@ const WeclomeScreen = (): JSX.Element => {
     if (isUserExists) {
       navigation.navigate('HOME');
     }
-    console.log('isUserExists', isUserExists);
+    console.log('isUserExists', isUserExists, userUid);
   }, [userUid, navigation, isUserExists]);
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
-    setLoading(true);
+    // setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
     }

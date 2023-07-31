@@ -7,6 +7,7 @@ import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import useAppStateHook from '../../../hooks/useAppState';
+import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
 
 type props = {
   communititesSearch: string[];
@@ -20,10 +21,11 @@ const ManagingTab = ({
   removedCommunity,
 }: props) => {
   const navigation = useNavigation();
-  const {managingCommunity} = useCommunities();
+  const {managingCommunity, getManagingCommunities, isLoadManaging} =
+    useCommunities();
+  const lengthEmptyCommunities = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
-
   const [communitites, setCommunitites] = useState(
     managingCommunity
       ?.filter(
@@ -35,9 +37,14 @@ const ManagingTab = ({
   );
   const [openingFilters, setOpeningFilters] = useState(false);
 
+  console.log('managingCommunity', managingCommunity, communitites);
   const [addedStyles, setAddedStyles] = useState<string[]>(
     new Array(0).fill(''),
   );
+  useEffect(() => {
+    getManagingCommunities();
+  }, []);
+
   useEffect(() => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
@@ -68,7 +75,7 @@ const ManagingTab = ({
   }, [removedCommunity, managingCommunity.length]);
   // console.log('removedCommunity', removedCommunity);
   const onClear = () => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
       managingCommunity?.filter(i =>
@@ -107,17 +114,30 @@ const ManagingTab = ({
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
+        {isLoadManaging &&
+          lengthEmptyCommunities.map(() => {
+            return (
+              <>
+                <RN.View style={{marginVertical: 8}}>
+                  <SkeletonCommunityCard />
+                </RN.View>
+              </>
+            );
+          })}
+        {!isLoadManaging && (
+          <RN.Text style={styles.emptyText}>
+            There are no communities yet
+          </RN.Text>
+        )}
       </RN.View>
     );
   };
 
   const renderItemCommunity = useCallback((item: any) => {
-    // console.log('item.item.id', item.item.id);
-    if (!item.item.id) {
+    if (!item.item._id) {
       return null;
     }
-    return <CommunityCard item={item} key={item.index + item.item.id} />;
+    return <CommunityCard item={item} key={item.index + item.item._id} />;
   }, []);
   const renderFilters = () => {
     return (

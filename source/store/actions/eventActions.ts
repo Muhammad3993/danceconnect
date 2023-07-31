@@ -12,18 +12,21 @@ export type eventParams = {
   images?: string[];
   errors?: null;
   eventsList?: string[];
-  eventsByIdData?: string[];
+  eventsByIdCommunity?: string[];
   loadingEvents?: boolean;
   eventUid?: string;
   eventDate?: {};
   place?: string;
   communityUid?: string;
-  typeEvent: string;
+  typeEvent?: string;
+  eventById?: null;
+  errorsById?: null;
+  managingEvents?: string[];
 };
 
 export type followingParams = {
   isLoadingFollow?: boolean;
-  communityUid: string;
+  communityUid?: string;
   eventUid: string;
   userUid?: string;
 };
@@ -75,30 +78,28 @@ export const getEventsFailAction = () => ({
   type: EVENT.GET_EVENTS_FAIL,
 });
 
-export const getEventByIdRequestAction = ({eventUid}: eventParams) => ({
-  type: EVENT.GET_EVENT_BY_ID_REQUEST,
+export const getEventByIdCommunityRequestAction = ({
+  eventUid,
+}: eventParams) => ({
+  type: EVENT.GET_EVENT_BY_COMMUNITY_REQUEST,
   payload: {
     eventUid: eventUid ?? null,
   },
 });
-export const getEventByIdSuccessAction = ({eventsByIdData}: eventParams) => ({
-  type: EVENT.GET_EVENT_BY_ID_SUCCESS,
+export const getEventByIdCommunitySuccessAction = ({
+  eventsByIdCommunity,
+}: eventParams) => ({
+  type: EVENT.GET_EVENT_BY_COMMUNITY_SUCCESS,
   payload: {
-    eventsByIdData: eventsByIdData,
+    eventsByIdCommunity: eventsByIdCommunity,
   },
 });
-export const getEventByIdFailAction = () => ({
-  type: EVENT.GET_EVENT_BY_ID_FAIL,
+export const getEventByIdCommunityFailAction = () => ({
+  type: EVENT.GET_EVENT_BY_COMMUNITY_FAIL,
 });
-export const startAttendEventRequestAction = ({
-  communityUid,
-  userUid,
-  eventUid,
-}: followingParams) => ({
+export const startAttendEventRequestAction = ({eventUid}: followingParams) => ({
   type: EVENT.START_ATTEND_EVENT_REQUEST,
   payload: {
-    communityUid: communityUid,
-    userUid: userUid,
     eventUid: eventUid,
   },
 });
@@ -107,6 +108,18 @@ export const startAttendEventSuccessAction = () => ({
 });
 export const startAttendEventFailAction = () => ({
   type: EVENT.START_ATTEND_EVENT_FAIL,
+});
+export const endAttendEventRequestAction = ({eventUid}: followingParams) => ({
+  type: EVENT.END_ATTEND_EVENT_REQUEST,
+  payload: {
+    eventUid: eventUid,
+  },
+});
+export const endAttendEventSuccessAction = () => ({
+  type: EVENT.END_ATTEND_EVENT_SUCCESS,
+});
+export const endAttendEventFailAction = () => ({
+  type: EVENT.END_ATTEND_EVENT_FAIL,
 });
 export const changeInformationEventRequestAction = ({
   name,
@@ -144,4 +157,38 @@ export const changeInformationEventFailAction = () => ({
 
 export const changeInformationValueAction = () => ({
   type: EVENT.CHANGE_INFORMATION_VALUE,
+});
+
+export const getEventByIdRequestAction = ({eventUid}: eventParams) => ({
+  type: EVENT.GET_EVENT_BY_ID_REQUEST,
+  payload: {
+    eventUid: eventUid,
+  },
+});
+export const getEventByIdSuccessAction = ({eventById}: eventParams) => ({
+  type: EVENT.GET_EVENT_BY_ID_SUCCESS,
+  payload: {
+    eventById: eventById,
+  },
+});
+export const getEventByIdFailAction = ({errorsById}: eventParams) => ({
+  type: EVENT.GET_EVENT_BY_ID_FAIL,
+  payload: {
+    errorsById: errorsById,
+  },
+});
+
+export const getManagingEventsFailAction = () => ({
+  type: EVENT.GET_MANAGING_EVENTS_FAIL,
+});
+export const getManagingEventsRequestAction = () => ({
+  type: EVENT.GET_MANAGING_EVENTS_REQUEST,
+});
+export const getManagingEventsSuccessAction = ({
+  managingEvents,
+}: eventParams) => ({
+  type: EVENT.GET_MANAGING_EVENTS_SUCCESS,
+  payload: {
+    managingEvents: managingEvents,
+  },
 });

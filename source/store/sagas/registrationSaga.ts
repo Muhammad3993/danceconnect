@@ -1,4 +1,4 @@
-import {call, debounce, put, select, takeLatest} from 'redux-saga/effects';
+import {call, put, takeLatest} from 'redux-saga/effects';
 
 import {
   AUTHORIZATION_WITH_APPLE,
@@ -8,20 +8,15 @@ import {
   REGISTRATION_WITH_EMAIL,
 } from '../actionTypes/authorizationActionTypes';
 import {
-  logInWithEmail,
   logout,
   onAppleButtonPress,
   setInitialDataUser,
   signWithGoogle,
-  sinUpWithEmail,
 } from '../../api/authSocial';
 import {
-  authWithAppleFail,
-  authWithAppleSuccess,
   authWithGoogleFail,
   authWithGoogleSuccess,
   authorizationWithEmailFail,
-  authorizationWithEmailSuccess,
   logoutFail,
   logoutSuccess,
   registrationWithEmailFail,
@@ -41,7 +36,11 @@ import {
 } from '../actions/communityActions';
 import {getEventsRequestAction} from '../actions/eventActions';
 import {choosedCityAction, setLoadingAction} from '../actions/appStateActions';
-import {createUser, login} from '../../api/serverRequests';
+import {
+  createUser,
+  loginByEmail,
+  loginBySocial,
+} from '../../api/serverRequests';
 import {firebase} from '@react-native-firebase/database';
 
 function* registrationEmail(action: any) {
@@ -51,12 +50,13 @@ function* registrationEmail(action: any) {
     const response = yield call(createUser, data);
     console.log('registrationEmail', response);
     if (response.status === 200) {
-      const auth = yield call(login, email, password);
+      const auth = yield call(loginBySocial, email, password);
       yield put(
         registrationWithEmailSuccess({
-          currentUser: auth?.data?.user?.user ?? auth?.data?.user,
+          currentUser: response?.data,
           isUserExists: true,
           token: auth?.data?.accessToken,
+          authProvider: 'email',
         }),
       );
     }
@@ -74,22 +74,30 @@ function* registrationEmail(action: any) {
 function* authorizationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
-    const auth = yield call(login, email, password);
-    if (auth?.response?.status !== 200) {
-      yield put(
-        authorizationWithEmailFail(setErrors(auth?.response?.data?.message)),
-      );
-    }
+    const auth = yield call(loginByEmail, email, password);
+    console.log('auth?.response?.data?.message', auth?.response);
+    // if (auth?.response?.status !== 200) {
+    //   console.log('auth?.response?.data?.message', auth?.response?.data?.message);
+    //   yield put(
+    //     authorizationWithEmailFail(setErrors(auth?.response?.data?.message)),
+    //   );
+    // }
     if (auth?.status === 200) {
       yield put(
         registrationWithEmailSuccess({
           currentUser: auth?.data?.user,
           isUserExists: true,
+          authProvider: 'email',
           token: auth?.data?.accessToken,
         }),
       );
     }
 
+    if (auth?.status === 404) {
+      yield put(
+        authorizationWithEmailFail(setErrors(auth?.response?.data?.message)),
+      );
+    }
     // const userCredentials = yield call(logInWithEmail, email, password);
     // const {uid} = userCredentials?._user;
     // yield put(getCommunitiesRequestAction());
@@ -106,9 +114,11 @@ function* authorizationEmail(action: any) {
     // yield put(getUserDataRequestAction());
     yield put(getCommunitiesRequestAction());
     yield put(setLoadingAction({onLoading: false}));
-  } catch (error: string | undefined | unknown) {
-    console.log('authorizationEmail error', error);
-    yield put(authorizationWithEmailFail(setErrors(error?.toString())));
+  } catch (error: any) {
+    // console.log('authorizationEmail error', error?.response?.data?.message);
+    yield put(
+      authorizationWithEmailFail(setErrors(error?.response?.data?.message)),
+    );
     yield put(setLoadingAction({onLoading: false}));
   }
 }
@@ -151,6 +161,7 @@ function* logoutUser() {
     if (user) {
       yield call(logout);
     }
+    // logoutApple();
     yield put(logoutSuccess());
     yield put(clearChangePassData({changePasswordSuccess: false}));
     yield put(clearUserDataInStorage());
@@ -163,9 +174,12 @@ function* logoutUser() {
 function* authWthGoogle() {
   try {
     const response = yield call(signWithGoogle);
-    console.log('authWthGoogle response', response);
-    const {uid} = response?._user;
-    const auth = yield call(login, response?._user?.email, uid);
+    // console.log('authWthGoogle response', response);
+    const auth = yield call(
+      loginBySocial,
+      response?._user?.email,
+      response?._user?.uid,
+    );
     console.log('authWthGoogle auth', auth);
     // if (auth?.status === 200) {
 
@@ -177,22 +191,30 @@ function* authWthGoogle() {
     //   }),
     // );
     // }
-    if (auth?.response?.status === 404 || auth?.response?.status === 400) {
+    if (auth?.response?.status === 404) {
       yield put(
         registrationWithEmailSuccess({
           // currentUser: auth?.data?.user?.user,
-          currentUser: {...response._user, _id: response?._user?.uid},
+          currentUser: {
+            ...response._user,
+            _id: response?._user?.uid,
+          },
           isUserExists: false,
           // token: auth?.data?.accessToken,
+          authProvider: 'google',
         }),
       );
     }
     if (auth?.status === 200) {
       yield put(
         authWithGoogleSuccess({
-          currentUser: {...auth?.data?.user, _id: auth?.data?.id},
+          currentUser: {
+            ...auth?.data?.user,
+            _id: auth?.data?.user?._id,
+          },
           isUserExists: true,
           token: auth?.data?.accessToken,
+          authProvider: 'google',
         }),
       );
     }
@@ -213,32 +235,90 @@ function* authWthGoogle() {
 }
 function* authWthApple() {
   try {
+    // const response = yield call(onAppleButtonPress);
+    // console.log('authWthApple saga response', response);
     const response = yield call(onAppleButtonPress);
-    console.log('authWthApple saga', response);
-    let name = response?.user?.displayName;
-    if (response?.user?.displayName === 'null null') {
-      name = '';
+    // const email = response?.additionalUserInfo?.profile?.email;
+    // const uid = response?.user?._user?.uid;
+    // const password = response?.user?._user?.uid;
+    // const isUserExists = yield call(userExists, email);
+    // console.log('authWthApple auth email', response, email, uid);
+    const auth = yield call(loginBySocial, response?.email, response?.uid);
+    // console.log('authWthApple auth', auth, email, uid);
+    if (auth?.response?.status === 404) {
+      yield put(
+        registrationWithEmailSuccess({
+          // currentUser: auth?.data?.user?.user,
+          currentUser: {
+            // ...response.user,
+            email: response?.email,
+            _id: response?.uid,
+            userName: response?.userName,
+          },
+          isUserExists: false,
+          // token: auth?.data?.accessToken,
+          authProvider: 'apple',
+        }),
+      );
     }
-    const user = {
-      uid: response?.user?._user?.uid,
-      email: response?.additionalUserInfo?.profile?.email,
-      username: name,
-    };
+    if (auth?.status === 200) {
+      yield put(
+        authWithGoogleSuccess({
+          currentUser: {
+            ...auth?.data?.user,
+            _id: auth?.data?.user?._id,
+            id: auth?.data?.user?._id,
+          },
+          isUserExists: true,
+          token: auth?.data?.accessToken,
+          authProvider: 'apple',
+        }),
+      );
+    }
+
+    // const auth = yield call(login, response?._user?.email, password);
+    // yield put(
+    //   registrationWithEmailSuccess({
+    //     // currentUser: auth?.data?.user?.user,
+    //     currentUser: {...response._user, _id: response?._user?.uid},
+    //     isUserExists: isUserExists,
+    //     token: auth?.data?.accessToken,
+    //   }),
+    // );
+    // let name = response?.user?.displayName;
+    // if (response?.user?.displayName === 'null null') {
+    //   name = '';
+    // }
+    // const user = {
+    //   uid: response?.user?._user?.uid,
+    //   email: response?.additionalUserInfo?.profile?.email,
+    //   username: name,
+    // };
+    // const password = response?.user?._user?.uid;
+    // const auth = yield call(login, email, password);
+
+    // yield put(
+    //   authWithGoogleSuccess({
+    //     currentUser: {...auth?.data?.user, _id: auth?.data?.user?._id},
+    //     isUserExists: true,
+    //     token: auth?.data?.accessToken,
+    //   }),
+    // );
     // const {uid} = response?._user;
-    const exists = yield call(userExists, response?.user?._user.uid);
-    yield put(
-      authWithAppleSuccess({
-        currentUser: user,
-        isUserExists: exists,
-      }),
-    );
-    yield put(getUserDataRequestAction());
+    // const exists = yield call(userExists, response?.user?._user.uid);
+    // yield put(
+    //   authWithAppleSuccess({
+    //     currentUser: user,
+    //     isUserExists: exists,
+    //   }),
+    // );
+    // yield put(getUserDataRequestAction());
     yield put(getCommunitiesRequestAction());
     yield put(getEventsRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('authWthApple error', error);
-    yield put(authWithAppleFail(setErrors(error?.toString())));
+    // yield put(authWithAppleFail(setErrors(error?.toString())));
     yield put(setLoadingAction({onLoading: false}));
   }
 }

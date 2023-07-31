@@ -14,4 +14,5 @@ export default {
   newPassword: '',
   changePasswordSuccess: false,
   changePasswordErrors: null,
+  userCountry: '',
 };

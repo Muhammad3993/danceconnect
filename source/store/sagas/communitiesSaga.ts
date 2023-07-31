@@ -1,16 +1,7 @@
 import {call, put, select, takeLatest} from 'redux-saga/effects';
-import {selectUserUid} from '../selectors/registrationSelector';
-import {
-  changeInformationCommunity,
-  createCommunity,
-  getCommunityByUid,
-  joinCommunity,
-  removeCommunity,
-} from '../../api/functions';
 import {COMMUNITIES} from '../actionTypes/communityActionTypes';
 import {
   cancelFollowedCommunityFailAction,
-  cancelFollowedCommunitySuccessAction,
   changeInformationCommunitySuccessAction,
   changeInformationValueAction,
   createCommunityFailAction,
@@ -19,6 +10,9 @@ import {
   getCommunitiesSuccessAction,
   getCommunityByIdFailAction,
   getCommunityByIdSuccessAction,
+  getManagingCommunitiesFailAction,
+  getManagingCommunitiesRequestAction,
+  getManagingCommunitiesSuccessAction,
   removeCommunityFailAction,
   removeCommunitySuccessAction,
   startFollowedCommunityFailAction,
@@ -27,60 +21,30 @@ import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {setLoadingAction} from '../actions/appStateActions';
-import {getMinInfoCommunities} from '../../api/communities';
 import {
   createCommunityWithMongo,
   deleteCommunityById,
   getCommunitiesWithMongo,
   getCommunityById,
+  getManagingCommunity,
+  getUserById,
+  subscribeCommunity,
+  unSubscribeCommunity,
+  updateCommunityById,
 } from '../../api/serverRequests';
-import {getUserDataRequestAction} from '../actions/profileActions';
-type minimalInformation = {
-  name: string;
-  description: string;
-  categories?: string[];
-  images?: string[];
-  followers?: string[];
-  location: string;
-  id: string;
-};
+
+import {selectCurrentCity} from '../selectors/appStateSelector';
+
 function* getCommunitiesRequest() {
   try {
-    const data = yield call(getCommunitiesWithMongo);
-    // console.log('getCommunitiesRequest', Object.values(data), data);
-    // const communities = data?.map((community: minimalInformation) => {
-    //   return {
-    //     name: community.name,
-    //     description: community.description,
-    //     categories: community?.categories,
-    //     images: community?.images,
-    //     followers: community?.followers,
-    //     location: community.location,
-    //     id: community.id,
-    //   };
-    // });
+    const location = yield select(selectCurrentCity);
+    // const data = yield call(getCommunitiesWithMongo, location);
+
     yield put(
       getCommunitiesSuccessAction({
-        dataCommunities: data,
+        dataCommunities: yield call(getCommunitiesWithMongo, location),
       }),
     );
-    // const userUid = yield select(selectUserUid);
-
-    // const followingCommunities: string[] =
-    //   data
-    //     .map(item => item)
-    //     ?.filter(
-    //       item =>
-    //         item?.followers?.length > 0 &&
-    //         item?.followers?.find(item => item?.userUid === userUid),
-    //     )
-    //     ?.map(item => item.id) ?? [];
-
-    // yield put(
-    //   startFollowedCommunitySuccessAction({
-    //     followingCommunities: followingCommunities,
-    //   }),
-    // );
   } catch (error: any) {
     console.log('getCommunitites', error);
     yield put(getCommunitiesFailAction(error));
@@ -101,7 +65,7 @@ function* createCommunityRequest(action: any) {
       images: images,
     };
     const response = yield call(createCommunityWithMongo, data);
-    console.log('createCommunityRequest', response);
+    // console.log('createCommunityRequest', response);
     yield put(createCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
     navigationRef.current?.dispatch(
@@ -120,11 +84,27 @@ function* createCommunityRequest(action: any) {
 }
 
 function* startFollowingCommunity(action: any) {
-  const {communityUid, userUid, userImg} = action?.payload;
+  const {communityUid} = action?.payload;
   try {
-    yield call(joinCommunity, communityUid, userUid, userImg);
+    const response = yield call(subscribeCommunity, communityUid);
+    const creatorId = response?.creatorUid ?? response?.creator?.uid;
+    const user = yield call(getUserById, creatorId);
+
+    const data = {
+      ...response,
+      creator: {
+        uid: creatorId,
+        image: user?.image || user?.userImage,
+        name: user?.fullName || user?.userName || user?.name,
+      },
+    };
+    yield put(
+      getCommunityByIdSuccessAction({
+        communityByIdData: data,
+      }),
+    );
     yield put(getCommunitiesRequestAction());
-    yield put(getUserDataRequestAction());
+    // yield put(getUserDataRequestAction());
     // yield put(getCommunityByIdRequestAction(communityUid));
   } catch (error) {
     console.log('startFollowingCommunity', error);
@@ -132,10 +112,28 @@ function* startFollowingCommunity(action: any) {
   }
 }
 function* cancelFollowingCommunity(action: any) {
-  const {communityUid, userUid, userImg} = action?.paylod;
+  const {communityUid} = action?.paylod;
+  console.log('cancelFollowingCommunity', action);
   try {
-    yield call(joinCommunity, communityUid, userUid, userImg);
-    yield put(cancelFollowedCommunitySuccessAction());
+    const response = yield call(unSubscribeCommunity, communityUid);
+    console.log("res", response);
+    // const creatorId = response?.creatorUid ?? response?.creator?.uid;
+    // const user = yield call(getUserById, creatorId);
+
+    // const data = {
+    //   ...response,
+    //   creator: {
+    //     uid: creatorId,
+    //     image: user?.image || user?.userImage,
+    //     name: user?.fullName || user?.userName || user?.name,
+    //   },
+    // };
+    yield put(
+      getCommunityByIdSuccessAction({
+        communityByIdData: response,
+      }),
+    );
+    yield put(getCommunitiesRequestAction());
   } catch (error) {
     console.log('cancelFollowingCommunity', error);
     yield put(cancelFollowedCommunityFailAction());
@@ -144,8 +142,9 @@ function* cancelFollowingCommunity(action: any) {
 
 function* getCommunityByIdRequest(action: any) {
   const {communityUid} = action?.payload;
-  console.log(action.payload);
   try {
+    // const response = yield call(getCommunityById, communityUid);
+
     yield put(
       getCommunityByIdSuccessAction({
         communityByIdData: yield call(getCommunityById, communityUid),
@@ -167,22 +166,33 @@ function* changeInformation(action: any) {
     images,
     followers,
   } = action?.payload;
+  const data = {
+    title: name,
+    description: description,
+    // country,
+    location: location,
+    // communityUid,
+    followers: followers,
+    categories: categories,
+    images: images,
+  };
   try {
-    yield call(
-      changeInformationCommunity,
-      name,
-      description,
-      // country,
-      location,
-      communityUid,
-      followers,
-      categories,
-      images,
+    yield put(setLoadingAction({onLoading: true}));
+    const response = yield call(updateCommunityById, communityUid, data);
+    // const response = yield call(getCommunityById, communityUid);
+    console.log('changeInformation', response);
+    navigationRef.current?.dispatch(
+      CommonActions.navigate({
+        name: 'CommunityScreen',
+        params: {
+          data: response,
+        },
+      }),
     );
-    // console.log('changeInformation', action.payload);
     yield put(changeInformationCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
     // yield put(getCommunityByIdRequestAction({communityUid: communityUid}));
+    yield put(setLoadingAction({onLoading: false}));
     yield put(changeInformationValueAction());
   } catch (error) {
     yield put(cancelFollowedCommunityFailAction());
@@ -195,6 +205,7 @@ function* removeCommunityRequest(action: any) {
     yield call(deleteCommunityById, action?.payload?.uid);
     yield put(removeCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
+    yield put(getManagingCommunitiesRequestAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
         name: 'CommunitiesMain',
@@ -205,10 +216,23 @@ function* removeCommunityRequest(action: any) {
     );
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
+    yield put(setLoadingAction({onLoading: false}));
     yield put(removeCommunityFailAction());
   }
 }
-
+function* getManagingCommunities() {
+  try {
+    const response = yield call(getManagingCommunity);
+    yield put(
+      getManagingCommunitiesSuccessAction({
+        managingCommunities: Object.values(response?.data),
+      }),
+    );
+  } catch (err) {
+    yield put(getManagingCommunitiesFailAction());
+    console.log(err);
+  }
+}
 function* communititesSaga() {
   yield takeLatest(
     COMMUNITIES.GET_COMMUNITY_BY_ID_REQUEST,
@@ -232,6 +256,10 @@ function* communititesSaga() {
   yield takeLatest(
     COMMUNITIES.REMOVE_COMMUNITY_REQUEST,
     removeCommunityRequest,
+  );
+  yield takeLatest(
+    COMMUNITIES.GET_MANAGING_COMMUNITIES_REQUEST,
+    getManagingCommunities,
   );
 }
 

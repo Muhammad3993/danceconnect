@@ -6,7 +6,6 @@ import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {useCommunities} from '../../hooks/useCommunitites';
 import {useProfile} from '../../hooks/useProfile';
-import database from '@react-native-firebase/database';
 import {useCommunityById} from '../../hooks/useCommunityById';
 import useEvents from '../../hooks/useEvents';
 import EventCard from '../../components/eventCard';
@@ -19,50 +18,58 @@ import {statusBarHeight} from '../../utils/constants';
 const CommunityScreen = () => {
   const routeProps = useRoute();
   const navigation = useNavigation();
-  const {userImgUrl, userById, getUser} = useProfile();
   const {userUid} = useRegistration();
-  const {startFollowed} = useCommunities();
+  const {startFollowed, isSaveChanges, cancelFollowed, getCommunitites} =
+    useCommunities();
 
   const {data}: any = routeProps.params;
-  const {_id} = data;
+  // const {_id} = data;
   // const _id = '64a558e4a6ac588333e736d4';
-  const isAdmin = userUid === data?.creator?.uid;
-  const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
-  const {remove, getCommunity, communityData, loadingById} =
-    useCommunityById(_id);
-  const [isJoined, setJoined] = useState();
+  const {remove, getCommunity, communityData, loadingById} = useCommunityById(
+    data?.id,
+  );
+  // const [isJoined, setJoined] = useState();
   const [openingDescription, setOpeningDescription] = useState(false);
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
-  const [displayedData, setDisplayedData] = useState(communityData);
+  const isAdmin = communityData?.creator?.uid === userUid;
+
   const {
-    getEventById,
-    eventsDataById,
+    getEventByIdCommunity,
+    eventsDataByCommunityId,
     loadingEvents,
     attendingEventsForCommunity,
   } = useEvents();
+  const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
   const [currentTab, setCurrentTab] = useState(TABS[0]);
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState(eventsDataByCommunityId);
 
   useEffect(() => {
     getCommunity();
+    getEventByIdCommunity(communityData?.eventsIds);
   }, []);
+  useEffect(() => {
+    if (isSaveChanges) {
+      getCommunity();
+    }
+  }, [isSaveChanges]);
+  const isJoined =
+    communityData?.followers?.find((user: any) => user === userUid) ?? false;
+  const upcomingEvents =
+    eventsDataByCommunityId?.filter(
+      (item: {eventDate: {startDate: Date}}) =>
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >=
+        moment(new Date()).format('YYYY-MM-DD'),
+    ) ?? [];
 
-  // const upcomingEvents =
-  //   eventsDataById?.filter(
-  //     (item: {eventDate: {startDate: Date}}) =>
-  //       moment(item.eventDate?.startDate).format('YYYY-MM-DD') >=
-  //       moment(new Date()).format('YYYY-MM-DD'),
-  //   ) ?? [];
-  const [desc, setDesc] = useState(data.description);
+  const [desc, setDesc] = useState(communityData?.description);
   // useEffect(() => {
   //   getUser(displayedData?.creatorUid);
   // }, [displayedData?.creatorUid]);
-  // const passedEvents = eventsDataById?.filter(
-  //   (item: any) =>
-  //     moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
-  //     moment(new Date()).format('YYYY-MM-DD'),
-  // );
+  const passedEvents = eventsDataByCommunityId?.filter(
+    (item: any) =>
+      moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
+      moment(new Date()).format('YYYY-MM-DD'),
+  );
   // useEffect(() => {
   //   // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   //   const onValueChange = database()
@@ -75,42 +82,38 @@ const CommunityScreen = () => {
   //           : snapshot.val()?.description,
   //       );
   //       // getEvents();
-  //       getEventById(snapshot.val()?.events);
+  //       getEventByIdCommunity(snapshot.val()?.events);
   //     });
 
   //   return () => database().ref(`community/${id}`).off('value', onValueChange);
   // }, [id]);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('beforeRemove', () => {
+  //     getCommunitites();
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
   useMemo(() => {
-    setEvents(communityData?.eventsC);
-  }, [communityData?.eventsC?.length]);
+    setEvents(eventsDataByCommunityId);
+  }, [eventsDataByCommunityId?.length]);
   const onPressShowText = () => {
     setOpeningDescription(true);
-    setDesc(data?.description);
+    setDesc(communityData?.description);
   };
   const onPressEditCommunity = () => {
     navigation.navigate('EditCommunity', communityData);
   };
 
   const onPressJoin = () => {
-    if (isJoined) {
-      return null;
-    }
-    startFollowed({
-      communityUid: data.id,
-      userUid: userUid,
-      userImg: userImgUrl,
-    });
+    startFollowed(communityData?.id);
   };
   const onPressUnfollow = () => {
-    startFollowed({
-      communityUid: data.id,
-      userUid: userUid,
-      userImg: userImgUrl,
-    });
+    cancelFollowed(communityData?.id);
     setUnFollowOpen(v => !v);
   };
   const onPressRemove = async () => {
+    setUnFollowOpen(v => !v);
     remove();
     // navigation.navigate('CommunitiesMain', {removedCommunity: true});
   };
@@ -198,16 +201,36 @@ const CommunityScreen = () => {
         {renderTags()}
         <RN.View style={styles.titleContainer}>
           <RN.Text style={styles.titleName}>{communityData?.title}</RN.Text>
-          <RN.Text style={styles.titleDesc}>{desc}</RN.Text>
-          {!openingDescription && desc?.length > 40 && (
+          <RN.Text style={styles.titleDesc}>
+            {communityData?.description?.length > 40 && !openingDescription
+              ? `${communityData?.description?.slice(0, 40)}...`
+              : communityData?.description}
+          </RN.Text>
+          {communityData?.description?.length > 40 && (
             <RN.TouchableOpacity
-              onPress={onPressShowText}
+              onPress={() => {
+                RN.LayoutAnimation.configureNext(
+                  RN.LayoutAnimation.Presets.easeInEaseOut,
+                );
+                setOpeningDescription(v => !v);
+              }}
               style={styles.showWrapper}>
-              <RN.Text style={styles.showMoreText}>Show more</RN.Text>
+              <RN.Text style={styles.showMoreText}>
+                {!openingDescription ? 'Show more' : 'Show less'}
+              </RN.Text>
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Image
                   source={{uri: 'downlight'}}
-                  style={styles.arrowDownIcon}
+                  style={[
+                    styles.arrowDownIcon,
+                    {
+                      transform: [
+                        {
+                          rotate: openingDescription ? '180deg' : '0deg',
+                        },
+                      ],
+                    },
+                  ]}
                 />
               </RN.View>
             </RN.TouchableOpacity>
@@ -217,18 +240,18 @@ const CommunityScreen = () => {
     );
   };
 
-  // useEffect(() => {
-  //   switch (currentTab) {
-  //     case 'Upcoming Events':
-  //       return setEvents(upcomingEvents);
-  //     case 'Attending':
-  //       return setEvents(attendingEventsForCommunity);
-  //     case 'Passed':
-  //       return setEvents(passedEvents);
-  //     default:
-  //       return setEvents(upcomingEvents);
-  //   }
-  // }, [currentTab]);
+  useEffect(() => {
+    switch (currentTab) {
+      case 'Upcoming Events':
+        return setEvents(upcomingEvents);
+      case 'Attending':
+        return setEvents(attendingEventsForCommunity);
+      case 'Passed':
+        return setEvents(passedEvents);
+      default:
+        return setEvents(upcomingEvents);
+    }
+  }, [currentTab]);
   const onPressTab = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setCurrentTab(value);
@@ -271,32 +294,32 @@ const CommunityScreen = () => {
     );
   };
   const renderEvents = () => {
-    if (loadingById) {
+    if (loadingEvents) {
       return <RN.ActivityIndicator size={'small'} color={colors.orange} />;
     }
-    // if (currentTab === 'Passed' && !passedEvents?.length) {
-    //   return (
-    //     <RN.View style={styles.passedEventsContainer}>
-    //       <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
-    //         {isAdmin
-    //           ? 'You don`t have any past events yet'
-    //           : 'There are no past events yet'}
-    //       </RN.Text>
-    //     </RN.View>
-    //   );
-    // }
-    // if (!events?.length && eventsDataById?.length > 0) {
-    //   return (
-    //     <RN.View style={styles.passedEventsContainer}>
-    //       <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
-    //         There are no events yet
-    //       </RN.Text>
-    //     </RN.View>
-    //   );
-    // }
+    if (currentTab === 'Passed' && !passedEvents?.length) {
+      return (
+        <RN.View style={styles.passedEventsContainer}>
+          <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
+            {isAdmin
+              ? 'You don`t have any past events yet'
+              : 'There are no past events yet'}
+          </RN.Text>
+        </RN.View>
+      );
+    }
+    if (!events?.length && eventsDataByCommunityId?.length > 0) {
+      return (
+        <RN.View style={styles.passedEventsContainer}>
+          <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
+            There are no events yet
+          </RN.Text>
+        </RN.View>
+      );
+    }
     return (
       <>
-        {events?.length > 0 &&
+        {eventsDataByCommunityId?.length > 0 &&
           sotrtBy(events, 'eventDate.startDate').map((item: any) => (
             <EventCard item={{...item, communityId: data.id}} />
           ))}
@@ -331,7 +354,8 @@ const CommunityScreen = () => {
                 />
               </RN.View>
             </RN.View>
-            <RN.Text style={styles.locateText}>{`${data?.location}`}</RN.Text>
+            <RN.Text
+              style={styles.locateText}>{`${communityData?.location}`}</RN.Text>
           </RN.View>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.View style={{justifyContent: 'center'}}>
@@ -356,10 +380,11 @@ const CommunityScreen = () => {
           <RN.View style={{flexDirection: 'row'}}>
             <RN.Image
               source={
-                data?.creator?.image
+                communityData?.creator?.image
                   ? {
                       uri:
-                        'data:image/png;base64,' + data?.creator?.image?.base64,
+                        'data:image/png;base64,' +
+                        communityData?.creator?.image?.base64,
                     }
                   : require('../../assets/images/defaultuser.png')
               }
@@ -367,7 +392,7 @@ const CommunityScreen = () => {
             />
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.organizerName}>
-                {data?.creator?.name}
+                {communityData?.creator?.name}
               </RN.Text>
               <RN.Text style={styles.organizer}>Organizer</RN.Text>
             </RN.View>
@@ -381,18 +406,15 @@ const CommunityScreen = () => {
       </>
     );
   };
-  useEffect(() => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
-  }, []);
 
-  // if (loadingById) {
-  //   return <SkeletonCommunityScreen />;
-  // }
+  if (loadingById) {
+    return <SkeletonCommunityScreen />;
+  }
 
   return (
     <RN.ScrollView style={styles.container}>
       {header()}
-      <Carousel items={data?.images} />
+      <Carousel items={communityData?.images} />
       {renderTitle()}
       {renderMapInfoOrganizer()}
       {!isAdmin && !isJoined && (
@@ -411,7 +433,7 @@ const CommunityScreen = () => {
         <RN.View style={styles.btnJoin}>
           <Button
             onPress={() =>
-              navigation.navigate('CreateEvent', {communityData: data})
+              navigation.navigate('CreateEvent', {communityData: communityData})
             }
             disabled
             // isLoading={isLoadingWithFollow}
@@ -442,7 +464,7 @@ const CommunityScreen = () => {
           />
         </RN.View>
       )} */}
-      {events?.length > 0 && renderTabs()}
+      {eventsDataByCommunityId?.length > 0 && renderTabs()}
       {renderEvents()}
     </RN.ScrollView>
   );

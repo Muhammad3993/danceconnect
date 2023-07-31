@@ -28,20 +28,21 @@ const EditCommunity = () => {
   const navigation = useNavigation();
   const { userLocation } = useProfile();
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
-    routeParams?.params?.id,
+    routeParams?.params?._id,
   );
-  const {name, description, categories, location, id, images, followers} =
+  // console.log('routeParams?.params?.id', routeParams?.params);
+  const {description, categories, location, id, images, followers} =
     routeParams?.params;
-  const {isSaveChanges} = useCommunities();
+  // const {isSaveChanges} = useCommunities();
   // console.log('route', images);
-  const [title, setTitle] = useState(name);
+  const [title, setTitle] = useState(routeParams?.params?.title);
   const [desc, setDesc] = useState(description);
   const [imgs, setImgs] = useState(images);
   const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<city>(location);
 
   const [countNameSymbols, setCountNameSymbols] = useState({
-    current: name?.length,
+    current: title?.length,
     maxSymbols: 100,
   });
   const [countDescSymbols, setCountDescSymbols] = useState({
@@ -62,11 +63,7 @@ const EditCommunity = () => {
       subscribeHide.remove();
     };
   }, []);
-  useEffect(() => {
-    if (isSaveChanges) {
-      goBack();
-    }
-  }, [isSaveChanges]);
+
   const goBack = () => navigation.goBack();
   const onChangeValueName = (value: string) => {
     setTitle(value);

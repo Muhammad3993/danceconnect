@@ -9,6 +9,7 @@ import FiltersBottomForEvents from '../../../components/bottomFiltersEvents';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
 import useAppStateHook from '../../../hooks/useAppState';
+import SkeletonEventCard from '../../../components/skeleton/eventCard-Skeleton';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -16,10 +17,14 @@ type props = {
   searchValue: string;
 };
 const ManagingTab = ({searchValue, eventsSearch}: props) => {
-  const {managingEvents} = useEvents();
+  const {managingEvents, isLoadManaging, getManagingEvents} = useEvents();
+  const lengthEmptyEvents = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
+  useEffect(() => {
+    getManagingEvents();
+  }, []);
   const [events, setEvents] = useState(
     managingEvents
       ?.filter(
@@ -39,10 +44,23 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
+        {isLoadManaging &&
+          lengthEmptyEvents.map(() => {
+            return (
+              <>
+                <RN.View style={{marginVertical: 8}}>
+                  <SkeletonEventCard />
+                </RN.View>
+              </>
+            );
+          })}
+        {!isLoadManaging && (
+          <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
+        )}
       </RN.View>
     );
   };
+
   useEffect(() => {
     if (searchValue?.length > 0 && eventsSearch) {
       setEvents(eventsSearch);
@@ -61,7 +79,7 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
   }, [currentCity]);
 
   const onClear = () => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setEventType('All');
     setEventDate({start: null, end: null});

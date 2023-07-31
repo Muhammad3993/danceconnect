@@ -39,7 +39,7 @@ const HomeScreen = () => {
   useEffect(() => {
     getDanceStyles();
     setCurrentTab('All');
-    getCurrentUser();
+    // getCurrentUser();
     setEvents(
       attendEventWithUserUid?.concat(
         eventList?.filter((event: {communityUid: string}) =>
@@ -49,6 +49,7 @@ const HomeScreen = () => {
     );
   }, []);
   useEffect(() => {
+    getCommunitites();
     const unsubscribe = navigation.addListener('focus', () => {
       getEvents();
       setEvents(
@@ -59,7 +60,8 @@ const HomeScreen = () => {
         ),
       );
     });
-
+    return unsubscribe;
+  },[]);
   // useFocusEffect(
   //   useCallback(() => {
   //     const onValueChange = database()
@@ -84,28 +86,28 @@ const HomeScreen = () => {
   //   }, []),
   // );
   // console.log(individualStyles);
-  useFocusEffect(
-    useCallback(() => {
-      const onValueChange = database()
-        .ref(`users/${userUid}/goingEvent`)
-        .on('value', snapshot => {
-          if (snapshot?.val() !== null) {
-            const array = Object.values(snapshot?.val());
-            setMaybeEvents(
-              eventList?.filter(
-                ev =>
-                  !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
-              ),
-            );
-          }
-        });
-      RN.LayoutAnimation.configureNext(
-        RN.LayoutAnimation.Presets.easeInEaseOut,
-      );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const onValueChange = database()
+  //       .ref(`users/${userUid}/goingEvent`)
+  //       .on('value', snapshot => {
+  //         if (snapshot?.val() !== null) {
+  //           const array = Object.values(snapshot?.val());
+  //           setMaybeEvents(
+  //             eventList?.filter(
+  //               ev =>
+  //                 !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
+  //             ),
+  //           );
+  //         }
+  //       });
+  //     RN.LayoutAnimation.configureNext(
+  //       RN.LayoutAnimation.Presets.easeInEaseOut,
+  //     );
 
-      return () => database().ref('events/').off('value', onValueChange);
-    }, [eventList, userCommunities, userUid]),
-  );
+  //     return () => database().ref('events/').off('value', onValueChange);
+  //   }, [eventList, userCommunities, userUid]),
+  // );
   // console.log(individualStyles);
   // useFocusEffect(
   //   useCallback(() => {

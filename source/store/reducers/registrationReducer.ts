@@ -28,6 +28,7 @@ export type registrationAction = {
     userCountry?: string;
     userRole?: string[];
     individualStyles?: string[];
+    authProvider?: string;
   };
 };
 
@@ -60,6 +61,7 @@ export default (
         currentUser: action.payload?.currentUser,
         isUserExists: action.payload?.isUserExists,
         token: action.payload?.token,
+        authProvider: action.payload?.authProvider,
       };
     case REGISTRATION_WITH_EMAIL.FAIL:
       return {
@@ -137,6 +139,7 @@ export default (
         isAuthorized: false,
         isUserExists: action.payload?.isUserExists,
         token: action.payload?.token,
+        authProvider: action.payload?.authProvider,
         errors: null,
       };
     case AUTHORIZATION_WITH_GOOGLE.FAIL:

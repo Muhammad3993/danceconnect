@@ -5,8 +5,8 @@ import {
   REGISTRATION_WITH_EMAIL,
 } from '../store/actionTypes/authorizationActionTypes';
 
-const apiUrl = 'http://localhost:3000';
-// const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
+// const apiUrl = 'http://localhost:3000';
+const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
 
 type user = {
   email: string;
@@ -23,19 +23,30 @@ export const isUserExist = (email: string) => {
     .then(result => result)
     .catch(er => console.log('error userexist', er));
 };
-export const login = async (email: string, password: string) => {
+export const loginByEmail = async (email: string, password: string) => {
+  const data_auth = {
+    email: email,
+    password: password,
+  };
+  const response = await axios.post(`${apiUrl}/auth_email/`, {
+    data_auth: data_auth,
+  });
+  console.log('loginByEmail', response);
+  return response;
+};
+export const loginBySocial = async (email: string, password: string) => {
   try {
     const data_auth = {
       email: email,
       password: password,
     };
-    const response = await axios.post(`${apiUrl}/auth/`, {
+    const response = await axios.post(`${apiUrl}/auth_social/`, {
       data_auth: data_auth,
     });
-    console.log('login', response);
+    console.log('loginBySocial', response);
     return response;
   } catch (er) {
-    console.log('er login', er);
+    console.log('er loginBySocial', er);
     return er;
   }
 };
@@ -71,11 +82,59 @@ export const userExists = async (email: string) => {
     return console.log('er', er);
   }
 };
-export const getCommunitiesWithMongo = async () => {
+export const getUserById = async (id: string) => {
   try {
-    const response = await axios.get(`${apiUrl}/communities/`);
+    const response = await axios.get(`${apiUrl}/users/${id}`);
+    console.log('getUserById response', response);
+    return response?.data?.data ?? null;
+  } catch (er) {
+    return console.log('er', er);
+  }
+};
+
+export const updateUserById = async (data: object) => {
+  try {
+    const response = await axios.post(`${apiUrl}/user/update`, data);
+    console.log('updateUserById response', response);
+    return response?.data;
+  } catch (er) {
+    return console.log('er', er);
+  }
+};
+
+export const updateUserCountry = async (data: object) => {
+  try {
+    const response = await axios.post(`${apiUrl}/user/update_county`, data);
+    console.log('updateUserCountry response', response);
+    return response?.data;
+  } catch (er) {
+    return console.log('er', er);
+  }
+};
+
+export const refreshPassword = async (data: object) => {
+  try {
+    const response = await axios.post(`${apiUrl}/refresh`, data);
+    console.log('refreshPassword response', response);
+    return response?.data;
+  } catch (er) {
+    return console.log('refreshPassword er', er);
+  }
+};
+export const getCommunitiesWithMongo = async (location: string) => {
+  try {
+    const response = await axios.get(`${apiUrl}/communities/${location}`);
     console.log('getCommunitiesWithMongo', response);
     return response?.data?.data;
+  } catch (er) {
+    return console.log('er', er);
+  }
+};
+export const getManagingCommunity = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}/managing_communities`);
+    console.log('getManagingCommunity', response);
+    return response?.data;
   } catch (er) {
     return console.log('er', er);
   }
@@ -90,12 +149,50 @@ export const createCommunityWithMongo = async (data: object) => {
 };
 export const getCommunityById = async (id: string) => {
   try {
-    const response = await axios.get(`${apiUrl}/communities/${id}`);
+    const response = await axios.get(`${apiUrl}/community/${id}`);
+    console.log('getCommunityById', response);
+    return response.data;
+  } catch (error) {
+    return console.log('getCommunityById er', error);
+  }
+};
+export const updateCommunityById = async (id: string, data: object) => {
+  try {
+    const response = await axios.post(`${apiUrl}/communities/${id}/update`, {
+      data,
+    });
+    console.log('updateCommunityById', response);
     return response.data;
   } catch (error) {
     return console.log('createCommunityWithMongo er', error);
   }
 };
+
+export const subscribeCommunity = async (id: string) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl}/communities/${id}/subscribe`,
+      null,
+    );
+    return response.data;
+  } catch (error) {
+    return console.log('subscribeEvent er', error);
+  }
+};
+export const unSubscribeCommunity = async (id: string) => {
+  console.log('unSubscribeCommunity id', id);
+  try {
+    const response = await axios.post(
+      `${apiUrl}/communities/${id}/unsubscribe`,
+      null,
+    );
+    console.log('unSubscribeCommunity response', response);
+    return response.data;
+  } catch (error) {
+    return console.log('subscribeEvent er', error);
+  }
+};
+
 export const deleteCommunityById = async (id: string) => {
   try {
     const response = await axios.delete(`${apiUrl}/communities/${id}`);
@@ -119,6 +216,61 @@ export const getEventsWithMongo = async () => {
     return response?.data?.data;
   } catch (er) {
     return console.log('er', er);
+  }
+};
+export const getManagingEventsRequest = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}/managing_events`);
+    console.log('getManagingEventsRequest', response);
+    return response?.data;
+  } catch (er) {
+    return console.log('er', er);
+  }
+};
+export const getEventById = async (id: string) => {
+  try {
+    const response = await axios.get(`${apiUrl}/events/${id}`);
+    return response.data;
+  } catch (error) {
+    return console.log('getEventById er', error);
+  }
+};
+export const updateEventById = async (id: string, data: object) => {
+  try {
+    const response = await axios.post(`${apiUrl}/events/${id}/update`, {
+      data,
+    });
+    return response.data;
+  } catch (error) {
+    return console.log('updateEventById er', error);
+  }
+};
+export const subscribeEvent = async (id: string) => {
+  try {
+    const response = await axios.post(`${apiUrl}/events/${id}/subscribe`, null);
+    return response.data;
+  } catch (error) {
+    return console.log('subscribeEvent er', error);
+  }
+};
+export const unSubscribeEvent = async (id: string) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl}/events/${id}/unsubscribe`,
+      null,
+    );
+    return response.data;
+  } catch (error) {
+    return console.log('subscribeEvent er', error);
+  }
+};
+
+export const deleteEventById = async (id: string) => {
+  try {
+    const response = await axios.delete(`${apiUrl}/events/${id}`);
+    return response.data;
+  } catch (error) {
+    return console.log('deleteEventById er', error);
   }
 };
 export const saveAuthToken =

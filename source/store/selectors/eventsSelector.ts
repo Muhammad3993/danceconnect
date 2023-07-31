@@ -3,8 +3,8 @@ import store, {IRootState} from '..';
 
 // export const selectEventList = (state: IRootState) =>
 //   state.events?.eventsList ?? [];
-export const selectEventByIdData = (state: IRootState) =>
-  state.events?.eventsByIdData ?? [];
+export const selectEventByIdCommunity = (state: IRootState) =>
+  state.events?.eventsByIdCommunity ?? [];
 export const selectLoadingEvents = (state: IRootState) =>
   state?.events?.loadingEvents ?? false;
 export const selectLoadingattendEvent = (state: IRootState) =>
@@ -23,19 +23,21 @@ export const selectEventList = () =>
         moment(new Date()).format('YYYY-MM-DD'),
     )
     .map((item: any) => item) ?? [];
-export const selectManagingEvents = (userdUid: string) =>
-  store
-    ?.getState()
-    ?.events?.eventsList?.filter(
-      ev =>
-        ev?.creatorUid === userdUid &&
-        moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >
-          moment(new Date()).format('YYYY-MM-DD'),
-    ) ?? [];
+// export const selectManagingEvents = (userdUid: string) =>
+//   store
+//     ?.getState()
+//     ?.events?.eventsList?.filter(
+//       ev =>
+//         ev?.creatorUid === userdUid &&
+//         moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >
+//           moment(new Date()).format('YYYY-MM-DD'),
+//     ) ?? [];
 export const selectWithManagingEvents = (userdUid: string) =>
   store
     ?.getState()
-    ?.events?.eventsList?.filter(ev => ev?.creatorUid === userdUid) ?? [];
+    ?.events?.eventsList?.filter(
+      ev => (ev?.creatorUid || ev?.creator?.uid) === userdUid,
+    ) ?? [];
 export const selectAttentingEvents = (userdUid: string) =>
   store
     .getState()
@@ -73,3 +75,12 @@ export const selectPassedEvents = () =>
         moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
         moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
+export const selectEventById = (state: IRootState) =>
+  state?.events?.eventById ?? null;
+export const selectLoadingEventById = (state: IRootState) =>
+  state?.events?.loadingById ?? false;
+
+export const selectManagingEvents = (state: IRootState) =>
+  state.events?.managingEvents ?? [];
+export const selectLoadingManagingEvents = (state: IRootState) =>
+  state.events?.loadingManaging ?? false;

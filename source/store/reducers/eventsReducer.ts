@@ -14,7 +14,7 @@ export type eventAction = {
     images?: string[];
     errors?: null;
     eventsList?: string[];
-    eventsByIdData?: string[];
+    eventsByIdCommunity?: string[];
     loadingEvents?: boolean;
     eventUid?: string;
     eventDate?: null;
@@ -23,7 +23,12 @@ export type eventAction = {
     loadingAttend?: false;
     isLoadingChangeInformation?: false;
     saveChanges?: false;
-    typeEvent: string;
+    typeEvent?: string;
+    eventById?: null;
+    loadingById?: null;
+    errorsById?: null;
+    loadingManaging?: boolean;
+    managingEvents?: string[];
   };
 };
 
@@ -65,28 +70,29 @@ export default (state = eventsInitialState, action: eventAction) => {
         eventsList: [],
         loadingEvents: false,
       };
-    case EVENT.GET_EVENT_BY_ID_REQUEST:
+    case EVENT.GET_EVENT_BY_COMMUNITY_REQUEST:
       return {
         ...state,
-        eventsByIdData: [],
+        eventsByIdCommunity: [],
         loadingEvents: true,
       };
-    case EVENT.GET_EVENT_BY_ID_SUCCESS:
+    case EVENT.GET_EVENT_BY_COMMUNITY_SUCCESS:
       return {
         ...state,
-        eventsByIdData: action.payload?.eventsByIdData,
+        eventsByIdCommunity: action.payload?.eventsByIdCommunity,
         loadingEvents: false,
       };
-    case EVENT.GET_EVENT_BY_ID_FAIL:
+    case EVENT.GET_EVENT_BY_COMMUNITY_FAIL:
       return {
         ...state,
-        eventsByIdData: [],
+        eventsByIdCommunity: [],
         loadingEvents: false,
       };
     case EVENT.START_ATTEND_EVENT_REQUEST:
       return {
         ...state,
         loadingAttend: true,
+        eventUid: action.payload?.eventUid,
       };
     case EVENT.START_ATTEND_EVENT_SUCCESS:
       return {
@@ -95,6 +101,23 @@ export default (state = eventsInitialState, action: eventAction) => {
       };
 
     case EVENT.START_ATTEND_EVENT_FAIL:
+      return {
+        ...state,
+        loadingAttend: false,
+      };
+    case EVENT.END_ATTEND_EVENT_REQUEST:
+      return {
+        ...state,
+        loadingAttend: true,
+        eventUid: action.payload?.eventUid,
+      };
+    case EVENT.END_ATTEND_EVENT_SUCCESS:
+      return {
+        ...state,
+        loadingAttend: false,
+      };
+
+    case EVENT.END_ATTEND_EVENT_FAIL:
       return {
         ...state,
         loadingAttend: false,
@@ -133,6 +156,43 @@ export default (state = eventsInitialState, action: eventAction) => {
       return {
         ...state,
         saveChanges: false,
+      };
+    case EVENT.GET_EVENT_BY_ID_REQUEST:
+      return {
+        ...state,
+        eventById: null,
+        loadingById: true,
+      };
+    case EVENT.GET_EVENT_BY_ID_SUCCESS:
+      return {
+        ...state,
+        eventById: action.payload?.eventById,
+        loadingById: false,
+      };
+    case EVENT.GET_EVENT_BY_ID_FAIL:
+      return {
+        ...state,
+        eventById: null,
+        loadingById: false,
+        errorsById: action.payload?.errorsById,
+      };
+    case EVENT.GET_MANAGING_EVENTS_REQUEST:
+      return {
+        ...state,
+        loadingManaging: true,
+        managingEvents: [],
+      };
+    case EVENT.GET_MANAGING_EVENTS_SUCCESS:
+      return {
+        ...state,
+        loadingManaging: false,
+        managingEvents: action.payload?.managingEvents,
+      };
+    case EVENT.GET_MANAGING_EVENTS_FAIL:
+      return {
+        ...state,
+        loadingManaging: false,
+        managingEvents: [],
       };
     default:
       return state;

@@ -22,7 +22,7 @@ function* getDanceStylesRequest() {
     );
     yield put(
       setCountriesAction({
-        countries: data.countries,
+        countries: response?.data[0].countries,
       }),
     );
   } catch (error) {

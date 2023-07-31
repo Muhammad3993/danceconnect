@@ -17,17 +17,19 @@ interface city {
 }
 type props = {
   setSelectedLocation: (value: city) => void;
-  // selectedLocation?: city;
+  selectedLocation?: city;
   onClosed: (val: boolean) => void;
   communityScreen?: boolean;
   boardScreen?: boolean;
+  countryCode?: string;
 };
 const FindCity = ({
   setSelectedLocation,
-  // selectedLocation,
+  selectedLocation,
   onClosed,
   communityScreen = false,
   boardScreen = false,
+  countryCode = '',
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
   const {userLocation, getCurrentUser} = useProfile();
@@ -70,16 +72,23 @@ const FindCity = ({
         setSelectedLocation(country?.country + ', ' + country?.cities);
       }
     }
-    getCurrentUser();
+    // getCurrentUser();
   };
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
-    searchCity(searchValue, country?.countryCode).then((places: any) => {
-      RN.LayoutAnimation.configureNext(
-        RN.LayoutAnimation.Presets.easeInEaseOut,
-      );
-      setFindCity(places);
-    });
+    if (countryCode?.length > 0) {
+      searchCity(searchValue, countryCode).then((places: any) => {
+        setFindCity(places);
+      });
+    } else {
+      searchCity(searchValue, country?.countryCode).then((places: any) => {
+        // RN.LayoutAnimation.configureNext(
+        //   RN.LayoutAnimation.Presets.easeInEaseOut,
+        // );
+        setFindCity(places);
+      });
+    }
+
     if (value?.length > 0) {
       setFindCity([]);
     }

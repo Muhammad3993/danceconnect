@@ -72,14 +72,12 @@ const CreateCommunity = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
       setIsDescriptionError(false);
       setIsErrorName(false);
       setIsCountryError(false);
       setIsCityError(false);
-    }, 3000);
-    return clearTimeout(timer);
-  }, [isErrorName, isDescriptionError, isCityError, isCountryError]);
+      onClear();
+    }, [isErrorName, isDescriptionError, isCityError, isCountryError]);
 
   // city and state required
   const onPressCreate = () => {
@@ -104,9 +102,6 @@ const CreateCommunity = () => {
         categories: addedStyles,
         images: images,
       });
-      setTimeout(() => {
-        onClear();
-      }, 2000);
     }
   };
 
@@ -114,7 +109,6 @@ const CreateCommunity = () => {
     setName('');
     setDescription('');
     setImages(new Array(0).fill(''));
-    setAddedStyles(new Array(0).fill(''));
     setCountNameSymbols({
       current: 0,
       maxSymbols: 100,

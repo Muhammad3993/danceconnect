@@ -1,14 +1,19 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import * as RN from 'react-native';
-import {statusBarHeight} from '../../utils/constants';
 import colors from '../../utils/colors';
 import CommunityCard from '../../components/communityCard';
 import {useNavigation} from '@react-navigation/native';
 import {useCommunities} from '../../hooks/useCommunitites';
+import SkeletonCommunityCard from '../../components/skeleton/communityCard-Skeleton';
 
 const ManagingCommunities = () => {
-  const {managingCommunity} = useCommunities();
+  const {managingCommunity, getManagingCommunities, isLoadManaging} =
+    useCommunities();
+  const lengthEmptyEvents = new Array(3).fill('');
   const navigation = useNavigation();
+  useEffect(() => {
+    getManagingCommunities();
+  }, []);
 
   const header = () => {
     return (
@@ -22,14 +27,27 @@ const ManagingCommunities = () => {
       </RN.TouchableOpacity>
     );
   };
+
   const renderEmpty = () => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
+        {isLoadManaging &&
+          lengthEmptyEvents.map(() => {
+            return (
+              <>
+                <RN.View style={{marginVertical: 8}}>
+                  <SkeletonCommunityCard />
+                </RN.View>
+              </>
+            );
+          })}
+        {!isLoadManaging && (
+          <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
+        )}
       </RN.View>
     );
   };
-
   const renderItemCommunity = useCallback((item: any) => {
     return <CommunityCard item={item} key={item.index + item.item.id} />;
   }, []);

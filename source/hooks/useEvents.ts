@@ -1,20 +1,23 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
   changeInformationEventRequestAction,
+  endAttendEventRequestAction,
   eventParams,
   followingParams,
-  getEventByIdRequestAction,
+  getEventByIdCommunityRequestAction,
   getEventsRequestAction,
+  getManagingEventsRequestAction,
   startAttendEventRequestAction,
 } from '../store/actions/eventActions';
 import {createEventRequestAction} from '../store/actions/eventActions';
 import {
   selectAttentingEvents,
-  selectEventByIdData,
+  selectEventByIdCommunity,
   selectEventList,
   selectIsSaveChanges,
   selectLoadingChangeInformationEvent,
   selectLoadingEvents,
+  selectLoadingManagingEvents,
   selectLoadingattendEvent,
   selectManagingEvents,
   selectPassedEvents,
@@ -28,7 +31,7 @@ import {useProfile} from './useProfile';
 const useEvents = () => {
   const dispatch = useDispatch();
   const eventList = useSelector(selectEventList) ?? [];
-  const eventsDataById = useSelector(selectEventByIdData);
+  const eventsDataByCommunityId = useSelector(selectEventByIdCommunity);
   const loadingEvents = useSelector(selectLoadingEvents);
   const loadingAttend = useSelector(selectLoadingattendEvent);
   const userId = useSelector(selectUserUid);
@@ -37,12 +40,16 @@ const useEvents = () => {
   );
   const isSaveChanges = useSelector(selectIsSaveChanges);
 
-  const managingEvents = selectManagingEvents(userId);
+  const managingEvents = useSelector(selectManagingEvents);
+  const isLoadManaging = useSelector(selectLoadingManagingEvents);
+  const getManagingEvents = () => {
+    dispatch(getManagingEventsRequestAction());
+  };
   const attentingsEvents = selectAttentingEvents(userId);
   const attendEventWithUserUid = selectUpcomingEventsWithUserUid(userId);
   const upcomingEvents = selectUpcomingEvents();
   const passingEvents = selectPassedEvents();
-  const managingEventsWithPassed = useSelector(selectWithManagingEvents);
+  const managingEventsWithPassed = selectWithManagingEvents(userId);
   const {individualStyles} = useProfile();
   const maybeEvents = upcomingEvents?.filter(
     i =>
@@ -52,7 +59,7 @@ const useEvents = () => {
   );
 
   const attendingEventsForCommunity =
-    eventsDataById?.filter(
+    eventsDataByCommunityId?.filter(
       (item: any) =>
         item?.attendedPeople?.length > 0 &&
         item?.attendedPeople?.find((user: any) => user.userUid === userId),
@@ -61,8 +68,8 @@ const useEvents = () => {
     dispatch(getEventsRequestAction());
   };
 
-  const getEventById = (uid: string) => {
-    dispatch(getEventByIdRequestAction({eventUid: uid}));
+  const getEventByIdCommunity = (uid: string) => {
+    dispatch(getEventByIdCommunityRequestAction({eventUid: uid}));
   };
   const createEvent = ({
     name,
@@ -93,11 +100,16 @@ const useEvents = () => {
       }),
     );
   };
-  const attendEvent = ({communityUid, userUid, eventUid}: followingParams) => {
+  const attendEvent = (eventUid: string) => {
     dispatch(
       startAttendEventRequestAction({
-        communityUid: communityUid,
-        userUid: userUid,
+        eventUid: eventUid,
+      }),
+    );
+  };
+  const unAttendEvent = (eventUid: string) => {
+    dispatch(
+      endAttendEventRequestAction({
         eventUid: eventUid,
       }),
     );
@@ -135,11 +147,12 @@ const useEvents = () => {
     createEvent,
     eventList,
     getEvents,
-    getEventById,
-    eventsDataById,
+    getEventByIdCommunity,
+    eventsDataByCommunityId,
     loadingEvents,
     loadingAttend,
     attendEvent,
+    unAttendEvent,
     attendingEventsForCommunity,
     changeInformation,
     loadingWithChangeInformation,
@@ -150,7 +163,9 @@ const useEvents = () => {
     passingEvents,
     attendEventWithUserUid,
     maybeEvents,
-    managingEventsWithPassed
+    managingEventsWithPassed,
+    isLoadManaging,
+    getManagingEvents,
   };
 };
 export default useEvents;

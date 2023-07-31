@@ -92,6 +92,7 @@ const useRegistration = () => {
     isUserExists,
     isErrors,
     clearErrors,
+    authorizationWithApple,
     pass,
   };
 };

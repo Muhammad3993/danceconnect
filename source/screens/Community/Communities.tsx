@@ -10,7 +10,7 @@ import JoinTab from './tabs/joinedTab';
 import AllTab from './tabs/allTab';
 import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
-import { Portal } from 'react-native-portalize';
+import {Portal} from 'react-native-portalize';
 import FindCity from '../../components/findCity';
 
 const TABS = ['All', 'Joined', 'Managing'];
@@ -36,7 +36,7 @@ const CommunitiesScreen = () => {
   const removedCommunity = routeProps.params?.removedCommunity ?? null;
 
   const onPressTab = (value: string) => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     if (searchValue?.length) {
       RN.Keyboard.dismiss();
       setCommunitiesSearch([]);
@@ -49,13 +49,21 @@ const CommunitiesScreen = () => {
   useMemo(() => {
     if (removedCommunity) {
       onPressTab('Managing');
-      // getCommunitites();
+      getCommunitites();
     }
   }, [removedCommunity]);
-
-  useEffect(() => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  }, []);
+  // useMemo(() => {
+  //   if (returnScreen) {
+  //     getCommunitites();
+  //   }
+  //   console.log('returnScreen', returnScreen);
+  // }, [returnScreen]);
+  // useEffect(() => {
+  //   getCommunitites();
+  // }, [currentCity]);
+  // useEffect(() => {
+  //   RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  // }, []);
 
   const onChangeTextSearch = useCallback(
     (value: string) => {
@@ -93,14 +101,6 @@ const CommunitiesScreen = () => {
     },
     [communitiesData, currentTab, joinedCommunities, managingCommunity],
   );
-
-  const renderLoading = () => {
-    return (
-      <RN.View style={styles.loadingContainer}>
-        <RN.ActivityIndicator size={'large'} color={colors.orange} />
-      </RN.View>
-    );
-  };
 
   const renderHeader = () => {
     return (
@@ -193,6 +193,10 @@ const CommunitiesScreen = () => {
     }
   }, [currentTab, communititesSearch, searchValue, removedCommunity]);
 
+  const onPressChange = () => {
+    setOpenModal(false);
+    getCommunitites();
+  };
   return (
     <RN.SafeAreaView style={styles.container}>
       {renderHeader()}
@@ -203,7 +207,7 @@ const CommunitiesScreen = () => {
           <FindCity
             selectedLocation={currentCity}
             setSelectedLocation={onChoosedCity}
-            onClosed={() => setOpenModal(false)}
+            onClosed={onPressChange}
             communityScreen
           />
         </Portal>

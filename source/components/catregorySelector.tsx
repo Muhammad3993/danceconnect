@@ -75,7 +75,9 @@ const CategorySelector = ({
           style={styles.titleWrapper}
           onPress={() => onSelectItem(key)}
           activeOpacity={0.7}>
-          <RN.Text style={styles.itemTitle}>{item?.title}</RN.Text>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text style={styles.itemTitle}>{item?.title}</RN.Text>
+          </RN.View>
           <RN.View style={styles.rightIconWrapper}>
             <RN.Animated.Image
               source={{uri: 'backicon'}}
@@ -129,7 +131,9 @@ const styles = RN.StyleSheet.create({
   },
   rightIcon: {
     height: 15,
-    width: 15,
+    width: 18,
+    margin: 2,
+    marginVertical: 4,
     tintColor: colors.white,
   },
   rightIconWrapper: {

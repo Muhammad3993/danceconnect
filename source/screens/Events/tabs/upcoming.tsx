@@ -9,6 +9,7 @@ import FiltersBottomForEvents from '../../../components/bottomFiltersEvents';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
 import useAppStateHook from '../../../hooks/useAppState';
+import SkeletonEventCard from '../../../components/skeleton/eventCard-Skeleton';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -16,7 +17,8 @@ type props = {
   searchValue: string;
 };
 const UpcommingTab = ({searchValue, eventsSearch}: props) => {
-  const {upcomingEvents} = useEvents();
+  const {upcomingEvents, loadingEvents} = useEvents();
+  const lengthEmptyEvents = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
@@ -40,11 +42,22 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   const onPressFilters = () => {
     setOpeningFilters(true);
   };
-
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
+        {loadingEvents &&
+          lengthEmptyEvents.map(() => {
+            return (
+              <>
+                <RN.View style={{marginVertical: 8}}>
+                  <SkeletonEventCard />
+                </RN.View>
+              </>
+            );
+          })}
+        {!loadingEvents && (
+          <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
+        )}
       </RN.View>
     );
   };

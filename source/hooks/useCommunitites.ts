@@ -6,6 +6,7 @@ import {
   selectIsSaveChanges,
   selectJoinedCommunitites,
   selectLoadingInCreateCommunity,
+  selectLoadingManagingCommunities,
   selectManagingCommunities,
 } from '../store/selectors/communitiesSelector';
 import {
@@ -14,6 +15,7 @@ import {
   createCommunityRequestAction,
   followingParams,
   getCommunitiesRequestAction,
+  getManagingCommunitiesRequestAction,
   startFollowedCommunityRequestAction,
 } from '../store/actions/communityActions';
 import {createCommunitySuccessAction} from '../store/actions/communityActions';
@@ -28,16 +30,21 @@ export const useCommunities = () => {
   const userId = useSelector(selectUserUid);
   const isSaveChanges = useSelector(selectIsSaveChanges);
 
-  // const managingCommunity = selectManagingCommunities(userId);
-
-  const managingCommunity = useSelector(state => {
-    const initialData = state?.communities?.dataCommunities;
-    const filter =
-      initialData?.filter((item: any) => item?.creatorUid === userId) ?? [];
-    return filter;
-  });
+  const managingCommunity = useSelector(selectManagingCommunities);
+  const isLoadManaging = useSelector(selectLoadingManagingCommunities);
+  // const managingCommunity = useSelector(state => {
+  //   const initialData = state?.communities?.dataCommunities;
+  //   const filter =
+  //     initialData?.filter(
+  //       (item: any) =>
+  //         item?.creator?.uid === userId || item?.creatorUid === userId,
+  //     ) ?? [];
+  //   return filter;
+  // });
   const joinedCommunities = selectJoinedCommunitites(userId);
-
+  const getManagingCommunities = () => {
+    dispatch(getManagingCommunitiesRequestAction());
+  };
   const create = ({
     name,
     description,
@@ -63,23 +70,19 @@ export const useCommunities = () => {
   const getCommunitites = () => {
     dispatch(getCommunitiesRequestAction());
   };
-  const startFollowed = ({communityUid, userUid, userImg}: followingParams) => {
+  const startFollowed = (communityUid: string) => {
+    console.log('startFollowed', communityUid);
     dispatch(
       startFollowedCommunityRequestAction({
         communityUid: communityUid,
-        userUid: userUid,
-        userImg: userImg,
       }),
     );
     // dispatch(getCommunityByIdRequestAction({communityUid: communityUid}));
   };
-  const cancelFollowed = ({
-    communityUid,
-    userImg,
-    userUid,
-  }: followingParams) => {
+  const cancelFollowed = (communityUid: string) => {
+    console.log('cancelFollowed', communityUid);
     dispatch(
-      cancelFollowedCommunityRequestAction({communityUid, userUid, userImg}),
+      cancelFollowedCommunityRequestAction({communityUid: communityUid}),
     );
   };
 
@@ -100,5 +103,7 @@ export const useCommunities = () => {
     followingCommunities,
     managingCommunity,
     isSaveChanges,
+    isLoadManaging,
+    getManagingCommunities,
   };
 };

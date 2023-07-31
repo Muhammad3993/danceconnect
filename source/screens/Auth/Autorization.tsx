@@ -77,7 +77,7 @@ const AuthorizationScreen = (): JSX.Element => {
 
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
-    setLoading(true);
+    // setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
     }
@@ -90,7 +90,7 @@ const AuthorizationScreen = (): JSX.Element => {
     // forgotPassword(email);
   };
   const onPressLogin = async () => {
-    setLoading(true);
+    // setLoading(true);
     authorizaton(email, password);
   };
 

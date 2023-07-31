@@ -8,6 +8,7 @@ import FiltersBottom from '../../../components/bottomFilters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useProfile} from '../../../hooks/useProfile';
 import useAppStateHook from '../../../hooks/useAppState';
+import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
 
 type props = {
   communititesSearch: string[];
@@ -16,7 +17,8 @@ type props = {
 
 const JoinTab = ({communititesSearch, searchValue}: props) => {
   const navigation = useNavigation();
-  const {joinedCommunities} = useCommunities();
+  const {joinedCommunities, isLoading} = useCommunities();
+  const lengthEmptyCommunities = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
@@ -53,7 +55,7 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   }, [currentCity]);
 
   const onClear = () => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
       joinedCommunities?.filter(i =>
@@ -84,7 +86,21 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
+        {isLoading &&
+          lengthEmptyCommunities.map(() => {
+            return (
+              <>
+                <RN.View style={{marginVertical: 8}}>
+                  <SkeletonCommunityCard />
+                </RN.View>
+              </>
+            );
+          })}
+        {!isLoading && (
+          <RN.Text style={styles.emptyText}>
+            There are no communities yet
+          </RN.Text>
+        )}
       </RN.View>
     );
   };

@@ -23,18 +23,24 @@ const CommunityCard = ({item}: any) => {
     isFollowedCurrentCommunity,
     communitiesData,
     startFollowed,
+    isLoading,
   } = useCommunities();
   const {userImgUrl, user} = useProfile();
   const [countFollowers, setCountFollowers] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const isMyCommunity = userUid === data?.creatorUid;
+  const isMyCommunity =
+    data?.creator?.uid === userUid || data?.creatorUid === userUid;
+
   const [isFollowed, setIsFollowed] = useState(
     user?.joinedCommunities?.includes(data?.id),
   );
+  // const isJoined =
+  // communityData?.followers?.find((user: any) => user.userUid === userUid) ??
+  // false;
   // const isFollowed = user?.joinedCommunities?.includes(data?.id);
   const [crntIndex, setCrntIndex] = useState(null);
-  const [displayedData, setDisplayedData] = useState();
+  const [displayedData, setDisplayedData] = useState(data);
   const [loadData, setLoadData] = useState(false);
   const index = communitiesData?.findIndex((itm: any) => itm.id === data.id);
 
@@ -42,25 +48,23 @@ const CommunityCard = ({item}: any) => {
     navigation.navigate('CommunityScreen', {data});
   };
   useEffect(() => {
-    setIsFollowed(
-      displayedData?.followers?.map(item => item.userUid)?.includes(userUid),
-    );
+    setIsFollowed(displayedData?.followers?.includes(userUid));
   }, [displayedData?.followers, userUid]);
 
   // console.log(data);
-  useEffect(() => {
-    setLoadData(true);
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    const onValueChange = database()
-      .ref(`community/${data?.id}`)
-      .on('value', snapshot => {
-        setDisplayedData(snapshot.val());
-        setLoadData(false);
-      });
+  // useEffect(() => {
+  //   setLoadData(true);
+  //   RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  //   const onValueChange = database()
+  //     .ref(`community/${data?.id}`)
+  //     .on('value', snapshot => {
+  //       setDisplayedData(snapshot.val());
+  //       setLoadData(false);
+  //     });
 
-    return () =>
-      database().ref(`community/${data?.id}`).off('value', onValueChange);
-  }, [data?.id, user?.joinedCommunities]);
+  //   return () =>
+  //     database().ref(`community/${data?.id}`).off('value', onValueChange);
+  // }, [data?.id, user?.joinedCommunities]);
   useMemo(() => {
     if (isLoadingWithFollow) {
       setLoading(true);
@@ -68,22 +72,17 @@ const CommunityCard = ({item}: any) => {
       setLoading(false);
     }
   }, [isLoadingWithFollow]);
-  const description =
-    displayedData?.description?.length > 70
-      ? displayedData?.description?.slice(0, 70) + '...'
-      : displayedData?.description;
-  const title =
-    displayedData?.name?.length > 70
-      ? displayedData?.name?.slice(0, 50) + '...'
-      : displayedData?.name;
+  // const description =
+  //   displayedData?.description?.length > 70
+  //     ? displayedData?.description?.slice(0, 70) + '...'
+  //     : displayedData?.description;
+  // const title =
+  //   displayedData?.name?.length > 70
+  //     ? displayedData?.name?.slice(0, 50) + '...'
+  //     : displayedData?.name;
   useMemo(() => {
-    const count =
-      communitiesData
-        ?.map(item => item)
-        ?.filter(item => item?.id === displayedData?.id)[0]?.followers
-        ?.length ?? 0;
-    setCountFollowers(count);
-  }, [communitiesData, displayedData?.id]);
+    setCountFollowers(displayedData?.followers?.length);
+  }, [displayedData?.followers?.length]);
   const renderCount = () => {
     // const usersImg = communitiesData
     //   ?.map(item => item)
@@ -150,21 +149,17 @@ const CommunityCard = ({item}: any) => {
   }, [isLoadingWithFollow]);
   const onPressJoin = (communityId: string, idx: number) => {
     setCrntIndex(idx);
-    startFollowed({
-      communityUid: communityId,
-      userUid: userUid,
-      userImg: userImgUrl,
-    });
+    startFollowed(communityId);
   };
-  if (loadData) {
-    return (
-      <>
-        <RN.View style={{marginBottom: 16}}>
-          <SkeletonCommunityCard />
-        </RN.View>
-      </>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <>
+  //       <RN.View style={{marginBottom: 16}}>
+  //         <SkeletonCommunityCard />
+  //       </RN.View>
+  //     </>
+  //   );
+  // }
   return (
     <RN.View style={styles.itemContainer}>
       <RN.TouchableOpacity
@@ -174,7 +169,7 @@ const CommunityCard = ({item}: any) => {
         <RN.View style={{maxWidth: SCREEN_WIDTH / 1.5}}>
           {data?.categories && renderTags(data?.categories)}
           <RN.Text numberOfLines={1} style={styles.itemTitle}>
-            {data?.title}
+            {data?.title ?? data?.name}
           </RN.Text>
           <RN.Text numberOfLines={2} style={styles.itemDesc}>
             {data?.description}

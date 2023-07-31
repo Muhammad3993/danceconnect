@@ -72,6 +72,7 @@ const DanceStylesProfile = () => {
           disabled={addedStyles?.length > 0}
         />
       </RN.View>
+      <RN.View style={{ marginBottom: 60 }} />
     </RN.ScrollView>
   );
 };

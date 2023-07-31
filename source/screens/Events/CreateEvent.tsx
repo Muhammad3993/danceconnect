@@ -91,12 +91,10 @@ const CreateEvent = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsDescriptionError(false);
-      setIsErrorName(false);
-      setIsErrorPlace(false);
-    }, 3000);
-    return clearTimeout(timer);
+    setIsDescriptionError(false);
+    setIsErrorName(false);
+    setIsErrorPlace(false);
+    onClear();
   }, [isErrorName, isDescriptionError, isErrorPlace]);
 
   const onPressCreate = () => {
@@ -132,10 +130,6 @@ const CreateEvent = () => {
         eventDate: eventDate,
         typeEvent: typeEvent,
       });
-      setTimeout(() => {
-        // goBackBtn();
-        onClear();
-      }, 2000);
     }
   };
 
@@ -143,7 +137,6 @@ const CreateEvent = () => {
     setName('');
     setDescription('');
     setImages(new Array(0).fill(''));
-    setAddedStyles(new Array(0).fill(''));
     setCountNameSymbols({
       current: 0,
       maxSymbols: 100,

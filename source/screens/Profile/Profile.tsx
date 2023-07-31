@@ -3,46 +3,35 @@ import * as RN from 'react-native';
 import useRegistration from '../../hooks/useRegistration';
 import {useProfile} from '../../hooks/useProfile';
 import colors from '../../utils/colors';
-import {
-  SCREEN_HEIGHT,
-  SCREEN_WIDTH,
-  statusBarHeight,
-} from '../../utils/constants';
-import database from '@react-native-firebase/database';
+import {SCREEN_WIDTH, statusBarHeight} from '../../utils/constants';
 import {useCommunities} from '../../hooks/useCommunitites';
-import {CommonActions, useNavigation} from '@react-navigation/native';
-import {navigationRef} from '../../navigation/types';
+import {useNavigation} from '@react-navigation/native';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import FindCity from '../../components/findCity';
-import {setUserCountry} from '../../api/functions';
 import useAppStateHook from '../../hooks/useAppState';
 import {removeAccount} from '../../api/authSocial';
 import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
-import { deleteUser } from '../../api/serverRequests';
-// import axios from 'axios';
-// import { createUser } from '../../api/serverRequests';
+import {deleteUser} from '../../api/serverRequests';
 
 const ProfileScreen = () => {
   const {logout} = useRegistration();
   const {
-    userCountry,
     userImgUrl,
-    userName,
     isSuccessChangePassword,
     onChangePassword,
     errorsWithChangePassword,
     isSocialAuth,
-    getCurrentUser,
+    onChangeUserCountry,
   } = useProfile();
   const {onChoosedCity} = useAppStateHook();
   const dispatch = useDispatch();
-  const {managingCommunity} = useCommunities();
+  const {managingCommunity, getManagingCommunities, isLoadManaging} =
+    useCommunities();
   const navigation = useNavigation();
-  const [userData, setUserData] = useState();
   const {userUid, currentUser} = useRegistration();
   const [newPassword, setNewPassword] = useState('');
   const [visibleError, setVisibleError] = useState(false);
@@ -54,35 +43,24 @@ const ProfileScreen = () => {
   const successChangePassRefModalize = useRef<Modalize>(null);
   const deleteAccountModazile = useRef<Modalize>(null);
 
-  // const onPressAuth = () => {
-  //   // const data = {
-  //   //   email: 'y.balaev@ya.ru',
-  //   //   password: 'qwerty123',
-  //   //   fullName: 'Yanis Balaev',
-  //   //   mobile_phone: '12314',
-  //   // };
-  //   const data = {
-  //     mobile_phone: '+79817770964',
-  //     fullName: 'Yanis Balaev',
-  //     email: 'y.balaev@yandex.ru',
-  //     password: 'qwerty123',
-  //   };
-
-  //   createUser(data);
-  // };
-
   useEffect(() => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    const onValueChange = database()
-      .ref(`users/${userUid}`)
-      .on('value', snapshot => {
-        setUserData(snapshot.val());
-      });
-
-    return () => database().ref(`users/${userUid}`).off('value', onValueChange);
-  }, [userUid]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getManagingCommunities();
+    });
+    return unsubscribe;
+  }, [navigation]);
   const onPressChangeProfile = () => {
     navigation.navigate('ChangeProfile');
+  };
+  const renderSmallLoading = () => {
+    return (
+      <RN.ActivityIndicator
+        size={'small'}
+        style={{marginLeft: 46}}
+        color={colors.darkGray}
+        // animating={isLoadManaging}
+      />
+    );
   };
 
   useEffect(() => {
@@ -109,32 +87,6 @@ const ProfileScreen = () => {
   };
 
   const onPressCommunities = () => {
-    // navigationRef.current?.dispatch(
-    //   CommonActions.reset({
-    //     index: 1,
-    //     routes: [
-    //       {name: 'Profile'},
-    //       {
-    //         name: 'CommunitiesMain',
-    //         key: 'CommunitiesMain',
-    //         params: {createdCommunity: true},
-    //       },
-    //       // {
-    //       //   name: 'CommunitiesMain',
-    //       //   params: {createdCommunity: true},
-    //       // },
-    //     ],
-    //   }),
-    // );
-    // navigationRef.current?.dispatch(
-    //   CommonActions.navigate({
-    //     name: 'Communities',
-    //     params: {
-    //       createdCommunity: true,
-    //     },
-    //   }),
-    // );
-    // console.log('createdCommunity: true');
     navigation.navigate('ManagingCommunities');
   };
   const onPressDanceStyles = () => {
@@ -147,8 +99,9 @@ const ProfileScreen = () => {
     // console.log(value);
     onChoosedCity(value);
     setSelectedLocation(value);
-    setUserCountry(value);
-    getCurrentUser();
+    onChangeUserCountry(value);
+    // setUserCountry(value);
+    // getCurrentUser();
   };
 
   const onPressDeleteAccount = () => {
@@ -200,11 +153,17 @@ const ProfileScreen = () => {
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemText}>
                   Manage my communities
-                  {managingCommunity?.length > 0 && (
-                    <RN.Text
-                      style={{
-                        color: colors.darkGray,
-                      }}>{` (${managingCommunity?.length})`}</RN.Text>
+                  {isLoadManaging ? (
+                    renderSmallLoading()
+                  ) : (
+                    <>
+                      {managingCommunity?.length > 0 && (
+                        <RN.Text
+                          style={{
+                            color: colors.darkGray,
+                          }}>{` (${managingCommunity?.length})`}</RN.Text>
+                      )}
+                    </>
                   )}
                 </RN.Text>
               </RN.View>
@@ -221,11 +180,11 @@ const ProfileScreen = () => {
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemText}>
                   Manage my dance styles
-                  {userData?.individualStyles?.length > 0 && (
+                  {currentUser?.individualStyles?.length > 0 && (
                     <RN.Text
                       style={{
                         color: colors.darkGray,
-                      }}>{` (${userData?.individualStyles?.length})`}</RN.Text>
+                      }}>{` (${currentUser?.individualStyles?.length})`}</RN.Text>
                   )}
                 </RN.Text>
               </RN.View>

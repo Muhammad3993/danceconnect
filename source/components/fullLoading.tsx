@@ -8,7 +8,7 @@ const FullLoading = () => {
   const [loading, setLoading] = useState(onLoading);
   useEffect(() => {
     setLoading(onLoading);
-    console.log('FullLoading', onLoading);
+    // console.log('FullLoading', onLoading);
   }, [onLoading]);
 
   if (loading) {

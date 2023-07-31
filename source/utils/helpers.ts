@@ -70,7 +70,10 @@ export const setErrors = (valueError: string) => {
       type: ['email', 'password'],
     };
   }
-  return '';
+  return {
+    message: valueError,
+    type: ['email', 'password'],
+  };
 };
 
 export const getIcon = (name: string, isFocused: boolean) => {
