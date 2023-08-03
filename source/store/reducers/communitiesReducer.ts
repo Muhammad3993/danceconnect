@@ -37,6 +37,7 @@ export default (
     case COMMUNITIES.GET_DATA_REQUEST:
       return {
         ...state,
+        dataCommunities: [],
         isLoading: true,
         errors: null,
       };

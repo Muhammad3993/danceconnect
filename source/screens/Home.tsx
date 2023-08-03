@@ -39,6 +39,7 @@ const HomeScreen = () => {
   useEffect(() => {
     getDanceStyles();
     setCurrentTab('All');
+    // getCommunitites();
     // getCurrentUser();
     setEvents(
       attendEventWithUserUid?.concat(
@@ -49,7 +50,6 @@ const HomeScreen = () => {
     );
   }, []);
   useEffect(() => {
-    getCommunitites();
     const unsubscribe = navigation.addListener('focus', () => {
       getEvents();
       setEvents(

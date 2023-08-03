@@ -17,7 +17,6 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
   const {communitiesData, isLoading} = useCommunities();
   const {currentCity} = useAppStateHook();
 
-  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
   const lengthEmptyCommunities = new Array(3).fill('');
   const [communitites, setCommunitites] = useState(communitiesData);
 
@@ -36,25 +35,16 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
     }
   }, [communititesSearch, searchValue]);
   useEffect(() => {
-    // getCommunitiesWithMongo().then(res => setCommunitites(res));
     setCommunitites(
       communitiesData
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
+        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
         .map(ev => ev),
     );
   }, [currentCity]);
   useEffect(() => {
     setCommunitites(
       communitiesData
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
+        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
         .map(ev => ev),
     );
   }, [communitiesData.length]);
@@ -62,8 +52,8 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
-      communitiesData?.filter(i =>
-        i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
+      communitiesData?.filter(
+        i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
       ),
     );
   };
@@ -72,17 +62,13 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
       const data = communitiesData.filter(
         (item: any) =>
           item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
-          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          item?.location?.substr(item?.location?.length - 2) ===
-            lastSymUserCountry,
+          item?.location?.toLowerCase() === currentCity.toLowerCase(),
       );
       setCommunitites(data);
     } else {
       setCommunitites(
         communitiesData?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+          i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
         ),
       );
     }
@@ -110,9 +96,9 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
     );
   };
 
-  const renderItemCommunity = useCallback((item: any) => {
+  const renderItemCommunity = (item: any) => {
     return <CommunityCard item={item} key={item.index} />;
-  }, []);
+  };
   const renderFilters = () => {
     return (
       <RN.View style={styles.filterWrapper}>

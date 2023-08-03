@@ -4,6 +4,8 @@ import {
   LOGOUT,
   REGISTRATION_WITH_EMAIL,
 } from '../store/actionTypes/authorizationActionTypes';
+// import socketIoClient from 'socket.io-client';
+// const socket = socketIoClient('http://localhost:3000', {autoConnect: false});
 
 // const apiUrl = 'http://localhost:3000';
 const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
@@ -17,6 +19,11 @@ type user = {
   userRole: string[];
   individualStyles: string[];
 };
+axios.defaults.headers.common.Accept = 'application/json';
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.get['Content-Type'] = 'application/json';
+
 export const isUserExist = (email: string) => {
   axios
     .get(`${apiUrl}/userExist/${email}`)
@@ -125,7 +132,7 @@ export const getCommunitiesWithMongo = async (location: string) => {
   try {
     const response = await axios.get(`${apiUrl}/communities/${location}`);
     console.log('getCommunitiesWithMongo', response);
-    return response?.data?.data;
+    return response?.data;
   } catch (er) {
     return console.log('er', er);
   }
@@ -281,9 +288,11 @@ export const saveAuthToken =
     }
     if (action.type === REGISTRATION_WITH_EMAIL.SUCCESS) {
       axios.defaults.headers.common.Authorization = `Bearer ${action.payload?.token}`;
+      // socket.emit('init', action?.payload?.currentUser?.id);
     }
     if (action.type === AUTHORIZATION_WITH_GOOGLE.SUCCESS) {
       axios.defaults.headers.common.Authorization = `Bearer ${action.payload?.token}`;
+      // socket.emit('init', action?.payload?.currentUser?.id);
     }
     if (
       action.type === 'persist/REHYDRATE' &&

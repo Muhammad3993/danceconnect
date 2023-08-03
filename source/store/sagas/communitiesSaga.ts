@@ -34,17 +34,24 @@ import {
 } from '../../api/serverRequests';
 
 import {selectCurrentCity} from '../selectors/appStateSelector';
+// import {io} from 'socket.io-client';
+import {selectUserUid} from '../selectors/registrationSelector';
+import socket from '../../api/sockets';
+// const socket = io('http://localhost:3000', {autoConnect: true});
+// socket.connect();
 
 function* getCommunitiesRequest() {
   try {
     const location = yield select(selectCurrentCity);
-    // const data = yield call(getCommunitiesWithMongo, location);
+    const data = yield call(getCommunitiesWithMongo, location);
+    console.log('data', Object.values(data));
 
     yield put(
       getCommunitiesSuccessAction({
-        dataCommunities: yield call(getCommunitiesWithMongo, location),
+        dataCommunities: Object.values(data),
       }),
     );
+    yield put(getManagingCommunitiesRequestAction());
   } catch (error: any) {
     console.log('getCommunitites', error);
     yield put(getCommunitiesFailAction(error));
@@ -76,6 +83,7 @@ function* createCommunityRequest(action: any) {
         },
       }),
     );
+    yield put(getManagingCommunitiesRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     console.log('createCommunityRequest error', error);
@@ -86,37 +94,18 @@ function* createCommunityRequest(action: any) {
 function* startFollowingCommunity(action: any) {
   const {communityUid} = action?.payload;
   try {
-    const response = yield call(subscribeCommunity, communityUid);
-    const creatorId = response?.creatorUid ?? response?.creator?.uid;
-    const user = yield call(getUserById, creatorId);
+    const userUid = yield select(selectUserUid);
+    socket.connect();
+    socket.emit('follow_community', communityUid, userUid);
+    // setTimeout(() => {
+    //   socket.disconnect();
+    // }, 1000);
 
-    const data = {
-      ...response,
-      creator: {
-        uid: creatorId,
-        image: user?.image || user?.userImage,
-        name: user?.fullName || user?.userName || user?.name,
-      },
-    };
-    yield put(
-      getCommunityByIdSuccessAction({
-        communityByIdData: data,
-      }),
-    );
-    yield put(getCommunitiesRequestAction());
-    // yield put(getUserDataRequestAction());
-    // yield put(getCommunityByIdRequestAction(communityUid));
-  } catch (error) {
-    console.log('startFollowingCommunity', error);
-    yield put(startFollowedCommunityFailAction());
-  }
-}
-function* cancelFollowingCommunity(action: any) {
-  const {communityUid} = action?.paylod;
-  console.log('cancelFollowingCommunity', action);
-  try {
-    const response = yield call(unSubscribeCommunity, communityUid);
-    console.log("res", response);
+    // socket.on('subscribed', ({community}) => {
+    //   console.log('socket subscribed', community);
+    // });
+
+    // const response = yield call(subscribeCommunity, communityUid);
     // const creatorId = response?.creatorUid ?? response?.creator?.uid;
     // const user = yield call(getUserById, creatorId);
 
@@ -128,12 +117,45 @@ function* cancelFollowingCommunity(action: any) {
     //     name: user?.fullName || user?.userName || user?.name,
     //   },
     // };
-    yield put(
-      getCommunityByIdSuccessAction({
-        communityByIdData: response,
-      }),
-    );
-    yield put(getCommunitiesRequestAction());
+    // yield put(
+    //   getCommunityByIdSuccessAction({
+    //     communityByIdData: data,
+    //   }),
+    // );
+    // yield put(getCommunitiesRequestAction());
+    // yield put(getUserDataRequestAction());
+    // yield put(getCommunityByIdRequestAction(communityUid));
+  } catch (error) {
+    console.log('startFollowingCommunity', error);
+    yield put(startFollowedCommunityFailAction());
+  }
+}
+function* cancelFollowingCommunity(action: any) {
+  const {communityUid} = action?.paylod;
+  try {
+    const userUid = yield select(selectUserUid);
+    socket.connect();
+    socket.emit('follow_community', communityUid, userUid);
+
+    // const response = yield call(unSubscribeCommunity, communityUid);
+    // console.log('res', response);
+    // // const creatorId = response?.creatorUid ?? response?.creator?.uid;
+    // // const user = yield call(getUserById, creatorId);
+
+    // // const data = {
+    // //   ...response,
+    // //   creator: {
+    // //     uid: creatorId,
+    // //     image: user?.image || user?.userImage,
+    // //     name: user?.fullName || user?.userName || user?.name,
+    // //   },
+    // // };
+    // yield put(
+    //   getCommunityByIdSuccessAction({
+    //     communityByIdData: response,
+    //   }),
+    // );
+    // yield put(getCommunitiesRequestAction());
   } catch (error) {
     console.log('cancelFollowingCommunity', error);
     yield put(cancelFollowedCommunityFailAction());
@@ -143,11 +165,11 @@ function* cancelFollowingCommunity(action: any) {
 function* getCommunityByIdRequest(action: any) {
   const {communityUid} = action?.payload;
   try {
-    // const response = yield call(getCommunityById, communityUid);
+    const response = yield call(getCommunityById, communityUid);
 
     yield put(
       getCommunityByIdSuccessAction({
-        communityByIdData: yield call(getCommunityById, communityUid),
+        communityByIdData: response,
       }),
     );
   } catch (error) {
@@ -214,6 +236,7 @@ function* removeCommunityRequest(action: any) {
         },
       }),
     );
+    yield put(getManagingCommunitiesRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     yield put(setLoadingAction({onLoading: false}));
@@ -239,6 +262,7 @@ function* communititesSaga() {
     getCommunityByIdRequest,
   );
   yield takeLatest(COMMUNITIES.GET_DATA_REQUEST, getCommunitiesRequest);
+  // yield takeLatest(COMMUNITIES.GET_DATA_SUCCESS, getManagingCommunities);
   yield takeLatest(COMMUNITIES.CREATE_REQUEST, createCommunityRequest);
   // yield debounce(2000, COMMUNITIES.CREATE_SUCCESS, getCommunitiesRequest);
   yield takeLatest(

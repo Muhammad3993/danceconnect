@@ -1,10 +1,8 @@
-import database from '@react-native-firebase/database';
-
-export const communityDataRealtime = (uid: string) => {
-  return database()
-    .ref(`community/${uid}`)
-    .on('value', snapshot => snapshot.val());
-};
-export const clearRealTime = (uid: string, onValueChange: any) => {
-  return database().ref(`community/${uid}`).off('value', onValueChange);
-};
+import {io} from 'socket.io-client';
+const socket = io('https://dance-connect-528e8b559e89.herokuapp.com', {
+  autoConnect: true,
+});
+// const socket = io('http://localhost:3000', {
+//   autoConnect: true,
+// });
+export default socket;

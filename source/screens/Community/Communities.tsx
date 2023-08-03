@@ -44,12 +44,14 @@ const CommunitiesScreen = () => {
     }
     setCurrentTab(value);
   };
-
+  useEffect(() => {
+    getCommunitites();
+  }, [currentCity]);
   // console.log('removedCommunity', removedCommunity, routeProps);
   useMemo(() => {
     if (removedCommunity) {
       onPressTab('Managing');
-      getCommunitites();
+      // getCommunitites();
     }
   }, [removedCommunity]);
   // useMemo(() => {
@@ -195,7 +197,6 @@ const CommunitiesScreen = () => {
 
   const onPressChange = () => {
     setOpenModal(false);
-    getCommunitites();
   };
   return (
     <RN.SafeAreaView style={styles.container}>

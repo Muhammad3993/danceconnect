@@ -25,25 +25,20 @@ const ManagingTab = ({
     useCommunities();
   const lengthEmptyCommunities = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
-  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
   const [communitites, setCommunitites] = useState(
     managingCommunity
-      ?.filter(
-        i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-      )
+      ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
       .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
 
-  console.log('managingCommunity', managingCommunity, communitites);
+  // console.log('managingCommunity', managingCommunity, communitites);
   const [addedStyles, setAddedStyles] = useState<string[]>(
     new Array(0).fill(''),
   );
-  useEffect(() => {
-    getManagingCommunities();
-  }, []);
+  // useEffect(() => {
+  //   getManagingCommunities();
+  // }, []);
 
   useEffect(() => {
     if (searchValue?.length > 0 && communititesSearch) {
@@ -53,11 +48,7 @@ const ManagingTab = ({
   useEffect(() => {
     setCommunitites(
       managingCommunity
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
+        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
         .map(ev => ev),
     );
   }, [currentCity]);
@@ -65,11 +56,7 @@ const ManagingTab = ({
   useEffect(() => {
     setCommunitites(
       managingCommunity
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
+        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
         .map(ev => ev),
     );
   }, [removedCommunity, managingCommunity.length]);
@@ -78,8 +65,8 @@ const ManagingTab = ({
     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
-      managingCommunity?.filter(i =>
-        i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
+      managingCommunity?.filter(
+        i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
       ),
     );
   };
@@ -88,17 +75,13 @@ const ManagingTab = ({
       const data = managingCommunity.filter(
         (item: any) =>
           item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
-          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          item?.location?.substr(item?.location?.length - 2) ===
-            lastSymUserCountry,
+          item?.location?.toLowerCase() === currentCity.toLowerCase(),
       );
       setCommunitites(data);
     } else {
       setCommunitites(
         managingCommunity?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+          i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
         ),
       );
     }

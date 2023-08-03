@@ -41,7 +41,10 @@ import {
   loginByEmail,
   loginBySocial,
 } from '../../api/serverRequests';
-import {firebase} from '@react-native-firebase/database';
+// import {firebase} from '@react-native-firebase/database';
+import {io} from 'socket.io-client';
+const socket = io('http://localhost:3000', {autoConnect: true});
+// socket.connect();
 
 function* registrationEmail(action: any) {
   try {
@@ -112,7 +115,7 @@ function* authorizationEmail(action: any) {
     //   }),
     // );
     // yield put(getUserDataRequestAction());
-    yield put(getCommunitiesRequestAction());
+    // yield put(getCommunitiesRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: any) {
     // console.log('authorizationEmail error', error?.response?.data?.message);
@@ -157,10 +160,10 @@ function* registrationSetData(action: any) {
 
 function* logoutUser() {
   try {
-    const user = firebase.auth().currentUser?._user;
-    if (user) {
-      yield call(logout);
-    }
+    // const user = firebase.auth().currentUser?._user;
+    // if (user) {
+    //   yield call(logout);
+    // }
     // logoutApple();
     yield put(logoutSuccess());
     yield put(clearChangePassData({changePasswordSuccess: false}));
@@ -218,6 +221,7 @@ function* authWthGoogle() {
         }),
       );
     }
+    socket.emit('init', auth?.data?.user?._id);
 
     // const exists = yield call(userExists, uid);
     // console.log('authWthGoogle saga', auth, response);
@@ -313,7 +317,7 @@ function* authWthApple() {
     //   }),
     // );
     // yield put(getUserDataRequestAction());
-    yield put(getCommunitiesRequestAction());
+    // yield put(getCommunitiesRequestAction());
     yield put(getEventsRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {

@@ -14,6 +14,7 @@ import moment from 'moment';
 import Carousel from '../../components/carousel';
 import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
 import {statusBarHeight} from '../../utils/constants';
+import socket from '../../api/sockets';
 
 const CommunityScreen = () => {
   const routeProps = useRoute();
@@ -42,6 +43,7 @@ const CommunityScreen = () => {
   const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
   const [currentTab, setCurrentTab] = useState(TABS[0]);
   const [events, setEvents] = useState(eventsDataByCommunityId);
+  const [loadSubscribe, setLoadSubscribe] = useState(false);
 
   useEffect(() => {
     getCommunity();
@@ -52,8 +54,10 @@ const CommunityScreen = () => {
       getCommunity();
     }
   }, [isSaveChanges]);
-  const isJoined =
-    communityData?.followers?.find((user: any) => user === userUid) ?? false;
+  const [isJoined, setIsJoined] = useState(
+    communityData?.followers?.find((user: any) => user.userUid === userUid) ??
+      false,
+  );
   const upcomingEvents =
     eventsDataByCommunityId?.filter(
       (item: {eventDate: {startDate: Date}}) =>
@@ -93,10 +97,32 @@ const CommunityScreen = () => {
   //   });
   //   return unsubscribe;
   // }, [navigation]);
-
+  useEffect(() => {
+    setIsJoined(
+      communityData?.followers?.find(
+        (i: {userUid: string}) => i.userUid === userUid,
+      ),
+    );
+  }, [communityData?.followers, userUid]);
+  useEffect(() => {
+    socket.on('subscribed', community => {
+      if (community?.id === data.id) {
+        // setDisplayedData(community);
+        setIsJoined(
+          community.followers?.find(
+            (i: {userUid: string}) => i.userUid === userUid,
+          ),
+        );
+        setLoadSubscribe(false);
+        // setLoadSubscribe(false);
+        // console.log(community?.followers?.find(i => i.userUid === userUid));
+      }
+    });
+  }, [data.id, userUid]);
   useMemo(() => {
     setEvents(eventsDataByCommunityId);
   }, [eventsDataByCommunityId?.length]);
+
   const onPressShowText = () => {
     setOpeningDescription(true);
     setDesc(communityData?.description);
@@ -106,10 +132,12 @@ const CommunityScreen = () => {
   };
 
   const onPressJoin = () => {
+    setLoadSubscribe(true);
     startFollowed(communityData?.id);
   };
   const onPressUnfollow = () => {
-    cancelFollowed(communityData?.id);
+    setLoadSubscribe(true);
+    startFollowed(communityData?.id);
     setUnFollowOpen(v => !v);
   };
   const onPressRemove = async () => {
@@ -293,9 +321,12 @@ const CommunityScreen = () => {
       </RN.ScrollView>
     );
   };
+  const renderLoading = () => {
+    return <RN.ActivityIndicator size={'small'} color={colors.orange} />;
+  };
   const renderEvents = () => {
     if (loadingEvents) {
-      return <RN.ActivityIndicator size={'small'} color={colors.orange} />;
+      return renderLoading();
     }
     if (currentTab === 'Passed' && !passedEvents?.length) {
       return (
@@ -417,18 +448,21 @@ const CommunityScreen = () => {
       <Carousel items={communityData?.images} />
       {renderTitle()}
       {renderMapInfoOrganizer()}
-      {!isAdmin && !isJoined && (
-        <RN.View style={styles.btnJoin}>
-          <Button
-            onPress={onPressJoin}
-            // iconName={isJoined && 'chat'}
-            disabled
-            // isLoading={loadingFollow}
-            buttonStyle={isJoined && styles.btnMessage}
-            title={'Join Community'}
-          />
-        </RN.View>
-      )}
+      {loadSubscribe
+        ? renderLoading()
+        : !isAdmin &&
+          !isJoined && (
+            <RN.View style={styles.btnJoin}>
+              <Button
+                onPress={onPressJoin}
+                // iconName={isJoined && 'chat'}
+                disabled
+                // isLoading={loadingFollow}
+                buttonStyle={isJoined && styles.btnMessage}
+                title={'Join Community'}
+              />
+            </RN.View>
+          )}
       {isAdmin && (
         <RN.View style={styles.btnJoin}>
           <Button

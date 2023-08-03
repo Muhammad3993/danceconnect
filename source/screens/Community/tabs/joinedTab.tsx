@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import {useCommunities} from '../../../hooks/useCommunitites';
 import CommunityCard from '../../../components/communityCard';
@@ -6,7 +6,6 @@ import {isAndroid} from '../../../utils/constants';
 import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useProfile} from '../../../hooks/useProfile';
 import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
 
@@ -17,18 +16,14 @@ type props = {
 
 const JoinTab = ({communititesSearch, searchValue}: props) => {
   const navigation = useNavigation();
-  const {joinedCommunities, isLoading} = useCommunities();
+  const {joinedCommunities, isLoading, getCommunitites} = useCommunities();
   const lengthEmptyCommunities = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
-  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
+  // console.log('joinedCommunities', joinedCommunities)
   const [communitites, setCommunitites] = useState(
     joinedCommunities
-      ?.filter(
-        i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-      )
+      ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
       .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
@@ -38,6 +33,10 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   );
 
   useEffect(() => {
+    getCommunitites();
+    setCommunitites(joinedCommunities);
+  }, [isLoading]);
+  useEffect(() => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
     }
@@ -45,11 +44,7 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   useEffect(() => {
     setCommunitites(
       joinedCommunities
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
+        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
         .map(ev => ev),
     );
   }, [currentCity]);
@@ -58,8 +53,8 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
-      joinedCommunities?.filter(i =>
-        i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
+      joinedCommunities?.filter(
+        i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
       ),
     );
   };
@@ -68,17 +63,13 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
       const data = joinedCommunities.filter(
         (item: any) =>
           item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
-          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          item?.location?.substr(item?.location?.length - 2) ===
-            lastSymUserCountry,
+          item?.location?.toLowerCase() === currentCity.toLowerCase(),
       );
       setCommunitites(data);
     } else {
       setCommunitites(
         joinedCommunities?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+          i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
         ),
       );
     }

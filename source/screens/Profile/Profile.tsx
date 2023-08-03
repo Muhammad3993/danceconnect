@@ -43,12 +43,12 @@ const ProfileScreen = () => {
   const successChangePassRefModalize = useRef<Modalize>(null);
   const deleteAccountModazile = useRef<Modalize>(null);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getManagingCommunities();
-    });
-    return unsubscribe;
-  }, [navigation]);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     getManagingCommunities();
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
   const onPressChangeProfile = () => {
     navigation.navigate('ChangeProfile');
   };

@@ -8,6 +8,7 @@ import {useNavigation} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
 import SkeletonCommunityCard from './skeleton/communityCard-Skeleton';
+import socket from '../api/sockets';
 
 type props = {
   item: any;
@@ -29,28 +30,42 @@ const CommunityCard = ({item}: any) => {
   const [countFollowers, setCountFollowers] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const isMyCommunity =
-    data?.creator?.uid === userUid || data?.creatorUid === userUid;
+  const isMyCommunity = data?.creator?.uid === userUid;
+  const [displayedData, setDisplayedData] = useState(data);
 
-  const [isFollowed, setIsFollowed] = useState(
-    user?.joinedCommunities?.includes(data?.id),
-  );
+  const [isFollowed, setIsFollowed] = useState(false);
   // const isJoined =
   // communityData?.followers?.find((user: any) => user.userUid === userUid) ??
   // false;
   // const isFollowed = user?.joinedCommunities?.includes(data?.id);
   const [crntIndex, setCrntIndex] = useState(null);
-  const [displayedData, setDisplayedData] = useState(data);
-  const [loadData, setLoadData] = useState(false);
+  const [loadSubscribe, setLoadSubscribe] = useState(false);
   const index = communitiesData?.findIndex((itm: any) => itm.id === data.id);
 
   const goToCommunity = () => {
     navigation.navigate('CommunityScreen', {data});
   };
+  console.log('di', data.followers, isFollowed);
   useEffect(() => {
-    setIsFollowed(displayedData?.followers?.includes(userUid));
-  }, [displayedData?.followers, userUid]);
+    setIsFollowed(
+      data.followers?.find((i: {userUid: string}) => i.userUid === userUid),
+    );
+  }, [data?.followers, userUid]);
 
+  useEffect(() => {
+    socket.on('subscribed', community => {
+      if (community?.id === data.id) {
+        setDisplayedData(community);
+        setIsFollowed(
+          community.followers?.find(
+            (i: {userUid: string}) => i.userUid === userUid,
+          ),
+        );
+        setLoadSubscribe(false);
+        // console.log(community?.followers?.find(i => i.userUid === userUid));
+      }
+    });
+  }, [data.id, userUid]);
   // console.log(data);
   // useEffect(() => {
   //   setLoadData(true);
@@ -65,13 +80,7 @@ const CommunityCard = ({item}: any) => {
   //   return () =>
   //     database().ref(`community/${data?.id}`).off('value', onValueChange);
   // }, [data?.id, user?.joinedCommunities]);
-  useMemo(() => {
-    if (isLoadingWithFollow) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [isLoadingWithFollow]);
+
   // const description =
   //   displayedData?.description?.length > 70
   //     ? displayedData?.description?.slice(0, 70) + '...'
@@ -136,20 +145,22 @@ const CommunityCard = ({item}: any) => {
     return (
       <RN.ActivityIndicator
         size={'small'}
-        color={colors.black}
-        animating={loading}
+        color={colors.orange}
+        animating={loadSubscribe}
         key={index}
+        style={{marginRight: 14}}
       />
     );
   };
   useMemo(() => {
-    if (!isLoadingWithFollow) {
+    if (!loadSubscribe) {
       setCrntIndex(null);
     }
-  }, [isLoadingWithFollow]);
+  }, [loadSubscribe]);
   const onPressJoin = (communityId: string, idx: number) => {
     setCrntIndex(idx);
     startFollowed(communityId);
+    setLoadSubscribe(true);
   };
   // if (isLoading) {
   //   return (
@@ -191,7 +202,9 @@ const CommunityCard = ({item}: any) => {
       <RN.View style={styles.footerItemContainer}>
         {renderCount()}
         <RN.View>
-          {isFollowed ? (
+          {loadSubscribe ? (
+            renderLoading()
+          ) : isFollowed ? (
             <RN.View style={{flexDirection: 'row'}}>
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Image
