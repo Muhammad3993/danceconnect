@@ -15,6 +15,8 @@ import Carousel from '../../components/carousel';
 import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
 import {statusBarHeight} from '../../utils/constants';
 import socket from '../../api/sockets';
+import {useDispatch} from 'react-redux';
+import {getCommunitiesSuccessAction} from '../../store/actions/communityActions';
 
 const CommunityScreen = () => {
   const routeProps = useRoute();
@@ -24,6 +26,7 @@ const CommunityScreen = () => {
     useCommunities();
 
   const {data}: any = routeProps.params;
+  const dispatch = useDispatch();
   // const {_id} = data;
   // const _id = '64a558e4a6ac588333e736d4';
   const {remove, getCommunity, communityData, loadingById} = useCommunityById(
@@ -105,20 +108,36 @@ const CommunityScreen = () => {
     );
   }, [communityData?.followers, userUid]);
   useEffect(() => {
-    socket.on('subscribed', community => {
-      if (community?.id === data.id) {
+    socket.on('subscribed', socket => {
+      // console.log('subscribed', data);
+      if (socket?.currentCommunity?.id === data.id) {
         // setDisplayedData(community);
         setIsJoined(
-          community.followers?.find(
+          socket?.currentCommunity?.followers?.find(
             (i: {userUid: string}) => i.userUid === userUid,
           ),
         );
         setLoadSubscribe(false);
+        // dispatch(
+        //   getCommunitiesSuccessAction({
+        //     dataCommunities: Object.values(data?.communities),
+        //   }),
+        // );
         // setLoadSubscribe(false);
         // console.log(community?.followers?.find(i => i.userUid === userUid));
       }
     });
   }, [data.id, userUid]);
+  // useEffect(() => {
+  //   socket.emit('joined_update', communityData?.location);
+  // }, [loadSubscribe]);
+
+  // useEffect(() => {
+  //   socket.on('updated_communities', communities => {
+  //     console.log('updated_communities', communities);
+  // dispatch(getCommunitiesSuccessAction({dataCommunities: communities}));
+  //   });
+  // }, [dispatch]);
   useMemo(() => {
     setEvents(eventsDataByCommunityId);
   }, [eventsDataByCommunityId?.length]);

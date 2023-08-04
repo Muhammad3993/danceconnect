@@ -13,8 +13,8 @@ import {
   cancelFollowedCommunityRequestAction,
   communityParams,
   createCommunityRequestAction,
-  followingParams,
   getCommunitiesRequestAction,
+  getCommunitiesSuccessAction,
   getManagingCommunitiesRequestAction,
   startFollowedCommunityRequestAction,
 } from '../store/actions/communityActions';
@@ -44,6 +44,11 @@ export const useCommunities = () => {
   const joinedCommunities = selectJoinedCommunitites(userId);
   const getManagingCommunities = () => {
     dispatch(getManagingCommunitiesRequestAction());
+  };
+  const setSocketCommunities = (data: string[]) => {
+    dispatch(
+      getCommunitiesSuccessAction({dataCommunities: Object.values(data)}),
+    );
   };
   const create = ({
     name,
@@ -105,5 +110,6 @@ export const useCommunities = () => {
     isSaveChanges,
     isLoadManaging,
     getManagingCommunities,
+    setSocketCommunities,
   };
 };

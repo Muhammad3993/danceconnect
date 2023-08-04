@@ -3,9 +3,7 @@ import * as RN from 'react-native';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import {useCommunities} from '../hooks/useCommunitites';
-import {useProfile} from '../hooks/useProfile';
 import {useNavigation} from '@react-navigation/native';
-import database from '@react-native-firebase/database';
 import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
 import SkeletonCommunityCard from './skeleton/communityCard-Skeleton';
 import socket from '../api/sockets';
@@ -25,10 +23,9 @@ const CommunityCard = ({item}: any) => {
     communitiesData,
     startFollowed,
     isLoading,
+    setSocketCommunities
   } = useCommunities();
-  const {userImgUrl, user} = useProfile();
   const [countFollowers, setCountFollowers] = useState(0);
-  const [loading, setLoading] = useState(false);
 
   const isMyCommunity = data?.creator?.uid === userUid;
   const [displayedData, setDisplayedData] = useState(data);
@@ -45,7 +42,7 @@ const CommunityCard = ({item}: any) => {
   const goToCommunity = () => {
     navigation.navigate('CommunityScreen', {data});
   };
-  console.log('di', data.followers, isFollowed);
+  // console.log('di', data.followers, isFollowed);
   useEffect(() => {
     setIsFollowed(
       data.followers?.find((i: {userUid: string}) => i.userUid === userUid),
@@ -53,18 +50,28 @@ const CommunityCard = ({item}: any) => {
   }, [data?.followers, userUid]);
 
   useEffect(() => {
-    socket.on('subscribed', community => {
-      if (community?.id === data.id) {
-        setDisplayedData(community);
+    socket.on('subscribed', socket => {
+      console.log('data', socket);
+      if (socket?.currentCommunity?.id === data.id) {
+        // socket.emit('joined_update', community.location);
+
+        setDisplayedData(socket?.currentCommunity);
         setIsFollowed(
-          community.followers?.find(
+          socket?.currentCommunity.followers?.find(
             (i: {userUid: string}) => i.userUid === userUid,
           ),
         );
         setLoadSubscribe(false);
+        if (socket?.communities?.length) {
+          setSocketCommunities(socket?.communities);
+        }
+        // socket.disconnect();
         // console.log(community?.followers?.find(i => i.userUid === userUid));
       }
     });
+    // socket.on('updated_communities', communities => {
+    //   console.log('joined_update', communities);
+    // });
   }, [data.id, userUid]);
   // console.log(data);
   // useEffect(() => {

@@ -12,6 +12,7 @@ import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
 import {Portal} from 'react-native-portalize';
 import FindCity from '../../components/findCity';
+import socket from '../../api/sockets';
 
 const TABS = ['All', 'Joined', 'Managing'];
 
@@ -47,6 +48,18 @@ const CommunitiesScreen = () => {
   useEffect(() => {
     getCommunitites();
   }, [currentCity]);
+  // useEffect(() => {
+  //   socket
+  //     // .emit('joined_update', currentCity)
+  //     .on('updated_communities', communities => {
+  //       console.log('joined_update', communities);
+  //       setUpdatedCommunities(communities);
+  //     });
+
+  //   // socket.on('joined_update', communities => {
+  //   //   console.log('joined_update', communities);
+  //   // });
+  // }, []);
   // console.log('removedCommunity', removedCommunity, routeProps);
   useMemo(() => {
     if (removedCommunity) {

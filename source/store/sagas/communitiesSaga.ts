@@ -16,6 +16,7 @@ import {
   removeCommunityFailAction,
   removeCommunitySuccessAction,
   startFollowedCommunityFailAction,
+  startFollowedCommunitySuccessAction,
 } from '../actions/communityActions';
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
@@ -44,7 +45,8 @@ function* getCommunitiesRequest() {
   try {
     const location = yield select(selectCurrentCity);
     const data = yield call(getCommunitiesWithMongo, location);
-    console.log('data', Object.values(data));
+    // console.log('data', Object.values(data));
+    // socket.emit('joined_update', location);
 
     yield put(
       getCommunitiesSuccessAction({
@@ -94,9 +96,15 @@ function* createCommunityRequest(action: any) {
 function* startFollowingCommunity(action: any) {
   const {communityUid} = action?.payload;
   try {
+    const location = yield select(selectCurrentCity);
     const userUid = yield select(selectUserUid);
     socket.connect();
-    socket.emit('follow_community', communityUid, userUid);
+    socket.emit('follow_community', communityUid, userUid, location);
+    // yield put(
+    //   getCommunitiesSuccessAction({
+    //     dataCommunities: Object.values(data),
+    //   }),
+    // );
     // setTimeout(() => {
     //   socket.disconnect();
     // }, 1000);
@@ -122,6 +130,9 @@ function* startFollowingCommunity(action: any) {
     //     communityByIdData: data,
     //   }),
     // );
+    yield put(startFollowedCommunitySuccessAction());
+    // socket.emit('joined_update', location);
+
     // yield put(getCommunitiesRequestAction());
     // yield put(getUserDataRequestAction());
     // yield put(getCommunityByIdRequestAction(communityUid));

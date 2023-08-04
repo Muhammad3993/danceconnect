@@ -95,13 +95,8 @@ export const startFollowedCommunityRequestAction = ({
     communityUid: communityUid,
   },
 });
-export const startFollowedCommunitySuccessAction = ({
-  followingCommunities,
-}: communityParams) => ({
+export const startFollowedCommunitySuccessAction = () => ({
   type: COMMUNITIES.START_FOLLOWING_SUCCESS,
-  payload: {
-    followingCommunities: followingCommunities,
-  },
 });
 export const startFollowedCommunityFailAction = () => ({
   type: COMMUNITIES.START_FOLLOWING_FAIL,

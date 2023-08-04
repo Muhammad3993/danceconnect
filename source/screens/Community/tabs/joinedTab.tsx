@@ -32,10 +32,18 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
     new Array(0).fill(''),
   );
 
-  useEffect(() => {
-    getCommunitites();
-    setCommunitites(joinedCommunities);
-  }, [isLoading]);
+  // useEffect(() => {
+  //   socket
+  //     .emit('joined_update', currentCity)
+  //     .on('updated_communities', communities => {
+  //       console.log('joined_update', communities);
+  //       setCommunitites(communities);
+  //     });
+
+  //   // socket.on('joined_update', communities => {
+  //   //   console.log('joined_update', communities);
+  //   // });
+  // }, []);
   useEffect(() => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
