@@ -2,7 +2,7 @@
 import React, {useLayoutEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
-import { isAndroid } from '../utils/constants';
+import {isAndroid} from '../utils/constants';
 
 type InputProp = {
   value: string;
@@ -155,6 +155,7 @@ const styles = RN.StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 16,
+    paddingVertical: 17,
     // paddingLeft: 46,
     color: colors.textPrimary,
     fontSize: 16,

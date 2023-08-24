@@ -1,5 +1,5 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import Carousel from '../../components/carousel';
@@ -7,73 +7,271 @@ import moment from 'moment';
 import {Button} from '../../components/Button';
 import useEvents from '../../hooks/useEvents';
 import useRegistration from '../../hooks/useRegistration';
-import {SCREEN_WIDTH, statusBarHeight} from '../../utils/constants';
+import {
+  MERCHANT_ID,
+  SCREEN_WIDTH,
+  STRIPE_PUBLIC_KEY,
+  statusBarHeight,
+} from '../../utils/constants';
 import SkeletonEventScreen from '../../components/skeleton/EventScreen-Skeleton';
 import {useEventById} from '../../hooks/useEventById';
+import {diablePayEvent, getTickets, payEvent} from '../../api/serverRequests';
+import socket from '../../api/sockets';
+import {
+  BillingDetails,
+  CardField,
+  PlatformPay,
+  PlatformPayButton,
+  StripeProvider,
+  confirmPayment,
+  confirmPlatformPayPayment,
+} from '@stripe/stripe-react-native';
+import {Modalize} from 'react-native-modalize';
+import {Portal} from 'react-native-portalize';
 
 const EventScreen = () => {
   const routeProps = useRoute();
   const navigation = useNavigation();
-  const {data}: any = routeProps.params;
+  const {data, createEvent}: any = routeProps.params;
+  const openPaymentModal = useRef<Modalize>(null);
 
-  const {getEvent, loadingById, eventData} = useEventById(data?.id);
+  const {getEvent, loadingById, eventData, remove} = useEventById(data?.id);
   const [openingDescription, setOpeningDescription] = useState(false);
-  const {userUid} = useRegistration();
-  const {attendEvent, unAttendEvent} = useEvents();
+  const {userUid, saveEmail} = useRegistration();
+  const {attendEvent, onClearEventDataById} = useEvents();
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
-
-  // const isPassedEvent =
-  //   moment(data.eventDate?.endDate).format('YYYY-MM-DD') <
-  //   moment(new Date()).format('YYYY-MM-DD');
+  // const [displayedData, setDisplayedData] = useState(eventData);
   const isPassedEvent = eventData?.eventDate?.time < new Date().getTime();
 
-  const isJoined =
-    eventData?.attendedPeople?.find((user: any) => user.userUid === userUid) ??
-    false;
+  const [loadSubscribe, setLoadSubscribe] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(
+    eventData?.attendedPeople?.find(
+      (user: {userUid: any}) => user?.userUid === userUid,
+    ),
+  );
+  const [attendedImgs, setAttendedImgs] = useState([]);
+
   const isAdmin = eventData?.creator?.uid === userUid;
-  // console.log('eventData', eventData, userUid, isAdmin);
+  const total =
+    (Number(eventData?.price) / 100) * 10 + Number(eventData?.price);
+
+  const [cardDisabled, setCardDisabled] = useState(true);
+  const [paymentError, setPaymentError] = useState('');
+  const [disablePaymentBtn, setDisablePaymentBtn] = useState(false);
+  const [showPaymentBtn, setShowPaymentBtn] = useState(true);
+
   useEffect(() => {
     getEvent();
   }, []);
+  useEffect(() => {
+    setShowPaymentBtn(!isFollowed && total > 0);
+  }, [isFollowed, total]);
 
   const onPressShowText = () => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setOpeningDescription(v => !v);
   };
 
-  // useEffect(() => {
-  //   const onValueChange = database()
-  //     .ref(`events/${data.eventUid}`)
-  //     .on('value', snapshot => {
-  //       seteventData(snapshot.val());
-  //       setImages(snapshot.val()?.images);
-  //     });
+  useEffect(() => {
+    setAttendedImgs(eventData?.userImages);
+  }, [eventData?.userImages]);
 
-  //   return () =>
-  //     database().ref(`events/${data.eventUid}`).off('value', onValueChange);
-  // }, [data.eventUid]);
+  useEffect(() => {
+    socket.on('subscribed_event', socket_data => {
+      // console.log('currentEvent data', socket_data?.currentEvent?.attendedPeople);
+      // if (socket_data?.currentEvent) {
+      // setDisplayedData(socket_data?.currentEvent);
+      RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
+      // setAttendedImgs(socket_data?.userImages);
+      setFollowed(socket_data?.currentEvent?.attendedPeople);
+      // setIsFollowed(
+      //   socket_data?.currentEvent?.attendedPeople?.find(
+      //     (user: {userUid: any}) => user.userUid === userUid,
+      //   ),
+      // );
+      // // socket.emit('updated_events');
+      // setAttendedImgs(eventData?.userImages);
+      setDisablePaymentBtn(false);
+      // }
+    });
+  }, []);
+  const setFollowed = useCallback(
+    (attendedList: string[]) => {
+      const isFollow = attendedList
+        ?.map(user => user?.userUid)
+        ?.findIndex(id => id === userUid);
+      // setIsFollowed()
+      if (isFollow === 1) {
+        setIsFollowed(true);
+        setLoadSubscribe(false);
+      } else {
+        setIsFollowed(false);
+        setLoadSubscribe(false);
+      }
+      console.log('isFollow', isFollow);
+    },
+    [userUid],
+  );
+  useEffect(() => {
+    setFollowed(data?.attendedPeople);
+  }, []);
 
-  // useEffect(() => {
-  //   getUser(eventData?.creatorUid);
-  // }, [eventData?.creatorUid]);
+  useEffect(() => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  }, [loadSubscribe]);
 
-  const onPressAttend = () => {
-    attendEvent(eventData?.id);
+  const confirmPaymentByCard = () => {
+    const billingDetails: BillingDetails = {
+      email: saveEmail,
+    };
+    setDisablePaymentBtn(true);
+    socket.connect();
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // attendEvent(eventData?.id);
+    const amount = Math.floor(total * 100);
+    payEvent(eventData?.id, amount).then(async res => {
+      const {clientSecret} = res;
+      const {paymentIntent, error} = await confirmPayment(clientSecret, {
+        paymentMethodType: 'Card',
+        paymentMethodData: {
+          billingDetails,
+        },
+      });
+      if (error) {
+        console.log('payEvent er', error);
+        diablePayEvent(res?.id).then();
+        RN.LayoutAnimation.configureNext(
+          RN.LayoutAnimation.Presets.easeInEaseOut,
+        );
+        setDisablePaymentBtn(false);
+        setShowPaymentBtn(true);
+        // setLoadSubscribe(false);
+        setPaymentError(error?.localizedMessage);
+      } else {
+        if (paymentIntent?.status === 'Succeeded') {
+          attendEvent(eventData?.id);
+          openPaymentModal.current?.close();
+          setDisablePaymentBtn(false);
+        }
+      }
+    });
+  };
+
+  const onPressApplePayBtn = () => {
+    setDisablePaymentBtn(true);
+    // socket.connect();
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    const amount = Math.floor(total * 100);
+    payEvent(eventData?.id, amount).then(async res => {
+      const {clientSecret} = res;
+      const {error, paymentIntent} = await confirmPlatformPayPayment(
+        clientSecret,
+        {
+          applePay: {
+            cartItems: [
+              {
+                label: eventData?.title,
+                amount: total.toString(),
+                paymentType: PlatformPay.PaymentType.Immediate,
+              },
+              {
+                label: 'Dance Connect',
+                amount: total.toString(),
+                paymentType: PlatformPay.PaymentType.Immediate,
+              },
+            ],
+            merchantCountryCode: 'US',
+            currencyCode: 'USD',
+            requiredBillingContactFields: [
+              PlatformPay.ContactField.EmailAddress,
+            ],
+          },
+        },
+      );
+      if (error) {
+        // console.log('payEvent er', error, res);
+        diablePayEvent(res?.id).then();
+        RN.LayoutAnimation.configureNext(
+          RN.LayoutAnimation.Presets.easeInEaseOut,
+        );
+        // setLoadSubscribe(false);
+        setShowPaymentBtn(true);
+        setDisablePaymentBtn(false);
+      } else {
+        if (paymentIntent?.status === 'Succeeded') {
+          attendEvent(eventData?.id);
+          openPaymentModal.current?.close();
+        }
+        setDisablePaymentBtn(false);
+      }
+    });
+  };
+  const onPressAttend = async () => {
+    socket.connect();
+    setShowPaymentBtn(false);
+    setLoadSubscribe(true);
+    if (Number(eventData?.price) > 0) {
+      openPaymentModal.current?.open();
+    } else {
+      attendEvent(eventData?.id);
+    }
+  };
+
+  const onPressTicket = (eventUid: string) => {
+    getTickets().then(ticketsList => {
+      const tickets = Object.values(ticketsList).flat();
+      const currentTicket = tickets.find(
+        ticket => ticket?.currentTicket?.eventUid === eventUid,
+      );
+      navigation.navigate('Ticket', currentTicket?.currentTicket);
+    });
   };
   const onPressUnSubscribe = () => {
-    unAttendEvent(eventData?.id);
+    setLoadSubscribe(true);
+    // setUnFollowOpen(false);
+    // if (Number(eventData?.price) > 0) {
+    //   refundPayEvent(eventData.id).then(res => {
+    //     setLoadSubscribe(false);
+    //   });
+    //   attendEvent(eventData?.id);
+    // } else {
+    //   attendEvent(eventData?.id);
+    // }
+    setUnFollowOpen(v => !v);
+    socket.connect();
+    attendEvent(eventData?.id);
   };
   const onPressEditEvent = () => {
     navigation.navigate('EditEvent', eventData);
   };
+  const onPressRemove = async () => {
+    setUnFollowOpen(v => !v);
+    remove();
+  };
+  const onPressBack = () => {
+    onClearEventDataById();
+    if (createEvent) {
+      navigation.navigate('Events');
+    } else {
+      navigation.goBack();
+    }
+  };
+  useMemo(() => {
+    if (paymentError.length > 0) {
+      setTimeout(() => {
+        setPaymentError('');
+      }, 5000);
+    }
+  }, [paymentError]);
   const header = () => {
     return (
       <>
         <RN.TouchableOpacity
           style={styles.backIconContainer}
-          onPress={() => navigation.goBack()}>
+          onPress={onPressBack}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.TouchableOpacity>
-        {!isAdmin && (
+        {!isAdmin && isFollowed && Number(eventData?.price) <= 0 && (
           <RN.TouchableOpacity
             style={styles.moreIconContainer}
             onPress={() => setUnFollowOpen(v => !v)}>
@@ -82,12 +280,35 @@ const EventScreen = () => {
         )}
         {isAdmin && !isPassedEvent && (
           <RN.TouchableOpacity
-            style={styles.settingIconContainer}
+            style={[
+              styles.settingIconContainer,
+              {right: Number(eventData?.price) <= 0 ? 48 : 0},
+            ]}
             onPress={onPressEditEvent}>
             <RN.Image source={{uri: 'setting'}} style={styles.backIcon} />
           </RN.TouchableOpacity>
         )}
-        {isJoined && unFolloweOpen && (
+        {isAdmin && Number(eventData?.price) <= 0 && (
+          <RN.TouchableOpacity
+            style={styles.moreIconContainer}
+            onPress={() => setUnFollowOpen(v => !v)}>
+            <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
+          </RN.TouchableOpacity>
+        )}
+        {isAdmin && unFolloweOpen && (
+          <RN.TouchableOpacity
+            style={styles.unFollowContainer}
+            onPress={onPressRemove}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image
+                source={{uri: 'closesquare'}}
+                style={{height: 20, width: 20}}
+              />
+            </RN.View>
+            <RN.Text style={styles.unFollowText}>{'Remove Event'}</RN.Text>
+          </RN.TouchableOpacity>
+        )}
+        {!isAdmin && isFollowed && unFolloweOpen && (
           <RN.TouchableOpacity
             style={styles.unFollowContainer}
             onPress={onPressUnSubscribe}>
@@ -103,15 +324,50 @@ const EventScreen = () => {
       </>
     );
   };
+  const renderAttendedImgs = () => {
+    const countPeople =
+      attendedImgs?.length > 6 ? `+${attendedImgs?.length - 6} going` : 'going';
+    return (
+      <RN.View
+        style={{
+          flexDirection: 'row',
+          marginHorizontal: 24,
+          paddingVertical: 20,
+        }}>
+        {attendedImgs?.slice(0, 6)?.map((img, idx) => {
+          // console.log('img', img, idx);
+          const imgUri =
+            typeof img !== 'undefined'
+              ? {uri: 'data:image/png;base64,' + img?.userImage?.base64}
+              : require('../../assets/images/defaultuser.png');
+          return (
+            <RN.View
+              style={{
+                marginLeft: idx !== 0 ? -12 : 0,
+                zIndex: idx !== 0 ? idx : -idx,
+              }}>
+              <RN.Image
+                source={imgUri}
+                style={styles.attendPeopleImg}
+                defaultSource={require('../../assets/images/defaultuser.png')}
+              />
+            </RN.View>
+          );
+        })}
+        <RN.View style={{justifyContent: 'center'}}>
+          <RN.Text style={styles.attendPeopleText}>{countPeople}</RN.Text>
+        </RN.View>
+      </RN.View>
+    );
+  };
   const renderTitle = () => {
     return (
       <>
         {renderTags()}
         <RN.View style={styles.titleContainer}>
-          <RN.Text style={styles.titleName}>
-            {data?.title ?? data?.name}
-          </RN.Text>
+          <RN.Text style={styles.titleName}>{eventData?.title}</RN.Text>
         </RN.View>
+        {renderAttendedImgs()}
       </>
     );
   };
@@ -230,6 +486,7 @@ const EventScreen = () => {
             </RN.View>
           </RN.View>
         </RN.TouchableOpacity>
+        {total > 0 && renderPrice()}
         <RN.View style={styles.organizerContainer}>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.Image
@@ -268,6 +525,35 @@ const EventScreen = () => {
           )} */}
         </RN.View>
       </>
+    );
+  };
+  const renderPrice = () => {
+    return (
+      <RN.View style={styles.mapInfoContainer}>
+        <RN.View style={{flexDirection: 'row'}}>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.View
+              style={{
+                backgroundColor: colors.transparentPurple,
+                padding: 10,
+                borderRadius: 100,
+              }}>
+              <RN.Image
+                source={{uri: 'ticketfull'}}
+                style={{height: 20, width: 20, tintColor: colors.purple}}
+              />
+            </RN.View>
+          </RN.View>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text numberOfLines={1} style={styles.locateText}>
+              {`$ ${total}`}
+            </RN.Text>
+            <RN.Text style={{color: colors.darkGray, paddingLeft: 12}}>
+              {'Ticket price depends on package'}
+            </RN.Text>
+          </RN.View>
+        </RN.View>
+      </RN.View>
     );
   };
   const renderDescription = () => {
@@ -310,37 +596,211 @@ const EventScreen = () => {
       </RN.View>
     );
   };
-  const renderAttendBtn = () => {
+
+  const renderLoading = () => {
     return (
-      <Button
-        title="Attend"
-        disabled={!isPassedEvent}
-        // isLoading={loading}
-        onPress={onPressAttend}
-        buttonStyle={styles.attendBtn}
-      />
+      <RN.View style={{marginVertical: 16}}>
+        <RN.ActivityIndicator size={'small'} color={colors.orange} />
+      </RN.View>
     );
   };
-
+  const renderAttendBtn = () => {
+    if (loadSubscribe) {
+      return <>{renderLoading()}</>;
+    }
+    if (isAdmin) {
+      return null;
+    }
+    if (total > 0 && isFollowed) {
+      return (
+        <>
+          <RN.TouchableOpacity
+            onPress={() => onPressTicket(eventData.id)}
+            style={styles.ticketBtn}>
+            <RN.Text
+              style={[
+                styles.joinedText,
+                {color: colors.white, paddingLeft: 0},
+              ]}>
+              {'Show ticket'}
+            </RN.Text>
+          </RN.TouchableOpacity>
+        </>
+      );
+    }
+    if (total > 0 && showPaymentBtn) {
+      return (
+        <>
+          <StripeProvider
+            publishableKey={STRIPE_PUBLIC_KEY}
+            merchantIdentifier={MERCHANT_ID}>
+            <Button
+              title={`Buy ticket for ${total} USD`}
+              disabled={!isPassedEvent}
+              onPress={onPressAttend}
+              buttonStyle={styles.attendBtn}
+            />
+          </StripeProvider>
+        </>
+      );
+    }
+    // if (total <= 0) {
+    return (
+      <RN.View>
+        {loadSubscribe ? (
+          <>{renderLoading()}</>
+        ) : isFollowed ? null : (
+          <Button
+            title="Attend"
+            disabled={!isPassedEvent}
+            onPress={onPressAttend}
+            buttonStyle={styles.attendBtn}
+          />
+        )}
+      </RN.View>
+    );
+    // }
+  };
   if (loadingById) {
     return <SkeletonEventScreen />;
   }
+
   return (
-    <RN.ScrollView style={styles.container}>
-      {header()}
-      <Carousel items={eventData?.images} />
-      {renderTitle()}
-      {renderEventDate()}
-      {renderOrganizer()}
-      {!isAdmin && !isJoined && renderAttendBtn()}
-      {renderDescription()}
-    </RN.ScrollView>
+    <>
+      <RN.ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}>
+        {header()}
+        <Carousel items={data?.images} />
+        {renderTitle()}
+        {renderEventDate()}
+        {renderOrganizer()}
+        {renderAttendBtn()}
+        {renderDescription()}
+      </RN.ScrollView>
+      <Portal>
+        <Modalize
+          ref={openPaymentModal}
+          closeOnOverlayTap={false}
+          // onClosed={() => {
+          //   setLoadSubscribe(false);
+          //   // setShowPaymentBtn(true);
+          // }}
+          handlePosition="inside"
+          modalStyle={styles.paymentModal}
+          disableScrollIfPossible={false}
+          adjustToContentHeight={true}>
+          <RN.TouchableOpacity
+            onPress={() => {
+              setLoadSubscribe(false);
+              setShowPaymentBtn(!isFollowed && total > 0);
+              openPaymentModal.current?.close();
+            }}
+            style={{
+              alignSelf: 'flex-end',
+              margin: 14,
+              backgroundColor: colors.grayTransparent,
+              borderRadius: 100,
+              padding: 10,
+              borderWidth: 0.5,
+              borderColor: colors.darkGray,
+            }}>
+            <RN.Image source={{uri: 'close'}} style={{height: 14, width: 14}} />
+          </RN.TouchableOpacity>
+          <RN.View style={{paddingVertical: 14, paddingBottom: 40}}>
+            <RN.View style={{alignItems: 'center', marginTop: 4}}>
+              <PlatformPayButton
+                onPress={onPressApplePayBtn}
+                type={PlatformPay.ButtonType.Continue}
+                appearance={PlatformPay.ButtonStyle.WhiteOutline}
+                borderRadius={8}
+                style={{
+                  width: '90%',
+                  height: 50,
+                }}
+              />
+            </RN.View>
+            <CardField
+              postalCodeEnabled={false}
+              placeholders={{
+                number: '4242 4242 4242 4242',
+              }}
+              cardStyle={{
+                backgroundColor: '#FFFFFF',
+                textColor: '#000000',
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                marginVertical: 30,
+              }}
+              onCardChange={cardDetails => {
+                // console.log('cardDetails', cardDetails);
+                if (cardDetails?.complete) {
+                  setCardDisabled(false);
+                }
+                //  else {
+                //   setCardDisabled(true);
+                // }
+              }}
+              // onFocus={focusedField => {
+              //   console.log('focusField', focusedField);
+              // }}
+            />
+            {paymentError?.length > 0 && (
+              <RN.Text
+                style={{
+                  textAlign: 'center',
+                  color: colors.redError,
+                  marginTop: -12,
+                }}>
+                {paymentError}
+              </RN.Text>
+            )}
+            {disablePaymentBtn ? (
+              <>{renderLoading()}</>
+            ) : (
+              <Button
+                title={`Confirm pay ${total} $`}
+                disabled={!cardDisabled}
+                onPress={confirmPaymentByCard}
+              />
+            )}
+          </RN.View>
+        </Modalize>
+      </Portal>
+    </>
   );
 };
 const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  paymentModal: {
+    backgroundColor: colors.white,
+  },
+  attendPeopleImg: {
+    height: 44,
+    width: 44,
+    borderRadius: 100,
+  },
+  attendPeopleText: {
+    fontSize: 14,
+    lineHeight: 18.9,
+    fontWeight: '400',
+    color: '#616161',
+    paddingLeft: 8,
+  },
+  ticketBtn: {
+    justifyContent: 'center',
+    backgroundColor: '#07BD74',
+    borderRadius: 48,
+    paddingVertical: 6,
+    marginHorizontal: 28,
+    marginTop: 34,
+    marginVertical: 14,
+    alignItems: 'center',
   },
   typeEventContainer: {
     backgroundColor: colors.purple,
@@ -373,6 +833,7 @@ const styles = RN.StyleSheet.create({
   descWrapper: {
     paddingHorizontal: 24,
     marginVertical: 20,
+    marginTop: 14,
   },
   aboutText: {
     fontSize: 20,
@@ -553,6 +1014,7 @@ const styles = RN.StyleSheet.create({
     // fontSize: 12,
     marginVertical: 28,
     marginHorizontal: 24,
+    marginTop: 34,
   },
   settingIconContainer: {
     padding: 8,

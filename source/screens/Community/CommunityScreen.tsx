@@ -5,7 +5,6 @@ import colors from '../../utils/colors';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {useCommunities} from '../../hooks/useCommunitites';
-import {useProfile} from '../../hooks/useProfile';
 import {useCommunityById} from '../../hooks/useCommunityById';
 import useEvents from '../../hooks/useEvents';
 import EventCard from '../../components/eventCard';
@@ -15,18 +14,16 @@ import Carousel from '../../components/carousel';
 import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
 import {statusBarHeight} from '../../utils/constants';
 import socket from '../../api/sockets';
-import {useDispatch} from 'react-redux';
-import {getCommunitiesSuccessAction} from '../../store/actions/communityActions';
 
 const CommunityScreen = () => {
   const routeProps = useRoute();
   const navigation = useNavigation();
   const {userUid} = useRegistration();
-  const {startFollowed, isSaveChanges, cancelFollowed, getCommunitites} =
+  const {startFollowed, isSaveChanges, onClearCommunityDataById} =
     useCommunities();
 
   const {data}: any = routeProps.params;
-  const dispatch = useDispatch();
+  const {isProfileScreen}: any = routeProps.params;
   // const {_id} = data;
   // const _id = '64a558e4a6ac588333e736d4';
   const {remove, getCommunity, communityData, loadingById} = useCommunityById(
@@ -37,12 +34,8 @@ const CommunityScreen = () => {
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
   const isAdmin = communityData?.creator?.uid === userUid;
 
-  const {
-    getEventByIdCommunity,
-    eventsDataByCommunityId,
-    loadingEvents,
-    attendingEventsForCommunity,
-  } = useEvents();
+  const {getEventByIdCommunity, eventsDataByCommunityId, loadingEvents} =
+    useEvents();
   const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
   const [currentTab, setCurrentTab] = useState(TABS[0]);
   const [events, setEvents] = useState(eventsDataByCommunityId);
@@ -50,102 +43,67 @@ const CommunityScreen = () => {
 
   useEffect(() => {
     getCommunity();
-    getEventByIdCommunity(communityData?.eventsIds);
+    getEventByIdCommunity(data?.eventsIds);
   }, []);
   useEffect(() => {
     if (isSaveChanges) {
       getCommunity();
     }
   }, [isSaveChanges]);
-  const [isJoined, setIsJoined] = useState(
-    communityData?.followers?.find((user: any) => user.userUid === userUid) ??
-      false,
-  );
+  const [isJoined, setIsJoined] = useState();
+  const [attendedImgs, setAttendedImgs] = useState([]);
+
   const upcomingEvents =
     eventsDataByCommunityId?.filter(
       (item: {eventDate: {startDate: Date}}) =>
         moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >=
         moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
+  const attendingEventsForCommunity = eventsDataByCommunityId?.filter(ev =>
+    ev?.attendedPeople?.find(u => u.userUid === userUid),
+  );
 
-  const [desc, setDesc] = useState(communityData?.description);
-  // useEffect(() => {
-  //   getUser(displayedData?.creatorUid);
-  // }, [displayedData?.creatorUid]);
   const passedEvents = eventsDataByCommunityId?.filter(
     (item: any) =>
       moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
       moment(new Date()).format('YYYY-MM-DD'),
   );
-  // useEffect(() => {
-  //   // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  //   const onValueChange = database()
-  //     .ref(`community/${id}`)
-  //     .on('value', snapshot => {
-  //       setDisplayedData(snapshot.val());
-  //       setDesc(
-  //         snapshot.val()?.description?.length > 70
-  //           ? snapshot.val()?.description?.slice(0, 40) + '...'
-  //           : snapshot.val()?.description,
-  //       );
-  //       // getEvents();
-  //       getEventByIdCommunity(snapshot.val()?.events);
-  //     });
 
-  //   return () => database().ref(`community/${id}`).off('value', onValueChange);
-  // }, [id]);
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('beforeRemove', () => {
-  //     getCommunitites();
-  //   });
-  //   return unsubscribe;
-  // }, [navigation]);
   useEffect(() => {
+    setAttendedImgs(communityData?.userImages);
+  }, [communityData?.userImages]);
+
+  useEffect(() => {
+    // setIsJoined(
+    //   communityData?.followers
+    //     ?.map(u => u)
+    //     ?.some(user => user.userUid === userUid),
+    // );
     setIsJoined(
       communityData?.followers?.find(
-        (i: {userUid: string}) => i.userUid === userUid,
+        (user: {userUid: any}) => user?.userUid === userUid,
       ),
     );
   }, [communityData?.followers, userUid]);
   useEffect(() => {
-    socket.on('subscribed', socket => {
-      // console.log('subscribed', data);
-      if (socket?.currentCommunity?.id === data.id) {
-        // setDisplayedData(community);
+    socket.on('subscribed', socket_data => {
+      if (socket_data?.currentCommunity?.id === data.id) {
         setIsJoined(
-          socket?.currentCommunity?.followers?.find(
-            (i: {userUid: string}) => i.userUid === userUid,
-          ),
+          socket_data?.currentCommunity?.followers
+            ?.map(u => u)
+            .some(user => user.userUid === userUid),
         );
+        RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
+        setAttendedImgs(socket_data?.userImages);
         setLoadSubscribe(false);
-        // dispatch(
-        //   getCommunitiesSuccessAction({
-        //     dataCommunities: Object.values(data?.communities),
-        //   }),
-        // );
-        // setLoadSubscribe(false);
-        // console.log(community?.followers?.find(i => i.userUid === userUid));
       }
     });
   }, [data.id, userUid]);
-  // useEffect(() => {
-  //   socket.emit('joined_update', communityData?.location);
-  // }, [loadSubscribe]);
 
-  // useEffect(() => {
-  //   socket.on('updated_communities', communities => {
-  //     console.log('updated_communities', communities);
-  // dispatch(getCommunitiesSuccessAction({dataCommunities: communities}));
-  //   });
-  // }, [dispatch]);
   useMemo(() => {
     setEvents(eventsDataByCommunityId);
-  }, [eventsDataByCommunityId?.length]);
+  }, [eventsDataByCommunityId]);
 
-  const onPressShowText = () => {
-    setOpeningDescription(true);
-    setDesc(communityData?.description);
-  };
   const onPressEditCommunity = () => {
     navigation.navigate('EditCommunity', communityData);
   };
@@ -163,6 +121,14 @@ const CommunityScreen = () => {
     setUnFollowOpen(v => !v);
     remove();
     // navigation.navigate('CommunitiesMain', {removedCommunity: true});
+  };
+  const onPressBack = () => {
+    if (isProfileScreen) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('CommunitiesMain');
+    }
+    onClearCommunityDataById();
   };
   // useMemo(() => {
   //   setJoined(
@@ -198,7 +164,7 @@ const CommunityScreen = () => {
       <>
         <RN.TouchableOpacity
           style={styles.backIconContainer}
-          onPress={() => navigation.navigate('CommunitiesMain')}>
+          onPress={onPressBack}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.TouchableOpacity>
         {isAdmin && (
@@ -208,11 +174,20 @@ const CommunityScreen = () => {
             <RN.Image source={{uri: 'setting'}} style={styles.backIcon} />
           </RN.TouchableOpacity>
         )}
-        <RN.TouchableOpacity
-          style={styles.moreIconContainer}
-          onPress={() => setUnFollowOpen(v => !v)}>
-          <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
-        </RN.TouchableOpacity>
+        {!isAdmin && isJoined && (
+          <RN.TouchableOpacity
+            style={styles.moreIconContainer}
+            onPress={() => setUnFollowOpen(v => !v)}>
+            <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
+          </RN.TouchableOpacity>
+        )}
+        {isAdmin && (
+          <RN.TouchableOpacity
+            style={styles.moreIconContainer}
+            onPress={() => setUnFollowOpen(v => !v)}>
+            <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
+          </RN.TouchableOpacity>
+        )}
         {isAdmin && unFolloweOpen && (
           <RN.TouchableOpacity
             style={styles.unFollowContainer}
@@ -370,9 +345,16 @@ const CommunityScreen = () => {
     return (
       <>
         {eventsDataByCommunityId?.length > 0 &&
-          sotrtBy(events, 'eventDate.startDate').map((item: any) => (
-            <EventCard item={{...item, communityId: data.id}} />
-          ))}
+          sotrtBy(events, 'eventDate.startDate').map((item: any) => {
+            if (item?.id) {
+              return (
+                <EventCard
+                  key={item?.id}
+                  item={{...item, communityId: data.id}}
+                />
+              );
+            }
+          })}
       </>
     );
   };
@@ -383,6 +365,44 @@ const CommunityScreen = () => {
     });
 
     RN.Linking.openURL(url);
+  };
+  const renderAttendedImgs = () => {
+    const countPeople =
+      attendedImgs?.length > 6
+        ? `+${attendedImgs?.length - 6} joined`
+        : 'joined';
+    return (
+      <RN.View
+        style={{
+          flexDirection: 'row',
+          marginHorizontal: 24,
+          paddingVertical: 10,
+        }}>
+        {attendedImgs?.slice(0, 6)?.map((img, idx) => {
+          // console.log('img', img, idx);
+          const imgUri =
+            typeof img !== 'undefined'
+              ? {uri: 'data:image/png;base64,' + img?.userImage?.base64}
+              : require('../../assets/images/defaultuser.png');
+          return (
+            <RN.View
+              style={{
+                marginLeft: idx !== 0 ? -12 : 0,
+                zIndex: idx !== 0 ? idx : -idx,
+              }}>
+              <RN.Image
+                source={imgUri}
+                style={styles.attendPeopleImg}
+                defaultSource={require('../../assets/images/defaultuser.png')}
+              />
+            </RN.View>
+          );
+        })}
+        <RN.View style={{justifyContent: 'center'}}>
+          <RN.Text style={styles.attendPeopleText}>{countPeople}</RN.Text>
+        </RN.View>
+      </RN.View>
+    );
   };
   const renderMapInfoOrganizer = () => {
     return (
@@ -453,6 +473,7 @@ const CommunityScreen = () => {
             </RN.TouchableOpacity>
           )} */}
         </RN.View>
+        {attendedImgs?.length > 0 && renderAttendedImgs()}
       </>
     );
   };
@@ -462,7 +483,9 @@ const CommunityScreen = () => {
   }
 
   return (
-    <RN.ScrollView style={styles.container}>
+    <RN.ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}>
       {header()}
       <Carousel items={communityData?.images} />
       {renderTitle()}
@@ -527,6 +550,19 @@ const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+
+  attendPeopleImg: {
+    height: 38,
+    width: 38,
+    borderRadius: 100,
+  },
+  attendPeopleText: {
+    fontSize: 14,
+    lineHeight: 18.9,
+    fontWeight: '400',
+    color: '#616161',
+    paddingLeft: 8,
   },
   loadingContainer: {
     position: 'absolute',

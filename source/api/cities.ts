@@ -42,7 +42,7 @@ export const searchPlacesInEvent = async (
   const response = await axios.get(
     `${googleUrl}key=${GOOGLE_API_KEY}&language=en&types=establishment&components=country:${country}&input=${cityName} ${searchString}`,
   );
-
+// console.log('dadad', response);
   return response.data?.predictions;
 };
 export const searchStateOfUSA = async (searchString: string) => {
@@ -56,5 +56,6 @@ export const searchCity = async (searchString: string, countryCode: string) => {
   const response = await axios.get(
     `${googleUrl}key=${GOOGLE_API_KEY}&types=(cities)&components=country:${countryCode}&input=${searchString}&language=en`,
   );
+  // console.log('re', response)
   return response.data?.predictions;
 };

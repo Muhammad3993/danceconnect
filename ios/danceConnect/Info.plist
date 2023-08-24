@@ -48,6 +48,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>To install images in the community and events, allow the application access to camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To install images in the community and events, allow the application access to photos</string>
 	<key>UIAppFonts</key>

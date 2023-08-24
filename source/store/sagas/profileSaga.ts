@@ -21,38 +21,42 @@ import {
   selectUserUid,
   selectorToken,
 } from '../selectors/registrationSelector';
-import {
-  changeUserDanceStyles,
-  changeUserPassword,
-  getUserData,
-  getUserDataById,
-} from '../../api/functions';
+// import {
+//   changeUserDanceStyles,
+//   changeUserPassword,
+//   getUserData,
+//   getUserDataById,
+// } from '../../api/functions';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {getEventsRequestAction} from '../actions/eventActions';
 import {setLoadingAction} from '../actions/appStateActions';
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {setErrors} from '../../utils/helpers';
-import {refreshPassword, updateUserById, updateUserCountry} from '../../api/serverRequests';
+import {
+  refreshPassword,
+  updateUserById,
+  updateUserCountry,
+} from '../../api/serverRequests';
 import {authWithGoogleSuccess} from '../actions/authorizationActions';
 
-function* getUserDataRequest() {
-  try {
-    const uid = yield select(selectUserUid);
-    const data = yield call(getUserData, uid);
+// function* getUserDataRequest() {
+//   try {
+//     const uid = yield select(selectUserUid);
+//     const data = yield call(getUserData, uid);
 
-    console.log('getUserDataRequest', data, '\n ------', uid);
-    yield put(
-      getuserDataSuccessAction({
-        userData: data,
-      }),
-    );
-    yield put(getCommunitiesRequestAction());
-    yield put(getEventsRequestAction());
-  } catch (error: any) {
-    yield put(getUserDataFailAction(error));
-  }
-}
+//     console.log('getUserDataRequest', data, '\n ------', uid);
+//     yield put(
+//       getuserDataSuccessAction({
+//         userData: data,
+//       }),
+//     );
+//     yield put(getCommunitiesRequestAction());
+//     yield put(getEventsRequestAction());
+//   } catch (error: any) {
+//     yield put(getUserDataFailAction(error));
+//   }
+// }
 function* getUserByIdRequest(action: any) {
   const {userUid} = action.payload;
   try {
@@ -150,6 +154,7 @@ function* changeUserCountry(action: {userCountry: string}) {
     };
     yield put(setLoadingAction({onLoading: true}));
     yield put(getCommunitiesRequestAction());
+    yield put(getEventsRequestAction({limit: 1, offset: 0}));
     const user = yield call(updateUserCountry, data);
     const token = yield select(selectorToken);
     const userData = yield select(selectRegistrationState);

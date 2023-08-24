@@ -118,7 +118,7 @@ const FindCity = ({
     return (
       <>
         <RN.View style={styles.headerDanceStyle}>
-          <RN.TouchableOpacity onPress={onCancel}>
+          <RN.TouchableOpacity onPress={onCancel} disabled={communityScreen}>
             <RN.Image
               source={{uri: 'backicon'}}
               style={{

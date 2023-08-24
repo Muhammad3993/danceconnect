@@ -17,4 +17,5 @@ export default {
   eventDate: '',
   place: '',
   communityUid: '',
+  price: '',
 };

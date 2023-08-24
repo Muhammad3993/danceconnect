@@ -10,6 +10,7 @@ import Moment from 'moment';
 import {extendMoment} from 'moment-range';
 import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonEventCard from '../../../components/skeleton/eventCard-Skeleton';
+import socket from '../../../api/sockets';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -17,11 +18,26 @@ type props = {
   searchValue: string;
 };
 const UpcommingTab = ({searchValue, eventsSearch}: props) => {
-  const {upcomingEvents, loadingEvents} = useEvents();
+  const {
+    upcomingEvents,
+    loadingEvents,
+    getEvents,
+    setSocketEvents,
+    // setDefaultEventLimit,
+  } = useEvents();
   const lengthEmptyEvents = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
+  useEffect(() => {
+    socket.once('subscribed_event', socket_data => {
+      // console.log('subscribed_event socket_data.events?.length', socket_data.events?.length);
+      if (socket_data?.events?.length) {
+        setSocketEvents(socket_data?.events);
+      }
+    });
+    // console.log('eventData.attendedPeople.length', eventData.attendedPeople.length);
+  }, []);
   const [events, setEvents] = useState(
     upcomingEvents
       ?.filter(
@@ -155,7 +171,8 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     }
   };
   const renderItem = (item: any) => {
-    return <EventCard item={item?.item} key={item.index} />;
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    return <EventCard item={item?.item} key={item.item.id} />;
   };
   const renderFilters = () => {
     return (
@@ -192,12 +209,19 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
         showsVerticalScrollIndicator={false}
         data={sotrtBy(events, 'eventDate.startDate')}
         renderItem={renderItem}
+        onRefresh={() => {
+          onClear();
+          getEvents();
+        }}
+        refreshing={loadingEvents}
         ListHeaderComponent={renderFilters()}
         keyExtractor={(item, _index) => `${item}${_index}`}
         ListEmptyComponent={renderEmpty()}
         ListFooterComponent={() => {
           return <RN.View style={{paddingBottom: SCREEN_HEIGHT / 10}} />;
         }}
+        // onEndReachedThreshold={0.7}
+        // onEndReached={setEventLimit}
       />
       <FiltersBottomForEvents
         onOpening={openingFilters}

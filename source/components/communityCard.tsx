@@ -13,7 +13,7 @@ type props = {
   idx: number;
 };
 
-const CommunityCard = ({item}: any) => {
+const CommunityCard = ({item, isProfileScreen}: any) => {
   const {userUid} = useRegistration();
   const navigation = useNavigation();
   const data = item.item;
@@ -38,9 +38,10 @@ const CommunityCard = ({item}: any) => {
   const [crntIndex, setCrntIndex] = useState(null);
   const [loadSubscribe, setLoadSubscribe] = useState(false);
   const index = communitiesData?.findIndex((itm: any) => itm.id === data.id);
+  const [attendedImgs, setAttendedImgs] = useState(displayedData?.userImages);
 
   const goToCommunity = () => {
-    navigation.navigate('CommunityScreen', {data});
+    navigation.navigate('CommunityScreen', {data, isProfileScreen});
   };
   // console.log('di', data.followers, isFollowed);
   useEffect(() => {
@@ -50,20 +51,24 @@ const CommunityCard = ({item}: any) => {
   }, [data?.followers, userUid]);
 
   useEffect(() => {
-    socket.on('subscribed', socket => {
-      console.log('data', socket);
-      if (socket?.currentCommunity?.id === data.id) {
-        // socket.emit('joined_update', community.location);
+    setAttendedImgs(displayedData?.userImages);
+  }, []);
 
-        setDisplayedData(socket?.currentCommunity);
+  useEffect(() => {
+    socket.on('subscribed', socket_data => {
+      // console.log('data', socket);
+      if (socket_data?.currentCommunity?.id === data.id) {
+        // socket.emit('joined_update', community.location);
+        setAttendedImgs(socket_data?.userImages);
+        setDisplayedData(socket_data?.currentCommunity);
         setIsFollowed(
-          socket?.currentCommunity.followers?.find(
+          socket_data?.currentCommunity.followers?.find(
             (i: {userUid: string}) => i.userUid === userUid,
           ),
         );
         setLoadSubscribe(false);
-        if (socket?.communities?.length) {
-          setSocketCommunities(socket?.communities);
+        if (socket_data?.communities?.length) {
+          setSocketCommunities(socket_data?.communities);
         }
         // socket.disconnect();
         // console.log(community?.followers?.find(i => i.userUid === userUid));
@@ -100,31 +105,37 @@ const CommunityCard = ({item}: any) => {
     setCountFollowers(displayedData?.followers?.length);
   }, [displayedData?.followers?.length]);
   const renderCount = () => {
-    // const usersImg = communitiesData
-    //   ?.map(item => item)
-    //   ?.slice(0, 3)
-    //   ?.filter(item => item?.id === communityData.id)[0]
-    //   ?.followers?.map(item => item?.userImg)[0];
-    // console.log(usersImg);
     return (
-      <RN.View style={{flexDirection: 'row'}}>
-        {/* {count > 0 && (
-        <RN.View style={{backgroundColor: 'red'}}>
-        <RN.Image
-          source={{uri: usersImg}}
-          style={{height: 24, width: 24, borderRadius: 40}}
-        />
-        </RN.View>
-        )} */}
+      <RN.View style={{flexDirection: 'row', paddingVertical: 8}}>
+        {attendedImgs?.slice(0, 3)?.map((img, idx) => {
+          // console.log('img', img, idx);
+          const imgUri =
+            typeof img !== 'undefined'
+              ? {uri: 'data:image/png;base64,' + img?.userImage?.base64}
+              : require('../assets/images/defaultuser.png');
+          return (
+            <RN.View
+              style={{
+                marginLeft: idx !== 0 ? -8 : 0,
+                zIndex: idx !== 0 ? -idx : idx,
+              }}>
+              <RN.Image
+                source={imgUri}
+                style={styles.attendPeopleImg}
+                defaultSource={require('../assets/images/defaultuser.png')}
+              />
+            </RN.View>
+          );
+        })}
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Text
             style={{
               color: colors.darkGray,
             }}>
             {countFollowers > 0
-              ? countFollowers > 100
-                ? '+' + `${countFollowers} followers`
-                : `${countFollowers} followers`
+              ? countFollowers > 3
+                ? '+' + `${countFollowers - 3} followers`
+                : ' already followed'
               : 'no subscribers yet'}
           </RN.Text>
         </RN.View>
@@ -185,11 +196,10 @@ const CommunityCard = ({item}: any) => {
         style={styles.headerItemContainer}
         activeOpacity={0.7}>
         <RN.View style={{maxWidth: SCREEN_WIDTH / 1.5}}>
-          {data?.categories && renderTags(data?.categories)}
           <RN.Text numberOfLines={1} style={styles.itemTitle}>
-            {data?.title ?? data?.name}
+            {data?.title}
           </RN.Text>
-          <RN.Text numberOfLines={2} style={styles.itemDesc}>
+          <RN.Text numberOfLines={3} style={styles.itemDesc}>
             {data?.description}
           </RN.Text>
         </RN.View>
@@ -205,9 +215,10 @@ const CommunityCard = ({item}: any) => {
           style={styles.itemImg}
         />
       </RN.TouchableOpacity>
+      {renderCount()}
       <RN.View style={{borderTopWidth: 1, borderColor: colors.gray}} />
       <RN.View style={styles.footerItemContainer}>
-        {renderCount()}
+        {data?.categories && renderTags(data?.categories)}
         <RN.View>
           {loadSubscribe ? (
             renderLoading()
@@ -245,6 +256,13 @@ const styles = RN.StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 16,
     marginHorizontal: isAndroid ? 0 : 10,
+  },
+  attendPeopleImg: {
+    height: 24,
+    width: 24,
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: colors.white,
   },
   joinBtn: {
     backgroundColor: colors.orange,

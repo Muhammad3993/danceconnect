@@ -23,6 +23,18 @@ const DanceStylesProfile = () => {
       setAddedStyles([...addedStyles, value]);
     }
   };
+
+  const header = () => {
+    return (
+      <RN.View style={styles.headerWrapper}>
+        <RN.TouchableOpacity
+          style={{justifyContent: 'center'}}
+          onPress={() => navigation.goBack()}>
+          <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
+        </RN.TouchableOpacity>
+      </RN.View>
+    );
+  };
   const onPressDeleteItem = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const filter = addedStyles.filter(item => item !== value);
@@ -33,53 +45,69 @@ const DanceStylesProfile = () => {
     // navigation.goBack();
   };
   return (
-    <RN.ScrollView style={styles.container}>
-      <RN.Text style={[styles.title, {paddingBottom: 20}]}>
-        What dance style do you prefer?
-      </RN.Text>
-      {addedStyles?.length > 0 && (
-        <RN.View style={styles.danceStyleContainer}>
-          {addedStyles?.map(item => {
-            return (
-              <RN.TouchableOpacity
-                style={styles.addedDanceStyleItem}
-                activeOpacity={0.7}
-                onPress={() => onPressDeleteItem(item)}>
-                <RN.Text style={styles.addedDanceStyleText}>{item}</RN.Text>
-                <RN.View style={{justifyContent: 'center', marginTop: 2}}>
-                  <RN.Image
-                    style={{
-                      height: 14,
-                      width: 14,
-                      tintColor: colors.orange,
-                    }}
-                    source={{uri: 'close'}}
-                  />
-                </RN.View>
-              </RN.TouchableOpacity>
-            );
-          })}
-        </RN.View>
-      )}
-      <CategorySelector
-        addedStyles={addedStyles}
-        onChoosheDanceStyle={onChooseDanceStyles}
-      />
-      <RN.View style={[styles.finishBtn, {marginTop: -24}]}>
-        <Button
-          title="Save"
-          onPress={onPressFinish}
-          disabled={addedStyles?.length > 0}
+    <>
+      {header()}
+      <RN.ScrollView style={styles.container}>
+        <RN.Text style={[styles.title, {paddingBottom: 20}]}>
+          What dance style do you prefer?
+        </RN.Text>
+        {addedStyles?.length > 0 && (
+          <RN.View style={styles.danceStyleContainer}>
+            {addedStyles?.map(item => {
+              return (
+                <RN.TouchableOpacity
+                  style={styles.addedDanceStyleItem}
+                  activeOpacity={0.7}
+                  onPress={() => onPressDeleteItem(item)}>
+                  <RN.Text style={styles.addedDanceStyleText}>{item}</RN.Text>
+                  <RN.View style={{justifyContent: 'center', marginTop: 2}}>
+                    <RN.Image
+                      style={{
+                        height: 14,
+                        width: 14,
+                        tintColor: colors.orange,
+                      }}
+                      source={{uri: 'close'}}
+                    />
+                  </RN.View>
+                </RN.TouchableOpacity>
+              );
+            })}
+          </RN.View>
+        )}
+        <CategorySelector
+          addedStyles={addedStyles}
+          onChoosheDanceStyle={onChooseDanceStyles}
         />
-      </RN.View>
-      <RN.View style={{ marginBottom: 60 }} />
-    </RN.ScrollView>
+        <RN.View style={[styles.finishBtn, {marginTop: -24}]}>
+          <Button
+            title="Save"
+            onPress={onPressFinish}
+            disabled={addedStyles?.length > 0}
+          />
+        </RN.View>
+        <RN.View style={{marginBottom: 60}} />
+      </RN.ScrollView>
+    </>
   );
 };
 const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: statusBarHeight,
+    backgroundColor: colors.white,
+  },
+  backIcon: {
+    height: 24,
+    width: 28,
+  },
+  headerWrapper: {
+    paddingTop: statusBarHeight,
+    flexDirection: 'row',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray,
     backgroundColor: colors.white,
   },
   title: {

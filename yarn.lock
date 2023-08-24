@@ -1735,6 +1735,11 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.0.tgz#96116f2a912e0c02817345b3c10751069920d553"
   integrity sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==
 
+"@stripe/stripe-react-native@^0.30.0":
+  version "0.30.0"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.30.0.tgz#75fd976ee6cf153569523ba1ccc221ddd160d99f"
+  integrity sha512-uh8XKUA7jmvr/10vf9eCTaLJ3xQ/3IFPpW+oQz2OEi1hUF2gOAEyZU6IDjMu23FX7aYlubBzgtN+iZfP5zuHEQ==
+
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"

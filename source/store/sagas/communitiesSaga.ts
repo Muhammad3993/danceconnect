@@ -1,4 +1,4 @@
-import {call, put, select, takeLatest} from 'redux-saga/effects';
+import {call, put, select, takeLatest, all} from 'redux-saga/effects';
 import {COMMUNITIES} from '../actionTypes/communityActionTypes';
 import {
   cancelFollowedCommunityFailAction,
@@ -28,9 +28,7 @@ import {
   getCommunitiesWithMongo,
   getCommunityById,
   getManagingCommunity,
-  getUserById,
-  subscribeCommunity,
-  unSubscribeCommunity,
+  getUsersImagesFromCommunity,
   updateCommunityById,
 } from '../../api/serverRequests';
 
@@ -44,13 +42,31 @@ import socket from '../../api/sockets';
 function* getCommunitiesRequest() {
   try {
     const location = yield select(selectCurrentCity);
-    const data = yield call(getCommunitiesWithMongo, location);
+    const response = yield call(getCommunitiesWithMongo, location);
     // console.log('data', Object.values(data));
-    // socket.emit('joined_update', location);
-
+    const communities = response;
+    const data: string[] = yield all(
+      communities.map(community =>
+        (function* () {
+          try {
+            const imagesEv: string[] = yield call(
+              getUsersImagesFromCommunity,
+              community?.id,
+            );
+            const communityata = {
+              ...community,
+              userImages: Object.values(imagesEv),
+            };
+            return communityata;
+          } catch (e) {
+            return console.log('errro', e);
+          }
+        })(),
+      ),
+    );
     yield put(
       getCommunitiesSuccessAction({
-        dataCommunities: Object.values(data),
+        dataCommunities: data,
       }),
     );
     yield put(getManagingCommunitiesRequestAction());
@@ -96,10 +112,11 @@ function* createCommunityRequest(action: any) {
 function* startFollowingCommunity(action: any) {
   const {communityUid} = action?.payload;
   try {
-    const location = yield select(selectCurrentCity);
-    const userUid = yield select(selectUserUid);
+    const location: string = yield select(selectCurrentCity);
+    const userUid: string = yield select(selectUserUid);
     socket.connect();
     socket.emit('follow_community', communityUid, userUid, location);
+    // socket.disconnect();
     // yield put(
     //   getCommunitiesSuccessAction({
     //     dataCommunities: Object.values(data),
@@ -147,6 +164,7 @@ function* cancelFollowingCommunity(action: any) {
     const userUid = yield select(selectUserUid);
     socket.connect();
     socket.emit('follow_community', communityUid, userUid);
+    // socket.disconnect();
 
     // const response = yield call(unSubscribeCommunity, communityUid);
     // console.log('res', response);
@@ -177,10 +195,14 @@ function* getCommunityByIdRequest(action: any) {
   const {communityUid} = action?.payload;
   try {
     const response = yield call(getCommunityById, communityUid);
-
+    const imagesEv = yield call(getUsersImagesFromCommunity, response.id);
+    const communityata = {
+      ...response,
+      userImages: Object.values(imagesEv),
+    };
     yield put(
       getCommunityByIdSuccessAction({
-        communityByIdData: response,
+        communityByIdData: communityata,
       }),
     );
   } catch (error) {
@@ -257,9 +279,29 @@ function* removeCommunityRequest(action: any) {
 function* getManagingCommunities() {
   try {
     const response = yield call(getManagingCommunity);
+    const communities = response;
+    const data: string[] = yield all(
+      communities.map(community =>
+        (function* () {
+          try {
+            const imagesEv: string[] = yield call(
+              getUsersImagesFromCommunity,
+              community?.id,
+            );
+            const communityata = {
+              ...community,
+              userImages: Object.values(imagesEv),
+            };
+            return communityata;
+          } catch (e) {
+            return console.log('errro', e);
+          }
+        })(),
+      ),
+    );
     yield put(
       getManagingCommunitiesSuccessAction({
-        managingCommunities: Object.values(response?.data),
+        managingCommunities: data,
       }),
     );
   } catch (err) {

@@ -90,3 +90,10 @@ export const getIcon = (name: string, isFocused: boolean) => {
       break;
   }
 };
+// export const getMoneyString = (value: string) => {
+//   const formatString = new Intl.NumberFormat('en-US', {
+//     style: 'decimal',
+//     currency: 'USD',
+//   });
+//   return formatString.format(Number(value));
+// };

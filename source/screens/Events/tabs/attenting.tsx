@@ -18,7 +18,7 @@ type props = {
   searchValue: string;
 };
 const AttentingTab = ({searchValue, eventsSearch}: props) => {
-  const {attentingsEvents, loadingEvents} = useEvents();
+  const {attentingsEvents, loadingEvents, getEvents} = useEvents();
   const lengthEmptyEvents = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
@@ -144,7 +144,7 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
     }
   };
   const renderItem = (item: any) => {
-    return <EventCard item={item?.item} key={item.index} />;
+    return <EventCard item={item?.item} key={item.item.id} />;
   };
   const renderFilters = () => {
     return (
@@ -181,6 +181,11 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
         showsVerticalScrollIndicator={false}
         data={sotrtBy(events, 'eventDate.startDate')}
         renderItem={renderItem}
+        onRefresh={() => {
+          onClear();
+          getEvents();
+        }}
+        refreshing={loadingEvents}
         ListHeaderComponent={renderFilters()}
         keyExtractor={(item, _index) => `${item}${_index}`}
         ListEmptyComponent={renderEmpty()}

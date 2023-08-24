@@ -64,6 +64,7 @@ const BottomCalendar = ({
     hours: 0,
     minutes: 0,
   });
+  const [onPressedTime, setOnPressedTime] = useState(false);
   const minDate = new Date().toDateString();
   const onOpen = () => {
     modalizeRef.current?.open();
@@ -203,6 +204,13 @@ const BottomCalendar = ({
   };
 
   const onPressFinished = () => {
+    if (!onPressedTime) {
+      const nowTime = moment(new Date(time).getTime()).format('HH:mm');
+      const hours = Number(nowTime?.slice(0, 2));
+      const minutes = Number(nowTime?.slice(3, 5));
+      const endTime = new Date(startDate).setHours(hours, minutes);
+      setTime(endTime);
+    }
     setStart(startDate);
     setEnd(endDate);
     onClosed();
@@ -254,7 +262,10 @@ const BottomCalendar = ({
               </RN.View>
               <RN.TouchableOpacity
                 style={styles.timeContainer}
-                onPress={() => setOpeningTime(v => !v)}>
+                onPress={() => {
+                  setOnPressedTime(v => !v);
+                  setOpeningTime(v => !v);
+                }}>
                 <RN.Text style={styles.timeText}>
                   {moment(time).format('HH:mm')}
                 </RN.Text>

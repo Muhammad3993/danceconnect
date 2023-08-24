@@ -4,7 +4,10 @@ import {
   selectEventById,
   selectLoadingEventById,
 } from '../store/selectors/eventsSelector';
-import {getEventByIdRequestAction} from '../store/actions/eventActions';
+import {
+  getEventByIdRequestAction,
+  removeEventRequestAction,
+} from '../store/actions/eventActions';
 
 export const useEventById = (id: string) => {
   const dispatch = useDispatch();
@@ -15,13 +18,19 @@ export const useEventById = (id: string) => {
     dispatch(getEventByIdRequestAction({eventUid: id}));
   };
 
-  //   const remove = () => {
-  //     dispatch(removeCommunityRequestAction({communityUid: id}));
-  //   };
+  const remove = () => {
+    // console.log('attendEvent', eventUid);
+    dispatch(
+      removeEventRequestAction({
+        eventUid: id,
+      }),
+    );
+  };
 
   return {
     getEvent,
     eventData,
     loadingById,
+    remove,
   };
 };

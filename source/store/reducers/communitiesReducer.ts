@@ -137,6 +137,11 @@ export default (
         isLoadingById: false,
         communityUid: '',
       };
+    case COMMUNITIES.GET_COMMUNITY_BY_ID_CLEAR:
+      return {
+        ...state,
+        communityByIdData: {},
+      };
     case COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_REQUEST:
       return {
         ...state,

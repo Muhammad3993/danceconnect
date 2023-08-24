@@ -26,7 +26,8 @@ const CreateCommunity = () => {
   const navigation = useNavigation();
   const {create, isLoading} = useCommunities();
   const goBackBtn = () => {
-    navigation.navigate('CommunitiesMain');
+    // navigation.navigate('CommunitiesMain');
+    navigation.goBack();
   };
   const {userCountry, individualStyles, userLocation} = useProfile();
 
@@ -167,9 +168,9 @@ const CreateCommunity = () => {
         <RN.TouchableOpacity onPress={goBackBtn}>
           <RN.Image source={{uri: 'backicon'}} style={styles.iconHeader} />
         </RN.TouchableOpacity>
-        <RN.TouchableOpacity onPress={goBackBtn}>
+        {/* <RN.TouchableOpacity onPress={goBackBtn}>
           <RN.Image source={{uri: 'close'}} style={styles.iconHeader} />
-        </RN.TouchableOpacity>
+        </RN.TouchableOpacity> */}
       </RN.View>
     );
   };
@@ -503,7 +504,7 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: statusBarHeight,
-    paddingBottom: 20,
+    paddingBottom: 12,
     backgroundColor: colors.white,
   },
   createWrapper: {

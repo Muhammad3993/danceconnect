@@ -11,7 +11,7 @@ import ManagingTab from './tabs/managing';
 import PassingTab from './tabs/passed';
 import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {Portal} from 'react-native-portalize';
 import FindCity from '../../components/findCity';
 
@@ -26,9 +26,10 @@ const EventsScreen = () => {
     managingEvents,
     attentingsEvents,
     passingEvents,
+    // setDefaultEventLimit,
   } = useEvents();
   const routeProps = useRoute();
-
+  const navigation = useNavigation();
   const [currentTab, setCurrentTab] = useState(TABS[0]);
 
   const [searchValue, onSearch] = useState('');
@@ -38,20 +39,13 @@ const EventsScreen = () => {
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
   const createdEvent = routeProps.params?.createdEvent ?? null;
 
-  useEffect(() => {
-    getEvents();
-  }, []);
+  // useEffect(() => {
+  //   getEvents();
+  // }, []);
 
   useEffect(() => {
     onPressTab(TABS[0]);
   }, []);
-
-  useMemo(() => {
-    if (createdEvent) {
-      onPressTab('Managing');
-      // getCommunitites();
-    }
-  }, [createdEvent]);
 
   const upcomingEvents = eventList
     ?.filter(
@@ -126,6 +120,13 @@ const EventsScreen = () => {
     setCurrentTab(value);
   };
 
+  useMemo(() => {
+    if (createdEvent) {
+      onPressTab('Managing');
+      // getCommunitites();
+    }
+  }, [createdEvent]);
+
   const renderHeader = () => {
     const renderTab = ({item}: any) => {
       return (
@@ -169,10 +170,11 @@ const EventsScreen = () => {
             />
           </RN.TouchableOpacity>
           <Search
+            onPressAdd={() => navigation.navigate('CreateEvent')}
             onSearch={onChangeTextSearch}
             searchValue={searchValue}
             placeholder="Event name, dance style, place..."
-            visibleAddBtn={false}
+            visibleAddBtn
           />
         </RN.View>
         <RN.View style={styles.tabsWrapper}>

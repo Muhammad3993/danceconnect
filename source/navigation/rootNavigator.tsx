@@ -4,7 +4,7 @@ import {
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
 import analytics from '@react-native-firebase/analytics';
-import {createStackNavigator} from '@react-navigation/stack';
+import {TransitionSpecs, createStackNavigator} from '@react-navigation/stack';
 import {
   AuthStackNavigationParamList,
   MainStackNavigationParamList,
@@ -32,6 +32,8 @@ import {Host} from 'react-native-portalize';
 import DanceStylesProfile from '../screens/Profile/EditDanceStylesProfile';
 import ChangeProfile from '../screens/Profile/ChangeProfile';
 import ManagingCommunities from '../screens/Profile/ManagingCommunities';
+import TicketScreen from '../screens/Events/Ticket';
+import TicketsScreen from '../screens/Profile/Tickets';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -61,7 +63,17 @@ const CommunityNavigator = () => {
       <CommunityStack.Screen name="EditCommunity" component={EditCommunity} />
       <CommunityStack.Screen name="CreateEvent" component={CreateEvent} />
       <CommunityStack.Screen name="EventScreen" component={EventScreen} />
-      <EventsStack.Screen name="EditEvent" component={EditEvent} />
+      <CommunityStack.Screen name="EditEvent" component={EditEvent} />
+      <CommunityStack.Screen
+        name="Ticket"
+        component={TicketScreen}
+        options={{
+          animationEnabled: true,
+          presentation: 'transparentModal',
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
     </CommunityStack.Navigator>
   );
 };
@@ -74,6 +86,16 @@ const EventsNavigator = () => {
       <EventsStack.Screen name="CreateEvent" component={CreateEvent} />
       <EventsStack.Screen name="EventScreen" component={EventScreen} />
       <EventsStack.Screen name="EditEvent" component={EditEvent} />
+      <EventsStack.Screen
+        name="Ticket"
+        component={TicketScreen}
+        options={{
+          animationEnabled: true,
+          presentation: 'transparentModal',
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
     </EventsStack.Navigator>
   );
 };
@@ -84,6 +106,18 @@ const HomeNavigator = () => {
       screenOptions={{headerShown: false, gestureEnabled: false}}>
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="EventScreen" component={EventScreen} />
+      <HomeStack.Screen name="EditEvent" component={EditEvent} />
+      <HomeStack.Screen
+        name="Ticket"
+        component={TicketScreen}
+        options={{
+          // animationEnabled: true,
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+
+      <HomeStack.Screen name="CreateCommunity" component={CreateCommunity} />
     </HomeStack.Navigator>
   );
 };
@@ -101,6 +135,25 @@ const ProfileNavigator = () => {
       <ProfileStack.Screen
         name="ManagingCommunities"
         component={ManagingCommunities}
+      />
+      <ProfileStack.Screen name="CommunityScreen" component={CommunityScreen} />
+      <ProfileStack.Screen
+        name="Tickets"
+        component={TicketsScreen}
+        options={{
+          // animationEnabled: true,
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+      <ProfileStack.Screen
+        name="Ticket"
+        component={TicketScreen}
+        options={{
+          // animationEnabled: true,
+          headerShown: false,
+          gestureEnabled: false,
+        }}
       />
     </ProfileStack.Navigator>
   );
@@ -133,6 +186,9 @@ const TabsNavigator = () => {
           if (routeName === 'ProfileDanceStyles') {
             return {display: 'none'};
           }
+          // if (routeName === 'Ticket') {
+          //   return {display: 'none'};
+          // }
           return {display: 'flex'};
         })(route),
       })}

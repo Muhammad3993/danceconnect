@@ -6,6 +6,7 @@ import {Button} from '../../components/Button';
 import {Input} from '../../components/input';
 import CategorySelector from '../../components/catregorySelector';
 import {
+  SCREEN_WIDTH,
   dataDanceCategory,
   isAndroid,
   statusBarHeight,
@@ -30,7 +31,7 @@ interface city {
 const CreateEvent = () => {
   const navigation = useNavigation();
   const routeParams = useRoute();
-  const {communityData} = routeParams.params;
+  const communityData = routeParams.params?.communityData;
   const {isLoading} = useCommunities();
   const {individualStyles} = useProfile();
   const goBackBtn = () => {
@@ -44,6 +45,7 @@ const CreateEvent = () => {
   const [isErrorName, setIsErrorName] = useState(false);
   const [isDescriptionError, setIsDescriptionError] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
+  const [price, setPrice] = useState(0);
   const [time, setTime] = useState();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -56,13 +58,13 @@ const CreateEvent = () => {
     maxSymbols: 350,
   });
   const [addedStyles, setAddedStyles] = useState<string[]>(individualStyles);
-  const {eventTypes} = useAppStateHook();
+  const {eventTypes, currentCity} = useAppStateHook();
 
   const [openPlace, setOpenPlace] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<string>('');
   const [openLocation, setOpenLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<city>(
-    communityData?.location,
+  const [selectedLocation, setSelectedLocation] = useState(
+    communityData?.location ?? currentCity,
   );
   const [isErrorPlace, setIsErrorPlace] = useState(false);
 
@@ -90,16 +92,16 @@ const CreateEvent = () => {
     setImages(filter);
   };
 
-  useEffect(() => {
-    setIsDescriptionError(false);
-    setIsErrorName(false);
-    setIsErrorPlace(false);
-    onClear();
-  }, [isErrorName, isDescriptionError, isErrorPlace]);
+  // useEffect(() => {
+  //   setIsDescriptionError(false);
+  //   setIsErrorName(false);
+  //   setIsErrorPlace(false);
+  //   // onClear();
+  // }, [isErrorName, isDescriptionError, isErrorPlace]);
 
   const onPressCreate = () => {
     const eventDate = {
-      time: time,
+      time: time ?? new Date().getTime(),
       startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
       endDate: endDate ?? null,
     };
@@ -110,14 +112,16 @@ const CreateEvent = () => {
           (selectedLocation?.structured_formatting?.main_text?.length > 0
             ? selectedLocation?.terms[1].value
             : '')
-        : communityData?.location;
+        : communityData?.location ?? currentCity;
     if (name?.length <= 0) {
       setIsErrorName(true);
     } else if (description?.length <= 0) {
       setIsDescriptionError(true);
-    } else if (selectedPlace?.length <= 0) {
-      setIsErrorPlace(true);
+      // } else if (selectedPlace?.length <= 0) {
+      //   setIsErrorPlace(true);
+      // } else {
     } else {
+      console.log('press create', time);
       createEvent({
         name: name,
         description: description,
@@ -125,10 +129,12 @@ const CreateEvent = () => {
         location: locationEdt,
         categories: addedStyles,
         images: images,
+        // place: 'selectedPlace',
         place: selectedPlace,
-        communityUid: communityData?._id,
+        communityUid: communityData ? communityData?._id : '',
         eventDate: eventDate,
         typeEvent: typeEvent,
+        price: price,
       });
     }
   };
@@ -199,9 +205,9 @@ const CreateEvent = () => {
         <RN.TouchableOpacity onPress={goBackBtn}>
           <RN.Image source={{uri: 'backicon'}} style={styles.iconHeader} />
         </RN.TouchableOpacity>
-        <RN.TouchableOpacity onPress={goBackBtn}>
+        {/* <RN.TouchableOpacity onPress={goBackBtn}>
           <RN.Image source={{uri: 'close'}} style={{height: 28, width: 28}} />
-        </RN.TouchableOpacity>
+        </RN.TouchableOpacity> */}
       </RN.View>
     );
   };
@@ -320,13 +326,15 @@ const CreateEvent = () => {
             {'/' + countNameSymbols.maxSymbols}
           </RN.Text>
         </RN.View>
-        <Input
-          value={name}
-          onChange={onChangeValueName}
-          placeholder="Name"
-          maxLength={countNameSymbols.maxSymbols}
-          isErrorBorder={isErrorName}
-        />
+        <RN.View style={{marginHorizontal: 4}}>
+          <Input
+            value={name}
+            onChange={onChangeValueName}
+            placeholder="Name"
+            maxLength={countNameSymbols.maxSymbols}
+            isErrorBorder={isErrorName}
+          />
+        </RN.View>
       </RN.View>
     );
   };
@@ -394,14 +402,16 @@ const CreateEvent = () => {
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
           Describe your community and add the necessary contact information
         </RN.Text>
-        <Input
-          multiLine
-          value={description}
-          onChange={onChangeValueDescription}
-          placeholder="Description"
-          maxLength={countDescSymbols.maxSymbols}
-          isErrorBorder={isDescriptionError}
-        />
+        <RN.View style={{marginHorizontal: 4}}>
+          <Input
+            multiLine
+            value={description}
+            onChange={onChangeValueDescription}
+            placeholder="Description"
+            maxLength={countDescSymbols.maxSymbols}
+            isErrorBorder={isDescriptionError}
+          />
+        </RN.View>
       </RN.View>
     );
   };
@@ -518,7 +528,45 @@ const CreateEvent = () => {
       </RN.View>
     );
   };
-  // console.log('communityData', communityData);
+  const renderPriceEvent = () => {
+    return (
+      <RN.View>
+        <RN.View style={styles.nameTitle}>
+          <RN.Text style={styles.title}>Set Event Price</RN.Text>
+        </RN.View>
+        <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
+          If event is free leave 0
+        </RN.Text>
+        <RN.View
+          style={{
+            alignItems: 'flex-start',
+            marginHorizontal: 18,
+            flexDirection: 'row',
+          }}>
+          <RN.TextInput
+            style={styles.inputPrice}
+            value={price}
+            maxLength={10}
+            onChangeText={value => setPrice(Number(value))}
+            placeholderTextColor={colors.darkGray}
+            placeholder="0"
+            keyboardType={'numeric'}
+            onFocus={() => setPrice(0)}
+          />
+          <RN.Text
+            style={{
+              right: 46,
+              top: 18,
+              fontSize: 16,
+              lineHeight: 22.4,
+              color: colors.textPrimary,
+            }}>
+            USD
+          </RN.Text>
+        </RN.View>
+      </RN.View>
+    );
+  };
   return (
     <>
       {renderHeader()}
@@ -538,6 +586,7 @@ const CreateEvent = () => {
             {renderChooseCategory()}
             {renderDescription()}
             {renderEventDates()}
+            {renderPriceEvent()}
             {renderChooseImage()}
             <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
             <RN.TouchableOpacity
@@ -631,6 +680,23 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
     paddingTop: 24,
   },
+  inputPrice: {
+    borderWidth: 1,
+    borderColor: colors.gray,
+    padding: 16,
+    color: colors.textPrimary,
+    textAlign: 'left',
+    borderRadius: 8,
+    backgroundColor: colors.lightGray,
+    fontSize: 16,
+    lineHeight: 20.4,
+    fontWeight: '400',
+    // paddingLeft: 46,
+    letterSpacing: 0.2,
+    marginBottom: 24,
+    justifyContent: 'center',
+    minWidth: SCREEN_WIDTH / 2,
+  },
   selectLocationBtn: {
     marginHorizontal: 20,
     marginVertical: 14,
@@ -699,7 +765,7 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: statusBarHeight,
-    paddingBottom: 8,
+    paddingBottom: 14,
     backgroundColor: colors.white,
   },
   createWrapper: {

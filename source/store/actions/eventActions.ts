@@ -22,6 +22,11 @@ export type eventParams = {
   eventById?: null;
   errorsById?: null;
   managingEvents?: string[];
+  price?: number;
+  limit?: number;
+  offset?: number;
+  prevLimit?: number;
+  prevOffset?: number;
 };
 
 export type followingParams = {
@@ -42,6 +47,7 @@ export const createEventRequestAction = ({
   eventDate,
   typeEvent,
   communityUid,
+  price,
 }: eventParams) => ({
   type: EVENT.EVENT_CREATE_REQUEST,
   payload: {
@@ -56,6 +62,7 @@ export const createEventRequestAction = ({
     eventDate: eventDate,
     typeEvent: typeEvent,
     communityUid: communityUid,
+    price: price,
   },
 });
 export const createEventSuccessAction = () => ({
@@ -65,13 +72,23 @@ export const createEventFailAction = () => ({
   type: EVENT.EVENT_CREATE_FAIL,
 });
 
-export const getEventsRequestAction = () => ({
+export const getEventsRequestAction = ({offset, limit}: eventParams) => ({
   type: EVENT.GET_EVENTS_REQUEST,
+  payload: {
+    limit: limit,
+    offset: offset,
+  },
 });
-export const getEventsSuccessAction = ({eventsList}: eventParams) => ({
+export const getEventsSuccessAction = ({
+  eventsList,
+  prevOffset,
+  prevLimit,
+}: eventParams) => ({
   type: EVENT.GET_EVENTS_SUCCESS,
   payload: {
     eventsList: eventsList,
+    prevOffset: prevOffset,
+    prevLimit: prevLimit,
   },
 });
 export const getEventsFailAction = () => ({
@@ -97,7 +114,7 @@ export const getEventByIdCommunitySuccessAction = ({
 export const getEventByIdCommunityFailAction = () => ({
   type: EVENT.GET_EVENT_BY_COMMUNITY_FAIL,
 });
-export const startAttendEventRequestAction = ({eventUid}: followingParams) => ({
+export const startAttendEventRequestAction = ({eventUid}: eventParams) => ({
   type: EVENT.START_ATTEND_EVENT_REQUEST,
   payload: {
     eventUid: eventUid,
@@ -132,6 +149,7 @@ export const changeInformationEventRequestAction = ({
   place,
   typeEvent,
   eventUid,
+  price,
 }: eventParams) => ({
   type: EVENT.CHANGE_INFORMATION_EVENT_REQUEST,
   payload: {
@@ -145,6 +163,7 @@ export const changeInformationEventRequestAction = ({
     place: place,
     typeEvent: typeEvent,
     eventUid: eventUid,
+    price: price,
   },
 });
 export const changeInformationEventSuccessAction = () => ({
@@ -178,6 +197,9 @@ export const getEventByIdFailAction = ({errorsById}: eventParams) => ({
   },
 });
 
+export const getEventByIdClearAction = () => ({
+  type: EVENT.GET_EVENT_BY_ID_CLEAR,
+});
 export const getManagingEventsFailAction = () => ({
   type: EVENT.GET_MANAGING_EVENTS_FAIL,
 });
@@ -190,5 +212,25 @@ export const getManagingEventsSuccessAction = ({
   type: EVENT.GET_MANAGING_EVENTS_SUCCESS,
   payload: {
     managingEvents: managingEvents,
+  },
+});
+export const removeEventSuccessAction = () => ({
+  type: EVENT.REMOVE_EVENT_SUCCESS,
+});
+export const removeEventFailAction = () => ({
+  type: EVENT.REMOVE_EVENTY_FAIL,
+});
+export const removeEventRequestAction = ({eventUid}: eventParams) => ({
+  type: EVENT.REMOVE_EVENT_REQUEST,
+  payload: {
+    uid: eventUid,
+  },
+});
+
+export const setLimit = ({limit, offset}: eventParams) => ({
+  type: EVENT.SET_LIMIT,
+  payload: {
+    limit: limit,
+    offset: offset,
   },
 });

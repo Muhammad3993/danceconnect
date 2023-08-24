@@ -49,7 +49,7 @@ const ManagingCommunities = () => {
     );
   };
   const renderItemCommunity = useCallback((item: any) => {
-    return <CommunityCard item={item} key={item.index + item.item.id} />;
+    return <CommunityCard item={item} key={item.item.id} isProfileScreen />;
   }, []);
   return (
     <RN.SafeAreaView style={styles.container}>

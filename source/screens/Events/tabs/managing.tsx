@@ -145,7 +145,7 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
     }
   };
   const renderItem = (item: any) => {
-    return <EventCard item={item?.item} key={item.index} />;
+    return <EventCard item={item?.item} key={item.item.id} />;
   };
   const renderFilters = () => {
     return (
@@ -182,6 +182,11 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
         showsVerticalScrollIndicator={false}
         data={sotrtBy(events, 'eventDate.startDate')}
         renderItem={renderItem}
+        onRefresh={() => {
+          onClear();
+          getManagingEvents();
+        }}
+        refreshing={isLoadManaging}
         ListHeaderComponent={renderFilters()}
         keyExtractor={(item, _index) => `${item}${_index}`}
         ListEmptyComponent={renderEmpty()}

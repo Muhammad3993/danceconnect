@@ -8,28 +8,37 @@ import {SCREEN_HEIGHT, isAndroid} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import EventCard from '../components/eventCard';
 import EmptyContainer from '../components/emptyCommunitiesMain';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
-import database from '@react-native-firebase/database';
 import VerticalCard from '../components/verticalEventCard';
 import moment from 'moment';
 import useAppStateHook from '../hooks/useAppState';
 import {useCommunities} from '../hooks/useCommunitites';
+import socket from '../api/sockets';
 
 const HomeScreen = () => {
   const {userImgUrl, individualStyles, getCurrentUser, userCommunities} =
     useProfile();
+  const isFocused = useIsFocused();
   const {userUid} = useRegistration();
   const navigation = useNavigation();
   const {eventTypes, getDanceStyles} = useAppStateHook();
-  const {getCommunitites} = useCommunities();
+  const {communitiesData} = useCommunities();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const {attendEventWithUserUid, loadingEvents, getEvents, eventList} =
-    useEvents();
-  const [events, setEvents] = useState(
-    !loadingEvents && attendEventWithUserUid,
-  );
+  const {
+    attendEventWithUserUid,
+    getManagingEvents,
+    getEvents,
+    eventList,
+    setSocketEvents,
+    // setDefaultEventLimit,
+  } = useEvents();
+  const [events, setEvents] = useState<string[]>(attendEventWithUserUid);
 
   const [maybeEvents, setMaybeEvents] = useState([]);
   useEffect(() => {
@@ -37,141 +46,79 @@ const HomeScreen = () => {
   }, [eventTypes?.length]);
 
   useEffect(() => {
-    getDanceStyles();
-    setCurrentTab('All');
-    // getCommunitites();
-    // getCurrentUser();
-    setEvents(
-      attendEventWithUserUid?.concat(
-        eventList?.filter((event: {communityUid: string}) =>
-          userCommunities?.includes(event?.communityUid),
-        ),
-      ),
-    );
+    socket.once('subscribed_event', socket_data => {
+      // console.log('subscribed_event socket_data.events?.length', socket_data.events?.length);
+      if (socket_data?.events?.length) {
+        setSocketEvents(socket_data?.events);
+      }
+    });
+    // console.log('eventData.attendedPeople.length', eventData.attendedPeople.length);
   }, []);
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getEvents();
-      setEvents(
-        attendEventWithUserUid?.concat(
-          eventList?.filter((event: {communityUid: string}) =>
-            userCommunities?.includes(event?.communityUid),
-          ),
-        ),
+    getDanceStyles();
+    getEvents();
+    getManagingEvents();
+  }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      const followCommunities = communitiesData
+        ?.map(community => community)
+        .filter(
+          item =>
+            item.followers?.length > 0 &&
+            item.followers?.find(user => user.userUid === userUid),
+        )
+        ?.map(c => c.id);
+      const communitiesIdsIncludesForEvents = eventList.filter(ev =>
+        followCommunities.includes(ev.communityUid),
       );
-    });
-    return unsubscribe;
-  },[]);
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const onValueChange = database()
-  //       .ref('events/')
-  //       .on('value', snapshot => {
-  //         const array = Object.values(snapshot.val());
-  //         const attendedPeople = array?.filter(
-  //           i =>
-  //             i?.attendedPeople?.find(
-  //               (user: any) => user.userUid === userUid,
-  //             ) &&
-  //             moment(i.eventDate?.startDate).format('YYYY-MM-DD') >
-  //               moment(new Date()).format('YYYY-MM-DD'),
-  //         );
-  //         setEvents(attendedPeople);
-  //       });
-  //     RN.LayoutAnimation.configureNext(
-  //       RN.LayoutAnimation.Presets.easeInEaseOut,
-  //     );
-
-  //     return () => database().ref('events/').off('value', onValueChange);
-  //   }, []),
-  // );
-  // console.log(individualStyles);
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const onValueChange = database()
-  //       .ref(`users/${userUid}/goingEvent`)
-  //       .on('value', snapshot => {
-  //         if (snapshot?.val() !== null) {
-  //           const array = Object.values(snapshot?.val());
-  //           setMaybeEvents(
-  //             eventList?.filter(
-  //               ev =>
-  //                 !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
-  //             ),
-  //           );
-  //         }
-  //       });
-  //     RN.LayoutAnimation.configureNext(
-  //       RN.LayoutAnimation.Presets.easeInEaseOut,
-  //     );
-
-  //     return () => database().ref('events/').off('value', onValueChange);
-  //   }, [eventList, userCommunities, userUid]),
-  // );
-  // console.log(individualStyles);
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const onValueChange = database()
-  //       .ref(`users/${userUid}/goingEvent`)
-  //       .on('value', snapshot => {
-  //         if (snapshot?.val() !== null) {
-  //           const array = Object.values(snapshot?.val());
-  //           setMaybeEvents(
-  //             eventList?.filter(
-  //               ev =>
-  //                 !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
-  //             ),
-  //           );
-  //         } else {
-  //           const ev = eventList?.filter(
-  //             event =>
-  //               event?.categories?.some(st => individualStyles?.includes(st)) &&
-  //               event?.creatorUid !== userUid,
-  //           );
-  //           setMaybeEvents(ev);
-  //         }
-  //       });
-  //     RN.LayoutAnimation.configureNext(
-  //       RN.LayoutAnimation.Presets.easeInEaseOut,
-  //     );
-
-  //     return () =>
-  //       database()
-  //         .ref(`users/${userUid}/goingEvent`)
-  //         .off('value', onValueChange);
-  //   }, [eventList, events, individualStyles, userUid]),
-  // );
+      // if (communitiesIdsIncludesForEvents?.length > 0) {
+      //   setMaybeEvents(communitiesIdsIncludesForEvents);
+      // }
+      setEvents([
+        ...attendEventWithUserUid,
+        ...communitiesIdsIncludesForEvents,
+      ]);
+      // console.log(
+      //   'communitiesIdsIncludesForEvents',
+      //   attendEventWithUserUid,
+      // );
+    }
+  }, [isFocused, eventList]);
 
   const goToCommunities = () => navigation.navigate('Communities');
   useEffect(() => {
+    onPressTab('All');
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   }, []);
-  const onPressTab = (value: string) => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    setCurrentTab(value);
-    if (value === 'All') {
-      getEvents();
-      setEvents(
-        attendEventWithUserUid?.concat(
-          eventList?.filter((event: {communityUid: string}) =>
-            userCommunities?.includes(event?.communityUid),
-          ),
-        ),
+
+  const onPressTab = useCallback(
+    (value: string) => {
+      RN.LayoutAnimation.configureNext(
+        RN.LayoutAnimation.Presets.easeInEaseOut,
       );
-    } else {
-      setEvents(
-        attendEventWithUserUid
-          ?.filter((event: any) => event?.typeEvent?.includes(value))
-          .concat(
-            eventList?.filter(
-              (event: {communityUid: string}) =>
-                userCommunities?.includes(event?.communityUid) &&
-                event?.typeEvent?.includes(value),
-            ),
-          ),
-      );
+      setCurrentTab(value);
+      // console.log('value', attendEventWithUserUid?.filter(event => event?.typeEvent === value));
+      if (value === 'All') {
+        setEvents(attendEventWithUserUid);
+      } else {
+        setEvents(
+          attendEventWithUserUid?.filter(event => event?.typeEvent === value),
+        );
+      }
+    },
+    [attendEventWithUserUid],
+  );
+  useEffect(() => {
+    if (isFocused) {
+      onPressTab('All');
     }
-  };
+    if (currentTab !== 'All') {
+      console.log('currentTab', currentTab);
+      onPressTab(currentTab);
+    }
+  }, [isFocused, currentTab]);
   const renderHeader = () => {
     return (
       <>
@@ -224,7 +171,7 @@ const HomeScreen = () => {
     );
   };
   const renderItem = (item: any) => {
-    return <EventCard item={item?.item} key={item.index} />;
+    return <EventCard item={item?.item} key={item.item.id} />;
   };
   const renderEmpty = () => {
     return <EmptyContainer onPressButton={goToCommunities} />;

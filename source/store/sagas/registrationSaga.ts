@@ -104,7 +104,7 @@ function* authorizationEmail(action: any) {
     // const userCredentials = yield call(logInWithEmail, email, password);
     // const {uid} = userCredentials?._user;
     // yield put(getCommunitiesRequestAction());
-    yield put(getEventsRequestAction());
+    yield put(getEventsRequestAction({limit: 1, offset: 0}));
     // const userData = yield call(getUserData, uid);
     // console.log('authorizationEmail', userData);
     // const exists = yield call(userExists, uid);
@@ -318,7 +318,7 @@ function* authWthApple() {
     // );
     // yield put(getUserDataRequestAction());
     // yield put(getCommunitiesRequestAction());
-    yield put(getEventsRequestAction());
+    yield put(getEventsRequestAction({limit: 1, offset: 0}));
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('authWthApple error', error);

@@ -3,7 +3,7 @@ import * as RN from 'react-native';
 import colors from '../utils/colors';
 
 type props = {
-  onPressButton: () => {};
+  onPressButton: () => void;
 };
 const EmptyContainer = ({onPressButton}: props) => {
   return (

@@ -4,6 +4,7 @@ import {Modalize} from 'react-native-modalize';
 import Search from './search';
 import {searchPlacesInEvent} from '../api/cities';
 import colors from '../utils/colors';
+import useAppStateHook from '../hooks/useAppState';
 
 interface city {
   structured_formatting: {
@@ -27,11 +28,31 @@ const FindPlace = ({
   const [searchValue, setSearchValue] = useState<string>(selectedPlace ?? '');
   const [findPlace, setFindPlices] = useState([]);
   const handleStyle = {height: 3, width: 38};
+  const {countries} = useAppStateHook();
+  const [selectCountry, setSelectedCountry] = useState();
 
   // console.log(crntCity);
   useEffect(() => {
     modalizeRef?.current?.open();
   }, []);
+  // useEffect(() => {
+  //   countries?.map(item => {
+  //     console.log(
+  //       'item?.country?.startsWith(crntCity)',
+  //       item?.country,
+  //       crntCity,
+  //       crntCity.split(',')[1],
+  //     );
+  //     if (crntCity?.split(',')[0] === 'Singapore') {
+  //       setSelectedCountry(item);
+  //     } else {
+  //       setSelectedCountry(crntCity);
+  //     }
+  //     // if (item?.country === crntCity?.split(',')[0]) {
+  //     //   setSelectedCountry(item);
+  //     // }
+  //   });
+  // }, [countries, crntCity]);
 
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
@@ -40,9 +61,14 @@ const FindPlace = ({
       country = 'SG';
     } else if (crntCity === 'Indonesia, Bali') {
       country = 'IDN';
+    } else if (crntCity === 'Indonesia, Jakarta') {
+      country = 'IDN';
+    } else if (crntCity?.endsWith('Russia')) {
+      country = 'RU';
     } else {
       country = 'USA';
     }
+    console.log('onChangeTextSearch', crntCity);
     const city = crntCity?.structured_formatting?.main_text ?? crntCity;
     searchPlacesInEvent(city, searchValue, country).then((places: any) => {
       // console.log(places);
@@ -108,11 +134,14 @@ const FindPlace = ({
                   color: colors.textPrimary,
                   lineHeight: 22.4,
                 }}>
-                {crntCity === 'Singapore, Singapore'
-                  ? item?.structured_formatting?.main_text +
-                    ', ' +
-                    item.terms[item.terms.length - 1].value
-                  : item?.description}
+                {item?.structured_formatting?.main_text +
+                  ', ' +
+                  item.terms[item.terms.length - 2].value}
+                {/* {selectCountry?.countryCode !== 'SG' && (
+                  <RN.Text style={{fontSize: 12, color: colors.darkGray}}>
+                    {`\n${item?.structured_formatting?.secondary_text}`}
+                  </RN.Text>
+                )} */}
               </RN.Text>
             </RN.TouchableOpacity>
           );

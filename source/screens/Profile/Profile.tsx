@@ -15,7 +15,7 @@ import useAppStateHook from '../../hooks/useAppState';
 import {removeAccount} from '../../api/authSocial';
 import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
-import {deleteUser} from '../../api/serverRequests';
+import {deleteUser, getTickets} from '../../api/serverRequests';
 
 const ProfileScreen = () => {
   const {logout} = useRegistration();
@@ -42,6 +42,7 @@ const ProfileScreen = () => {
   const changePassRefModalize = useRef<Modalize>(null);
   const successChangePassRefModalize = useRef<Modalize>(null);
   const deleteAccountModazile = useRef<Modalize>(null);
+  const [countTickets, setCountTickets] = useState<number>(0);
 
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener('focus', () => {
@@ -89,6 +90,9 @@ const ProfileScreen = () => {
   const onPressCommunities = () => {
     navigation.navigate('ManagingCommunities');
   };
+  const onPressTickets = () => {
+    navigation.navigate('Tickets');
+  };
   const onPressDanceStyles = () => {
     navigation.navigate('ProfileDanceStyles');
   };
@@ -112,6 +116,11 @@ const ProfileScreen = () => {
   };
 
   useEffect(() => {
+    getTickets().then(ticketsList => {
+      setCountTickets(ticketsList.paidEvents.flat().length);
+      // console.log('tick', ticketsList);
+      // setTickets(ticketsList.paidEvents.flat());
+    });
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
@@ -161,6 +170,7 @@ const ProfileScreen = () => {
                         <RN.Text
                           style={{
                             color: colors.darkGray,
+                            fontWeight: '400',
                           }}>{` (${managingCommunity?.length})`}</RN.Text>
                       )}
                     </>
@@ -184,7 +194,30 @@ const ProfileScreen = () => {
                     <RN.Text
                       style={{
                         color: colors.darkGray,
+                        fontWeight: '400',
                       }}>{` (${currentUser?.individualStyles?.length})`}</RN.Text>
+                  )}
+                </RN.Text>
+              </RN.View>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+            </RN.View>
+          </RN.TouchableOpacity>
+          <RN.TouchableOpacity
+            style={styles.listItemWrapper}
+            onPress={onPressTickets}>
+            <RN.View style={{flexDirection: 'row'}}>
+              <RN.Image source={{uri: 'ticketoutline'}} style={styles.icon} />
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.listItemText}>
+                  My tickets
+                  {countTickets !== 0 && (
+                    <RN.Text
+                      style={{
+                        color: colors.darkGray,
+                        fontWeight: '400',
+                      }}>{` (${countTickets})`}</RN.Text>
                   )}
                 </RN.Text>
               </RN.View>
@@ -210,7 +243,12 @@ const ProfileScreen = () => {
                   {currentUser?.userCountry}
                 </RN.Text>
               </RN.View>
-              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Image
+                  source={{uri: 'arrowright'}}
+                  style={styles.iconRight}
+                />
+              </RN.View>
             </RN.View>
           </RN.TouchableOpacity>
           {isSocialAuth && <RN.View style={{marginTop: -12}} />}
@@ -617,6 +655,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 25.2,
     paddingLeft: 20,
     color: colors.textPrimary,
+    fontWeight: '500',
   },
   listItemTextLogout: {
     fontSize: 18,
@@ -631,8 +670,8 @@ const styles = RN.StyleSheet.create({
     color: colors.darkGray,
   },
   iconRight: {
-    height: 20,
-    width: 20,
+    height: 14,
+    width: 14,
     tintColor: colors.textPrimary,
   },
   logoutIcon: {
@@ -643,7 +682,7 @@ const styles = RN.StyleSheet.create({
   icon: {
     height: 28,
     width: 28,
-    tintColor: colors.textPrimary,
+    tintColor: '#424242',
   },
 });
 

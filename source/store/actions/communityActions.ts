@@ -143,6 +143,9 @@ export const getCommunityByIdFailAction = ({error}: any) => ({
   },
 });
 
+export const getCommunityByIdClearAction = () => ({
+  type: COMMUNITIES.GET_COMMUNITY_BY_ID_CLEAR,
+});
 export const changeInformationCommunityRequestAction = ({
   name,
   description,
@@ -177,7 +180,9 @@ export const changeInformationValueAction = () => ({
   type: COMMUNITIES.CHANGE_INFORMATION_VALUE,
 });
 
-export const removeCommunityRequestAction = ({communityUid}: communityParams) => ({
+export const removeCommunityRequestAction = ({
+  communityUid,
+}: communityParams) => ({
   type: COMMUNITIES.REMOVE_COMMUNITY_REQUEST,
   payload: {
     uid: communityUid,

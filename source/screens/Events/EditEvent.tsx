@@ -42,6 +42,7 @@ const EditEvent = () => {
     location,
     place,
     typeEvent,
+    price,
   } = routeParams?.params;
   useEffect(() => {
     if (isSaveChanges) {
@@ -128,7 +129,7 @@ const EditEvent = () => {
     } else {
       changeInformation({
         name: title,
-        description: description,
+        description: desc,
         // country: countryEdit,
         location: locationEdt,
         categories: addedStyles,
@@ -137,6 +138,7 @@ const EditEvent = () => {
         place: selectedPlace,
         eventUid: routeParams?.params?._id,
         typeEvent: typeEventEdit,
+        price: price,
       });
       setTimeout(() => {
         // goBackBtn();

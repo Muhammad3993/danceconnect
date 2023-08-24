@@ -15,6 +15,7 @@ import {
   createCommunityRequestAction,
   getCommunitiesRequestAction,
   getCommunitiesSuccessAction,
+  getCommunityByIdClearAction,
   getManagingCommunitiesRequestAction,
   startFollowedCommunityRequestAction,
 } from '../store/actions/communityActions';
@@ -95,6 +96,9 @@ export const useCommunities = () => {
     return followingCommunities?.includes(communityUid);
   };
 
+  const onClearCommunityDataById = () => {
+    dispatch(getCommunityByIdClearAction());
+  };
   return {
     communitiesData,
     isLoading,
@@ -111,5 +115,6 @@ export const useCommunities = () => {
     isLoadManaging,
     getManagingCommunities,
     setSocketCommunities,
+    onClearCommunityDataById,
   };
 };

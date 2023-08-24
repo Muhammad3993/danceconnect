@@ -10,7 +10,7 @@ type props = {
 const CreateCommunityButton = ({onPress}: props) => {
   const navigation = useNavigation();
   const onPressBtn = () => {
-    navigation.navigate('Communities', {screen: 'CreateCommunity'});
+    navigation.navigate('CreateCommunity');
   };
   return (
     <RN.TouchableOpacity

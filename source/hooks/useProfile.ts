@@ -18,7 +18,7 @@ import {
   getUserByIdRequestAction,
   getUserDataRequestAction,
 } from '../store/actions/profileActions';
-import { selectorSocialProvider } from '../store/selectors/registrationSelector';
+import {selectorSocialProvider} from '../store/selectors/registrationSelector';
 
 export const useProfile = () => {
   const dispatch = useDispatch();

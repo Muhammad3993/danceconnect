@@ -29,6 +29,11 @@ export type eventAction = {
     errorsById?: null;
     loadingManaging?: boolean;
     managingEvents?: string[];
+    price?: string;
+    offset: number;
+    limit: number;
+    prevLimit: number;
+    prevOffset: number;
   };
 };
 
@@ -57,18 +62,28 @@ export default (state = eventsInitialState, action: eventAction) => {
         ...state,
         eventsList: [],
         loadingEvents: true,
+        limit: action.payload?.limit,
+        offset: action.payload?.offset,
       };
     case EVENT.GET_EVENTS_SUCCESS:
       return {
         ...state,
         eventsList: action.payload?.eventsList,
         loadingEvents: false,
+        prevLimit: action.payload?.prevLimit,
+        prevOffset: action.payload?.prevOffset,
       };
     case EVENT.GET_EVENTS_FAIL:
       return {
         ...state,
         eventsList: [],
         loadingEvents: false,
+      };
+    case EVENT.SET_LIMIT:
+      return {
+        ...state,
+        limit: action?.payload?.limit,
+        offset: action.payload?.offset,
       };
     case EVENT.GET_EVENT_BY_COMMUNITY_REQUEST:
       return {
@@ -136,6 +151,7 @@ export default (state = eventsInitialState, action: eventAction) => {
         eventDate: action?.payload?.eventDate,
         place: action?.payload?.place,
         typeEvent: action?.payload?.typeEvent,
+        price: action?.payload?.price,
         saveChanges: false,
       };
     case EVENT.CHANGE_INFORMATION_EVENT_SUCCESS:
@@ -175,6 +191,11 @@ export default (state = eventsInitialState, action: eventAction) => {
         eventById: null,
         loadingById: false,
         errorsById: action.payload?.errorsById,
+      };
+    case EVENT.GET_EVENT_BY_ID_CLEAR:
+      return {
+        ...state,
+        eventById: null,
       };
     case EVENT.GET_MANAGING_EVENTS_REQUEST:
       return {

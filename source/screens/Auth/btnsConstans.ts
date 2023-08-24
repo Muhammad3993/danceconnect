@@ -3,6 +3,7 @@ import {
   onAppleButtonPress,
   // onFacebookButtonPress,
 } from '../../api/authSocial';
+import {isAndroid} from '../../utils/constants';
 
 export const authButtons = [
   {
@@ -15,7 +16,7 @@ export const authButtons = [
     title: 'Continue with Apple',
     icon: 'apple',
     onPress: () => onAppleButtonPress(),
-    isAvailable: true,
+    isAvailable: isAndroid ? false : true,
   },
   // {
   //   key: 2,
