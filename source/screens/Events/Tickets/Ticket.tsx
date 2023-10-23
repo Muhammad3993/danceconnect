@@ -1,19 +1,22 @@
-import React from 'react';
+import React, {useState} from 'react';
 import * as RN from 'react-native';
-import colors from '../../utils/colors';
+import colors from '../../../utils/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {statusBarHeight} from '../../utils/constants';
+import {statusBarHeight} from '../../../utils/constants';
 import moment from 'moment';
 // import {getTicketById} from '../../api/serverRequests';
 
 const TicketScreen = () => {
   const routeProps = useRoute();
-  const {event, user, id} = routeProps.params;
+  const {event, user, name} = routeProps.params;
   // console.log('ticket', routeProps.params);
-  // useEffect(() => {
-  //   getTicketById(id).then(res => console.log('res'));
-  // }, []);
   const navigation = useNavigation();
+  // const [tickets, setTickets] = useState(
+  //   new Array(routeProps.params?.quantity).fill(routeProps.params),
+  // );
+  const tickets = new Array(routeProps.params?.quantity).fill(
+    routeProps.params,
+  );
   const renderHeader = () => {
     return (
       <RN.TouchableOpacity
@@ -26,26 +29,33 @@ const TicketScreen = () => {
   return (
     <RN.View style={styles.container}>
       {renderHeader()}
-      <RN.ScrollView>
-        <RN.View style={styles.eventContainer}>
-          <RN.Text style={styles.smallText}>Event</RN.Text>
-          <RN.Text style={styles.meduimText}>{event?.title}</RN.Text>
-          <RN.Text style={styles.smallText}>Date and Hour</RN.Text>
-          <RN.Text style={styles.meduimText}>
-            {`${moment(event?.eventDate?.startDate).format('dddd')}, ${moment(
-              event?.eventDate?.startDate,
-            ).format('MMM D')}${
-              event?.eventDate?.endDate
-                ? ' - ' + moment(event?.eventDate?.endDate).format('MMM D')
-                : ''
-            } • ${moment(event?.eventDate?.time).format('HH:mm')}`}
-          </RN.Text>
-          <RN.Text style={styles.smallText}>Event Location</RN.Text>
-          <RN.Text style={styles.meduimText}>{event?.place}</RN.Text>
-          <RN.Text style={styles.smallText}>Event Organizer</RN.Text>
-          <RN.Text style={styles.meduimText}>{event?.creator}</RN.Text>
-        </RN.View>
-        <RN.View style={styles.eventContainer}>
+      <RN.ScrollView style={{flex: 1}}>
+        {tickets.map((item: any) => {
+          return (
+            <RN.View style={styles.eventContainer}>
+              <RN.Text style={styles.smallText}>Event</RN.Text>
+              <RN.Text style={styles.meduimText}>{event?.title}</RN.Text>
+              <RN.Text style={styles.smallText}>Date and Hour</RN.Text>
+              <RN.Text style={styles.meduimText}>
+                {`${moment(event?.eventDate?.startDate).format(
+                  'dddd',
+                )}, ${moment(event?.eventDate?.startDate).format('MMM D')}${
+                  event?.eventDate?.endDate
+                    ? ' - ' + moment(event?.eventDate?.endDate).format('MMM D')
+                    : ''
+                } • ${moment(event?.eventDate?.time).format('HH:mm')}`}
+              </RN.Text>
+              <RN.Text style={styles.smallText}>Event Location</RN.Text>
+              <RN.Text style={styles.meduimText}>{event?.place}</RN.Text>
+              <RN.Text style={styles.smallText}>Event Organizer</RN.Text>
+              <RN.Text style={styles.meduimText}>
+                {event?.creator?.name}
+              </RN.Text>
+            </RN.View>
+          );
+        })}
+
+        {/* <RN.View style={styles.eventContainer}>
           <RN.View style={styles.userWrapper}>
             <RN.Text style={styles.smallText}>Full Name</RN.Text>
             <RN.Text style={styles.largeText}>{user?.name}</RN.Text>
@@ -62,7 +72,7 @@ const TicketScreen = () => {
             <RN.Text style={styles.smallText}>Email</RN.Text>
             <RN.Text style={styles.largeText}>{user?.email}</RN.Text>
           </RN.View>
-        </RN.View>
+        </RN.View> */}
       </RN.ScrollView>
     </RN.View>
   );
@@ -119,8 +129,10 @@ const styles = RN.StyleSheet.create({
     width: 28,
   },
   backIconContainer: {
-    padding: 10,
+    paddingHorizontal: 12,
     margin: 12,
+    marginTop: 0,
+    // paddingTop: 2,
   },
 });
 export default TicketScreen;

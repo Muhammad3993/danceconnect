@@ -4,6 +4,7 @@ import profileSaga from './profileSaga';
 import communititesSaga from './communitiesSaga';
 import eventSaga from './eventsSaga';
 import appStateSaga from './appStateSata';
+import ticketsSaga from './ticketsSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -12,5 +13,6 @@ export default function* rootSaga() {
     communititesSaga(),
     eventSaga(),
     appStateSaga(),
+    ticketsSaga(),
   ]);
 }

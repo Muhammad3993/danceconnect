@@ -6,6 +6,10 @@ type appStateParams = {
   danceStyles?: string[];
   eventTypes?: string[];
   countries?: string[];
+  currentCountry?: any;
+
+  isVisible?: boolean;
+  errorMessage?: string;
 };
 
 export const setLoadingAction = ({onLoading}: appStateParams) => ({
@@ -42,5 +46,24 @@ export const setCountriesAction = ({countries}: appStateParams) => ({
   type: APP_STATE.SET_COUNTRIES,
   payload: {
     countries: countries,
+  },
+});
+
+export const setNoticeVisible = ({isVisible}: appStateParams) => ({
+  type: APP_STATE.SET_ERROR_NOTICE_VISIBLE,
+  payload: {
+    isVisible: isVisible,
+  },
+});
+export const setNoticeMessage = ({errorMessage}: appStateParams) => ({
+  type: APP_STATE.SET_ERROR_NOTICE_MESSAGE,
+  payload: {
+    errorMessage: errorMessage,
+  },
+});
+export const setCurrentCountryAction = ({currentCountry}: appStateParams) => ({
+  type: APP_STATE.SET_CURRENT_COUNTRY,
+  payload: {
+    currentCountry: currentCountry,
   },
 });

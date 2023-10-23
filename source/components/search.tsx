@@ -10,6 +10,7 @@ type searchProps = {
   onPressAdd?: () => void;
   visibleAddBtn?: boolean;
   autoFocus?: boolean;
+  onFocus?: () => void;
 };
 const Search = ({
   onPressAdd,
@@ -18,6 +19,7 @@ const Search = ({
   placeholder,
   visibleAddBtn = true,
   autoFocus = false,
+  onFocus,
 }: searchProps) => {
   const addButton = () => {
     return (
@@ -31,12 +33,7 @@ const Search = ({
     );
   };
   const searchIcon = () => {
-    return (
-      <RN.Image
-        source={{uri: 'search'}}
-        style={{height: 20, width: 20, position: 'absolute', left: 6, top: 12}}
-      />
-    );
+    return <RN.Image source={{uri: 'search'}} style={styles.serachIcon} />;
   };
   return (
     <RN.View style={styles.container}>
@@ -47,8 +44,9 @@ const Search = ({
         style={[styles.inputContainer, {width: visibleAddBtn ? '86%' : '100%'}]}
         inlineImageLeft="search"
         inlineImagePadding={20}
-        placeholderTextColor={colors.darkGray}
+        placeholderTextColor={'#BDBDBD'}
         autoFocus={autoFocus}
+        onFocus={onFocus}
       />
       {!isAndroid && searchIcon()}
       {visibleAddBtn && addButton()}
@@ -59,16 +57,24 @@ const Search = ({
 const styles = RN.StyleSheet.create({
   container: {
     flexDirection: 'row',
-    // justifyContent: 'space-evenly',
     margin: 20,
+    marginTop: 10,
     marginHorizontal: 0,
+  },
+  serachIcon: {
+    height: 20,
+    width: 20,
+    position: 'absolute',
+    left: 20,
+    top: 16,
+    tintColor: '#BDBDBD',
   },
   inputContainer: {
     borderWidth: 1,
     borderColor: colors.gray,
     backgroundColor: colors.lightGray,
-    paddingLeft: isAndroid ? 10 : 30,
-    paddingVertical: isAndroid ? 10 : 14,
+    paddingLeft: isAndroid ? 10 : 52,
+    paddingVertical: isAndroid ? 10 : 18,
     color: colors.textPrimary,
     borderRadius: 8,
     tintColor: colors.gray,

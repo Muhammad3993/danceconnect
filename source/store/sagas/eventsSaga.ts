@@ -30,6 +30,9 @@ import {
   getManagingEventsFailAction,
   getManagingEventsRequestAction,
   getManagingEventsSuccessAction,
+  getPersonalEventsFailAction,
+  getPersonalEventsRequestAction,
+  getPersonalEventsSuccessAction,
   removeEventFailAction,
   removeEventSuccessAction,
   startAttendEventFailAction,
@@ -41,57 +44,47 @@ import {
   getEventById,
   getEventsWithMongo,
   getManagingEventsRequest,
-  getUsersImagesFromEvent,
+  getTickets,
+  getTicketByEventUid,
   unSubscribeEvent,
   updateEventById,
 } from '../../api/serverRequests';
-import {setLoadingAction} from '../actions/appStateActions';
+import {
+  setLoadingAction,
+  setNoticeMessage,
+  setNoticeVisible,
+} from '../actions/appStateActions';
 import {selectUserUid} from '../selectors/registrationSelector';
 import socket from '../../api/sockets';
 import {selectCurrentCity} from '../selectors/appStateSelector';
+import {selectEventList} from '../selectors/eventsSelector';
+import moment from 'moment';
 
 function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
   const {limit, offset} = action.payload;
   try {
-    const location: string = yield select(selectCurrentCity);
-    // const userImages = yield call(
-    //   getUsersImagesFromEvent,
-    //   '64e4778b7da3bc0028bc6c6b',
-    // );
-    // console.log('userImages', userImages);
     const {eventsList} = yield call(getEventsWithMongo);
-    // const {eventsList} = yield call(getEventsWithMongo, location);
 
-    // const data: string[] = yield call(getEventsWithMongo);
-    // {
-    //   eventsList: data,
-    //   prevOffset: prevOffset,
-    //   prevLimit: prevLimit,
-    // }
-    // yield put(
-    //   getEventsSuccessAction(
-    //     yield call(getEventsWithMongo, location, limit, offset),
-    //   ),
-    // );
-    // const eventList: string[] = yield select(getEventsList);
-    // const images: string[] = yield eventsList.map(event =>
-    //   call(getUsersImagesFromEvent, event?.id),
-    // );
     const data: string[] = yield all(
-      eventsList.map(event =>
+      eventsList.map((event: any) =>
         (function* () {
           try {
-            const imagesEv: string[] = yield call(
-              getUsersImagesFromEvent,
-              event.id,
-            );
+            const tickets: string[] = yield call(getTickets, event.id);
+            const prices = tickets?.map((ticket: any) => ticket?.price);
+            const minPriceTickets = Math.min(...prices);
+            const maxPriceTickets = Math.max(...prices);
             const eventData = {
               ...event,
-              userImages: Object.values(imagesEv),
+              minPriceTickets:
+                minPriceTickets === Infinity
+                  ? maxPriceTickets > 0
+                    ? 0
+                    : null
+                  : minPriceTickets,
             };
             return eventData;
           } catch (e) {
-            return console.log('errro', e);
+            return console.log('error', e);
           }
         })(),
       ),
@@ -100,6 +93,9 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
     // console.log('userImages', data);
   } catch (error: any) {
     console.log('er', error);
+    yield put(setNoticeVisible({isVisible: true}));
+    // yield put(setNoticeMessage({errorMessage: error?.message}));
+    // setNoticeMessage
     yield put(getEventsFailAction());
   }
 }
@@ -107,22 +103,55 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
 function* getEventForCommunity(action: any) {
   const {eventUid} = action.payload;
 
+  // console.log('eventId', eventUid);
   const requests = eventUid.map((eventId: string) =>
     call(getEventById, eventId),
   );
   try {
-    const events: string[] = yield all(requests);
-    if (events[0] !== null) {
+    if (eventUid?.length > 0) {
+      const events: string[] = yield all(requests);
+      if (events[0] !== null) {
+        const data: string[] = yield all(
+          events.map((event: any) =>
+            (function* () {
+              try {
+                const tickets: string[] = yield call(getTickets, event.id);
+                const prices = tickets?.map(
+                  (ticket: any) => ticket?.price,
+                );
+                const minPriceTickets = Math.min(...prices);
+                // const maxPriceTickets = Math.max(...prices);
+                const eventData = {
+                  ...event,
+                  minPriceTickets:
+                    minPriceTickets === Infinity ? null : minPriceTickets,
+                };
+                return eventData;
+              } catch (e) {
+                return console.log('error', e);
+              }
+            })(),
+          ),
+        );
+        yield put(
+          getEventByIdCommunitySuccessAction({
+            eventsByIdCommunity: data,
+          }),
+        );
+      } else {
+        yield put(getEventByIdCommunityFailAction());
+      }
+    } else {
       yield put(
         getEventByIdCommunitySuccessAction({
-          eventsByIdCommunity: events,
+          eventsByIdCommunity: [],
         }),
       );
-    } else {
-      yield put(getEventByIdCommunityFailAction());
     }
+
     // yield put(getEventsRequestAction({limit: 1, offset: 0}));
   } catch (error) {
+    yield put(setNoticeVisible({isVisible: true}));
     yield put(getEventByIdCommunityFailAction());
     console.log(error);
   }
@@ -136,18 +165,23 @@ function* attendEvent(action: any) {
     // console.log('attendEvent saga', socket);
     socket.emit('follow_event', eventUid, userUid);
     const response = yield call(getEventById, eventUid);
-    const imagesEv = yield call(getUsersImagesFromEvent, response.id);
-    const eventData = {
-      ...response,
-      userImages: Object.values(imagesEv),
-    };
+    // const imagesEv = yield call(getUsersImagesFromEvent, response.id);
+    // const eventData = {
+    //   ...response,
+    //   userImages: Object.values(imagesEv),
+    // };
+    const isFollowed = response.attendedPeople?.findIndex(
+      (i: {userUid: string}) => i.userUid === userUid,
+    );
     yield put(
       getEventByIdSuccessAction({
-        eventById: eventData,
+        eventById: response,
+        isFollowed: isFollowed !== -1 ? true : false,
       }),
     );
     // socket.emit('updated_events');
     yield put(startAttendEventSuccessAction());
+    yield put(getPersonalEventsRequestAction());
   } catch (error) {
     console.log('startFollowingCommunity', error);
     yield put(startAttendEventFailAction());
@@ -156,15 +190,21 @@ function* attendEvent(action: any) {
 function* unAttendEvent(action: any) {
   const {eventUid} = action?.payload;
   try {
+    const userUid: string = yield select(selectUserUid);
     const response = yield call(unSubscribeEvent, eventUid);
     yield put(endAttendEventSuccessAction());
 
+    const isFollowed = response.attendedPeople?.findIndex(
+      (i: {userUid: string}) => i.userUid === userUid,
+    );
     yield put(
       getEventByIdSuccessAction({
         eventById: response,
+        isFollowed: isFollowed !== -1 ? true : false,
       }),
     );
     // yield put(getEventsRequestAction());
+    yield put(getPersonalEventsRequestAction());
   } catch (error) {
     console.log('startFollowingCommunity', error);
     yield put(endAttendEventFailAction());
@@ -184,6 +224,7 @@ function* createEventRequest(action: any) {
     typeEvent,
     communityUid,
     price,
+    type,
   } = action?.payload;
   try {
     const data = {
@@ -199,26 +240,38 @@ function* createEventRequest(action: any) {
       typeEvent: typeEvent,
       communityUid: communityUid,
       price: price,
+      type: type,
     };
     yield put(setLoadingAction({onLoading: true}));
     const response = yield call(createEventWithMongo, data);
-    // console.log('createEventRequest', response);
-    yield put(createEventSuccessAction());
-    yield put(getEventsRequestAction({limit: 1, offset: 0}));
-    navigationRef.current?.dispatch(
-      CommonActions.navigate({
-        name: 'EventScreen',
-        params: {
-          data: response,
-          createEvent: true,
-        },
-      }),
-    );
+    console.log('createEventRequest', response);
+    if (!response) {
+      yield put(setNoticeVisible({isVisible: true}));
+      yield put(
+        setNoticeMessage({
+          errorMessage: 'Server error',
+        }),
+      );
+    } else {
+      yield put(createEventSuccessAction({...response}));
+      yield put(getEventsRequestAction({limit: 1, offset: 0}));
+      // navigationRef.current?.dispatch(
+      //   CommonActions.navigate({
+      //   name: 'EventScreen',
+      //   params: {
+      //     data: response,
+      //     createEvent: true,
+      //   },
+      // }),
+      // );
+    }
+
     // socket.emit('updated_events');
     yield put(getManagingEventsRequestAction());
     yield put(setLoadingAction({onLoading: false}));
     // yield put(getCommunitiesRequestAction());
   } catch (error) {
+    // yield put(setNoticeVisible({isVisible: true}));
     yield put(setLoadingAction({onLoading: false}));
     console.log('createCommunityRequest error', error);
     yield put(createEventFailAction());
@@ -237,6 +290,7 @@ function* changeInformation(action: any) {
     place,
     typeEvent,
     eventUid,
+    type,
   } = action.payload;
   try {
     const data = {
@@ -249,26 +303,39 @@ function* changeInformation(action: any) {
       eventDate: eventDate,
       place: place,
       typeEvent: typeEvent,
+      type: type,
     };
     // console.log('updateEventById', eventUid);
+    yield put(setLoadingAction({onLoading: true}));
     yield call(updateEventById, eventUid, data);
     yield put(changeInformationEventSuccessAction());
     yield put(changeInformationValueAction());
+    yield put(getEventsRequestAction({limit: 1, offset: 0}));
     const response = yield call(getEventById, eventUid);
     // socket.emit('updated_events');
-    yield put(
-      getEventByIdSuccessAction({
-        eventById: response,
-      }),
-    );
-    navigationRef.current?.dispatch(
-      CommonActions.navigate({
-        name: 'EventScreen',
-        params: {
-          data: response,
-        },
-      }),
-    );
+    if (!response) {
+      yield put(setNoticeVisible({isVisible: true}));
+      yield put(
+        setNoticeMessage({
+          errorMessage: 'Server error',
+        }),
+      );
+    } else {
+      yield put(
+        getEventByIdSuccessAction({
+          eventById: response,
+        }),
+      );
+      yield put(setLoadingAction({onLoading: false}));
+      navigationRef.current?.dispatch(
+        CommonActions.navigate({
+          name: 'EventScreen',
+          params: {
+            data: response,
+          },
+        }),
+      );
+    }
   } catch (er) {
     yield put(changeInformationEventFailAction());
   }
@@ -278,16 +345,36 @@ function* getEventByIdRequest(action: any) {
   const {eventUid} = action?.payload;
   try {
     const response = yield call(getEventById, eventUid);
-    const imagesEv = yield call(getUsersImagesFromEvent, response.id);
-    const eventData = {
-      ...response,
-      userImages: Object.values(imagesEv),
-    };
-    yield put(
-      getEventByIdSuccessAction({
-        eventById: eventData,
-      }),
+    // const imagesEv = yield call(getUsersImagesFromEvent, response.id);
+    // const eventData = {
+    //   ...response,
+    //   userImages: Object.values(imagesEv),
+    // };
+    const userUid: string = yield select(selectUserUid);
+
+    const isFollowed = response.attendedPeople?.findIndex(
+      (i: {userUid: string}) => i.userUid === userUid,
     );
+    if (!response) {
+      yield put(setNoticeVisible({isVisible: true}));
+      yield put(
+        setNoticeMessage({
+          errorMessage: 'Server error',
+        }),
+      );
+      navigationRef.current?.dispatch(
+        CommonActions.navigate({
+          name: 'Events',
+        }),
+      );
+    } else {
+      yield put(
+        getEventByIdSuccessAction({
+          eventById: response,
+          isFollowed: isFollowed !== -1 ? true : false,
+        }),
+      );
+    }
   } catch (error) {
     console.log('getEventByIdRequest er', error);
     yield put(getEventByIdFailAction(error));
@@ -297,19 +384,22 @@ function* getEventByIdRequest(action: any) {
 function* getManagingEvents() {
   try {
     const response = yield call(getManagingEventsRequest);
-    const eventsList = Object.values(response?.data);
     const data: string[] = yield all(
-      eventsList.map(event =>
+      response.map((event: any) =>
         (function* () {
           try {
-            const imagesEv = yield call(getUsersImagesFromEvent, event.id);
+            const tickets: string[] = yield call(getTickets, event.id);
+            const prices = tickets?.map((ticket: any) => ticket?.price);
+            const minPriceTickets = Math.min(...prices);
+            // const maxPriceTickets = Math.max(...prices);
             const eventData = {
               ...event,
-              userImages: Object.values(imagesEv),
+              minPriceTickets:
+                minPriceTickets === Infinity ? null : minPriceTickets,
             };
             return eventData;
           } catch (e) {
-            return console.log('errro', e);
+            return console.log('error', e);
           }
         })(),
       ),
@@ -339,9 +429,56 @@ function* removeEventRquest(action: any) {
       }),
     );
     yield put(setLoadingAction({onLoading: false}));
+    yield put(getPersonalEventsRequestAction());
   } catch (error) {
     yield put(setLoadingAction({onLoading: false}));
     yield put(removeEventFailAction());
+  }
+}
+function* getPersonalEvents() {
+  try {
+    const userUid = yield select(selectUserUid);
+    const {eventsList} = yield call(getEventsWithMongo);
+    const personalEvents =
+      eventsList
+        .filter(
+          (event: {attendedPeople: string[]; eventDate: {startDate: Date}}) =>
+            moment(event.eventDate?.startDate).format('YYYY-MM-DD') >=
+              moment(new Date()).format('YYYY-MM-DD') &&
+            event?.attendedPeople?.length > 0 &&
+            event?.attendedPeople?.find(
+              (user: {userUid: string}) => user.userUid === userUid,
+            ),
+        )
+        .map((item: any) => item) ?? [];
+    const data: string[] = yield all(
+      personalEvents.map((event: any) =>
+        (function* () {
+          try {
+            const tickets: string[] = yield call(getTickets, event.id);
+            const prices = tickets?.map((ticket: any) => ticket?.price);
+            const minPriceTickets = Math.min(...prices);
+            // const maxPriceTickets = Math.max(...prices);
+            const eventData = {
+              ...event,
+              minPriceTickets:
+                minPriceTickets === Infinity ? null : minPriceTickets,
+            };
+            return eventData;
+          } catch (e) {
+            return console.log('error', e);
+          }
+        })(),
+      ),
+    );
+    yield put(
+      getPersonalEventsSuccessAction({
+        personalEvents: data,
+      }),
+    );
+  } catch (error) {
+    console.log('getPersonalEvents', error);
+    yield put(getPersonalEventsFailAction());
   }
 }
 function* eventSaga() {
@@ -356,6 +493,7 @@ function* eventSaga() {
   yield takeLatest(EVENT.REMOVE_EVENT_REQUEST, removeEventRquest);
   yield takeLatest(EVENT.GET_MANAGING_EVENTS_REQUEST, getManagingEvents);
   yield takeLatest(EVENT.SET_LIMIT, getEventsRequest);
+  yield takeLatest(EVENT.GET_PERSONAL_EVENTS_REQUEST, getPersonalEvents);
   // yield debounce(1000, AUTHORIZATION_WITH_EMAIL.REQUEST, getEvents);
   // yield debounce(1000, AUTHORIZATION_WITH_GOOGLE.REQUEST, getEvents);
 }

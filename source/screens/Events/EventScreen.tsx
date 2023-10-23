@@ -7,35 +7,24 @@ import moment from 'moment';
 import {Button} from '../../components/Button';
 import useEvents from '../../hooks/useEvents';
 import useRegistration from '../../hooks/useRegistration';
-import {
-  MERCHANT_ID,
-  SCREEN_WIDTH,
-  STRIPE_PUBLIC_KEY,
-  statusBarHeight,
-} from '../../utils/constants';
+import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
 import SkeletonEventScreen from '../../components/skeleton/EventScreen-Skeleton';
 import {useEventById} from '../../hooks/useEventById';
-import {diablePayEvent, getTickets, payEvent} from '../../api/serverRequests';
+import {apiUrl, getTicketByEventUid} from '../../api/serverRequests';
 import socket from '../../api/sockets';
-import {
-  BillingDetails,
-  CardField,
-  PlatformPay,
-  PlatformPayButton,
-  StripeProvider,
-  confirmPayment,
-  confirmPlatformPayPayment,
-} from '@stripe/stripe-react-native';
-import {Modalize} from 'react-native-modalize';
-import {Portal} from 'react-native-portalize';
+import useTickets from '../../hooks/useTickets';
+import FastImage from 'react-native-fast-image';
+import {Animated} from 'react-native';
 
 const EventScreen = () => {
   const routeProps = useRoute();
-  const navigation = useNavigation();
-  const {data, createEvent}: any = routeProps.params;
-  const openPaymentModal = useRef<Modalize>(null);
+  const {data, createEvent, pressBtnAttend}: any = routeProps.params;
+  const linkId = routeProps.params?.id ?? data?.id;
+  const navigation: any = useNavigation();
+  const {ticketsList, getTickets, onLoading} = useTickets();
 
-  const {getEvent, loadingById, eventData, remove} = useEventById(data?.id);
+  const {getEvent, loadingById, eventData, remove, isFollowed} =
+    useEventById(linkId);
   const [openingDescription, setOpeningDescription] = useState(false);
   const {userUid, saveEmail} = useRegistration();
   const {attendEvent, onClearEventDataById} = useEvents();
@@ -44,28 +33,42 @@ const EventScreen = () => {
   const isPassedEvent = eventData?.eventDate?.time < new Date().getTime();
 
   const [loadSubscribe, setLoadSubscribe] = useState(false);
-  const [isFollowed, setIsFollowed] = useState(
-    eventData?.attendedPeople?.find(
-      (user: {userUid: any}) => user?.userUid === userUid,
-    ),
-  );
   const [attendedImgs, setAttendedImgs] = useState([]);
 
   const isAdmin = eventData?.creator?.uid === userUid;
-  const total =
-    (Number(eventData?.price) / 100) * 10 + Number(eventData?.price);
 
-  const [cardDisabled, setCardDisabled] = useState(true);
-  const [paymentError, setPaymentError] = useState('');
-  const [disablePaymentBtn, setDisablePaymentBtn] = useState(false);
-  const [showPaymentBtn, setShowPaymentBtn] = useState(true);
+  const [tickets, setTickers] = useState([]);
 
+  const prices = ticketsList?.map((ticket: any) => ticket?.price);
+  const minPriceTickets = Math.min(...prices);
+  const maxPriceTickets = Math.max(...prices);
+  useEffect(() => {
+    if (eventData && eventData.id) {
+      getTicketByEventUid(eventData?.id).then(res => {
+        setTickers(res);
+      });
+      getTickets(eventData?.id);
+    }
+  }, [eventData, eventData?.id]);
+
+  useEffect(() => {
+    if (pressBtnAttend) {
+      onPressAttend();
+    }
+  }, [pressBtnAttend]);
   useEffect(() => {
     getEvent();
-  }, []);
+    // getTickets(data?.id);
+  }, [linkId]);
   useEffect(() => {
-    setShowPaymentBtn(!isFollowed && total > 0);
-  }, [isFollowed, total]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getTickets(eventData?.id);
+      getTicketByEventUid(eventData?.id).then(res => {
+        setTickers(res);
+      });
+    });
+    return unsubscribe;
+  }, [navigation, eventData?.id]);
 
   const onPressShowText = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -78,165 +81,40 @@ const EventScreen = () => {
 
   useEffect(() => {
     socket.on('subscribed_event', socket_data => {
-      // console.log('currentEvent data', socket_data?.currentEvent?.attendedPeople);
+      // console.log('currentEvent data', socket_data);
       // if (socket_data?.currentEvent) {
       // setDisplayedData(socket_data?.currentEvent);
       RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
       // setAttendedImgs(socket_data?.userImages);
-      setFollowed(socket_data?.currentEvent?.attendedPeople);
-      // setIsFollowed(
-      //   socket_data?.currentEvent?.attendedPeople?.find(
-      //     (user: {userUid: any}) => user.userUid === userUid,
-      //   ),
-      // );
+      // setFollowed(socket_data?.currentEvent?.attendedPeople);
       // // socket.emit('updated_events');
-      // setAttendedImgs(eventData?.userImages);
-      setDisablePaymentBtn(false);
-      // }
+      setAttendedImgs(socket_data?.userImages);
     });
-  }, []);
-  const setFollowed = useCallback(
-    (attendedList: string[]) => {
-      const isFollow = attendedList
-        ?.map(user => user?.userUid)
-        ?.findIndex(id => id === userUid);
-      // setIsFollowed()
-      if (isFollow === 1) {
-        setIsFollowed(true);
-        setLoadSubscribe(false);
-      } else {
-        setIsFollowed(false);
-        setLoadSubscribe(false);
-      }
-      console.log('isFollow', isFollow);
-    },
-    [userUid],
-  );
-  useEffect(() => {
-    setFollowed(data?.attendedPeople);
   }, []);
 
   useEffect(() => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   }, [loadSubscribe]);
 
-  const confirmPaymentByCard = () => {
-    const billingDetails: BillingDetails = {
-      email: saveEmail,
-    };
-    setDisablePaymentBtn(true);
-    socket.connect();
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    // attendEvent(eventData?.id);
-    const amount = Math.floor(total * 100);
-    payEvent(eventData?.id, amount).then(async res => {
-      const {clientSecret} = res;
-      const {paymentIntent, error} = await confirmPayment(clientSecret, {
-        paymentMethodType: 'Card',
-        paymentMethodData: {
-          billingDetails,
-        },
-      });
-      if (error) {
-        console.log('payEvent er', error);
-        diablePayEvent(res?.id).then();
-        RN.LayoutAnimation.configureNext(
-          RN.LayoutAnimation.Presets.easeInEaseOut,
-        );
-        setDisablePaymentBtn(false);
-        setShowPaymentBtn(true);
-        // setLoadSubscribe(false);
-        setPaymentError(error?.localizedMessage);
-      } else {
-        if (paymentIntent?.status === 'Succeeded') {
-          attendEvent(eventData?.id);
-          openPaymentModal.current?.close();
-          setDisablePaymentBtn(false);
-        }
-      }
-    });
-  };
-
-  const onPressApplePayBtn = () => {
-    setDisablePaymentBtn(true);
-    // socket.connect();
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    const amount = Math.floor(total * 100);
-    payEvent(eventData?.id, amount).then(async res => {
-      const {clientSecret} = res;
-      const {error, paymentIntent} = await confirmPlatformPayPayment(
-        clientSecret,
-        {
-          applePay: {
-            cartItems: [
-              {
-                label: eventData?.title,
-                amount: total.toString(),
-                paymentType: PlatformPay.PaymentType.Immediate,
-              },
-              {
-                label: 'Dance Connect',
-                amount: total.toString(),
-                paymentType: PlatformPay.PaymentType.Immediate,
-              },
-            ],
-            merchantCountryCode: 'US',
-            currencyCode: 'USD',
-            requiredBillingContactFields: [
-              PlatformPay.ContactField.EmailAddress,
-            ],
-          },
-        },
-      );
-      if (error) {
-        // console.log('payEvent er', error, res);
-        diablePayEvent(res?.id).then();
-        RN.LayoutAnimation.configureNext(
-          RN.LayoutAnimation.Presets.easeInEaseOut,
-        );
-        // setLoadSubscribe(false);
-        setShowPaymentBtn(true);
-        setDisablePaymentBtn(false);
-      } else {
-        if (paymentIntent?.status === 'Succeeded') {
-          attendEvent(eventData?.id);
-          openPaymentModal.current?.close();
-        }
-        setDisablePaymentBtn(false);
-      }
-    });
-  };
   const onPressAttend = async () => {
     socket.connect();
-    setShowPaymentBtn(false);
-    setLoadSubscribe(true);
-    if (Number(eventData?.price) > 0) {
-      openPaymentModal.current?.open();
+    if (isFollowed) {
+      onPressTicket();
+    } else if (ticketsList.length > 0) {
+      navigation.navigate('BuyTickets', {
+        tickets: ticketsList,
+        eventUid: eventData.id,
+      });
     } else {
       attendEvent(eventData?.id);
     }
   };
 
-  const onPressTicket = (eventUid: string) => {
-    getTickets().then(ticketsList => {
-      const tickets = Object.values(ticketsList).flat();
-      const currentTicket = tickets.find(
-        ticket => ticket?.currentTicket?.eventUid === eventUid,
-      );
-      navigation.navigate('Ticket', currentTicket?.currentTicket);
-    });
+  const onPressTicket = () => {
+    navigation.navigate('Tickets', {eventUid: eventData.id});
   };
   const onPressUnSubscribe = () => {
     setLoadSubscribe(true);
-    // setUnFollowOpen(false);
-    // if (Number(eventData?.price) > 0) {
-    //   refundPayEvent(eventData.id).then(res => {
-    //     setLoadSubscribe(false);
-    //   });
-    //   attendEvent(eventData?.id);
-    // } else {
-    //   attendEvent(eventData?.id);
-    // }
     setUnFollowOpen(v => !v);
     socket.connect();
     attendEvent(eventData?.id);
@@ -248,6 +126,9 @@ const EventScreen = () => {
     setUnFollowOpen(v => !v);
     remove();
   };
+  const onPressBuyTickets = () => {
+    navigation.navigate('BuyTickets', {tickets: ticketsList});
+  };
   const onPressBack = () => {
     onClearEventDataById();
     if (createEvent) {
@@ -256,72 +137,117 @@ const EventScreen = () => {
       navigation.goBack();
     }
   };
-  useMemo(() => {
-    if (paymentError.length > 0) {
-      setTimeout(() => {
-        setPaymentError('');
-      }, 5000);
+  const onPressShare = async () => {
+    try {
+      const result = await RN.Share.share({
+        title: `${eventData.title}`,
+        message: isAndroid
+          ? `https://danceconnect.online/event/${eventData?.id}`
+          : `${eventData.title}`,
+        url: `https://danceconnect.online/event/${eventData?.id}`,
+      });
+      if (result.action === RN.Share.sharedAction) {
+        if (result.activityType) {
+          console.log('resi', result);
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === RN.Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      console.log(error.message);
     }
-  }, [paymentError]);
+  };
+
+  const headerOptionButtons = [
+    {
+      key: 'edit',
+      icon: 'edit',
+      isEnabled: !isPassedEvent && isAdmin,
+      onPress: onPressEditEvent,
+    },
+    {
+      key: 'more',
+      icon: 'more',
+      isEnabled: isAdmin
+        ? ticketsList?.length <= 0
+        : isFollowed
+        ? ticketsList?.length > 0
+          ? false
+          : true
+        : false,
+      onPress: () => setUnFollowOpen(v => !v),
+    },
+    {key: 'share', icon: 'share', isEnabled: true, onPress: onPressShare},
+  ];
+  const opacity = new Animated.Value(0);
+
+  const onScroll = (ev: RN.NativeSyntheticEvent<RN.NativeScrollEvent>) => {
+    const {y} = ev.nativeEvent.contentOffset;
+    Animated.timing(opacity, {
+      toValue: y / 100,
+      duration: 100,
+      useNativeDriver: false,
+    }).start();
+    setUnFollowOpen(false);
+  };
   const header = () => {
     return (
-      <>
+      <RN.View style={styles.headerContainer}>
+        <RN.Animated.View
+          style={[
+            styles.headerAnimateContainer,
+            {backgroundColor: colors.white, opacity},
+          ]}
+        />
         <RN.TouchableOpacity
           style={styles.backIconContainer}
           onPress={onPressBack}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.TouchableOpacity>
-        {!isAdmin && isFollowed && Number(eventData?.price) <= 0 && (
-          <RN.TouchableOpacity
-            style={styles.moreIconContainer}
-            onPress={() => setUnFollowOpen(v => !v)}>
-            <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
-          </RN.TouchableOpacity>
-        )}
-        {isAdmin && !isPassedEvent && (
-          <RN.TouchableOpacity
-            style={[
-              styles.settingIconContainer,
-              {right: Number(eventData?.price) <= 0 ? 48 : 0},
-            ]}
-            onPress={onPressEditEvent}>
-            <RN.Image source={{uri: 'setting'}} style={styles.backIcon} />
-          </RN.TouchableOpacity>
-        )}
-        {isAdmin && Number(eventData?.price) <= 0 && (
-          <RN.TouchableOpacity
-            style={styles.moreIconContainer}
-            onPress={() => setUnFollowOpen(v => !v)}>
-            <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
-          </RN.TouchableOpacity>
-        )}
-        {isAdmin && unFolloweOpen && (
+        <RN.View style={{flexDirection: 'row', zIndex: 2}}>
+          {headerOptionButtons.map(btn => {
+            return (
+              <>
+                {btn?.isEnabled && (
+                  <RN.TouchableOpacity
+                    style={styles.headerIconContainer}
+                    onPress={btn.onPress}>
+                    <RN.Image
+                      source={{uri: btn.icon}}
+                      style={[styles.backIcon]}
+                    />
+                  </RN.TouchableOpacity>
+                )}
+              </>
+            );
+          })}
+        </RN.View>
+        {unFolloweOpen && (
           <RN.TouchableOpacity
             style={styles.unFollowContainer}
-            onPress={onPressRemove}>
+            onPress={
+              isAdmin
+                ? onPressRemove
+                : tickets?.length > 0
+                ? null
+                : onPressUnSubscribe
+            }>
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Image
                 source={{uri: 'closesquare'}}
                 style={{height: 20, width: 20}}
               />
             </RN.View>
-            <RN.Text style={styles.unFollowText}>{'Remove Event'}</RN.Text>
+            <RN.Text style={styles.unFollowText}>
+              {isAdmin ? 'Remove Event' : 'Un-attend'}
+            </RN.Text>
           </RN.TouchableOpacity>
         )}
-        {!isAdmin && isFollowed && unFolloweOpen && (
-          <RN.TouchableOpacity
-            style={styles.unFollowContainer}
-            onPress={onPressUnSubscribe}>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image
-                source={{uri: 'closesquare'}}
-                style={{height: 20, width: 20}}
-              />
-            </RN.View>
-            <RN.Text style={styles.unFollowText}>{'Un-attend'}</RN.Text>
-          </RN.TouchableOpacity>
-        )}
-      </>
+        {/* </RN.Animated.View> */}
+      </RN.View>
     );
   };
   const renderAttendedImgs = () => {
@@ -331,25 +257,24 @@ const EventScreen = () => {
       <RN.View
         style={{
           flexDirection: 'row',
-          marginHorizontal: 24,
+          marginHorizontal: 20,
           paddingVertical: 20,
         }}>
         {attendedImgs?.slice(0, 6)?.map((img, idx) => {
-          // console.log('img', img, idx);
-          const imgUri =
-            typeof img !== 'undefined'
-              ? {uri: 'data:image/png;base64,' + img?.userImage?.base64}
-              : require('../../assets/images/defaultuser.png');
           return (
             <RN.View
               style={{
                 marginLeft: idx !== 0 ? -12 : 0,
                 zIndex: idx !== 0 ? idx : -idx,
               }}>
-              <RN.Image
-                source={imgUri}
-                style={styles.attendPeopleImg}
+              <FastImage
+                source={{
+                  uri: apiUrl + img?.userImage,
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.high,
+                }}
                 defaultSource={require('../../assets/images/defaultuser.png')}
+                style={styles.attendPeopleImg}
               />
             </RN.View>
           );
@@ -423,23 +348,46 @@ const EventScreen = () => {
             eventData?.eventDate?.time,
           )
             .format('Z')
-            ?.replaceAll('0', '')
-            ?.replace(':', '')}`}</RN.Text>
+            ?.replace('0', '')
+            ?.replace(':', '')
+            ?.replace('0', '')
+            ?.replace('0', '')}`}</RN.Text>
         </RN.View>
       </RN.View>
     );
   };
   const onOpenMaps = () => {
-    const url = RN.Platform.select({
-      ios: `maps:0,0?q=${eventData.place}`,
-      android: `geo:0,0?q=${eventData.place}`,
-    });
-
+    const url = isAndroid
+      ? `geo:0,0?q=${eventData.place}`
+      : `maps:0,0?q=${eventData.place}`;
     RN.Linking.openURL(url);
   };
+  // console.log('ticketsList.filter(i => i.items.length > 0)', ticketsList.filter(i => i.items.length > 0));
   const renderOrganizer = () => {
     return (
       <>
+        <RN.View style={styles.organizerContainer}>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <FastImage
+                source={{
+                  uri: apiUrl + eventData?.creator?.userImage,
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.high,
+                }}
+                defaultSource={require('../../assets/images/defaultuser.png')}
+                style={styles.organizerImg}
+              />
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text style={styles.organizerName}>
+                {eventData?.creator?.name}
+              </RN.Text>
+              <RN.Text style={styles.organizer}>Organizer</RN.Text>
+            </RN.View>
+          </RN.View>
+        </RN.View>
+        {renderEventDate()}
         <RN.TouchableOpacity
           style={styles.mapInfoContainer}
           onPress={onOpenMaps}>
@@ -486,48 +434,91 @@ const EventScreen = () => {
             </RN.View>
           </RN.View>
         </RN.TouchableOpacity>
-        {total > 0 && renderPrice()}
-        <RN.View style={styles.organizerContainer}>
-          <RN.View style={{flexDirection: 'row'}}>
-            <RN.Image
-              source={
-                eventData?.creator?.image
-                  ? {
-                      uri:
-                        'data:image/png;base64,' +
-                        eventData?.creator?.image.base64,
-                    }
-                  : require('../../assets/images/defaultuser.png')
+        {renderPrice()}
+        {isAdmin && ticketsList?.length > 0 && (
+          <>
+            <Button
+              title="Manage tickets"
+              disabled
+              onPress={() =>
+                navigation.navigate('EditEvent', {
+                  ...eventData,
+                  isEditTicket: true,
+                })
               }
-              style={styles.organizerImg}
+              buttonStyle={styles.manageTicketsBtn}
             />
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Text style={styles.organizerName}>
-                {eventData?.creator?.name}
-              </RN.Text>
-              <RN.Text style={styles.organizer}>Organizer</RN.Text>
-            </RN.View>
-          </RN.View>
-          {/* {!isAdmin && (
-            <RN.TouchableOpacity
-              style={
-                isPassedEvent ? styles.contactBtnDisabled : styles.contactBtn
-              }
-              disabled={isPassedEvent}>
-              <RN.Text
-                style={[
-                  styles.contactText,
-                  {color: isPassedEvent ? colors.darkGray : colors.purple},
-                ]}>
-                Contact
-              </RN.Text>
-            </RN.TouchableOpacity>
-          )} */}
-        </RN.View>
+            {ticketsList.filter(i => i.items.length > 0).length > 0 && (
+              <RN.TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('SoldTickets', {
+                    ticketsList: ticketsList,
+                    eventUid: eventData.id,
+                  });
+                }}>
+                <RN.Text
+                  style={{
+                    textAlign: 'center',
+                    color: colors.purple,
+                    fontSize: 18,
+                  }}>
+                  See tickets sold
+                </RN.Text>
+              </RN.TouchableOpacity>
+            )}
+          </>
+        )}
       </>
     );
   };
+  const renderLoading = () => {
+    return (
+      <RN.View style={{alignItems: 'center', paddingVertical: 8}}>
+        <RN.ActivityIndicator
+          animating={onLoading}
+          size={'small'}
+          color={colors.orange}
+        />
+      </RN.View>
+    );
+  };
   const renderPrice = () => {
+    if (onLoading) {
+      return renderLoading();
+    }
+    if (ticketsList?.length > 0) {
+      return (
+        <RN.View style={styles.mapInfoContainer}>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.View
+                style={{
+                  backgroundColor: colors.transparentPurple,
+                  padding: 10,
+                  borderRadius: 100,
+                }}>
+                <RN.Image
+                  source={{uri: 'ticketfull'}}
+                  style={{height: 20, width: 20, tintColor: colors.purple}}
+                />
+              </RN.View>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text numberOfLines={1} style={styles.locateText}>
+                {`$ ${minPriceTickets.toFixed(2)} ${
+                  maxPriceTickets !== minPriceTickets
+                    ? '- ' + maxPriceTickets.toFixed(2)
+                    : ''
+                }`}
+              </RN.Text>
+              <RN.Text style={{color: colors.darkGray, paddingLeft: 12}}>
+                {'Ticket price depends on package'}
+              </RN.Text>
+            </RN.View>
+          </RN.View>
+        </RN.View>
+      );
+    }
     return (
       <RN.View style={styles.mapInfoContainer}>
         <RN.View style={{flexDirection: 'row'}}>
@@ -546,10 +537,7 @@ const EventScreen = () => {
           </RN.View>
           <RN.View style={{justifyContent: 'center'}}>
             <RN.Text numberOfLines={1} style={styles.locateText}>
-              {`$ ${total}`}
-            </RN.Text>
-            <RN.Text style={{color: colors.darkGray, paddingLeft: 12}}>
-              {'Ticket price depends on package'}
+              Free event
             </RN.Text>
           </RN.View>
         </RN.View>
@@ -557,6 +545,10 @@ const EventScreen = () => {
     );
   };
   const renderDescription = () => {
+    const description =
+      eventData?.description?.length > 40 && !openingDescription
+        ? `${eventData.description.slice(0, 40)}...`
+        : eventData?.description;
     return (
       <RN.View style={styles.descWrapper}>
         <RN.Text style={styles.aboutText}>About this event</RN.Text>
@@ -565,7 +557,7 @@ const EventScreen = () => {
             openingDescription ? eventData?.description?.length : 3
           }
           style={styles.titleDesc}>
-          {eventData?.description}
+          {description}
         </RN.Text>
         {eventData?.description?.length > 40 && (
           <RN.TouchableOpacity
@@ -597,69 +589,61 @@ const EventScreen = () => {
     );
   };
 
-  const renderLoading = () => {
-    return (
-      <RN.View style={{marginVertical: 16}}>
-        <RN.ActivityIndicator size={'small'} color={colors.orange} />
-      </RN.View>
-    );
-  };
   const renderAttendBtn = () => {
-    if (loadSubscribe) {
-      return <>{renderLoading()}</>;
-    }
-    if (isAdmin) {
+    if (isFollowed && !ticketsList.length) {
       return null;
     }
-    if (total > 0 && isFollowed) {
+    if (isPassedEvent) {
       return (
-        <>
-          <RN.TouchableOpacity
-            onPress={() => onPressTicket(eventData.id)}
-            style={styles.ticketBtn}>
-            <RN.Text
-              style={[
-                styles.joinedText,
-                {color: colors.white, paddingLeft: 0},
-              ]}>
-              {'Show ticket'}
-            </RN.Text>
-          </RN.TouchableOpacity>
-        </>
+        <RN.Text
+          style={{
+            textAlign: 'center',
+            fontSize: 16,
+            color: colors.textPrimary,
+            fontWeight: '600',
+            paddingVertical: 14,
+          }}>
+          This event has passed
+        </RN.Text>
       );
     }
-    if (total > 0 && showPaymentBtn) {
-      return (
-        <>
-          <StripeProvider
-            publishableKey={STRIPE_PUBLIC_KEY}
-            merchantIdentifier={MERCHANT_ID}>
-            <Button
-              title={`Buy ticket for ${total} USD`}
-              disabled={!isPassedEvent}
-              onPress={onPressAttend}
-              buttonStyle={styles.attendBtn}
-            />
-          </StripeProvider>
-        </>
-      );
-    }
-    // if (total <= 0) {
     return (
-      <RN.View>
-        {loadSubscribe ? (
-          <>{renderLoading()}</>
-        ) : isFollowed ? null : (
-          <Button
-            title="Attend"
-            disabled={!isPassedEvent}
-            onPress={onPressAttend}
-            buttonStyle={styles.attendBtn}
-          />
-        )}
-      </RN.View>
+      <>
+        <Button
+          title={
+            !isFollowed
+              ? ticketsList.length > 0
+                ? 'Get Tickets'
+                : 'Attend'
+              : 'Show Tickets'
+          }
+          disabled={!isPassedEvent}
+          buttonStyle={isFollowed ? styles.ticketBtn : styles.attendBtn}
+          onPress={onPressAttend}
+        />
+        {isFollowed &&
+          ticketsList.length > 0 &&
+          ticketsList.filter((i: {isVisible: boolean}) => i.isVisible).length >
+            0 && (
+            <RN.TouchableOpacity
+              onPress={() => {
+                navigation.navigate('BuyTickets', {
+                  tickets: ticketsList,
+                  eventUid: eventData.id,
+                });
+              }}>
+              <RN.Text
+                style={{
+                  textAlign: 'center',
+                  color: colors.purple,
+                  fontSize: 16,
+                }}>
+                Get More Tickets
+              </RN.Text>
+            </RN.TouchableOpacity>
+          )}
+      </>
     );
-    // }
   };
   if (loadingById) {
     return <SkeletonEventScreen />;
@@ -667,108 +651,19 @@ const EventScreen = () => {
 
   return (
     <>
+      {header()}
       <RN.ScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={1}
         style={styles.container}
         showsVerticalScrollIndicator={false}>
-        {header()}
-        <Carousel items={data?.images} />
+        <Carousel items={eventData?.images} />
         {renderTitle()}
-        {renderEventDate()}
+        {/* {renderEventDate()} */}
         {renderOrganizer()}
-        {renderAttendBtn()}
+        {!isAdmin && renderAttendBtn()}
         {renderDescription()}
       </RN.ScrollView>
-      <Portal>
-        <Modalize
-          ref={openPaymentModal}
-          closeOnOverlayTap={false}
-          // onClosed={() => {
-          //   setLoadSubscribe(false);
-          //   // setShowPaymentBtn(true);
-          // }}
-          handlePosition="inside"
-          modalStyle={styles.paymentModal}
-          disableScrollIfPossible={false}
-          adjustToContentHeight={true}>
-          <RN.TouchableOpacity
-            onPress={() => {
-              setLoadSubscribe(false);
-              setShowPaymentBtn(!isFollowed && total > 0);
-              openPaymentModal.current?.close();
-            }}
-            style={{
-              alignSelf: 'flex-end',
-              margin: 14,
-              backgroundColor: colors.grayTransparent,
-              borderRadius: 100,
-              padding: 10,
-              borderWidth: 0.5,
-              borderColor: colors.darkGray,
-            }}>
-            <RN.Image source={{uri: 'close'}} style={{height: 14, width: 14}} />
-          </RN.TouchableOpacity>
-          <RN.View style={{paddingVertical: 14, paddingBottom: 40}}>
-            <RN.View style={{alignItems: 'center', marginTop: 4}}>
-              <PlatformPayButton
-                onPress={onPressApplePayBtn}
-                type={PlatformPay.ButtonType.Continue}
-                appearance={PlatformPay.ButtonStyle.WhiteOutline}
-                borderRadius={8}
-                style={{
-                  width: '90%',
-                  height: 50,
-                }}
-              />
-            </RN.View>
-            <CardField
-              postalCodeEnabled={false}
-              placeholders={{
-                number: '4242 4242 4242 4242',
-              }}
-              cardStyle={{
-                backgroundColor: '#FFFFFF',
-                textColor: '#000000',
-              }}
-              style={{
-                width: '100%',
-                height: 50,
-                marginVertical: 30,
-              }}
-              onCardChange={cardDetails => {
-                // console.log('cardDetails', cardDetails);
-                if (cardDetails?.complete) {
-                  setCardDisabled(false);
-                }
-                //  else {
-                //   setCardDisabled(true);
-                // }
-              }}
-              // onFocus={focusedField => {
-              //   console.log('focusField', focusedField);
-              // }}
-            />
-            {paymentError?.length > 0 && (
-              <RN.Text
-                style={{
-                  textAlign: 'center',
-                  color: colors.redError,
-                  marginTop: -12,
-                }}>
-                {paymentError}
-              </RN.Text>
-            )}
-            {disablePaymentBtn ? (
-              <>{renderLoading()}</>
-            ) : (
-              <Button
-                title={`Confirm pay ${total} $`}
-                disabled={!cardDisabled}
-                onPress={confirmPaymentByCard}
-              />
-            )}
-          </RN.View>
-        </Modalize>
-      </Portal>
     </>
   );
 };
@@ -781,8 +676,8 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
   },
   attendPeopleImg: {
-    height: 44,
-    width: 44,
+    height: 40,
+    width: 40,
     borderRadius: 100,
   },
   attendPeopleText: {
@@ -796,9 +691,9 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#07BD74',
     borderRadius: 48,
-    paddingVertical: 6,
+    // paddingVertical: 16,
     marginHorizontal: 28,
-    marginTop: 34,
+    marginTop: 8,
     marginVertical: 14,
     alignItems: 'center',
   },
@@ -881,6 +776,8 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 22,
+    borderTopWidth: 1,
+    borderTopColor: colors.gray,
   },
   organizerName: {
     fontSize: 16,
@@ -888,6 +785,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 22.4,
     letterSpacing: 0.2,
     fontWeight: '700',
+    paddingTop: 16,
   },
   organizerImg: {
     height: 40,
@@ -907,9 +805,7 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10,
     marginBottom: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray,
-    paddingTop: 12,
+    // paddingTop: 12,
   },
   eventDateText: {
     color: colors.textPrimary,
@@ -929,33 +825,43 @@ const styles = RN.StyleSheet.create({
     marginRight: 12,
     borderRadius: 50,
   },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: SCREEN_WIDTH,
+    position: 'absolute',
+    paddingTop: statusBarHeight + 14,
+    paddingHorizontal: 24,
+    zIndex: 2,
+  },
+  headerAnimateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: SCREEN_WIDTH,
+    position: 'absolute',
+    paddingTop: isAndroid ? statusBarHeight * 4 : statusBarHeight * 2.3,
+    // paddingHorizontal: 24,
+    zIndex: 1,
+  },
+  headerIconContainer: {
+    padding: 8,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 2,
+    right: 0,
+    marginHorizontal: 2,
+    borderRadius: 50,
+  },
   backIconContainer: {
     padding: 8,
     paddingVertical: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
     zIndex: 2,
-    left: 0,
-    margin: 12,
-    marginHorizontal: 24,
     borderRadius: 50,
-    top: statusBarHeight + 8,
-  },
-  moreIconContainer: {
-    padding: 8,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    zIndex: 2,
-    right: 0,
-    margin: 12,
-    marginHorizontal: 24,
-    borderRadius: 50,
-    top: statusBarHeight + 8,
   },
   backIcon: {
-    height: 22,
-    width: 26,
+    height: 20,
+    width: 25,
     tintColor: colors.white,
   },
   tagsContainer: {
@@ -984,6 +890,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 24,
     lineHeight: 28.8,
     fontWeight: '700',
+    fontFamily: 'Mulish-Regular',
   },
   titleDesc: {
     color: colors.darkGray,
@@ -1012,31 +919,31 @@ const styles = RN.StyleSheet.create({
   },
   attendBtn: {
     // fontSize: 12,
-    marginVertical: 28,
+    marginVertical: 8,
     marginHorizontal: 24,
-    marginTop: 34,
   },
-  settingIconContainer: {
-    padding: 8,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    zIndex: 2,
-    right: 0,
-    margin: 12,
+  manageTicketsBtn: {
+    // fontSize: 12,
+    marginVertical: 28,
+    marginBottom: 12,
     marginHorizontal: 24,
-    borderRadius: 50,
-    top: statusBarHeight + 8,
+    marginTop: 4,
+    backgroundColor: 'tranparent',
+    color: colors.purple,
+    borderColor: colors.purple,
+    borderWidth: 1,
   },
   unFollowContainer: {
     backgroundColor: colors.white,
     flexDirection: 'row',
     position: 'absolute',
     zIndex: 3,
-    right: 26,
-    top: statusBarHeight + 80,
+    right: 94,
+    // top: statusBarHeight + iAndroid ? 120 : 80, //TODO android
+    top: isAndroid ? 100 : 126,
     borderRadius: 8,
-    padding: 16,
+    borderTopRightRadius: 0,
+    padding: 14,
   },
   unFollowText: {
     color: colors.textPrimary,

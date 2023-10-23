@@ -34,6 +34,9 @@ export type eventAction = {
     limit: number;
     prevLimit: number;
     prevOffset: number;
+    event: any;
+    isFollowed: boolean;
+    personalEvents?: string[];
   };
 };
 
@@ -43,20 +46,28 @@ export default (state = eventsInitialState, action: eventAction) => {
       return {
         ...state,
         isLoading: true,
+        createdEvent: false,
       };
     case EVENT.EVENT_CREATE_SUCCESS:
       return {
         ...state,
         isLoading: false,
         ...action.payload,
+        event: action.payload?.event,
+        createdEvent: true,
       };
     case EVENT.EVENT_CREATE_FAIL:
       return {
         ...state,
         errors: action.payload?.errors,
         isLoading: false,
+        createdEvent: false,
       };
-
+    case EVENT.EVENT_CREATE_CHANGE_VALUE:
+      return {
+        ...state,
+        createdEvent: false,
+      };
     case EVENT.GET_EVENTS_REQUEST:
       return {
         ...state,
@@ -178,12 +189,14 @@ export default (state = eventsInitialState, action: eventAction) => {
         ...state,
         eventById: null,
         loadingById: true,
+        isFollowed: false,
       };
     case EVENT.GET_EVENT_BY_ID_SUCCESS:
       return {
         ...state,
         eventById: action.payload?.eventById,
         loadingById: false,
+        isFollowed: action?.payload?.isFollowed,
       };
     case EVENT.GET_EVENT_BY_ID_FAIL:
       return {
@@ -191,11 +204,13 @@ export default (state = eventsInitialState, action: eventAction) => {
         eventById: null,
         loadingById: false,
         errorsById: action.payload?.errorsById,
+        isFollowed: false,
       };
     case EVENT.GET_EVENT_BY_ID_CLEAR:
       return {
         ...state,
         eventById: null,
+        isFollowed: false,
       };
     case EVENT.GET_MANAGING_EVENTS_REQUEST:
       return {
@@ -214,6 +229,20 @@ export default (state = eventsInitialState, action: eventAction) => {
         ...state,
         loadingManaging: false,
         managingEvents: [],
+      };
+    case EVENT.GET_PERSONAL_EVENTS_REQUEST:
+      return {
+        ...state,
+      };
+    case EVENT.GET_PERSONAL_EVENTS_SUCCESS:
+      return {
+        ...state,
+        personalEvents: action.payload?.personalEvents,
+      };
+    case EVENT.GET_PERSONAL_EVENTS_FAIL:
+      return {
+        ...state,
+        personalEvents: [],
       };
     default:
       return state;

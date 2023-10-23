@@ -7,15 +7,16 @@ import useRegistration from '../../hooks/useRegistration';
 import {useCommunities} from '../../hooks/useCommunitites';
 import {useCommunityById} from '../../hooks/useCommunityById';
 import useEvents from '../../hooks/useEvents';
-import EventCard from '../../components/eventCard';
-import sotrtBy from 'lodash.sortby';
-import moment from 'moment';
 import Carousel from '../../components/carousel';
 import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
-import {statusBarHeight} from '../../utils/constants';
+import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
 import socket from '../../api/sockets';
+import {apiUrl} from '../../api/serverRequests';
+import CommunityEvents from '../../components/communityEvents';
+import FastImage from 'react-native-fast-image';
+import {Animated} from 'react-native';
 
-const CommunityScreen = () => {
+const CommunityScreen = ({route}) => {
   const routeProps = useRoute();
   const navigation = useNavigation();
   const {userUid} = useRegistration();
@@ -23,28 +24,48 @@ const CommunityScreen = () => {
     useCommunities();
 
   const {data}: any = routeProps.params;
+  const communityId = (route.params && route.params?.id) ?? data?.id;
   const {isProfileScreen}: any = routeProps.params;
-  // const {_id} = data;
-  // const _id = '64a558e4a6ac588333e736d4';
-  const {remove, getCommunity, communityData, loadingById} = useCommunityById(
-    data?.id,
-  );
-  // const [isJoined, setJoined] = useState();
+  const {remove, getCommunity, communityData, loadingById} =
+    useCommunityById(communityId);
   const [openingDescription, setOpeningDescription] = useState(false);
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
   const isAdmin = communityData?.creator?.uid === userUid;
 
-  const {getEventByIdCommunity, eventsDataByCommunityId, loadingEvents} =
-    useEvents();
+  const {getEventByIdCommunity, loadingEvents} = useEvents();
   const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
-  const [currentTab, setCurrentTab] = useState(TABS[0]);
-  const [events, setEvents] = useState(eventsDataByCommunityId);
+  const [currentTab, setCurrentTab] = useState<string>(TABS[0]);
   const [loadSubscribe, setLoadSubscribe] = useState(false);
-
+  const [sourceDimensions, setSourceDimensions] = useState({
+    height: 0,
+    width: 0,
+  });
+  RN.Image.getSizeWithHeaders(
+    apiUrl + communityData?.creator?.userImage,
+    {},
+    (width, height) => {
+      // console.log(`The image dimensions are ${width}x${height}`);
+      if (sourceDimensions.height === 0) {
+        setSourceDimensions({
+          height: height,
+          width: width,
+        });
+      }
+    },
+    error => {
+      console.error(`Couldn't get the image size: ${error}`);
+    },
+  );
   useEffect(() => {
     getCommunity();
-    getEventByIdCommunity(data?.eventsIds);
   }, []);
+  // console.log('com', routeProps.params, linkId);
+  useEffect(() => {
+    // getCommunity();
+    if (communityData !== null) {
+      getEventByIdCommunity(communityData?.eventsIds);
+    }
+  }, [communityData]);
   useEffect(() => {
     if (isSaveChanges) {
       getCommunity();
@@ -53,32 +74,13 @@ const CommunityScreen = () => {
   const [isJoined, setIsJoined] = useState();
   const [attendedImgs, setAttendedImgs] = useState([]);
 
-  const upcomingEvents =
-    eventsDataByCommunityId?.filter(
-      (item: {eventDate: {startDate: Date}}) =>
-        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >=
-        moment(new Date()).format('YYYY-MM-DD'),
-    ) ?? [];
-  const attendingEventsForCommunity = eventsDataByCommunityId?.filter(ev =>
-    ev?.attendedPeople?.find(u => u.userUid === userUid),
-  );
-
-  const passedEvents = eventsDataByCommunityId?.filter(
-    (item: any) =>
-      moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
-      moment(new Date()).format('YYYY-MM-DD'),
-  );
+  useEffect(() => {
+    if (communityData !== null) {
+      setAttendedImgs(communityData?.userImages);
+    }
+  }, [communityData, communityData?.userImages]);
 
   useEffect(() => {
-    setAttendedImgs(communityData?.userImages);
-  }, [communityData?.userImages]);
-
-  useEffect(() => {
-    // setIsJoined(
-    //   communityData?.followers
-    //     ?.map(u => u)
-    //     ?.some(user => user.userUid === userUid),
-    // );
     setIsJoined(
       communityData?.followers?.find(
         (user: {userUid: any}) => user?.userUid === userUid,
@@ -87,22 +89,18 @@ const CommunityScreen = () => {
   }, [communityData?.followers, userUid]);
   useEffect(() => {
     socket.on('subscribed', socket_data => {
-      if (socket_data?.currentCommunity?.id === data.id) {
+      if (socket_data?.currentCommunity?.id === communityId) {
         setIsJoined(
           socket_data?.currentCommunity?.followers
             ?.map(u => u)
             .some(user => user.userUid === userUid),
         );
-        RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
+        // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
         setAttendedImgs(socket_data?.userImages);
         setLoadSubscribe(false);
       }
     });
-  }, [data.id, userUid]);
-
-  useMemo(() => {
-    setEvents(eventsDataByCommunityId);
-  }, [eventsDataByCommunityId]);
+  }, [communityId, userUid]);
 
   const onPressEditCommunity = () => {
     navigation.navigate('EditCommunity', communityData);
@@ -130,24 +128,41 @@ const CommunityScreen = () => {
     }
     onClearCommunityDataById();
   };
-  // useMemo(() => {
-  //   setJoined(
-  //     displayedData?.followers?.map(item => item.userUid)?.includes(userUid),
-  //   );
-  // }, [displayedData?.followers, userUid]);
-
+  const onPressShare = async () => {
+    try {
+      const result = await RN.Share.share({
+        title: `${communityData.title}`,
+        message: isAndroid
+          ? `https://danceconnect.online/community/${communityData?.id}`
+          : `${communityData.title}`,
+        url: `https://danceconnect.online/community/${communityData?.id}`,
+      });
+      if (result.action === RN.Share.sharedAction) {
+        if (result.activityType) {
+          console.log('resi', result);
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === RN.Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const renderTags = () => {
     return (
       <RN.View
         style={[
           styles.tagsContainer,
-          {marginTop: data?.images?.length > 0 ? -50 : -10},
+          {marginTop: communityData?.images?.length > 0 ? -50 : -10},
         ]}>
         <RN.ScrollView
           horizontal
           style={styles.scrollTags}
           showsHorizontalScrollIndicator={false}>
-          {data?.categories?.map((item: string) => {
+          {communityData?.categories?.map((item: string) => {
             return (
               <RN.View style={styles.tagItem}>
                 <RN.Text style={{color: colors.white}}>{item}</RN.Text>
@@ -159,62 +174,81 @@ const CommunityScreen = () => {
       </RN.View>
     );
   };
+
+  const headerOptionButtons = [
+    {
+      key: 'edit',
+      icon: 'edit',
+      isEnabled: isAdmin,
+      onPress: onPressEditCommunity,
+    },
+    {
+      key: 'more',
+      icon: 'more',
+      isEnabled: isAdmin ? true : isJoined,
+      onPress: () => setUnFollowOpen(v => !v),
+    },
+    {key: 'share', icon: 'share', isEnabled: true, onPress: onPressShare},
+  ];
+  const opacity = new RN.Animated.Value(0);
+
+  const onScroll = (ev: RN.NativeSyntheticEvent<RN.NativeScrollEvent>) => {
+    const {y} = ev.nativeEvent.contentOffset;
+    Animated.timing(opacity, {
+      toValue: y / 100,
+      duration: 100,
+      useNativeDriver: false,
+    }).start();
+    setUnFollowOpen(false);
+  };
   const header = () => {
     return (
-      <>
+      <RN.View style={styles.headerContainer}>
+        <RN.Animated.View
+          style={[
+            styles.headerAnimateContainer,
+            {backgroundColor: colors.white, opacity},
+          ]}
+        />
         <RN.TouchableOpacity
           style={styles.backIconContainer}
           onPress={onPressBack}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.TouchableOpacity>
-        {isAdmin && (
-          <RN.TouchableOpacity
-            style={styles.settingIconContainer}
-            onPress={onPressEditCommunity}>
-            <RN.Image source={{uri: 'setting'}} style={styles.backIcon} />
-          </RN.TouchableOpacity>
-        )}
-        {!isAdmin && isJoined && (
-          <RN.TouchableOpacity
-            style={styles.moreIconContainer}
-            onPress={() => setUnFollowOpen(v => !v)}>
-            <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
-          </RN.TouchableOpacity>
-        )}
-        {isAdmin && (
-          <RN.TouchableOpacity
-            style={styles.moreIconContainer}
-            onPress={() => setUnFollowOpen(v => !v)}>
-            <RN.Image source={{uri: 'more'}} style={styles.backIcon} />
-          </RN.TouchableOpacity>
-        )}
-        {isAdmin && unFolloweOpen && (
+        <RN.View style={{flexDirection: 'row', zIndex: 2}}>
+          {headerOptionButtons.map(btn => {
+            return (
+              <>
+                {btn?.isEnabled && (
+                  <RN.TouchableOpacity
+                    style={styles.headerIconContainer}
+                    onPress={btn.onPress}>
+                    <RN.Image
+                      source={{uri: btn.icon}}
+                      style={styles.backIcon}
+                    />
+                  </RN.TouchableOpacity>
+                )}
+              </>
+            );
+          })}
+        </RN.View>
+        {unFolloweOpen && (
           <RN.TouchableOpacity
             style={styles.unFollowContainer}
-            onPress={onPressRemove}>
+            onPress={isAdmin ? onPressRemove : onPressUnfollow}>
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Image
                 source={{uri: 'closesquare'}}
                 style={{height: 20, width: 20}}
               />
             </RN.View>
-            <RN.Text style={styles.unFollowText}>{'Remove Community'}</RN.Text>
+            <RN.Text style={styles.unFollowText}>
+              {isAdmin ? 'Remove Community' : 'Unfollow'}
+            </RN.Text>
           </RN.TouchableOpacity>
         )}
-        {isJoined && unFolloweOpen && (
-          <RN.TouchableOpacity
-            style={styles.unFollowContainer}
-            onPress={onPressUnfollow}>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image
-                source={{uri: 'closesquare'}}
-                style={{height: 20, width: 20}}
-              />
-            </RN.View>
-            <RN.Text style={styles.unFollowText}>{'Unfollow'}</RN.Text>
-          </RN.TouchableOpacity>
-        )}
-      </>
+      </RN.View>
     );
   };
   const renderTitle = () => {
@@ -262,18 +296,6 @@ const CommunityScreen = () => {
     );
   };
 
-  useEffect(() => {
-    switch (currentTab) {
-      case 'Upcoming Events':
-        return setEvents(upcomingEvents);
-      case 'Attending':
-        return setEvents(attendingEventsForCommunity);
-      case 'Passed':
-        return setEvents(passedEvents);
-      default:
-        return setEvents(upcomingEvents);
-    }
-  }, [currentTab]);
   const onPressTab = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setCurrentTab(value);
@@ -311,59 +333,16 @@ const CommunityScreen = () => {
             </RN.TouchableOpacity>
           );
         })}
-        {/* <RN.View style={{paddingRight: 34}} /> */}
       </RN.ScrollView>
     );
   };
   const renderLoading = () => {
     return <RN.ActivityIndicator size={'small'} color={colors.orange} />;
   };
-  const renderEvents = () => {
-    if (loadingEvents) {
-      return renderLoading();
-    }
-    if (currentTab === 'Passed' && !passedEvents?.length) {
-      return (
-        <RN.View style={styles.passedEventsContainer}>
-          <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
-            {isAdmin
-              ? 'You don`t have any past events yet'
-              : 'There are no past events yet'}
-          </RN.Text>
-        </RN.View>
-      );
-    }
-    if (!events?.length && eventsDataByCommunityId?.length > 0) {
-      return (
-        <RN.View style={styles.passedEventsContainer}>
-          <RN.Text style={{color: 'rgba(158, 158, 158, 1)', fontSize: 16}}>
-            There are no events yet
-          </RN.Text>
-        </RN.View>
-      );
-    }
-    return (
-      <>
-        {eventsDataByCommunityId?.length > 0 &&
-          sotrtBy(events, 'eventDate.startDate').map((item: any) => {
-            if (item?.id) {
-              return (
-                <EventCard
-                  key={item?.id}
-                  item={{...item, communityId: data.id}}
-                />
-              );
-            }
-          })}
-      </>
-    );
-  };
   const onOpenMaps = () => {
-    const url = RN.Platform.select({
-      ios: `maps:0,0?q=${data?.location}`,
-      android: `geo:0,0?q=${data?.location}`,
-    });
-
+    const url = isAndroid
+      ? `geo:0,0?q=${communityData?.location}`
+      : `maps:0,0?q=${communityData?.location}`;
     RN.Linking.openURL(url);
   };
   const renderAttendedImgs = () => {
@@ -379,21 +358,20 @@ const CommunityScreen = () => {
           paddingVertical: 10,
         }}>
         {attendedImgs?.slice(0, 6)?.map((img, idx) => {
-          // console.log('img', img, idx);
-          const imgUri =
-            typeof img !== 'undefined'
-              ? {uri: 'data:image/png;base64,' + img?.userImage?.base64}
-              : require('../../assets/images/defaultuser.png');
           return (
             <RN.View
               style={{
                 marginLeft: idx !== 0 ? -12 : 0,
                 zIndex: idx !== 0 ? idx : -idx,
               }}>
-              <RN.Image
-                source={imgUri}
-                style={styles.attendPeopleImg}
+              <FastImage
+                source={{
+                  uri: apiUrl + img?.userImage,
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.high,
+                }}
                 defaultSource={require('../../assets/images/defaultuser.png')}
+                style={styles.attendPeopleImg}
               />
             </RN.View>
           );
@@ -448,18 +426,18 @@ const CommunityScreen = () => {
         </RN.TouchableOpacity>
         <RN.View style={styles.organizerContainer}>
           <RN.View style={{flexDirection: 'row'}}>
-            <RN.Image
-              source={
-                communityData?.creator?.image
-                  ? {
-                      uri:
-                        'data:image/png;base64,' +
-                        communityData?.creator?.image?.base64,
-                    }
-                  : require('../../assets/images/defaultuser.png')
-              }
-              style={styles.organizerImg}
-            />
+            <RN.View style={{justifyContent: 'center'}}>
+              <FastImage
+                source={{
+                  uri: apiUrl + communityData?.creator?.image,
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.high,
+                }}
+                defaultSource={require('../../assets/images/defaultuser.png')}
+                style={styles.organizerImg}
+              />
+            </RN.View>
+
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.organizerName}>
                 {communityData?.creator?.name}
@@ -483,66 +461,54 @@ const CommunityScreen = () => {
   }
 
   return (
-    <RN.ScrollView
-      style={styles.container}
-      showsVerticalScrollIndicator={false}>
+    <>
       {header()}
-      <Carousel items={communityData?.images} />
-      {renderTitle()}
-      {renderMapInfoOrganizer()}
-      {loadSubscribe
-        ? renderLoading()
-        : !isAdmin &&
-          !isJoined && (
-            <RN.View style={styles.btnJoin}>
-              <Button
-                onPress={onPressJoin}
-                // iconName={isJoined && 'chat'}
-                disabled
-                // isLoading={loadingFollow}
-                buttonStyle={isJoined && styles.btnMessage}
-                title={'Join Community'}
-              />
-            </RN.View>
-          )}
-      {isAdmin && (
-        <RN.View style={styles.btnJoin}>
-          <Button
-            onPress={() =>
-              navigation.navigate('CreateEvent', {communityData: communityData})
-            }
-            disabled
-            // isLoading={isLoadingWithFollow}
-            title={'Create Event'}
-          />
-        </RN.View>
-      )}
-      {/* {!isAdmin ? (
-        <RN.View style={styles.btnJoin}>
-          <Button
-            onPress={onPressJoin}
-            iconName={isJoined && 'chat'}
-            disabled
-            // isLoading={loadingFollow}
-            buttonStyle={isJoined && styles.btnMessage}
-            title={isJoined ? 'Message Community' : 'Join Community'}
-          />
-        </RN.View>
-      ) : (
-        <RN.View style={styles.btnJoin}>
-          <Button
-            onPress={() =>
-              navigation.navigate('CreateEvent', {communityData: data})
-            }
-            disabled
-            // isLoading={isLoadingWithFollow}
-            title={'Create Event'}
-          />
-        </RN.View>
-      )} */}
-      {eventsDataByCommunityId?.length > 0 && renderTabs()}
-      {renderEvents()}
-    </RN.ScrollView>
+      <RN.ScrollView
+        style={styles.container}
+        onScroll={onScroll}
+        scrollEventThrottle={1}
+        showsVerticalScrollIndicator={false}>
+        <Carousel items={communityData?.images} />
+        {renderTitle()}
+        {renderMapInfoOrganizer()}
+        {loadSubscribe
+          ? renderLoading()
+          : !isAdmin &&
+            !isJoined && (
+              <RN.View style={styles.btnJoin}>
+                <Button
+                  onPress={onPressJoin}
+                  // iconName={isJoined && 'chat'}
+                  disabled
+                  // isLoading={loadingFollow}
+                  buttonStyle={isJoined && styles.btnMessage}
+                  title={'Join Community'}
+                />
+              </RN.View>
+            )}
+        {isAdmin && (
+          <RN.View style={styles.btnJoin}>
+            <Button
+              onPress={() =>
+                navigation.navigate('CreateEvent', {
+                  communityData: communityData,
+                })
+              }
+              disabled
+              // isLoading={isLoadingWithFollow}
+              title={'Create Event'}
+            />
+          </RN.View>
+        )}
+        {renderTabs()}
+        {loadingEvents && renderLoading()}
+        <CommunityEvents
+          currentTab={currentTab}
+          communityUid={communityId}
+          isAdmin={isAdmin}
+        />
+      </RN.ScrollView>
+    </>
   );
 };
 
@@ -661,46 +627,37 @@ const styles = RN.StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: SCREEN_WIDTH,
     position: 'absolute',
-    // flex: 1,
+    paddingTop: statusBarHeight + 14,
+    paddingHorizontal: 24,
     zIndex: 2,
-    backgroundColor: 'transparent',
+  },
+  headerAnimateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: SCREEN_WIDTH,
+    position: 'absolute',
+    paddingTop: isAndroid ? statusBarHeight * 4 : statusBarHeight * 2.3,
+    // paddingTop: statusBarHeight * 2.2,
+    // paddingHorizontal: 24,
+    zIndex: 1,
+  },
+  headerIconContainer: {
+    padding: 8,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 2,
+    right: 0,
+    marginHorizontal: 2,
+    borderRadius: 50,
   },
   backIconContainer: {
     padding: 8,
     paddingVertical: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
     zIndex: 2,
-    left: 0,
-    margin: 12,
-    marginHorizontal: 24,
     borderRadius: 50,
-    top: statusBarHeight + 14,
-  },
-  moreIconContainer: {
-    padding: 8,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    zIndex: 2,
-    right: 0,
-    margin: 12,
-    marginHorizontal: 24,
-    borderRadius: 50,
-    top: statusBarHeight + 14,
-  },
-  settingIconContainer: {
-    padding: 8,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    zIndex: 2,
-    right: 48,
-    margin: 12,
-    marginHorizontal: 24,
-    borderRadius: 50,
-    top: statusBarHeight + 14,
   },
   backIcon: {
     height: 22,
@@ -719,6 +676,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 24,
     lineHeight: 28.8,
     fontWeight: '700',
+    fontFamily: 'Mulish-Regular',
   },
   titleDesc: {
     color: '#424242',
@@ -772,10 +730,11 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     position: 'absolute',
     zIndex: 3,
-    right: 26,
-    top: statusBarHeight + 80,
+    right: 94,
+    top: isAndroid ? 100 : 126,
     borderRadius: 8,
-    padding: 16,
+    borderTopRightRadius: 0,
+    padding: 14,
   },
   unFollowText: {
     color: colors.textPrimary,

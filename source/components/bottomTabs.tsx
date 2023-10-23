@@ -63,21 +63,20 @@ const styles = RN.StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     paddingHorizontal: 14,
     // justifyContent: 'center',
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     paddingVertical: 8,
-    paddingBottom: isAndroid ? 0 : 24,
+    paddingBottom: isAndroid ? 0 : 30,
   },
   icon: {
-    height: 24,
-    width: 24,
+    height: 20,
+    width: 20,
   },
   itemName: {
     fontSize: 12,
-    letterSpacing: -0.2,
   },
 });
 export default BottomTabs;

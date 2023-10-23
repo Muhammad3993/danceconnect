@@ -20,6 +20,7 @@
 		7112E4774AEC4E34B983DFE5 /* Mulish-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ABB0B4996EA84F858FF97A58 /* Mulish-BoldItalic.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8770453C2A449ECD0035EF6D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8770453B2A449ECD0035EF6D /* GoogleService-Info.plist */; };
+		87922F932ADECF590097E120 /* danceConnect.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 8770453D2A44AE240035EF6D /* danceConnect.entitlements */; };
 		8797DDE729E433CF0020DDDB /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8797DDE629E433CF0020DDDB /* logo.png */; };
 		8797DDE929E440720020DDDB /* gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 8797DDE829E440720020DDDB /* gradient.png */; };
 		8797DDED29E741B40020DDDB /* Mulish-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8797DDEC29E741B30020DDDB /* Mulish-Regular.ttf */; };
@@ -299,6 +300,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87922F932ADECF590097E120 /* danceConnect.entitlements in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				8797DDE929E440720020DDDB /* gradient.png in Resources */,
 				8797DDED29E741B40020DDDB /* Mulish-Regular.ttf in Resources */,

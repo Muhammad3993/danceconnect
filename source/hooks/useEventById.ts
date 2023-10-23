@@ -1,6 +1,7 @@
 import {useDispatch, useSelector} from 'react-redux';
 
 import {
+  getIsFollowEvent,
   selectEventById,
   selectLoadingEventById,
 } from '../store/selectors/eventsSelector';
@@ -13,6 +14,8 @@ export const useEventById = (id: string) => {
   const dispatch = useDispatch();
   const eventData = useSelector(selectEventById);
   const loadingById = useSelector(selectLoadingEventById);
+
+  const isFollowed = useSelector(getIsFollowEvent);
 
   const getEvent = () => {
     dispatch(getEventByIdRequestAction({eventUid: id}));
@@ -32,5 +35,6 @@ export const useEventById = (id: string) => {
     eventData,
     loadingById,
     remove,
+    isFollowed,
   };
 };

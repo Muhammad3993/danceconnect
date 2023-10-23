@@ -83,7 +83,7 @@ const styles = RN.StyleSheet.create({
     letterSpacing: 0.2,
     paddingVertical: 14,
     fontWeight: '700',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
   },
 });
 export default EmptyContainer;

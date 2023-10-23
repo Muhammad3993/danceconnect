@@ -4,7 +4,7 @@ import * as RN from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {AuthStackNavigationParamList} from '../../navigation/types';
 import AuthButton from '../../components/authBtn';
-import {authButtons} from './btnsConstans';
+import {authButtons} from '../../utils/btnsConstans';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Input} from '../../components/input';
 import colors from '../../utils/colors';
@@ -27,6 +27,7 @@ const AuthorizationScreen = (): JSX.Element => {
     isErrors,
     clearErrors,
     authorizationWithApple,
+    saveEmail,
   } = useRegistration();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -96,7 +97,7 @@ const AuthorizationScreen = (): JSX.Element => {
 
   useEffect(() => {
     if (userUid && !isUserExists) {
-      navigation.navigate('ONBOARDING');
+      navigation.navigate('ONBOARDING', {email: saveEmail, password: userUid});
     }
     if (isUserExists) {
       navigation.navigate('HOME');

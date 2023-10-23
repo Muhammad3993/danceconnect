@@ -16,6 +16,7 @@ import {useCommunities} from '../../hooks/useCommunitites';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useProfile} from '../../hooks/useProfile';
 import FindCity from '../../components/findCity';
+import FastImage from 'react-native-fast-image';
 interface city {
   structured_formatting: {
     main_text: '';
@@ -38,6 +39,8 @@ const CreateCommunity = () => {
   const [isDescriptionError, setIsDescriptionError] = useState(false);
   const [isCountryError, setIsCountryError] = useState(false);
   const [isCityError, setIsCityError] = useState(false);
+  const [loadImg, setLoadImg] = useState(false);
+
   const [countNameSymbols, setCountNameSymbols] = useState({
     current: name?.length,
     maxSymbols: 100,
@@ -72,14 +75,17 @@ const CreateCommunity = () => {
     setImages(filter);
   };
 
-  useEffect(() => {
-      setIsDescriptionError(false);
-      setIsErrorName(false);
-      setIsCountryError(false);
-      setIsCityError(false);
-      onClear();
-    }, [isErrorName, isDescriptionError, isCityError, isCountryError]);
+  // useEffect(() => {
+  //   setIsDescriptionError(false);
+  //   setIsErrorName(false);
+  //   setIsCountryError(false);
+  //   setIsCityError(false);
+  //   // onClear();
+  // }, [isErrorName, isDescriptionError, isCityError, isCountryError]);
 
+  useEffect(() => {
+    onClear();
+  }, []);
   // city and state required
   const onPressCreate = () => {
     const location =
@@ -121,8 +127,9 @@ const CreateCommunity = () => {
   };
 
   const onChooseImage = async () => {
+    setLoadImg(true);
     let options = {
-      mediaType: 'image',
+      mediaType: 'photo',
       quality: 1,
       includeBase64: true,
     };
@@ -131,6 +138,7 @@ const CreateCommunity = () => {
         setImages([...images, response?.assets[0]]);
       } else {
         console.log('cancel');
+        setLoadImg(false);
       }
     });
   };
@@ -249,6 +257,7 @@ const CreateCommunity = () => {
           placeholder="Name"
           maxLength={countNameSymbols.maxSymbols}
           isErrorBorder={isErrorName}
+          onFocusInput={() => setIsErrorName(false)}
         />
       </RN.View>
     );
@@ -332,6 +341,7 @@ const CreateCommunity = () => {
           placeholder="Description"
           maxLength={countDescSymbols.maxSymbols}
           isErrorBorder={isDescriptionError}
+          onFocusInput={() => setIsDescriptionError(false)}
         />
       </RN.View>
     );
@@ -360,10 +370,17 @@ const CreateCommunity = () => {
             {images?.map((img, index) => {
               return (
                 <>
-                  <RN.Image
+                  <FastImage
                     key={index}
-                    style={{height: 160, width: 160, marginRight: 8}}
-                    source={{uri: 'data:image/png;base64,' + img?.base64}}
+                    style={{
+                      height: 160,
+                      width: 160,
+                      marginRight: 8,
+                      borderRadius: 8,
+                    }}
+                    onLoadStart={() => setLoadImg(true)}
+                    onLoadEnd={() => setLoadImg(false)}
+                    source={{uri: img?.uri}}
                   />
                   <RN.TouchableOpacity
                     onPress={() => onPressDeleteImg(img)}
@@ -376,6 +393,12 @@ const CreateCommunity = () => {
                 </>
               );
             })}
+            {loadImg && (
+              <RN.View
+                style={{height: 160, width: 160, justifyContent: 'center'}}>
+                <RN.ActivityIndicator animating={loadImg} size={'small'} />
+              </RN.View>
+            )}
             <RN.TouchableOpacity
               style={{
                 alignSelf: 'center',
@@ -397,12 +420,20 @@ const CreateCommunity = () => {
             </RN.TouchableOpacity>
           </RN.ScrollView>
         ) : (
-          <RN.TouchableOpacity
-            style={styles.uploadImgContainer}
-            onPress={onChooseImage}>
-            <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-            <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
-          </RN.TouchableOpacity>
+          <>
+            {loadImg && (
+              <RN.View
+                style={{height: 160, width: 160, justifyContent: 'center'}}>
+                <RN.ActivityIndicator animating={loadImg} size={'small'} />
+              </RN.View>
+            )}
+            <RN.TouchableOpacity
+              style={styles.uploadImgContainer}
+              onPress={onChooseImage}>
+              <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
+              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+            </RN.TouchableOpacity>
+          </>
         )}
       </RN.View>
     );
@@ -516,21 +547,22 @@ const styles = RN.StyleSheet.create({
     marginHorizontal: 20,
   },
   createTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
     fontFamily: 'Mulish-Regular',
     lineHeight: 24,
-    color: colors.textPrimary,
+    color: '#000000',
     paddingVertical: 8,
   },
   createDescription: {
     fontSize: 16,
     fontWeight: '400',
     fontFamily: 'Mulish-Regular',
-    lineHeight: 16.7,
+    lineHeight: 22.4,
+    letterSpacing: 0.2,
     color: colors.textPrimary,
     textAlign: 'center',
-    marginHorizontal: 32,
+    paddingHorizontal: 32,
   },
   clearBtn: {
     backgroundColor: 'transparent',
@@ -552,7 +584,7 @@ const styles = RN.StyleSheet.create({
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     backgroundColor: colors.white,
-    paddingBottom: 8,
+    paddingBottom: isAndroid ? 0 : 8,
   },
   title: {
     fontSize: 16,

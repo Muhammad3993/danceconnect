@@ -9,7 +9,7 @@ import useRegistration from '../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
 import {minWeekDay} from '../utils/helpers';
 import SkeletonEventCard from './skeleton/eventCard-Skeleton';
-import {diablePayEvent, getTickets, payEvent} from '../api/serverRequests';
+import {apiUrl, diablePayEvent, payEvent} from '../api/serverRequests';
 import {
   BillingDetails,
   CardField,
@@ -22,6 +22,7 @@ import {
 import socket from '../api/sockets';
 import {Portal} from 'react-native-portalize';
 import {Modalize} from 'react-native-modalize';
+import FastImage from 'react-native-fast-image';
 
 type props = {
   item?: any;
@@ -46,7 +47,7 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
   } = useEvents();
   const [crntIndex, setCrntIndex] = useState(null);
   const index = eventList?.findIndex(
-    (itm: any) => itm?.eventUid === eventData.id,
+    (itm: any) => itm?.eventUid === eventData?.id,
   );
   const isAdmin = eventData?.creator?.uid === userUid;
 
@@ -79,12 +80,12 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
   // console.log('data?.userImages', data?.userImages);
   useEffect(() => {
     setIsFollowed(
-      eventData.attendedPeople?.find(
+      eventData?.attendedPeople?.find(
         (i: {userUid: string}) => i.userUid === userUid,
       ),
     );
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  }, [eventData.attendedPeople, userUid]);
+  }, [eventData?.attendedPeople, userUid]);
   useEffect(() => {
     if (isFollowed) {
       setLoadSubscribe(false);
@@ -93,7 +94,7 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
 
   useEffect(() => {
     socket.on('subscribed_event', socket_data => {
-      if (socket_data?.currentEvent?.id === data.id) {
+      if (socket_data?.currentEvent?.id === data?.id) {
         setEventData(socket_data?.currentEvent);
         // setAttendedImgs(socket_data?.userImages);
         setIsFollowed(
@@ -104,7 +105,7 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
         // setSocketEvents(socket_data?.events);
       }
     });
-  }, [data.id, loadSubscribe]);
+  }, [data?.id, loadSubscribe]);
 
   const renderTags = (tags: string[]) => {
     return (
@@ -131,13 +132,17 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
 
   const renderAttendedImgs = () => {
     const countPeople =
-      attendedImgs?.length > 3 ? `+${attendedImgs?.length} going` : 'going';
+      attendedImgs?.length > 3
+        ? `+${attendedImgs?.length - 3} going`
+        : attendedImgs?.length
+        ? 'going'
+        : '';
     return (
       <RN.View style={{flexDirection: 'row'}}>
         {attendedImgs?.slice(0, 3)?.map((img, idx) => {
           const imgUri =
-            typeof img !== 'undefined'
-              ? {uri: 'data:image/png;base64,' + img?.userImage?.base64}
+            img?.userImage?.length > 0
+              ? {uri: apiUrl + img?.userImage}
               : require('../assets/images/defaultuser.png');
           return (
             <RN.View
@@ -250,25 +255,27 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
     // }
   };
   const onPressAttend = async (idx: number) => {
+    // navigation.navigate('')
+    navigation.navigate('EventScreen', {data: eventData, pressBtnAttend: true});
     socket.connect();
-    setCrntIndex(idx);
-    setLoadSubscribe(true);
-    if (Number(eventData?.price) > 0) {
-      openPaymentModal.current?.open();
-    } else {
-      attendEvent(eventData?.id);
-      setLoadSubscribe(false);
-    }
+    // setCrntIndex(idx);
+    // setLoadSubscribe(true);
+    // if (Number(eventData?.price) > 0) {
+    //   openPaymentModal.current?.open();
+    // } else {
+    //   attendEvent(eventData?.id);
+    //   setLoadSubscribe(false);
+    // }
   };
 
   const onPressTicket = (eventUid: string) => {
-    getTickets().then(ticketsList => {
-      const tickets = Object.values(ticketsList).flat();
-      const currentTicket = tickets.find(
-        ticket => ticket?.currentTicket?.eventUid === eventUid,
-      );
-      navigation.navigate('Ticket', currentTicket?.currentTicket);
-    });
+    // getTickets().then(ticketsList => {
+    //   const tickets = Object.values(ticketsList).flat();
+    //   const currentTicket = tickets.find(
+    //     ticket => ticket?.currentTicket?.eventUid === eventUid,
+    //   );
+    //   navigation.navigate('Ticket', currentTicket?.currentTicket);
+    // });
   };
   const renderLoading = () => {
     return (
@@ -294,44 +301,6 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
     }
   }, [paymentError]);
   const renderAttendBtn = () => {
-    if (Number(eventData?.price) > 0) {
-      return (
-        <>
-          {loadSubscribe ? (
-            <>{renderLoading()}</>
-          ) : isFollowed ? (
-            <RN.View style={{flexDirection: 'row'}}>
-              {!isAdmin && (
-                <RN.TouchableOpacity
-                  disabled={isTicket}
-                  onPress={() => onPressTicket(eventData.id)}
-                  style={{
-                    justifyContent: 'center',
-                    backgroundColor: '#07BD74',
-                    borderRadius: 18,
-                    paddingVertical: 6,
-                  }}>
-                  <RN.Text style={[styles.joinedText, {color: colors.white}]}>
-                    {isAdmin ? '' : 'Show ticket'}
-                  </RN.Text>
-                </RN.TouchableOpacity>
-              )}
-            </RN.View>
-          ) : (
-            <StripeProvider
-              publishableKey={STRIPE_PUBLIC_KEY}
-              merchantIdentifier={MERCHANT_ID}>
-              <Button
-                title={'Buy ticket'}
-                disabled={!isPassedEvent}
-                onPress={() => onPressAttend(index)}
-                buttonStyle={styles.attendBtn}
-              />
-            </StripeProvider>
-          )}
-        </>
-      );
-    }
     return (
       <RN.View style={{}}>
         <RN.View>
@@ -339,28 +308,21 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
             <>{renderLoading()}</>
           ) : isFollowed ? (
             <RN.View style={{flexDirection: 'row', paddingTop: 4}}>
-              <RN.View style={{justifyContent: 'center'}}>
+              {/* <RN.View style={{justifyContent: 'center'}}>
                 {!isAdmin && (
                   <RN.Image
                     source={{uri: 'tick'}}
                     style={{height: 12, width: 12}}
                   />
                 )}
-              </RN.View>
+              </RN.View> */}
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.joinedText}>
-                  {isAdmin ? '' : 'Going'}
+                  {isAdmin ? 'Managing' : 'Going'}
                 </RN.Text>
               </RN.View>
             </RN.View>
-          ) : (
-            <Button
-              title="Attend"
-              disabled={!isPassedEvent}
-              onPress={() => onPressAttend(index)}
-              buttonStyle={styles.attendBtn}
-            />
-          )}
+          ) : null}
         </RN.View>
       </RN.View>
     );
@@ -371,15 +333,13 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
         <RN.View style={styles.typeEventContainer}>
           <RN.Text style={styles.typeEventText}>{eventData?.typeEvent}</RN.Text>
         </RN.View>
-        {Number(data?.price) > 0 ? (
-          <RN.View style={styles.priceContainer}>
-            <RN.Text style={styles.priceText}>{`$ ${total}`}</RN.Text>
-          </RN.View>
-        ) : (
-          <RN.View style={styles.priceContainer}>
-            <RN.Text style={styles.priceText}>{'Free'}</RN.Text>
-          </RN.View>
-        )}
+        <RN.View style={styles.priceContainer}>
+          <RN.Text style={styles.priceText}>
+            {eventData?.tickets?.length > 0 && data?.minPriceTickets >= 0
+              ? '$ ' + data?.minPriceTickets
+              : 'Free'}
+          </RN.Text>
+        </RN.View>
       </RN.View>
     );
   };
@@ -418,12 +378,13 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
             </RN.View>
           </RN.View>
           <RN.View>
-            <RN.Image
+            <FastImage
               source={
                 eventData?.images?.length > 0
                   ? {
-                      uri:
-                        'data:image/png;base64,' + eventData?.images[0]?.base64,
+                      uri: apiUrl + eventData?.images[0],
+                      cache: FastImage.cacheControl.immutable,
+                      priority: FastImage.priority.high,
                     }
                   : require('../assets/images/default.jpeg')
               }
@@ -452,7 +413,7 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
               </RN.View>
             </RN.View>
           )}
-          {eventData?.attendedPeople?.length &&
+          {eventData?.attendedPeople?.length > 0 &&
             !isTicket &&
             renderAttendedImgs()}
         </RN.View>
@@ -565,9 +526,9 @@ const styles = RN.StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.05,
     shadowRadius: 2,
-    elevation: 9,
+    elevation: 3,
   },
   priceText: {
     color: colors.white,
@@ -708,7 +669,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     lineHeight: 19.6,
-    paddingHorizontal: 12,
+    // paddingHorizontal: 12,
     // paddingLeft: 6,
   },
 });

@@ -12,17 +12,17 @@ function* getDanceStylesRequest() {
     const response = yield call(getConstants);
     yield put(
       setDanceStylesAction({
-        danceStyles: response.data[0].danceStyles[0],
+        danceStyles: response[0]?.danceStyles ?? [],
       }),
     );
     yield put(
       setEventTypesAction({
-        eventTypes: response.data[0].typesEvents,
+        eventTypes: response[0]?.typesEvents ?? [],
       }),
     );
     yield put(
       setCountriesAction({
-        countries: response?.data[0].countries,
+        countries: response[0]?.countries ?? [],
       }),
     );
   } catch (error) {

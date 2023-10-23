@@ -112,7 +112,7 @@ const CreateEvent = () => {
           (selectedLocation?.structured_formatting?.main_text?.length > 0
             ? selectedLocation?.terms[1].value
             : '')
-        : communityData?.location ?? currentCity;
+        : selectedLocation ?? communityData?.location ?? currentCity;
     if (name?.length <= 0) {
       setIsErrorName(true);
     } else if (description?.length <= 0) {
@@ -121,7 +121,7 @@ const CreateEvent = () => {
       //   setIsErrorPlace(true);
       // } else {
     } else {
-      console.log('press create', time);
+      // console.log('press create', locationEdt, selectedLocation);
       createEvent({
         name: name,
         description: description,
@@ -507,11 +507,11 @@ const CreateEvent = () => {
               <RN.Text style={styles.dateEventText}>
                 {`${
                   startDate === null
-                    ? moment(Date.now()).format('MMMM Do')
-                    : moment(startDate).format('MMMM Do')
+                    ? moment(Date.now()).format('MMM Do')
+                    : moment(startDate).format('MMM Do')
                 }${
                   endDate !== null
-                    ? ' - ' + moment(endDate).format('MMMM Do')
+                    ? ' - ' + moment(endDate).format('MMM Do')
                     : ''
                 }`}
               </RN.Text>

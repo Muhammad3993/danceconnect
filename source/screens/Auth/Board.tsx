@@ -78,14 +78,25 @@ const Board = () => {
         selectedLocation?.terms[1].value;
     }
     onChoosedCity(location);
+    const email = routeProps?.params?.email;
+    const password = routeProps?.params?.password;
+    console.log('e', email, password);
+
     const data = {
-      email: routeProps?.params?.email ?? saveEmail,
-      password: routeProps?.params?.password ?? userUid,
+      email: email,
+      password: password,
       userName: name,
       userGender: gender?.title,
       userCountry: location,
       userRole: role,
       individualStyles: addedStyles,
+      userImage: null,
+      customer: null,
+      myCommunities: [],
+      joinedCommunities: [],
+      events: [],
+      goingEvent: [],
+      paidEvents: [],
     };
     // createUser(data);
     registration(data);
@@ -394,7 +405,7 @@ const Board = () => {
             disabled={
               name?.length > 0 &&
               // selectedLocation?.structured_formatting?.main_text?.length > 0 &&
-              country?.country?.length > 0 &&
+              // country?.country?.length > 0 &&
               role?.length > 0 &&
               gender?.title?.length > 0
             }

@@ -7,6 +7,8 @@ import {useNavigation} from '@react-navigation/native';
 import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
 import SkeletonCommunityCard from './skeleton/communityCard-Skeleton';
 import socket from '../api/sockets';
+import {apiUrl} from '../api/serverRequests';
+import FastImage from 'react-native-fast-image';
 
 type props = {
   item: any;
@@ -16,14 +18,14 @@ type props = {
 const CommunityCard = ({item, isProfileScreen}: any) => {
   const {userUid} = useRegistration();
   const navigation = useNavigation();
-  const data = item.item;
+  const data = item?.item ?? item;
   const {
     isLoadingWithFollow,
     isFollowedCurrentCommunity,
     communitiesData,
     startFollowed,
     isLoading,
-    setSocketCommunities
+    setSocketCommunities,
   } = useCommunities();
   const [countFollowers, setCountFollowers] = useState(0);
 
@@ -37,16 +39,35 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
   // const isFollowed = user?.joinedCommunities?.includes(data?.id);
   const [crntIndex, setCrntIndex] = useState(null);
   const [loadSubscribe, setLoadSubscribe] = useState(false);
-  const index = communitiesData?.findIndex((itm: any) => itm.id === data.id);
+  const index = communitiesData?.findIndex((itm: any) => itm.id === data?.id);
   const [attendedImgs, setAttendedImgs] = useState(displayedData?.userImages);
-
+  const [sourceDimensions, setSourceDimensions] = useState({
+    height: 0,
+    width: 0,
+  });
+  RN.Image.getSizeWithHeaders(
+    apiUrl + data?.images[0],
+    {},
+    (width, height) => {
+      // console.log(`The image dimensions are ${width}x${height}`);
+      if (sourceDimensions.height === 0) {
+        setSourceDimensions({
+          height: height,
+          width: width,
+        });
+      }
+    },
+    error => {
+      console.error(`Couldn't get the image size: ${error}`);
+    },
+  );
   const goToCommunity = () => {
     navigation.navigate('CommunityScreen', {data, isProfileScreen});
   };
   // console.log('di', data.followers, isFollowed);
   useEffect(() => {
     setIsFollowed(
-      data.followers?.find((i: {userUid: string}) => i.userUid === userUid),
+      data?.followers?.find((i: {userUid: string}) => i.userUid === userUid),
     );
   }, [data?.followers, userUid]);
 
@@ -56,8 +77,8 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
 
   useEffect(() => {
     socket.on('subscribed', socket_data => {
-      // console.log('data', socket);
-      if (socket_data?.currentCommunity?.id === data.id) {
+      // console.log('data', socket_data);
+      if (socket_data?.currentCommunity?.id === data?.id) {
         // socket.emit('joined_update', community.location);
         setAttendedImgs(socket_data?.userImages);
         setDisplayedData(socket_data?.currentCommunity);
@@ -77,7 +98,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
     // socket.on('updated_communities', communities => {
     //   console.log('joined_update', communities);
     // });
-  }, [data.id, userUid]);
+  }, [data?.id, userUid]);
   // console.log(data);
   // useEffect(() => {
   //   setLoadData(true);
@@ -203,19 +224,17 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
             {data?.description}
           </RN.Text>
         </RN.View>
-        <RN.Image
+        <FastImage
+          source={{
+            uri: apiUrl + data?.images[0],
+            cache: FastImage.cacheControl.immutable,
+            priority: FastImage.priority.high,
+          }}
           defaultSource={require('../assets/images/default.jpeg')}
-          source={
-            data?.images?.length > 0
-              ? {
-                  uri: 'data:image/png;base64,' + data?.images[0]?.base64,
-                }
-              : require('../assets/images/default.jpeg')
-          }
           style={styles.itemImg}
         />
       </RN.TouchableOpacity>
-      {renderCount()}
+      {attendedImgs?.length > 0 && renderCount()}
       <RN.View style={{borderTopWidth: 1, borderColor: colors.gray}} />
       <RN.View style={styles.footerItemContainer}>
         {data?.categories && renderTags(data?.categories)}
@@ -224,13 +243,21 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
             renderLoading()
           ) : isFollowed ? (
             <RN.View style={{flexDirection: 'row'}}>
-              <RN.View style={{justifyContent: 'center'}}>
+              {/* <RN.View style={{justifyContent: 'center'}}>
                 <RN.Image
                   source={{uri: 'tick'}}
-                  style={{height: 12, width: 12}}
+                  style={{
+                    height: 12,
+                    width: 12,
+                    tintColor: isMyCommunity
+                      ? colors.white
+                      : colors.textPrimary,
+                  }}
                 />
-              </RN.View>
-              <RN.Text style={styles.joinedText}>{'Joined'}</RN.Text>
+              </RN.View> */}
+              <RN.Text style={styles.joinedText}>
+                {isMyCommunity ? 'Managing' : 'Joined'}
+              </RN.Text>
             </RN.View>
           ) : isMyCommunity ? null : (
             <RN.TouchableOpacity
@@ -248,6 +275,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
 
 const styles = RN.StyleSheet.create({
   itemContainer: {
+    zIndex: 2,
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 8,
@@ -256,6 +284,15 @@ const styles = RN.StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 16,
     marginHorizontal: isAndroid ? 0 : 10,
+    backgroundColor: colors.white,
+    shadowColor: colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 3,
   },
   attendPeopleImg: {
     height: 24,
@@ -266,8 +303,8 @@ const styles = RN.StyleSheet.create({
   },
   joinBtn: {
     backgroundColor: colors.orange,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 26,
     borderRadius: 100,
   },
   joinedText: {
@@ -275,7 +312,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     lineHeight: 19.6,
-    paddingLeft: 6,
+    // paddingHorizontal: 12,
   },
   headerItemContainer: {
     flexDirection: 'row',

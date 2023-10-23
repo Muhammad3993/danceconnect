@@ -7,7 +7,9 @@ export const GOOGLE_API_KEY = 'AIzaSyApGEMY5iKsDU1wayWSI2nCJGFafjPM39k';
 // export const STRIPE_PUBLIC_KEY =
   // 'pk_live_51NVTpaEh2JOoqoGgPhEEiMPZMcc06oDvCsCXq3JRnFJXJ9ZB7URRyGng3RJUVOS4onccJk2kCJPo7Z00NRxjmIva00jp6cdm0j';
 export const STRIPE_PUBLIC_KEY =
-  'pk_test_51NVTpaEh2JOoqoGgp7JLCXCfPhj3GLSJ2v2IonAUDgW3wFBxhOArnsVALPpASWvy14zSDCVsawljgoBo1ESQJLAl00FwNwIAGF';
+  'pk_test_51NBLSZDkcDPkhRfmfonNQvBiC4XLO3cOzJx4SIeK7xdmNMvLWKo67bfPf0sNrxLVS2kyR4BkHevXb5ruzbhVMR1h00WXPfuCKx';
+  // export const STRIPE_PUBLIC_KEY =
+  // 'pk_test_51NVTpaEh2JOoqoGgjRjnqLG1LFWbO3Aii7TLog8OdH07T7RFU754ak4oMgWGzeA8VCEaSavJKZGALFOqvETyZVPP00gsdcEZiA';
 export const MERCHANT_ID = 'merchant.incode.danceconnect';
 const {StatusBarManager} = NativeModules;
 export const genders = [

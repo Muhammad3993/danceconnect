@@ -5,6 +5,7 @@ export default {
   gray: '#EEE',
   lightGray: '#FAFAFA',
   darkGray: '#757575',
+  grayScale: '#9E9E9E',
   orange: '#F5A80C',
   tranparentOrange: 'rgba(245, 168, 12, 0.06)',
   purple: '#5C33D7',
@@ -12,4 +13,5 @@ export default {
   lightPurple: '#F6F5FF',
   redError: '#F75555',
   grayTransparent: 'rgba(238, 238, 238, 1)',
+  green: '#07BD74',
 };

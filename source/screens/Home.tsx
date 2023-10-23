@@ -4,89 +4,57 @@ import {useProfile} from '../hooks/useProfile';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import CreateCommunityButton from '../components/createCommunityBtn';
-import {SCREEN_HEIGHT, isAndroid} from '../utils/constants';
+import {isAndroid} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import EventCard from '../components/eventCard';
 import EmptyContainer from '../components/emptyCommunitiesMain';
-import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
 import VerticalCard from '../components/verticalEventCard';
-import moment from 'moment';
 import useAppStateHook from '../hooks/useAppState';
-import {useCommunities} from '../hooks/useCommunitites';
-import socket from '../api/sockets';
+import {apiUrl} from '../api/serverRequests';
+import useTickets from '../hooks/useTickets';
+import FastImage from 'react-native-fast-image';
 
 const HomeScreen = () => {
-  const {userImgUrl, individualStyles, getCurrentUser, userCommunities} =
-    useProfile();
+  const {userImgUrl} = useProfile();
+  const routeProps = useRoute();
   const isFocused = useIsFocused();
-  const {userUid} = useRegistration();
+  const {logout} = useRegistration();
   const navigation = useNavigation();
-  const {eventTypes, getDanceStyles} = useAppStateHook();
-  const {communitiesData} = useCommunities();
+  const {eventTypes, getDanceStyles, setMessageNotice, setVisibleNotice} =
+    useAppStateHook();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const {
-    attendEventWithUserUid,
-    getManagingEvents,
-    getEvents,
-    eventList,
-    setSocketEvents,
-    // setDefaultEventLimit,
-  } = useEvents();
-  const [events, setEvents] = useState<string[]>(attendEventWithUserUid);
+  const {getManagingEvents, personalEvents, getPersonalEvents} = useEvents();
+  const [events, setEvents] = useState<string[]>(personalEvents);
+  const {getPurchasedTickets} = useTickets();
 
-  const [maybeEvents, setMaybeEvents] = useState([]);
+  const [maybeEvents, setMaybeEvents] = useState([]); //TODO verticalCard
   useEffect(() => {
     setTabs(['All', ...eventTypes]);
-  }, [eventTypes?.length]);
+  }, [eventTypes, eventTypes.length]);
 
   useEffect(() => {
-    socket.once('subscribed_event', socket_data => {
-      // console.log('subscribed_event socket_data.events?.length', socket_data.events?.length);
-      if (socket_data?.events?.length) {
-        setSocketEvents(socket_data?.events);
-      }
-    });
-    // console.log('eventData.attendedPeople.length', eventData.attendedPeople.length);
-  }, []);
+    if (routeProps?.params && routeProps.params?.logout) {
+      setMessageNotice('Token expire');
+      setVisibleNotice(true);
+      logout();
+    }
+  }, [isFocused, routeProps.params?.logout, routeProps.params]);
+
   useEffect(() => {
     getDanceStyles();
-    getEvents();
     getManagingEvents();
+    getPersonalEvents();
+    getPurchasedTickets();
   }, []);
 
   useEffect(() => {
-    if (isFocused) {
-      const followCommunities = communitiesData
-        ?.map(community => community)
-        .filter(
-          item =>
-            item.followers?.length > 0 &&
-            item.followers?.find(user => user.userUid === userUid),
-        )
-        ?.map(c => c.id);
-      const communitiesIdsIncludesForEvents = eventList.filter(ev =>
-        followCommunities.includes(ev.communityUid),
-      );
-      // if (communitiesIdsIncludesForEvents?.length > 0) {
-      //   setMaybeEvents(communitiesIdsIncludesForEvents);
-      // }
-      setEvents([
-        ...attendEventWithUserUid,
-        ...communitiesIdsIncludesForEvents,
-      ]);
-      // console.log(
-      //   'communitiesIdsIncludesForEvents',
-      //   attendEventWithUserUid,
-      // );
+    if (personalEvents?.length > 0) {
+      setEvents(personalEvents);
     }
-  }, [isFocused, eventList]);
-
+  }, [personalEvents?.length]);
   const goToCommunities = () => navigation.navigate('Communities');
   useEffect(() => {
     onPressTab('All');
@@ -99,26 +67,26 @@ const HomeScreen = () => {
         RN.LayoutAnimation.Presets.easeInEaseOut,
       );
       setCurrentTab(value);
-      // console.log('value', attendEventWithUserUid?.filter(event => event?.typeEvent === value));
       if (value === 'All') {
-        setEvents(attendEventWithUserUid);
+        setEvents(personalEvents);
       } else {
         setEvents(
-          attendEventWithUserUid?.filter(event => event?.typeEvent === value),
+          personalEvents?.filter(
+            (event: {typeEvent: string}) => event?.typeEvent === value,
+          ),
         );
       }
     },
-    [attendEventWithUserUid],
+    [personalEvents],
   );
   useEffect(() => {
     if (isFocused) {
       onPressTab('All');
     }
     if (currentTab !== 'All') {
-      console.log('currentTab', currentTab);
       onPressTab(currentTab);
     }
-  }, [isFocused, currentTab]);
+  }, [isFocused, currentTab, onPressTab]);
   const renderHeader = () => {
     return (
       <>
@@ -131,14 +99,14 @@ const HomeScreen = () => {
             style={{justifyContent: 'center'}}
             activeOpacity={0.7}
             onPress={() => navigation.navigate('Profile')}>
-            <RN.Image
-              source={
-                userImgUrl
-                  ? {uri: 'data:image/png;base64,' + userImgUrl?.base64}
-                  : require('../assets/images/defaultuser.png')
-              }
-              style={{height: 40, width: 40, borderRadius: 50}}
+            <FastImage
+              source={{
+                uri: apiUrl + userImgUrl,
+                cache: FastImage.cacheControl.immutable,
+                priority: FastImage.priority.high,
+              }}
               defaultSource={require('../assets/images/defaultuser.png')}
+              style={{height: 40, width: 40, borderRadius: 50}}
             />
           </RN.TouchableOpacity>
         </RN.View>
@@ -171,7 +139,7 @@ const HomeScreen = () => {
     );
   };
   const renderItem = (item: any) => {
-    return <EventCard item={item?.item} key={item.item.id} />;
+    return <EventCard item={item} key={item?.id} />;
   };
   const renderEmpty = () => {
     return <EmptyContainer onPressButton={goToCommunities} />;
@@ -211,16 +179,14 @@ const HomeScreen = () => {
             horizontal
           />
         </RN.View>
-        <RN.FlatList
-          showsVerticalScrollIndicator={false}
-          data={events}
-          renderItem={renderItem}
-          keyExtractor={(item, _index) => `${item}${_index}`}
-          ListEmptyComponent={renderEmpty()}
-          ListFooterComponent={() => {
-            return <RN.View style={{paddingBottom: SCREEN_HEIGHT / 10}} />;
-          }}
-        />
+        <ScrollView>
+          {events?.length > 0 &&
+            events?.map((item: any) => {
+              return <RN.View>{renderItem(item)}</RN.View>;
+            })}
+          {!events?.length && renderEmpty()}
+          <RN.View style={{paddingBottom: 24}} />
+        </ScrollView>
       </ScrollView>
     </RN.View>
   );
@@ -231,7 +197,6 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     // backgroundColor: colors.white,
     backgroundColor: '#FAFAFA',
-    paddingTop: isAndroid ? 40 : 44,
     // paddingHorizontal: 20,
   },
   interestedWrapper: {
@@ -287,10 +252,11 @@ const styles = RN.StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 10,
+    // paddingTop: 10,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(238, 238, 238, 1)',
+    paddingTop: isAndroid ? 14 : 44,
     paddingBottom: 8,
     // marginBottom: 8,
     backgroundColor: colors.white,

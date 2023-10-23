@@ -29,6 +29,13 @@ export type registrationAction = {
     userRole?: string[];
     individualStyles?: string[];
     authProvider?: string;
+    userImage?: null;
+    customer?: null;
+    myCommunities?: [];
+    joinedCommunities?: [];
+    events?: [];
+    goingEvent?: [];
+    paidEvents?: [];
   };
 };
 
@@ -47,6 +54,13 @@ export default (
         userCountry: action.payload?.userCountry,
         userRole: action.payload?.userRole,
         individualStyles: action.payload?.individualStyles,
+        userImage: action.payload?.userImage,
+        customer: action.payload?.customer,
+        myCommunities: action.payload?.myCommunities,
+        joinedCommunities: action.payload?.joinedCommunities,
+        events: action.payload?.events,
+        goingEvent: action.payload?.goingEvent,
+        paidEvents: action.payload?.paidEvents,
         isLoading: true,
         isAuthorized: false,
       };
@@ -90,6 +104,7 @@ export default (
         isAuthorized: true,
         currentUser: action.payload?.currentUser,
         isUserExists: action.payload?.isUserExists,
+        authProvider: action.payload?.authProvider,
         isRegistrationsSuccess: true,
       };
     case AUTHORIZATION_WITH_EMAIL.FAIL:
@@ -174,6 +189,7 @@ export default (
       return {
         ...state,
         isAuthorized: false,
+        isUserExists: false,
         ...registrationInitialState,
       };
     }

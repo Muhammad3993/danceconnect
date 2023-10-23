@@ -128,7 +128,7 @@ export default (
         ...state,
         isLoadingById: false,
         communityByIdData: action.payload?.communityByIdData,
-        communityUid: '',
+        // communityUid: '',
       };
     case COMMUNITIES.GET_COMMUNITY_BY_ID_FAIL:
       return {
@@ -140,7 +140,7 @@ export default (
     case COMMUNITIES.GET_COMMUNITY_BY_ID_CLEAR:
       return {
         ...state,
-        communityByIdData: {},
+        communityByIdData: null,
       };
     case COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_REQUEST:
       return {

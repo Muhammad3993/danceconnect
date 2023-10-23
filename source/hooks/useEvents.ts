@@ -1,6 +1,7 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
   changeInformationEventRequestAction,
+  createEventChangeValue,
   endAttendEventRequestAction,
   eventParams,
   followingParams,
@@ -9,14 +10,17 @@ import {
   getEventsRequestAction,
   getEventsSuccessAction,
   getManagingEventsRequestAction,
+  getPersonalEventsRequestAction,
   setLimit,
   startAttendEventRequestAction,
 } from '../store/actions/eventActions';
 import {createEventRequestAction} from '../store/actions/eventActions';
 import {
+  getPreCreateEvent,
   selectAttentingEvents,
   selectEventByIdCommunity,
   selectEventList,
+  selectIsCreatedEvent,
   selectIsSaveChanges,
   selectLoadingChangeInformationEvent,
   selectLoadingEvents,
@@ -24,6 +28,7 @@ import {
   selectLoadingattendEvent,
   selectManagingEvents,
   selectPassedEvents,
+  selectPersonalEvents,
   selectPrevLimit,
   selectPrevOffset,
   selectUpcomingEvents,
@@ -35,6 +40,7 @@ import {useProfile} from './useProfile';
 
 const useEvents = () => {
   const dispatch = useDispatch();
+  const personalEvents = useSelector(selectPersonalEvents);
   const eventList = useSelector(selectEventList) ?? [];
   const eventsDataByCommunityId = useSelector(selectEventByIdCommunity);
   const loadingEvents = useSelector(selectLoadingEvents);
@@ -44,6 +50,7 @@ const useEvents = () => {
     selectLoadingChangeInformationEvent,
   );
   const isSaveChanges = useSelector(selectIsSaveChanges);
+  const isCreatedEvent = useSelector(selectIsCreatedEvent);
 
   const managingEvents = useSelector(selectManagingEvents);
   const isLoadManaging = useSelector(selectLoadingManagingEvents);
@@ -86,6 +93,8 @@ const useEvents = () => {
   const getEventByIdCommunity = (uid: string) => {
     dispatch(getEventByIdCommunityRequestAction({eventUid: uid}));
   };
+
+  const preCreatedEvent = useSelector(getPreCreateEvent);
   const createEvent = ({
     name,
     description,
@@ -99,6 +108,7 @@ const useEvents = () => {
     eventDate,
     typeEvent,
     price,
+    type,
   }: eventParams) => {
     dispatch(
       createEventRequestAction({
@@ -114,6 +124,7 @@ const useEvents = () => {
         eventDate: eventDate,
         typeEvent: typeEvent,
         price: price,
+        type: type,
       }),
     );
   };
@@ -155,19 +166,26 @@ const useEvents = () => {
   }: eventParams) => {
     dispatch(
       changeInformationEventRequestAction({
-        name,
-        description,
+        name: name,
+        description: description,
         // country,
-        location,
-        categories,
-        images,
-        eventDate,
-        place,
-        eventUid,
-        typeEvent,
-        price,
+        location: location,
+        categories: categories,
+        images: images,
+        eventDate: eventDate,
+        place: place,
+        eventUid: eventUid,
+        typeEvent: typeEvent,
+        price: price,
       }),
     );
+  };
+
+  const getPersonalEvents = () => {
+    dispatch(getPersonalEventsRequestAction());
+  };
+  const changeCreatedValue = () => {
+    dispatch(createEventChangeValue());
   };
 
   return {
@@ -197,6 +215,11 @@ const useEvents = () => {
     onClearEventDataById,
     setEventLimit,
     setDefaultEventLimit,
+    preCreatedEvent,
+    getPersonalEvents,
+    personalEvents,
+    isCreatedEvent,
+    changeCreatedValue,
   };
 };
 export default useEvents;

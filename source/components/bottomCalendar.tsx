@@ -253,25 +253,25 @@ const BottomCalendar = ({
         adjustToContentHeight>
         <RN.View>
           {renderHeader()}
-          {startDate !== null && (
-            <RN.View style={styles.nameTitle}>
-              <RN.View style={{justifyContent: 'center'}}>
+          <RN.View style={styles.nameTitle}>
+            <RN.View style={{justifyContent: 'center'}}>
+              {startDate !== null && (
                 <RN.Text style={[styles.title, {fontSize: 15}]}>
                   {dateEvent}
                 </RN.Text>
-              </RN.View>
-              <RN.TouchableOpacity
-                style={styles.timeContainer}
-                onPress={() => {
-                  setOnPressedTime(v => !v);
-                  setOpeningTime(v => !v);
-                }}>
-                <RN.Text style={styles.timeText}>
-                  {moment(time).format('HH:mm')}
-                </RN.Text>
-              </RN.TouchableOpacity>
+              )}
             </RN.View>
-          )}
+            <RN.TouchableOpacity
+              style={styles.timeContainer}
+              onPress={() => {
+                setOnPressedTime(v => !v);
+                setOpeningTime(v => !v);
+              }}>
+              <RN.Text style={styles.timeText}>
+                {moment(time).format('HH:mm')}
+              </RN.Text>
+            </RN.TouchableOpacity>
+          </RN.View>
           {openingTime ? (
             isAndroid ? (
               renderTimePicker()

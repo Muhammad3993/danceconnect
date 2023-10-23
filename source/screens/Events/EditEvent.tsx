@@ -434,9 +434,9 @@ const EditEvent = () => {
               <RN.Text style={styles.dateEventText}>
                 {`${
                   startDate === null
-                    ? moment(Date.now()).format('MMMM Do')
-                    : moment(startDate).format('MMMM Do')
-                }${endDate ? ' - ' + moment(endDate).format('MMMM Do') : ''}`}
+                    ? moment(Date.now()).format('MMM Do')
+                    : moment(startDate).format('MMM Do')
+                }${endDate ? ' - ' + moment(endDate).format('MMM Do') : ''}`}
               </RN.Text>
               <RN.Text style={styles.dateEventText}>
                 {moment(time).format('HH:mm')}

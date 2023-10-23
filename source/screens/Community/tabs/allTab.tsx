@@ -7,6 +7,7 @@ import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
+import {ScrollView} from 'react-native-gesture-handler';
 
 type props = {
   communititesSearch: string[];
@@ -14,7 +15,7 @@ type props = {
 };
 
 const AllTab = ({communititesSearch, searchValue}: props) => {
-  const {communitiesData, isLoading} = useCommunities();
+  const {communitiesData, isLoading, getCommunitites} = useCommunities();
   const {currentCity} = useAppStateHook();
 
   const lengthEmptyCommunities = new Array(3).fill('');
@@ -34,28 +35,24 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
       setCommunitites(communititesSearch);
     }
   }, [communititesSearch, searchValue]);
-  useEffect(() => {
-    setCommunitites(
-      communitiesData
-        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
-        .map(ev => ev),
-    );
-  }, [currentCity]);
-  useEffect(() => {
-    setCommunitites(
-      communitiesData
-        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
-        .map(ev => ev),
-    );
-  }, [communitiesData.length]);
+  // useEffect(() => {
+  //   setCommunitites(
+  //     communitiesData
+  //       ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
+  //       .map(ev => ev),
+  //   );
+  // }, [currentCity]);
+  // useEffect(() => {
+  //   setCommunitites(
+  //     communitiesData
+  //       ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
+  //       .map(ev => ev),
+  //   );
+  // }, [communitiesData.length]);
   const onClear = () => {
     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
-    setCommunitites(
-      communitiesData?.filter(
-        i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
-      ),
-    );
+    setCommunitites(communitiesData);
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
@@ -66,11 +63,7 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
       );
       setCommunitites(data);
     } else {
-      setCommunitites(
-        communitiesData?.filter(
-          i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
-        ),
-      );
+      setCommunitites(communitiesData);
     }
     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   };
@@ -97,7 +90,7 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
   };
 
   const renderItemCommunity = (item: any) => {
-    return <CommunityCard item={item} key={item.index} />;
+    return <CommunityCard item={item} key={item.id} />;
   };
   const renderFilters = () => {
     return (
@@ -133,16 +126,29 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
       </RN.View>
     );
   };
+  const refreshControl = () => {
+    return (
+      <RN.RefreshControl
+        onRefresh={() => {
+          onClear();
+          getCommunitites();
+        }}
+        refreshing={isLoading}
+      />
+    );
+  };
   return (
     <>
-      <RN.FlatList
-        data={communitites}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderFilters()}
-        renderItem={renderItemCommunity}
-        keyExtractor={(item, _index) => `${item.item?.id}/${_index}`}
-        ListEmptyComponent={renderEmpty()}
-      />
+        refreshControl={refreshControl()}>
+        {renderFilters()}
+        {communitites?.length > 0 &&
+          communitites?.map((item: any) => {
+            return <RN.View>{renderItemCommunity(item)}</RN.View>;
+          })}
+        {!communitites?.length && renderEmpty()}
+      </ScrollView>
       <FiltersBottom
         onOpening={openingFilters}
         onClose={() => setOpeningFilters(false)}
@@ -158,7 +164,7 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
 const styles = RN.StyleSheet.create({
   filterWrapper: {
     paddingVertical: 14,
-    paddingHorizontal: isAndroid ? 0 : 20,
+    paddingHorizontal: isAndroid ? 4 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

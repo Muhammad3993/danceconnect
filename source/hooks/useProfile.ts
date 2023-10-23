@@ -38,8 +38,8 @@ export const useProfile = () => {
   const getCurrentUser = () => {
     dispatch(getUserDataRequestAction());
   };
-  const getUser = (uid: string) => {
-    dispatch(getUserByIdRequestAction(uid));
+  const getUser = () => {
+    dispatch(getUserByIdRequestAction());
   };
   const onChange = (name: string, gender: string, profileImg: object) => {
     const data = {

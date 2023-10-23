@@ -13,6 +13,7 @@ import CitySelector from '../../components/citySelector';
 import {Portal} from 'react-native-portalize';
 import FindCity from '../../components/findCity';
 import socket from '../../api/sockets';
+import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
 
 const TABS = ['All', 'Joined', 'Managing'];
 
@@ -67,18 +68,10 @@ const CommunitiesScreen = () => {
       // getCommunitites();
     }
   }, [removedCommunity]);
-  // useMemo(() => {
-  //   if (returnScreen) {
-  //     getCommunitites();
-  //   }
-  //   console.log('returnScreen', returnScreen);
-  // }, [returnScreen]);
-  // useEffect(() => {
-  //   getCommunitites();
-  // }, [currentCity]);
-  // useEffect(() => {
-  //   RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  // }, []);
+
+  const onRefSearch = () => {
+    onPressTab('All');
+  };
 
   const onChangeTextSearch = useCallback(
     (value: string) => {
@@ -92,6 +85,9 @@ const CommunitiesScreen = () => {
           return itemData.indexOf(textData) > -1;
         });
         setCommunitiesSearch(search);
+        if (!value?.length) {
+          setCommunitiesSearch(communitiesData);
+        }
       }
       if (currentTab === 'Joined') {
         const searchJoin = joinedCommunities.filter((item: any) => {
@@ -102,6 +98,9 @@ const CommunitiesScreen = () => {
           return itemData.indexOf(textData) > -1;
         });
         setCommunitiesSearch(searchJoin);
+        if (!value?.length) {
+          setCommunitiesSearch(joinedCommunities);
+        }
       }
       if (currentTab === 'Managing') {
         const searchManaging = managingCommunity.filter((item: any) => {
@@ -112,59 +111,80 @@ const CommunitiesScreen = () => {
           return itemData.indexOf(textData) > -1;
         });
         setCommunitiesSearch(searchManaging);
+        if (!value?.length) {
+          setCommunitiesSearch(managingCommunity);
+        }
       }
     },
     [communitiesData, currentTab, joinedCommunities, managingCommunity],
   );
 
   const renderHeader = () => {
+    const renderTab = ({item, index}: any) => {
+      return (
+        <RN.TouchableOpacity
+          onPress={() => onPressTab(item)}
+          key={index}
+          style={[
+            styles.itemTabContainer,
+            {
+              borderBottomWidth: currentTab === item ? 3 : 0,
+              // paddingHorizontal: 24,
+              paddingBottom: 8,
+            },
+          ]}>
+          <RN.Text
+            style={[
+              styles.itemTabText,
+              {
+                color: currentTab === item ? colors.purple : colors.darkGray,
+              },
+            ]}>
+            {item}
+          </RN.Text>
+        </RN.TouchableOpacity>
+      );
+    };
     return (
       <>
-        <RN.View style={{paddingHorizontal: 20}}>
+        <RN.View
+          style={{
+            paddingHorizontal: isAndroid ? 0 : 20,
+            marginTop: isAndroid ? 14 : 0,
+          }}>
           <RN.TouchableOpacity
             style={styles.userLocationWrapper}
             onPress={() => setOpenModal(true)}>
-            <RN.Image
-              source={{uri: 'locate'}}
-              style={{height: 16, width: 16}}
-            />
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image
+                source={{uri: 'locate'}}
+                style={{height: 16, width: 16}}
+              />
+            </RN.View>
             <RN.Text style={styles.userLocationText}>{currentCity}</RN.Text>
-            <RN.Image
-              source={{uri: 'downlight'}}
-              style={{height: 16, width: 16, marginLeft: 6}}
-            />
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image
+                source={{uri: 'downlight'}}
+                style={{height: 16, width: 16, marginLeft: 6}}
+              />
+            </RN.View>
           </RN.TouchableOpacity>
           <Search
+            onFocus={onRefSearch}
             onSearch={onChangeTextSearch}
             searchValue={searchValue}
             placeholder="Community name, dance style"
             onPressAdd={() => navigation.navigate('CreateCommunity')}
           />
           <RN.View style={styles.tabsWrapper}>
-            {TABS.map((item: string, index: number) => {
-              return (
-                <RN.TouchableOpacity
-                  onPress={() => onPressTab(item)}
-                  key={index}
-                  style={[
-                    styles.itemTabContainer,
-                    {
-                      borderBottomWidth: currentTab === item ? 3 : 0,
-                    },
-                  ]}>
-                  <RN.Text
-                    style={[
-                      styles.itemTabText,
-                      {
-                        color:
-                          currentTab === item ? colors.purple : colors.darkGray,
-                      },
-                    ]}>
-                    {item}
-                  </RN.Text>
-                </RN.TouchableOpacity>
-              );
-            })}
+            <RN.FlatList
+              scrollEnabled={false}
+              data={TABS}
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderTab}
+              horizontal
+            />
           </RN.View>
         </RN.View>
       </>
@@ -185,6 +205,7 @@ const CommunitiesScreen = () => {
         return (
           <JoinTab
             searchValue={searchValue}
+            onPressTabAll={onRefSearch}
             communititesSearch={communititesSearch}
           />
         );
@@ -283,14 +304,13 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'space-around',
     borderBottomWidth: 1,
     borderBottomColor: colors.gray,
+    paddingTop: 0,
   },
   itemTabContainer: {
     borderBottomWidth: 1,
     borderBottomColor: colors.purple,
     alignSelf: 'center',
-    marginBottom: -1,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingHorizontal: SCREEN_WIDTH / 24,
   },
   itemTabText: {
     fontSize: 16,

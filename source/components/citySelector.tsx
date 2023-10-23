@@ -5,7 +5,6 @@ import {Portal} from 'react-native-portalize';
 import Search from './search';
 import {searchCity} from '../api/cities';
 import colors from '../utils/colors';
-import {countries} from '../utils/constants';
 import {useProfile} from '../hooks/useProfile';
 
 type modalProps = {

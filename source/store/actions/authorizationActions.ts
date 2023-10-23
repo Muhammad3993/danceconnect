@@ -10,7 +10,7 @@ import {
 type registrationParams = {
   email?: string;
   password?: string;
-  errors?: string | unknown | undefined | {};
+  errors?: {message: string; type: string[]};
   currentUser?: null;
   token?: string;
   name?: '';
@@ -26,6 +26,13 @@ type registrationParams = {
   userRole?: string[];
   individualStyles?: string[];
   authProvider?: string;
+  userImage?: null;
+  customer?: null;
+  myCommunities?: [];
+  joinedCommunities?: [];
+  events?: [];
+  goingEvent?: [];
+  paidEvents?: [];
 };
 export const registrationWithEmailRequest = ({
   email,
@@ -35,6 +42,13 @@ export const registrationWithEmailRequest = ({
   userCountry,
   userRole,
   individualStyles,
+  userImage,
+  customer,
+  myCommunities,
+  joinedCommunities,
+  events,
+  goingEvent,
+  paidEvents,
 }: registrationParams) => ({
   type: REGISTRATION_WITH_EMAIL.REQUEST,
   payload: {
@@ -45,6 +59,13 @@ export const registrationWithEmailRequest = ({
     userCountry: userCountry,
     userRole: userRole,
     individualStyles: individualStyles,
+    userImage: userImage,
+    customer: customer,
+    myCommunities: myCommunities,
+    joinedCommunities: joinedCommunities,
+    events: events,
+    goingEvent: goingEvent,
+    paidEvents: paidEvents,
   },
 });
 

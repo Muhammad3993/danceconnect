@@ -2,46 +2,108 @@ import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {SCREEN_HEIGHT, statusBarHeight} from '../../utils/constants';
-import {useEventById} from '../../hooks/useEventById';
-import {getTickets} from '../../api/serverRequests';
-import TicketCard from '../../components/ticketCard';
-import EventCard from '../../components/eventCard';
+import {
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  isAndroid,
+  statusBarHeight,
+} from '../../utils/constants';
+import useTickets from '../../hooks/useTickets';
+import QuantityTicketValue from '../../components/quantityTicket';
+import {getTicketByEventUid} from '../../api/serverRequests';
+import moment from 'moment';
 
 const TicketsScreen = () => {
-  const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
+  const routeProps = useRoute();
+  const eventUid = routeProps?.params?.eventUid;
+  const {purchasedTickets, getPurchasedTickets} = useTickets();
+  const [tickets, setTickets] = useState([]);
+  const [loadTickets, setLoadTickets] = useState(false);
   const fetchTickets = () => {
     setLoading(true);
-    getTickets().then(ticketsList => {
-      // console.log('tick', ticketsList);
-      setTickets(ticketsList.paidEvents.flat());
-      setLoading(false);
+    getPurchasedTickets();
+    setLoading(false);
+  };
+  const getTicketByEvent = () => {
+    setLoadTickets(true);
+    getTicketByEventUid(eventUid).then(res => {
+      setTickets(res);
+      setLoadTickets(false);
     });
   };
-  //   const {getEvent, loadingById, eventData, remove} = useEventById(ticketId);
   useEffect(() => {
     fetchTickets();
   }, []);
+  useEffect(() => {
+    if (eventUid) {
+      getTicketByEvent();
+    } else {
+      setTickets(purchasedTickets);
+    }
+  }, [eventUid]);
   const navigation = useNavigation();
   const renderHeader = () => {
     return (
       <RN.TouchableOpacity
         style={styles.backIconContainer}
         onPress={() => navigation.goBack()}>
-        <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
+        <RN.View style={{justifyContent: 'center'}}>
+          <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
+        </RN.View>
         <RN.Text style={styles.headerTitle}>My Tickets</RN.Text>
       </RN.TouchableOpacity>
     );
   };
-  const renderItem = (item: any) => {
+  const onPressTicket = (currentTicket: any) => {
+    navigation.navigate('Ticket', currentTicket);
+  };
+  const renderItem = (item: {
+    name: string;
+    description: string;
+    price: string;
+    enabled: boolean;
+    quantity: number;
+    event: any;
+  }) => {
+    const ticket = item;
+    const dateEvent = `${String(
+      moment(ticket.event?.eventDate?.startDate).format('MMM Do'),
+    )} • ${moment(ticket.event?.eventDate?.time).format('HH:mm')}`;
     return (
-      <EventCard
-        item={item.item?.event[0]}
-        key={item.id}
-        isTicket
-        currentTicket={item.item.currentTicket}
-      />
+      <RN.TouchableOpacity
+        style={styles.ticketContainer}
+        onPress={() => onPressTicket(ticket)}>
+        <RN.View
+          style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <RN.Text style={styles.eventTitle}>{ticket.event.title}</RN.Text>
+          <RN.Text style={styles.eventTitle}>{dateEvent}</RN.Text>
+        </RN.View>
+        <RN.View style={styles.ticketTitleWrapper}>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image
+                source={{uri: 'ticketfull'}}
+                style={styles.ticketIcon}
+              />
+            </RN.View>
+            <RN.Text numberOfLines={2} style={styles.ticketTitle}>
+              {ticket?.name}
+            </RN.Text>
+          </RN.View>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text style={styles.ticketTitle}>
+              {'$' + Number(ticket?.price).toFixed(2) * ticket?.quantity}
+            </RN.Text>
+          </RN.View>
+        </RN.View>
+        <RN.View>
+          <RN.Text numberOfLines={2} style={styles.ticketDescription}>
+            {ticket?.description}
+          </RN.Text>
+        </RN.View>
+        <QuantityTicketValue ticketCard ticket={ticket} />
+      </RN.TouchableOpacity>
     );
   };
   const renderEmpty = () => {
@@ -53,23 +115,30 @@ const TicketsScreen = () => {
       </RN.View>
     );
   };
+  const refreshControl = () => {
+    return (
+      <RN.RefreshControl
+        onRefresh={() => {
+          // console.log('refresh', eventUid);
+          eventUid ? getTicketByEvent() : fetchTickets();
+        }}
+        refreshing={loading || loadTickets}
+      />
+    );
+  };
   return (
     <RN.View style={styles.container}>
       {renderHeader()}
-      <RN.FlatList
-        refreshing={loading}
-        onRefresh={() => {
-          fetchTickets();
-        }}
-        showsVerticalScrollIndicator={false}
-        data={tickets}
-        renderItem={renderItem}
-        keyExtractor={(item, _index) => `${item}${_index}`}
-        ListEmptyComponent={renderEmpty()}
-        // ListFooterComponent={() => {
-        //   return <RN.View style={{paddingBottom: SCREEN_HEIGHT / 10}} />;
-        // }}
-      />
+      <RN.ScrollView
+        style={styles.flatList}
+        refreshControl={refreshControl()}
+        showsVerticalScrollIndicator={false}>
+        {tickets.map(ticket => {
+          return renderItem(ticket);
+        })}
+        {!loading && tickets.length < 0 && renderEmpty()}
+        <RN.View style={{marginBottom: 40}} />
+      </RN.ScrollView>
     </RN.View>
   );
 };
@@ -77,16 +146,22 @@ const styles = RN.StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     flex: 1,
-    paddingTop: statusBarHeight,
+    paddingTop: isAndroid ? 0 : statusBarHeight,
+  },
+  flatList: {
+    paddingVertical: 24,
+    paddingHorizontal: 16,
   },
   backIcon: {
     height: 24,
     width: 28,
   },
   backIconContainer: {
-    padding: 10,
-    margin: 12,
     flexDirection: 'row',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray,
   },
   headerTitle: {
     color: colors.textPrimary,
@@ -97,7 +172,7 @@ const styles = RN.StyleSheet.create({
     fontWeight: '600',
   },
   emptyContainer: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'center',
     // alignItems: 'center',
@@ -109,6 +184,58 @@ const styles = RN.StyleSheet.create({
     fontFamily: 'Mulish-Regular',
     textAlign: 'center',
     paddingVertical: 16,
+  },
+  ticketContainer: {
+    borderWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 8,
+    paddingTop: 20,
+    paddingBottom: 8,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  ticketTitleWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  ticketIcon: {
+    tintColor: colors.orange,
+    height: 18,
+    width: 18,
+    marginRight: 8,
+  },
+  ticketTitle: {
+    fontSize: 16,
+    lineHeight: 25.2,
+    letterSpacing: 0.2,
+    fontWeight: '700',
+    maxWidth: SCREEN_WIDTH - 190,
+    fontFamily: 'Mulish-Regular',
+    color: colors.textPrimary,
+  },
+  eventTitle: {
+    fontSize: 16,
+    lineHeight: 25.2,
+    letterSpacing: 0.2,
+    fontWeight: '800',
+    maxWidth: SCREEN_WIDTH - 190,
+    color: colors.textPrimary,
+    fontFamily: 'Mulish-Regular',
+    marginTop: -12,
+    paddingBottom: 14,
+  },
+  ticketPrice: {
+    fontSize: 16,
+    lineHeight: 25.2,
+    letterSpacing: 0.2,
+    fontWeight: '700',
+  },
+  ticketDescription: {
+    paddingVertical: 8,
+    fontSize: 14,
+    color: colors.darkGray,
+    lineHeight: 16.9,
+    fontWeight: '400',
   },
 });
 export default TicketsScreen;

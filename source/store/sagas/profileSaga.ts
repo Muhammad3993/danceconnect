@@ -19,6 +19,7 @@ import {
   selectRegistrationState,
   selectUser,
   selectUserUid,
+  selectorSocialProvider,
   selectorToken,
 } from '../selectors/registrationSelector';
 // import {
@@ -29,16 +30,24 @@ import {
 // } from '../../api/functions';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {getEventsRequestAction} from '../actions/eventActions';
-import {setLoadingAction} from '../actions/appStateActions';
+import {
+  setLoadingAction,
+  setNoticeMessage,
+  setNoticeVisible,
+} from '../actions/appStateActions';
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {setErrors} from '../../utils/helpers';
 import {
+  getUserById,
   refreshPassword,
   updateUserById,
   updateUserCountry,
 } from '../../api/serverRequests';
-import {authWithGoogleSuccess} from '../actions/authorizationActions';
+import {
+  authWithGoogleSuccess,
+  registrationWithEmailSuccess,
+} from '../actions/authorizationActions';
 
 // function* getUserDataRequest() {
 //   try {
@@ -57,14 +66,25 @@ import {authWithGoogleSuccess} from '../actions/authorizationActions';
 //     yield put(getUserDataFailAction(error));
 //   }
 // }
-function* getUserByIdRequest(action: any) {
-  const {userUid} = action.payload;
+function* getUserByIdRequest() {
   try {
-    // yield put(
-    //   getUserByIdSuccessAction({
-    //     userByIdData: yield call(getUserDataById, userUid),
-    //   }),
-    // );
+    const userUid = yield select(selectUserUid);
+    const token = yield select(selectorToken);
+    const authProvider = yield select(selectorSocialProvider);
+    const user = yield call(getUserById, userUid);
+    yield put(
+      registrationWithEmailSuccess({
+        currentUser: user,
+        isUserExists: true,
+        token: token,
+        authProvider: authProvider,
+      }),
+    );
+    yield put(
+      getUserByIdSuccessAction({
+        userByIdData: yield call(getUserById, userUid),
+      }),
+    );
   } catch (error) {
     yield put(getUserByIdFailAction());
   }
@@ -72,12 +92,16 @@ function* getUserByIdRequest(action: any) {
 function* changeInformation(action: any) {
   const {name, gender, profileImg} = action?.payload;
   try {
+    yield put(setLoadingAction({onLoading: true}));
+    const crntUser = yield select(selectUser);
     const data = {
       userName: name,
       userGender: gender,
       userImage: profileImg,
+      jwt: {
+        userId: crntUser.id,
+      },
     };
-    yield put(setLoadingAction({onLoading: true}));
     const user = yield call(updateUserById, data);
     const token = yield select(selectorToken);
     const userData = yield select(selectRegistrationState);
@@ -88,22 +112,31 @@ function* changeInformation(action: any) {
       ...user,
       authProvider: authProvider,
     };
-    yield put(
-      authWithGoogleSuccess({
-        currentUser: userInfo,
-        isUserExists: true,
-        token: token,
-      }),
-    );
+    if (!user) {
+      yield put(setNoticeVisible({isVisible: true}));
+      yield put(
+        setNoticeMessage({
+          errorMessage: 'Server error',
+        }),
+      );
+    } else {
+      yield put(
+        authWithGoogleSuccess({
+          currentUser: userInfo,
+          isUserExists: true,
+          token: token,
+        }),
+      );
 
-    yield put(changeUserInformationSuccessAction());
-    // yield put(getUserDataRequestAction());
+      yield put(changeUserInformationSuccessAction());
+      // yield put(getUserDataRequestAction());
+      navigationRef.current?.dispatch(
+        CommonActions.navigate({
+          name: 'Profile',
+        }),
+      );
+    }
     yield put(setLoadingAction({onLoading: false}));
-    navigationRef.current?.dispatch(
-      CommonActions.navigate({
-        name: 'Profile',
-      }),
-    );
   } catch (error) {
     yield put(setLoadingAction({onLoading: false}));
     yield put(changeUserInformationFailAction());
@@ -112,8 +145,13 @@ function* changeInformation(action: any) {
 function* changeDanceStyles(action: {danceStyles: string[]}) {
   const {danceStyles} = action?.payload;
   try {
+    const crntUser = yield select(selectUser);
     const data = {
+      ...crntUser,
       individualStyles: danceStyles,
+      jwt: {
+        userId: crntUser.id,
+      },
     };
     yield put(setLoadingAction({onLoading: true}));
     const user = yield call(updateUserById, data);
@@ -126,31 +164,45 @@ function* changeDanceStyles(action: {danceStyles: string[]}) {
       ...user,
       authProvider: authProvider,
     };
-    yield put(
-      authWithGoogleSuccess({
-        currentUser: userInfo,
-        isUserExists: true,
-        token: token,
-      }),
-    );
-    yield put(changeUserDanceStylesSuccessAction());
-    // yield put(getUserDataRequestAction());
+    if (!user) {
+      yield put(setNoticeVisible({isVisible: true}));
+      yield put(
+        setNoticeMessage({
+          errorMessage: 'Server error',
+        }),
+      );
+    } else {
+      yield put(
+        authWithGoogleSuccess({
+          currentUser: userInfo,
+          isUserExists: true,
+          token: token,
+        }),
+      );
+      yield put(changeUserDanceStylesSuccessAction());
+      // yield put(getUserDataRequestAction());
+      navigationRef.current?.dispatch(
+        CommonActions.navigate({
+          name: 'Profile',
+        }),
+      );
+    }
     yield put(setLoadingAction({onLoading: false}));
-    navigationRef.current?.dispatch(
-      CommonActions.navigate({
-        name: 'Profile',
-      }),
-    );
   } catch (error) {
     yield put(setLoadingAction({onLoading: false}));
     yield put(changeUserDanceStylesFailAction());
   }
 }
-function* changeUserCountry(action: {userCountry: string}) {
+function* changeUserCountry(action: any) {
   const {userCountry} = action?.payload;
   try {
+    const crntUser = yield select(selectUser);
     const data = {
+      ...crntUser,
       userCountry: userCountry,
+      jwt: {
+        userId: crntUser.id,
+      },
     };
     yield put(setLoadingAction({onLoading: true}));
     yield put(getCommunitiesRequestAction());
@@ -165,15 +217,24 @@ function* changeUserCountry(action: {userCountry: string}) {
       ...user,
       authProvider: authProvider,
     };
-    yield put(
-      authWithGoogleSuccess({
-        currentUser: userInfo,
-        isUserExists: true,
-        token: token,
-      }),
-    );
+    if (!user) {
+      yield put(setNoticeVisible({isVisible: true}));
+      yield put(
+        setNoticeMessage({
+          errorMessage: 'Server error',
+        }),
+      );
+    } else {
+      yield put(
+        authWithGoogleSuccess({
+          currentUser: userInfo,
+          isUserExists: true,
+          token: token,
+        }),
+      );
+      yield put(changeUserCountrySuccessAction());
+    }
     yield put(setLoadingAction({onLoading: false}));
-    yield put(changeUserCountrySuccessAction());
   } catch (error) {
     yield put(setLoadingAction({onLoading: false}));
     yield put(changeUserDanceStylesFailAction());
@@ -202,10 +263,17 @@ function* setNewPassword(action: {
   // yield put(setLoadingAction({onLoading: false}));
   // console.log(response);
   try {
+    const crntUser = yield select(selectUser);
     const {newPassword} = action?.payload;
     yield put(setLoadingAction({onLoading: true}));
+    // const data = {
+    //   new_pass: newPassword,
+    // };
     const data = {
       new_pass: newPassword,
+      jwt: {
+        userId: crntUser.id,
+      },
     };
     const response = yield call(refreshPassword, data);
     // yield put(
@@ -215,8 +283,8 @@ function* setNewPassword(action: {
     //       : false,
     //   }),
     // );
-    // console.log(response);
-    if (response.code !== 200) {
+    console.log('refreshPassword', response);
+    if (response?.status !== 201) {
       yield put(
         changePasswordFailAction({
           changePasswordSuccess: false,

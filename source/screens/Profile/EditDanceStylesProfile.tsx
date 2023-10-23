@@ -5,7 +5,7 @@ import {Button} from '../../components/Button';
 import {useProfile} from '../../hooks/useProfile';
 import colors from '../../utils/colors';
 import {useNavigation} from '@react-navigation/native';
-import {statusBarHeight} from '../../utils/constants';
+import {isAndroid, statusBarHeight} from '../../utils/constants';
 
 const DanceStylesProfile = () => {
   const {individualStyles, onChangeDanceStyles} = useProfile();
@@ -98,11 +98,11 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
   },
   backIcon: {
-    height: 24,
-    width: 28,
+    height: 16,
+    width: 19,
   },
   headerWrapper: {
-    paddingTop: statusBarHeight,
+    paddingTop: isAndroid ? 14 : statusBarHeight,
     flexDirection: 'row',
     paddingVertical: 12,
     paddingHorizontal: 24,

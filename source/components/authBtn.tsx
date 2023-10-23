@@ -44,6 +44,9 @@ const AuthButton = ({
       </RN.TouchableOpacity>
     );
   }
+  if (!isAvailable) {
+    return null;
+  }
   return (
     <RN.TouchableOpacity
       activeOpacity={0.7}

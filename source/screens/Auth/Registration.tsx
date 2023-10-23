@@ -4,7 +4,7 @@ import * as RN from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {AuthStackNavigationParamList} from '../../navigation/types';
 import AuthButton from '../../components/authBtn';
-import {authButtons} from './btnsConstans';
+import {authButtons} from '../../utils/btnsConstans';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Input} from '../../components/input';
 import colors from '../../utils/colors';
@@ -18,7 +18,7 @@ const RegistraionScreen = (): JSX.Element => {
   const btns = authButtons.slice(0, 2);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const {isErrors, clearErrors} = useRegistration();
+  const {isErrors, saveEmail} = useRegistration();
   const [errorExist, setErrorExist] = useState('');
   const errorViewHeight = new RN.Animated.Value(0);
   const {setLoading} = useAppStateHook();
@@ -89,7 +89,7 @@ const RegistraionScreen = (): JSX.Element => {
   // console.log(userUid, isUserExists)
   useEffect(() => {
     if (userUid && !isUserExists) {
-      navigation.navigate('ONBOARDING');
+      navigation.navigate('ONBOARDING', {email: saveEmail, password: userUid});
     }
     if (isUserExists) {
       navigation.navigate('HOME');
@@ -202,7 +202,7 @@ const RegistraionScreen = (): JSX.Element => {
               <RN.Text
                 style={styles.licenceTextOrange}
                 onPress={() =>
-                  RN.Linking.openURL('https://www.danceconnect.online/terms')
+                  RN.Linking.openURL('https://danceconnect.online/terms.html')
                 }>
                 {' '}
                 terms and conditions

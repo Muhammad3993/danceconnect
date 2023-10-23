@@ -19,7 +19,7 @@ export const selectEventList = () =>
     .getState()
     ?.events?.eventsList?.filter(
       (item: any) =>
-        moment(item.eventDate?.startDate).format('YYYY-MM-DD') >
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >
         moment(new Date()).format('YYYY-MM-DD'),
     )
     .map((item: any) => item) ?? [];
@@ -45,7 +45,7 @@ export const selectAttentingEvents = (userdUid: string) =>
       (item: any) =>
         item?.attendedPeople?.length > 0 &&
         item?.attendedPeople?.find((user: any) => user.userUid === userdUid) &&
-        moment(item.eventDate?.startDate).format('YYYY-MM-DD') >
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >
           moment(new Date()).format('YYYY-MM-DD'),
     )
     .map((item: any) => item) ?? [];
@@ -54,7 +54,7 @@ export const selectUpcomingEvents = () =>
     .getState()
     ?.events?.eventsList?.filter(
       (ev: any) =>
-        moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >=
+        moment(ev?.eventDate?.startDate).format('YYYY-MM-DD') >=
         moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
 export const selectUpcomingEventsWithUserUid = (userdUid: string) =>
@@ -64,7 +64,7 @@ export const selectUpcomingEventsWithUserUid = (userdUid: string) =>
       (ev: any) =>
         ev?.attendedPeople?.length > 0 &&
         ev?.attendedPeople?.find((user: any) => user.userUid === userdUid) &&
-        moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >=
+        moment(ev?.eventDate?.startDate).format('YYYY-MM-DD') >=
           moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
 export const selectPassedEvents = () =>
@@ -72,7 +72,7 @@ export const selectPassedEvents = () =>
     .getState()
     ?.events?.eventsList?.filter(
       (item: any) =>
-        moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
         moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
 export const selectEventById = (state: IRootState) =>
@@ -90,4 +90,16 @@ export const selectPrevLimit = (state: IRootState) =>
 export const selectPrevOffset = (state: IRootState) =>
   state.events?.prevOffset ?? 0;
 export const getEventsList = (state: IRootState) =>
-state.events?.eventsList ?? [];
+  state.events?.eventsList ?? [];
+
+export const getPreCreateEvent = (state: IRootState) =>
+  state?.events?.event ?? null;
+
+export const getIsFollowEvent = (state: IRootState) =>
+  state?.events?.isFollowed ?? false;
+
+export const selectPersonalEvents = (state: IRootState) =>
+  state?.events?.personalEvents ?? [];
+
+export const selectIsCreatedEvent = (state: IRootState) =>
+  state?.events?.createdEvent ?? false;

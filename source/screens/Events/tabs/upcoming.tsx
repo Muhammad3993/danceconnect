@@ -4,13 +4,14 @@ import useEvents from '../../../hooks/useEvents';
 import sotrtBy from 'lodash.sortby';
 import EventCard from '../../../components/eventCard';
 import colors from '../../../utils/colors';
-import {SCREEN_HEIGHT} from '../../../utils/constants';
+import {SCREEN_HEIGHT, isAndroid} from '../../../utils/constants';
 import FiltersBottomForEvents from '../../../components/bottomFiltersEvents';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
 import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonEventCard from '../../../components/skeleton/eventCard-Skeleton';
 import socket from '../../../api/sockets';
+import {RefreshControl, ScrollView} from 'react-native-gesture-handler';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -171,8 +172,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     }
   };
   const renderItem = (item: any) => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    return <EventCard item={item?.item} key={item.item.id} />;
+    return <EventCard item={item} key={item.id} />;
   };
   const renderFilters = () => {
     return (
@@ -203,26 +203,30 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
       </RN.View>
     );
   };
-  return (
-    <>
-      <RN.FlatList
-        showsVerticalScrollIndicator={false}
-        data={sotrtBy(events, 'eventDate.startDate')}
-        renderItem={renderItem}
+  const refreshControl = () => {
+    return (
+      <RefreshControl
         onRefresh={() => {
           onClear();
           getEvents();
         }}
         refreshing={loadingEvents}
-        ListHeaderComponent={renderFilters()}
-        keyExtractor={(item, _index) => `${item}${_index}`}
-        ListEmptyComponent={renderEmpty()}
-        ListFooterComponent={() => {
-          return <RN.View style={{paddingBottom: SCREEN_HEIGHT / 10}} />;
-        }}
-        // onEndReachedThreshold={0.7}
-        // onEndReached={setEventLimit}
       />
+    );
+  };
+  return (
+    <>
+      <ScrollView
+        refreshControl={refreshControl()}
+        showsVerticalScrollIndicator={false}>
+        {renderFilters()}
+        {events?.length > 0 &&
+          sotrtBy(events, 'eventDate.startDate')?.map((item: any) => {
+            return <RN.View>{renderItem(item)}</RN.View>;
+          })}
+        {!events?.length && renderEmpty()}
+        <RN.View style={{paddingBottom: 24}} />
+      </ScrollView>
       <FiltersBottomForEvents
         onOpening={openingFilters}
         onClose={() => setOpeningFilters(false)}
@@ -244,6 +248,7 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'center',
+    paddingTop: 14,
     // alignItems: 'center',
   },
   emptyText: {
@@ -256,7 +261,7 @@ const styles = RN.StyleSheet.create({
   },
   filterWrapper: {
     paddingTop: 14,
-    paddingHorizontal: 20,
+    paddingHorizontal: isAndroid ? 16 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

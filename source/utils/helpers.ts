@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Platform, Share } from 'react-native';
 export const validateEmail = (email: string) => {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))?/;
@@ -64,7 +65,7 @@ export const setErrors = (valueError: string) => {
       type: ['password'],
     };
   }
-  if (valueError?.includes('Invalid e-mail or password')) {
+  if (valueError?.includes('Invalid credentials')) {
     return {
       message: 'Invalid e-mail or password',
       type: ['email', 'password'],

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import {useCommunities} from '../../../hooks/useCommunitites';
 import CommunityCard from '../../../components/communityCard';
@@ -8,13 +8,16 @@ import FiltersBottom from '../../../components/bottomFilters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
+import {ScrollView} from 'react-native-gesture-handler';
+import EmptyContainer from '../../../components/emptyCommunitiesMain';
 
 type props = {
   communititesSearch: string[];
   searchValue: string;
+  onPressTabAll: () => void;
 };
 
-const JoinTab = ({communititesSearch, searchValue}: props) => {
+const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
   const navigation = useNavigation();
   const {joinedCommunities, isLoading, getCommunitites} = useCommunities();
   const lengthEmptyCommunities = new Array(3).fill('');
@@ -84,23 +87,25 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   };
   const renderEmpty = () => {
     return (
-      <RN.View style={styles.emptyContainer}>
-        {isLoading &&
-          lengthEmptyCommunities.map(() => {
-            return (
-              <>
-                <RN.View style={{marginVertical: 8}}>
-                  <SkeletonCommunityCard />
-                </RN.View>
-              </>
-            );
-          })}
-        {!isLoading && (
-          <RN.Text style={styles.emptyText}>
-            There are no communities yet
-          </RN.Text>
-        )}
-      </RN.View>
+      <EmptyContainer onPressButton={onPressTabAll} />
+
+      // <RN.View style={styles.emptyContainer}>
+      //   {isLoading &&
+      //     lengthEmptyCommunities.map(() => {
+      //       return (
+      //         <>
+      //           <RN.View style={{marginVertical: 8}}>
+      //             <SkeletonCommunityCard />
+      //           </RN.View>
+      //         </>
+      //       );
+      //     })}
+      //   {!isLoading && (
+      //     <RN.Text style={styles.emptyText}>
+      //       There are no communities yet
+      //     </RN.Text>
+      //   )}
+      // </RN.View>
     );
   };
   useFocusEffect(
@@ -113,7 +118,7 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   );
 
   const renderItemCommunity = useCallback((item: any) => {
-    return <CommunityCard item={item} key={item.index + item.item.id} />;
+    return <CommunityCard item={item} key={item?.id} />;
   }, []);
   const renderFilters = () => {
     return (
@@ -149,16 +154,29 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
       </RN.View>
     );
   };
+  const refreshControl = () => {
+    return (
+      <RN.RefreshControl
+        onRefresh={() => {
+          onClear();
+          getCommunitites();
+        }}
+        refreshing={isLoading}
+      />
+    );
+  };
   return (
     <>
-      <RN.FlatList
-        data={communitites}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderFilters()}
-        renderItem={renderItemCommunity}
-        keyExtractor={(item, _index) => `${item.item?.id}/${_index}`}
-        ListEmptyComponent={renderEmpty()}
-      />
+        refreshControl={refreshControl()}>
+        {communitites?.length > 0 && renderFilters()}
+        {communitites?.length > 0 &&
+          communitites?.map((item: any) => {
+            return <RN.View>{renderItemCommunity(item)}</RN.View>;
+          })}
+        {!communitites?.length && renderEmpty()}
+      </ScrollView>
       <FiltersBottom
         onOpening={openingFilters}
         onClose={() => setOpeningFilters(false)}
@@ -174,7 +192,7 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
 const styles = RN.StyleSheet.create({
   filterWrapper: {
     paddingVertical: 14,
-    paddingHorizontal: isAndroid ? 0 : 20,
+    paddingHorizontal: isAndroid ? 4 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

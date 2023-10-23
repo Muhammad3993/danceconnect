@@ -16,59 +16,34 @@ type props = {
   setSelectedPlace: (value: string) => void;
   selectedPlace?: string;
   onClosed: (val: boolean) => void;
-  crntCity: city;
+  crntCity: any;
+  currentCountry: any;
 };
 const FindPlace = ({
   setSelectedPlace,
   selectedPlace,
   onClosed,
   crntCity,
+  currentCountry,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
   const [searchValue, setSearchValue] = useState<string>(selectedPlace ?? '');
   const [findPlace, setFindPlices] = useState([]);
-  const handleStyle = {height: 3, width: 38};
   const {countries} = useAppStateHook();
-  const [selectCountry, setSelectedCountry] = useState();
+  const handleStyle = {height: 3, width: 38};
 
-  // console.log(crntCity);
   useEffect(() => {
     modalizeRef?.current?.open();
   }, []);
-  // useEffect(() => {
-  //   countries?.map(item => {
-  //     console.log(
-  //       'item?.country?.startsWith(crntCity)',
-  //       item?.country,
-  //       crntCity,
-  //       crntCity.split(',')[1],
-  //     );
-  //     if (crntCity?.split(',')[0] === 'Singapore') {
-  //       setSelectedCountry(item);
-  //     } else {
-  //       setSelectedCountry(crntCity);
-  //     }
-  //     // if (item?.country === crntCity?.split(',')[0]) {
-  //     //   setSelectedCountry(item);
-  //     // }
-  //   });
-  // }, [countries, crntCity]);
 
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
-    let country = '';
-    if (crntCity === 'Singapore, Singapore') {
-      country = 'SG';
-    } else if (crntCity === 'Indonesia, Bali') {
-      country = 'IDN';
-    } else if (crntCity === 'Indonesia, Jakarta') {
-      country = 'IDN';
-    } else if (crntCity?.endsWith('Russia')) {
-      country = 'RU';
-    } else {
-      country = 'USA';
-    }
-    console.log('onChangeTextSearch', crntCity);
+    console.log('onChangeTextSearch', crntCity, currentCountry);
+    const country =
+      currentCountry?.countryCode ??
+      countries.find(
+        (c: {country: string}) => c.country === crntCity?.split(', ')[0],
+      )?.countryCode;
     const city = crntCity?.structured_formatting?.main_text ?? crntCity;
     searchPlacesInEvent(city, searchValue, country).then((places: any) => {
       // console.log(places);

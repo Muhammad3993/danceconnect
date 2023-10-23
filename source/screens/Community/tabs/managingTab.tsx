@@ -8,6 +8,8 @@ import FiltersBottom from '../../../components/bottomFilters';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
+import {ScrollView} from 'react-native-gesture-handler';
+import CreateCommunityButton from '../../../components/createCommunityBtn';
 
 type props = {
   communititesSearch: string[];
@@ -97,30 +99,34 @@ const ManagingTab = ({
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        {isLoadManaging &&
-          lengthEmptyCommunities.map(() => {
-            return (
-              <>
-                <RN.View style={{marginVertical: 8}}>
-                  <SkeletonCommunityCard />
-                </RN.View>
-              </>
-            );
-          })}
-        {!isLoadManaging && (
-          <RN.Text style={styles.emptyText}>
-            There are no communities yet
-          </RN.Text>
-        )}
+        <CreateCommunityButton />
       </RN.View>
+
+      // <RN.View style={styles.emptyContainer}>
+      //   {isLoadManaging &&
+      //     lengthEmptyCommunities.map(() => {
+      //       return (
+      //         <>
+      //           <RN.View style={{marginVertical: 8}}>
+      //             <SkeletonCommunityCard />
+      //           </RN.View>
+      //         </>
+      //       );
+      //     })}
+      //   {!isLoadManaging && (
+      //     <RN.Text style={styles.emptyText}>
+      //       There are no communities yet
+      //     </RN.Text>
+      //   )}
+      // </RN.View>
     );
   };
 
   const renderItemCommunity = useCallback((item: any) => {
-    if (!item.item._id) {
+    if (!item?.id) {
       return null;
     }
-    return <CommunityCard item={item} key={item.index + item.item._id} />;
+    return <CommunityCard item={item} key={item?.id} />;
   }, []);
   const renderFilters = () => {
     return (
@@ -156,16 +162,30 @@ const ManagingTab = ({
       </RN.View>
     );
   };
+  const refreshControl = () => {
+    return (
+      <RN.RefreshControl
+        onRefresh={() => {
+          onClear();
+          getManagingCommunities();
+        }}
+        refreshing={isLoadManaging}
+      />
+    );
+  };
+
   return (
     <>
-      <RN.FlatList
-        data={communitites}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderFilters()}
-        renderItem={renderItemCommunity}
-        keyExtractor={(item, _index) => `${item.item?.id}/${_index}`}
-        ListEmptyComponent={renderEmpty()}
-      />
+        refreshControl={refreshControl()}>
+        {communitites?.length > 0 && renderFilters()}
+        {communitites?.length > 0 &&
+          communitites?.map((item: any) => {
+            return <RN.View>{renderItemCommunity(item)}</RN.View>;
+          })}
+        {!communitites?.length && renderEmpty()}
+      </ScrollView>
       <FiltersBottom
         onOpening={openingFilters}
         onClose={() => setOpeningFilters(false)}
@@ -181,7 +201,7 @@ const ManagingTab = ({
 const styles = RN.StyleSheet.create({
   filterWrapper: {
     paddingVertical: 14,
-    paddingHorizontal: isAndroid ? 0 : 20,
+    paddingHorizontal: isAndroid ? 4 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -210,6 +230,8 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 20,
   },
 
   emptyText: {

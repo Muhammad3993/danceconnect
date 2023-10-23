@@ -4,7 +4,7 @@ import {
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
 import analytics from '@react-native-firebase/analytics';
-import {TransitionSpecs, createStackNavigator} from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import {
   AuthStackNavigationParamList,
   MainStackNavigationParamList,
@@ -32,8 +32,16 @@ import {Host} from 'react-native-portalize';
 import DanceStylesProfile from '../screens/Profile/EditDanceStylesProfile';
 import ChangeProfile from '../screens/Profile/ChangeProfile';
 import ManagingCommunities from '../screens/Profile/ManagingCommunities';
-import TicketScreen from '../screens/Events/Ticket';
+import TicketScreen from '../screens/Events/Tickets/Ticket';
 import TicketsScreen from '../screens/Profile/Tickets';
+import MakeEvent from '../screens/Events/MakeEvent';
+import CreateTicket from '../screens/Events/Tickets/CreateTicket';
+import {LayoutAnimation} from 'react-native';
+import EditTicket from '../screens/Events/Tickets/EditTicket';
+import EditEventScreen from '../screens/Events/EditEventScreen';
+import BuyTickets from '../screens/Events/Tickets/BuyTickets';
+import ImageView from '../components/imageView';
+import SoldTickets from '../screens/Events/Tickets/SoldTickets';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -61,9 +69,12 @@ const CommunityNavigator = () => {
         component={CommunityScreen}
       />
       <CommunityStack.Screen name="EditCommunity" component={EditCommunity} />
-      <CommunityStack.Screen name="CreateEvent" component={CreateEvent} />
+      <CommunityStack.Screen name="CreateEvent" component={MakeEvent} />
       <CommunityStack.Screen name="EventScreen" component={EventScreen} />
-      <CommunityStack.Screen name="EditEvent" component={EditEvent} />
+      <CommunityStack.Screen name="EditEvent" component={EditEventScreen} />
+      <CommunityStack.Screen name="CreateTicket" component={CreateTicket} />
+      <CommunityStack.Screen name="EditTicket" component={EditTicket} />
+
       <CommunityStack.Screen
         name="Ticket"
         component={TicketScreen}
@@ -74,6 +85,7 @@ const CommunityNavigator = () => {
           gestureEnabled: false,
         }}
       />
+      <CommunityStack.Screen name="SoldTickets" component={SoldTickets} />
     </CommunityStack.Navigator>
   );
 };
@@ -83,19 +95,33 @@ const EventsNavigator = () => {
       initialRouteName="Events"
       screenOptions={{headerShown: false, gestureEnabled: false}}>
       <EventsStack.Screen name="Events" component={EventsScreen} />
-      <EventsStack.Screen name="CreateEvent" component={CreateEvent} />
+      {/* <EventsStack.Screen name="CreateEvent" component={CreateEvent} /> */}
       <EventsStack.Screen name="EventScreen" component={EventScreen} />
-      <EventsStack.Screen name="EditEvent" component={EditEvent} />
+      <EventsStack.Screen name="EditEvent" component={EditEventScreen} />
+      <EventsStack.Screen name="CreateEvent" component={MakeEvent} />
+      <EventsStack.Screen name="CreateTicket" component={CreateTicket} />
+      <EventsStack.Screen name="EditTicket" component={EditTicket} />
+      <EventsStack.Screen name="BuyTickets" component={BuyTickets} />
       <EventsStack.Screen
-        name="Ticket"
-        component={TicketScreen}
+        name="Tickets"
+        component={TicketsScreen}
         options={{
-          animationEnabled: true,
-          presentation: 'transparentModal',
+          // animationEnabled: true,
           headerShown: false,
           gestureEnabled: false,
         }}
       />
+      <EventsStack.Screen
+        name="Ticket"
+        component={TicketScreen}
+        options={{
+          // animationEnabled: true,
+          headerShown: false,
+          // gestureEnabled: false,
+        }}
+      />
+      {/* <EventsStack.Screen name="ImageView" component={ImageView} /> */}
+      <EventsStack.Screen name="SoldTickets" component={SoldTickets} />
     </EventsStack.Navigator>
   );
 };
@@ -106,7 +132,7 @@ const HomeNavigator = () => {
       screenOptions={{headerShown: false, gestureEnabled: false}}>
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="EventScreen" component={EventScreen} />
-      <HomeStack.Screen name="EditEvent" component={EditEvent} />
+      <HomeStack.Screen name="EditEvent" component={EditEventScreen} />
       <HomeStack.Screen
         name="Ticket"
         component={TicketScreen}
@@ -116,8 +142,20 @@ const HomeNavigator = () => {
           gestureEnabled: false,
         }}
       />
-
+      <HomeStack.Screen name="CreateTicket" component={CreateTicket} />
+      <HomeStack.Screen name="EditTicket" component={EditTicket} />
       <HomeStack.Screen name="CreateCommunity" component={CreateCommunity} />
+      <HomeStack.Screen name="BuyTickets" component={BuyTickets} />
+      <HomeStack.Screen
+        name="Tickets"
+        component={TicketsScreen}
+        options={{
+          // animationEnabled: true,
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+      <HomeStack.Screen name="SoldTickets" component={SoldTickets} />
     </HomeStack.Navigator>
   );
 };
@@ -137,6 +175,10 @@ const ProfileNavigator = () => {
         component={ManagingCommunities}
       />
       <ProfileStack.Screen name="CommunityScreen" component={CommunityScreen} />
+      <ProfileStack.Screen name="EventScreen" component={EventScreen} />
+      <ProfileStack.Screen name="EditEvent" component={EditEventScreen} />
+      <ProfileStack.Screen name="CreateTicket" component={CreateTicket} />
+      <ProfileStack.Screen name="EditTicket" component={EditTicket} />
       <ProfileStack.Screen
         name="Tickets"
         component={TicketsScreen}
@@ -155,6 +197,7 @@ const ProfileNavigator = () => {
           gestureEnabled: false,
         }}
       />
+      <ProfileStack.Screen name="SoldTickets" component={SoldTickets} />
     </ProfileStack.Navigator>
   );
 };
@@ -167,6 +210,7 @@ const TabsNavigator = () => {
         tabBarInactiveTintColor: colors.darkGray,
         tabBarHideOnKeyboard: true,
         tabBarStyle: (route => {
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
           const routeName = getFocusedRouteNameFromRoute(route) ?? '';
           if (routeName === 'CreateCommunity') {
             return {display: 'none'};
@@ -177,6 +221,12 @@ const TabsNavigator = () => {
           if (routeName === 'CreateEvent') {
             return {display: 'none'};
           }
+          if (routeName === 'CreateTicket') {
+            return {display: 'none'};
+          }
+          if (routeName === 'EditTicket') {
+            return {display: 'none'};
+          }
           if (routeName === 'EditEvent') {
             return {display: 'none'};
           }
@@ -184,6 +234,9 @@ const TabsNavigator = () => {
             return {display: 'none'};
           }
           if (routeName === 'ProfileDanceStyles') {
+            return {display: 'none'};
+          }
+          if (routeName === 'BuyTickets') {
             return {display: 'none'};
           }
           // if (routeName === 'Ticket') {
@@ -219,7 +272,7 @@ const MainNavigator = () => {
       <MainStack.Navigator
         screenOptions={{headerShown: false, gestureEnabled: false}}>
         <MainStack.Screen name={'TABS'} component={TabsNavigator} />
-        <MainStack.Screen name={'HOME'} component={HomeScreen} />
+        {/* <MainStack.Screen name={'HOME'} component={HomeScreen} /> */}
       </MainStack.Navigator>
     </Host>
   );
@@ -227,17 +280,65 @@ const MainNavigator = () => {
 const AppNavigator = () => {
   const {isUserExists} = useRegistration();
   const routeNameRef = React.useRef();
-  console.log('isUserExists', isUserExists);
-  // const navigationRef = React.useRef();
+  // console.log('isUserExists', isUserExists);
+  const linking = {
+    prefixes: ['https://danceconnect.online/', 'danceconnect://'],
+    config: {
+      screens: {
+        ['TABS']: {
+          path: '/',
+          screens: {
+            ['Communities']: {
+              initialRouteName: 'CommunitiesMain',
+              screens: {
+                ['CommunitiesMain']: {
+                  path: 'communities',
+                },
+                ['CommunityScreen']: {
+                  initialRouteName: 'CommunitiesMain',
+                  path: 'community/:id',
+                  parse: {
+                    id: (id: string) => {
+                      return id;
+                    },
+                  },
+                },
+              },
+            },
+            ['Events']: {
+              initialRouteName: 'Events',
+              screens: {
+                ['Events']: {
+                  path: 'events',
+                },
+                ['EventScreen']: {
+                  initialRouteName: 'Events',
+                  path: 'event/:id',
+                  parse: {
+                    id: (id: string) => {
+                      return id;
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
   return (
     <NavigationContainer
+      linking={linking}
       ref={navigationRef}
       onReady={() => {
-        routeNameRef.current = navigationRef.current.getCurrentRoute().name;
+        routeNameRef.current = navigationRef?.current?.getCurrentRoute()?.name;
       }}
       onStateChange={async () => {
-        const previousRouteName = routeNameRef.current;
-        const currentRouteName = navigationRef.current.getCurrentRoute().name;
+        const previousRouteName = routeNameRef?.current;
+        const currentRouteName =
+          navigationRef?.current?.getCurrentRoute()?.name;
 
         if (previousRouteName !== currentRouteName) {
           await analytics().logScreenView({
@@ -249,7 +350,7 @@ const AppNavigator = () => {
       }}>
       {isUserExists ? <MainNavigator /> : <AuthNavigor />}
       {/* <RootStack.Navigator screenOptions={{headerShown: false}}> */}
-      {/* <AuthNavigor /> */}
+      {/* <MainNavigator /> */}
       {/* </RootStack.Navigator> */}
     </NavigationContainer>
   );

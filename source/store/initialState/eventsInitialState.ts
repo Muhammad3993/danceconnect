@@ -18,4 +18,9 @@ export default {
   place: '',
   communityUid: '',
   price: '',
+  event: null,
+  type: '',
+  isFollowed: false,
+  personalEvents: [],
+  createdEvent: false,
 };

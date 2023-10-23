@@ -106,7 +106,7 @@ const CategorySelector = ({
 const styles = RN.StyleSheet.create({
   mainContainer: {
     paddingHorizontal: 20,
-    paddingTop: 12,
+    // paddingTop: 12,
     marginBottom: 32,
   },
   itemContainer: {
@@ -114,7 +114,7 @@ const styles = RN.StyleSheet.create({
     borderColor: '#E0E0E0',
     borderRadius: 16,
     marginBottom: 12,
-    paddingVertical: 20,
+    paddingVertical: 16,
     paddingLeft: 16,
     paddingRight: 20,
   },
@@ -124,16 +124,17 @@ const styles = RN.StyleSheet.create({
     lineHeight: 22.4,
     letterSpacing: 0.2,
     fontWeight: '700',
+    fontFamily: 'Mulish-Regular',
   },
   titleWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   rightIcon: {
-    height: 15,
-    width: 18,
+    height: 10,
+    width: 12,
     margin: 2,
-    marginVertical: 4,
+    // marginVertical: 4,
     tintColor: colors.white,
   },
   rightIconWrapper: {

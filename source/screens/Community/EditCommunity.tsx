@@ -15,7 +15,9 @@ import {
 import {useCommunities} from '../../hooks/useCommunitites';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import FindCity from '../../components/findCity';
-import { useProfile } from '../../hooks/useProfile';
+import {useProfile} from '../../hooks/useProfile';
+import {apiUrl} from '../../api/serverRequests';
+import FastImage from 'react-native-fast-image';
 
 interface city {
   structured_formatting: {
@@ -26,7 +28,7 @@ interface city {
 const EditCommunity = () => {
   const routeParams = useRoute();
   const navigation = useNavigation();
-  const { userLocation } = useProfile();
+  const {userLocation} = useProfile();
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
     routeParams?.params?._id,
   );
@@ -40,6 +42,7 @@ const EditCommunity = () => {
   const [imgs, setImgs] = useState(images);
   const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<city>(location);
+  const [loadImg, setLoadImg] = useState(false);
 
   const [countNameSymbols, setCountNameSymbols] = useState({
     current: title?.length,
@@ -240,10 +243,19 @@ const EditCommunity = () => {
             {imgs?.map((img, index) => {
               return (
                 <>
-                  <RN.Image
+                  <FastImage
                     key={index}
-                    style={{height: 160, width: 160, marginRight: 8}}
-                    source={{uri: 'data:image/png;base64,' + img?.base64}}
+                    style={{
+                      height: 160,
+                      width: 160,
+                      marginRight: 8,
+                      borderRadius: 8,
+                    }}
+                    onLoadStart={() => setLoadImg(true)}
+                    onLoadEnd={() => setLoadImg(false)}
+                    source={{
+                      uri: img?.base64?.length > 0 ? img?.uri : apiUrl + img,
+                    }}
                   />
                   <RN.TouchableOpacity
                     onPress={() => onPressDeleteImg(img)}
@@ -256,6 +268,16 @@ const EditCommunity = () => {
                 </>
               );
             })}
+            {loadImg && (
+              <RN.View
+                style={{
+                  height: 160,
+                  width: 160,
+                  justifyContent: 'center',
+                }}>
+                <RN.ActivityIndicator animating={loadImg} size={'small'} />
+              </RN.View>
+            )}
             <RN.TouchableOpacity
               style={styles.uploadPictureBtn}
               onPress={onChooseImage}>
@@ -264,12 +286,24 @@ const EditCommunity = () => {
             </RN.TouchableOpacity>
           </RN.ScrollView>
         ) : (
-          <RN.TouchableOpacity
-            style={styles.uploadImgContainer}
-            onPress={onChooseImage}>
-            <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-            <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
-          </RN.TouchableOpacity>
+          <>
+            {loadImg && (
+              <RN.View
+                style={{
+                  height: 160,
+                  width: 160,
+                  justifyContent: 'center',
+                }}>
+                <RN.ActivityIndicator animating={loadImg} size={'small'} />
+              </RN.View>
+            )}
+            <RN.TouchableOpacity
+              style={styles.uploadImgContainer}
+              onPress={onChooseImage}>
+              <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
+              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+            </RN.TouchableOpacity>
+          </>
         )}
       </RN.View>
     );
@@ -463,7 +497,7 @@ const styles = RN.StyleSheet.create({
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     backgroundColor: colors.lightGray,
-    paddingBottom: 8,
+    paddingBottom: isAndroid ? 0 : 8,
   },
   addedDanceStyleItem: {
     borderWidth: 1,

@@ -38,11 +38,8 @@ export const clearUserDataInStorage = () => ({
   type: PROFILE.CLEAR_USER_DATA,
 });
 
-export const getUserByIdRequestAction = (userUid: string) => ({
+export const getUserByIdRequestAction = () => ({
   type: PROFILE.GET_USER_BY_ID_REQUEST,
-  payload: {
-    userUid: userUid,
-  },
 });
 
 export const getUserByIdSuccessAction = ({userByIdData}: userParams) => ({
