@@ -3,8 +3,8 @@ import store, {IRootState} from '..';
 
 // export const selectEventList = (state: IRootState) =>
 //   state.events?.eventsList ?? [];
-export const selectEventByIdData = (state: IRootState) =>
-  state.events?.eventsByIdData ?? [];
+export const selectEventByIdCommunity = (state: IRootState) =>
+  state.events?.eventsByIdCommunity ?? [];
 export const selectLoadingEvents = (state: IRootState) =>
   state?.events?.loadingEvents ?? false;
 export const selectLoadingattendEvent = (state: IRootState) =>
@@ -19,23 +19,25 @@ export const selectEventList = () =>
     .getState()
     ?.events?.eventsList?.filter(
       (item: any) =>
-        moment(item.eventDate?.startDate).format('YYYY-MM-DD') >
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >
         moment(new Date()).format('YYYY-MM-DD'),
     )
     .map((item: any) => item) ?? [];
-export const selectManagingEvents = (userdUid: string) =>
-  store
-    ?.getState()
-    ?.events?.eventsList?.filter(
-      ev =>
-        ev?.creatorUid === userdUid &&
-        moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >
-          moment(new Date()).format('YYYY-MM-DD'),
-    ) ?? [];
+// export const selectManagingEvents = (userdUid: string) =>
+//   store
+//     ?.getState()
+//     ?.events?.eventsList?.filter(
+//       ev =>
+//         ev?.creatorUid === userdUid &&
+//         moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >
+//           moment(new Date()).format('YYYY-MM-DD'),
+//     ) ?? [];
 export const selectWithManagingEvents = (userdUid: string) =>
   store
     ?.getState()
-    ?.events?.eventsList?.filter(ev => ev?.creatorUid === userdUid) ?? [];
+    ?.events?.eventsList?.filter(
+      ev => (ev?.creatorUid || ev?.creator?.uid) === userdUid,
+    ) ?? [];
 export const selectAttentingEvents = (userdUid: string) =>
   store
     .getState()
@@ -43,7 +45,7 @@ export const selectAttentingEvents = (userdUid: string) =>
       (item: any) =>
         item?.attendedPeople?.length > 0 &&
         item?.attendedPeople?.find((user: any) => user.userUid === userdUid) &&
-        moment(item.eventDate?.startDate).format('YYYY-MM-DD') >
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >
           moment(new Date()).format('YYYY-MM-DD'),
     )
     .map((item: any) => item) ?? [];
@@ -52,7 +54,7 @@ export const selectUpcomingEvents = () =>
     .getState()
     ?.events?.eventsList?.filter(
       (ev: any) =>
-        moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >=
+        moment(ev?.eventDate?.startDate).format('YYYY-MM-DD') >=
         moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
 export const selectUpcomingEventsWithUserUid = (userdUid: string) =>
@@ -62,7 +64,7 @@ export const selectUpcomingEventsWithUserUid = (userdUid: string) =>
       (ev: any) =>
         ev?.attendedPeople?.length > 0 &&
         ev?.attendedPeople?.find((user: any) => user.userUid === userdUid) &&
-        moment(ev.eventDate?.startDate).format('YYYY-MM-DD') >=
+        moment(ev?.eventDate?.startDate).format('YYYY-MM-DD') >=
           moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
 export const selectPassedEvents = () =>
@@ -70,6 +72,34 @@ export const selectPassedEvents = () =>
     .getState()
     ?.events?.eventsList?.filter(
       (item: any) =>
-        moment(item.eventDate?.startDate).format('YYYY-MM-DD') <
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
         moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
+export const selectEventById = (state: IRootState) =>
+  state?.events?.eventById ?? null;
+export const selectLoadingEventById = (state: IRootState) =>
+  state?.events?.loadingById ?? false;
+
+export const selectManagingEvents = (state: IRootState) =>
+  state.events?.managingEvents ?? [];
+export const selectLoadingManagingEvents = (state: IRootState) =>
+  state.events?.loadingManaging ?? false;
+
+export const selectPrevLimit = (state: IRootState) =>
+  state.events?.prevLimit ?? 4;
+export const selectPrevOffset = (state: IRootState) =>
+  state.events?.prevOffset ?? 0;
+export const getEventsList = (state: IRootState) =>
+  state.events?.eventsList ?? [];
+
+export const getPreCreateEvent = (state: IRootState) =>
+  state?.events?.event ?? null;
+
+export const getIsFollowEvent = (state: IRootState) =>
+  state?.events?.isFollowed ?? false;
+
+export const selectPersonalEvents = (state: IRootState) =>
+  state?.events?.personalEvents ?? [];
+
+export const selectIsCreatedEvent = (state: IRootState) =>
+  state?.events?.createdEvent ?? false;

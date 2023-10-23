@@ -7,6 +7,9 @@ import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import useAppStateHook from '../../../hooks/useAppState';
+import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
+import {ScrollView} from 'react-native-gesture-handler';
+import CreateCommunityButton from '../../../components/createCommunityBtn';
 
 type props = {
   communititesSearch: string[];
@@ -20,24 +23,25 @@ const ManagingTab = ({
   removedCommunity,
 }: props) => {
   const navigation = useNavigation();
-  const {managingCommunity} = useCommunities();
+  const {managingCommunity, getManagingCommunities, isLoadManaging} =
+    useCommunities();
+  const lengthEmptyCommunities = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
-  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
-
   const [communitites, setCommunitites] = useState(
     managingCommunity
-      ?.filter(
-        i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-      )
+      ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
       .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
 
+  // console.log('managingCommunity', managingCommunity, communitites);
   const [addedStyles, setAddedStyles] = useState<string[]>(
     new Array(0).fill(''),
   );
+  // useEffect(() => {
+  //   getManagingCommunities();
+  // }, []);
+
   useEffect(() => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
@@ -46,11 +50,7 @@ const ManagingTab = ({
   useEffect(() => {
     setCommunitites(
       managingCommunity
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
+        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
         .map(ev => ev),
     );
   }, [currentCity]);
@@ -58,21 +58,17 @@ const ManagingTab = ({
   useEffect(() => {
     setCommunitites(
       managingCommunity
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
+        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
         .map(ev => ev),
     );
   }, [removedCommunity, managingCommunity.length]);
   // console.log('removedCommunity', removedCommunity);
   const onClear = () => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
-      managingCommunity?.filter(i =>
-        i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
+      managingCommunity?.filter(
+        i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
       ),
     );
   };
@@ -81,17 +77,13 @@ const ManagingTab = ({
       const data = managingCommunity.filter(
         (item: any) =>
           item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
-          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          item?.location?.substr(item?.location?.length - 2) ===
-            lastSymUserCountry,
+          item?.location?.toLowerCase() === currentCity.toLowerCase(),
       );
       setCommunitites(data);
     } else {
       setCommunitites(
         managingCommunity?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+          i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
         ),
       );
     }
@@ -107,17 +99,34 @@ const ManagingTab = ({
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
+        <CreateCommunityButton />
       </RN.View>
+
+      // <RN.View style={styles.emptyContainer}>
+      //   {isLoadManaging &&
+      //     lengthEmptyCommunities.map(() => {
+      //       return (
+      //         <>
+      //           <RN.View style={{marginVertical: 8}}>
+      //             <SkeletonCommunityCard />
+      //           </RN.View>
+      //         </>
+      //       );
+      //     })}
+      //   {!isLoadManaging && (
+      //     <RN.Text style={styles.emptyText}>
+      //       There are no communities yet
+      //     </RN.Text>
+      //   )}
+      // </RN.View>
     );
   };
 
   const renderItemCommunity = useCallback((item: any) => {
-    // console.log('item.item.id', item.item.id);
-    if (!item.item.id) {
+    if (!item?.id) {
       return null;
     }
-    return <CommunityCard item={item} key={item.index + item.item.id} />;
+    return <CommunityCard item={item} key={item?.id} />;
   }, []);
   const renderFilters = () => {
     return (
@@ -153,16 +162,30 @@ const ManagingTab = ({
       </RN.View>
     );
   };
+  const refreshControl = () => {
+    return (
+      <RN.RefreshControl
+        onRefresh={() => {
+          onClear();
+          getManagingCommunities();
+        }}
+        refreshing={isLoadManaging}
+      />
+    );
+  };
+
   return (
     <>
-      <RN.FlatList
-        data={communitites}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderFilters()}
-        renderItem={renderItemCommunity}
-        keyExtractor={(item, _index) => `${item.item?.id}/${_index}`}
-        ListEmptyComponent={renderEmpty()}
-      />
+        refreshControl={refreshControl()}>
+        {communitites?.length > 0 && renderFilters()}
+        {communitites?.length > 0 &&
+          communitites?.map((item: any) => {
+            return <RN.View>{renderItemCommunity(item)}</RN.View>;
+          })}
+        {!communitites?.length && renderEmpty()}
+      </ScrollView>
       <FiltersBottom
         onOpening={openingFilters}
         onClose={() => setOpeningFilters(false)}
@@ -178,7 +201,7 @@ const ManagingTab = ({
 const styles = RN.StyleSheet.create({
   filterWrapper: {
     paddingVertical: 14,
-    paddingHorizontal: isAndroid ? 0 : 20,
+    paddingHorizontal: isAndroid ? 4 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -207,6 +230,8 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 20,
   },
 
   emptyText: {

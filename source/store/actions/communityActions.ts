@@ -16,6 +16,8 @@ export type communityParams = {
   followingCommunities?: string[];
   communityByIdData?: null;
   communityUid?: string;
+  managingCommunities?: string[];
+  loadingManaging?: boolean;
 };
 export type followingParams = {
   isLoadingFollow?: boolean;
@@ -32,6 +34,21 @@ export const getCommunitiesSuccessAction = ({
   type: COMMUNITIES.GET_DATA_SUCCESS,
   payload: {
     dataCommunities: dataCommunities,
+  },
+});
+
+export const getManagingCommunitiesFailAction = () => ({
+  type: COMMUNITIES.GET_MANAGING_COMMUNITIES_FAIL,
+});
+export const getManagingCommunitiesRequestAction = () => ({
+  type: COMMUNITIES.GET_MANAGING_COMMUNITIES_REQUEST,
+});
+export const getManagingCommunitiesSuccessAction = ({
+  managingCommunities,
+}: communityParams) => ({
+  type: COMMUNITIES.GET_MANAGING_COMMUNITIES_SUCCESS,
+  payload: {
+    managingCommunities: managingCommunities,
   },
 });
 
@@ -72,37 +89,24 @@ export const createCommunityFailAction = ({errors}: communityParams) => ({
 
 export const startFollowedCommunityRequestAction = ({
   communityUid,
-  userUid,
-  userImg,
 }: followingParams) => ({
   type: COMMUNITIES.START_FOLLOWING_REQUEST,
   payload: {
     communityUid: communityUid,
-    userUid: userUid,
-    userImg: userImg,
   },
 });
-export const startFollowedCommunitySuccessAction = ({
-  followingCommunities,
-}: communityParams) => ({
+export const startFollowedCommunitySuccessAction = () => ({
   type: COMMUNITIES.START_FOLLOWING_SUCCESS,
-  payload: {
-    followingCommunities: followingCommunities,
-  },
 });
 export const startFollowedCommunityFailAction = () => ({
   type: COMMUNITIES.START_FOLLOWING_FAIL,
 });
 export const cancelFollowedCommunityRequestAction = ({
   communityUid,
-  userUid,
-  userImg,
-}: followingParams) => ({
-  type: COMMUNITIES.START_FOLLOWING_REQUEST,
+}: communityParams) => ({
+  type: COMMUNITIES.CANCEL_FOLLOWING_REQUEST,
   payload: {
     communityUid: communityUid,
-    userUid: userUid,
-    userImg: userImg,
   },
 });
 
@@ -139,6 +143,9 @@ export const getCommunityByIdFailAction = ({error}: any) => ({
   },
 });
 
+export const getCommunityByIdClearAction = () => ({
+  type: COMMUNITIES.GET_COMMUNITY_BY_ID_CLEAR,
+});
 export const changeInformationCommunityRequestAction = ({
   name,
   description,
@@ -173,7 +180,9 @@ export const changeInformationValueAction = () => ({
   type: COMMUNITIES.CHANGE_INFORMATION_VALUE,
 });
 
-export const removeCommunityRequestAction = ({communityUid}: communityParams) => ({
+export const removeCommunityRequestAction = ({
+  communityUid,
+}: communityParams) => ({
   type: COMMUNITIES.REMOVE_COMMUNITY_REQUEST,
   payload: {
     uid: communityUid,

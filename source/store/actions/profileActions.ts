@@ -14,6 +14,7 @@ type userParams = {
   gender?: string;
   profileImg?: object;
   danceStyles?: string[];
+  userCountry?: string;
   newPassword?: string;
   changePasswordSuccess?: boolean;
   changePasswordErrors?: object | null;
@@ -37,11 +38,8 @@ export const clearUserDataInStorage = () => ({
   type: PROFILE.CLEAR_USER_DATA,
 });
 
-export const getUserByIdRequestAction = (userUid: string) => ({
+export const getUserByIdRequestAction = () => ({
   type: PROFILE.GET_USER_BY_ID_REQUEST,
-  payload: {
-    userUid: userUid,
-  },
 });
 
 export const getUserByIdSuccessAction = ({userByIdData}: userParams) => ({
@@ -89,6 +87,19 @@ export const changeUserDanceStylesSuccessAction = () => ({
 });
 export const changeUserDanceStylesFailAction = () => ({
   type: PROFILE.CHANGE_DANCE_STYLES_FAIL,
+});
+export const changeUserCountryRequestAction = ({userCountry}: userParams) => ({
+  type: PROFILE.CHANGE_USER_COUNTRY_REQUEST,
+  payload: {
+    userCountry: userCountry,
+  },
+});
+
+export const changeUserCountrySuccessAction = () => ({
+  type: PROFILE.CHANGE_USER_COUNTRY_SUCCESS,
+});
+export const changeUserCountryFailAction = () => ({
+  type: PROFILE.CHANGE_USER_COUNTRY_FAIL,
 });
 export const changePasswordRequestAction = ({newPassword}: userParams) => ({
   type: PROFILE.CHANGE_PASSWORD_REQUEST,

@@ -9,6 +9,10 @@ export type appStateAction = {
     danceStyles: string[];
     eventTypes: string[];
     countries: string[];
+    currentCountry: any;
+
+    isVisible?: boolean;
+    errorMessage?: string;
   };
 };
 
@@ -38,6 +42,21 @@ export default (state = appStateInitialState, action: appStateAction) => {
       return {
         ...state,
         countries: action.payload.countries,
+      };
+    case APP_STATE.SET_ERROR_NOTICE_VISIBLE:
+      return {
+        ...state,
+        isVisible: action?.payload.isVisible,
+      };
+    case APP_STATE.SET_ERROR_NOTICE_MESSAGE:
+      return {
+        ...state,
+        errorMessage: action.payload?.errorMessage,
+      };
+    case APP_STATE.SET_CURRENT_COUNTRY:
+      return {
+        ...state,
+        currentCountry: action.payload.currentCountry,
       };
     default:
       return state;

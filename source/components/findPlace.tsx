@@ -4,6 +4,7 @@ import {Modalize} from 'react-native-modalize';
 import Search from './search';
 import {searchPlacesInEvent} from '../api/cities';
 import colors from '../utils/colors';
+import useAppStateHook from '../hooks/useAppState';
 
 interface city {
   structured_formatting: {
@@ -15,34 +16,34 @@ type props = {
   setSelectedPlace: (value: string) => void;
   selectedPlace?: string;
   onClosed: (val: boolean) => void;
-  crntCity: city;
+  crntCity: any;
+  currentCountry: any;
 };
 const FindPlace = ({
   setSelectedPlace,
   selectedPlace,
   onClosed,
   crntCity,
+  currentCountry,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
   const [searchValue, setSearchValue] = useState<string>(selectedPlace ?? '');
   const [findPlace, setFindPlices] = useState([]);
+  const {countries} = useAppStateHook();
   const handleStyle = {height: 3, width: 38};
 
-  // console.log(crntCity);
   useEffect(() => {
     modalizeRef?.current?.open();
   }, []);
 
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
-    let country = '';
-    if (crntCity === 'Singapore, Singapore') {
-      country = 'SG';
-    } else if (crntCity === 'Indonesia, Bali') {
-      country = 'IDN';
-    } else {
-      country = 'USA';
-    }
+    console.log('onChangeTextSearch', crntCity, currentCountry);
+    const country =
+      currentCountry?.countryCode ??
+      countries.find(
+        (c: {country: string}) => c.country === crntCity?.split(', ')[0],
+      )?.countryCode;
     const city = crntCity?.structured_formatting?.main_text ?? crntCity;
     searchPlacesInEvent(city, searchValue, country).then((places: any) => {
       // console.log(places);
@@ -108,11 +109,14 @@ const FindPlace = ({
                   color: colors.textPrimary,
                   lineHeight: 22.4,
                 }}>
-                {crntCity === 'Singapore, Singapore'
-                  ? item?.structured_formatting?.main_text +
-                    ', ' +
-                    item.terms[item.terms.length - 1].value
-                  : item?.description}
+                {item?.structured_formatting?.main_text +
+                  ', ' +
+                  item.terms[item.terms.length - 2].value}
+                {/* {selectCountry?.countryCode !== 'SG' && (
+                  <RN.Text style={{fontSize: 12, color: colors.darkGray}}>
+                    {`\n${item?.structured_formatting?.secondary_text}`}
+                  </RN.Text>
+                )} */}
               </RN.Text>
             </RN.TouchableOpacity>
           );

@@ -15,6 +15,7 @@ export type registrationAction = {
     password?: string;
     errors: string | object;
     currentUser?: undefined;
+    token?: string;
     name?: string;
     gender: string;
     country?: string;
@@ -22,7 +23,19 @@ export type registrationAction = {
     role?: string;
     isRegistrationsSuccess?: boolean;
     isUserExists?: boolean;
+    userName?: string;
+    userGender?: string;
+    userCountry?: string;
+    userRole?: string[];
     individualStyles?: string[];
+    authProvider?: string;
+    userImage?: null;
+    customer?: null;
+    myCommunities?: [];
+    joinedCommunities?: [];
+    events?: [];
+    goingEvent?: [];
+    paidEvents?: [];
   };
 };
 
@@ -36,17 +49,33 @@ export default (
         ...state,
         email: action.payload?.email,
         password: action.payload?.password,
+        userName: action.payload?.userName,
+        userGender: action.payload?.userGender,
+        userCountry: action.payload?.userCountry,
+        userRole: action.payload?.userRole,
+        individualStyles: action.payload?.individualStyles,
+        userImage: action.payload?.userImage,
+        customer: action.payload?.customer,
+        myCommunities: action.payload?.myCommunities,
+        joinedCommunities: action.payload?.joinedCommunities,
+        events: action.payload?.events,
+        goingEvent: action.payload?.goingEvent,
+        paidEvents: action.payload?.paidEvents,
         isLoading: true,
         isAuthorized: false,
       };
     case REGISTRATION_WITH_EMAIL.SUCCESS:
       return {
         ...state,
-        email: action.payload?.currentUser?.email,
+        // email: action.payload?.currentUser?.email,
         // password: action.payload?.password,
         isLoading: false,
-        isAuthorized: false,
+        isAuthorized: true,
+        isRegistrationsSuccess: true,
         currentUser: action.payload?.currentUser,
+        isUserExists: action.payload?.isUserExists,
+        token: action.payload?.token,
+        authProvider: action.payload?.authProvider,
       };
     case REGISTRATION_WITH_EMAIL.FAIL:
       return {
@@ -75,6 +104,8 @@ export default (
         isAuthorized: true,
         currentUser: action.payload?.currentUser,
         isUserExists: action.payload?.isUserExists,
+        authProvider: action.payload?.authProvider,
+        isRegistrationsSuccess: true,
       };
     case AUTHORIZATION_WITH_EMAIL.FAIL:
       return {
@@ -122,6 +153,8 @@ export default (
         name: action.payload?.currentUser?.displayName,
         isAuthorized: false,
         isUserExists: action.payload?.isUserExists,
+        token: action.payload?.token,
+        authProvider: action.payload?.authProvider,
         errors: null,
       };
     case AUTHORIZATION_WITH_GOOGLE.FAIL:
@@ -156,6 +189,7 @@ export default (
       return {
         ...state,
         isAuthorized: false,
+        isUserExists: false,
         ...registrationInitialState,
       };
     }

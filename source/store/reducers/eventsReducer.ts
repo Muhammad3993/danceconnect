@@ -14,7 +14,7 @@ export type eventAction = {
     images?: string[];
     errors?: null;
     eventsList?: string[];
-    eventsByIdData?: string[];
+    eventsByIdCommunity?: string[];
     loadingEvents?: boolean;
     eventUid?: string;
     eventDate?: null;
@@ -23,7 +23,20 @@ export type eventAction = {
     loadingAttend?: false;
     isLoadingChangeInformation?: false;
     saveChanges?: false;
-    typeEvent: string;
+    typeEvent?: string;
+    eventById?: null;
+    loadingById?: null;
+    errorsById?: null;
+    loadingManaging?: boolean;
+    managingEvents?: string[];
+    price?: string;
+    offset: number;
+    limit: number;
+    prevLimit: number;
+    prevOffset: number;
+    event: any;
+    isFollowed: boolean;
+    personalEvents?: string[];
   };
 };
 
@@ -33,31 +46,43 @@ export default (state = eventsInitialState, action: eventAction) => {
       return {
         ...state,
         isLoading: true,
+        createdEvent: false,
       };
     case EVENT.EVENT_CREATE_SUCCESS:
       return {
         ...state,
         isLoading: false,
         ...action.payload,
+        event: action.payload?.event,
+        createdEvent: true,
       };
     case EVENT.EVENT_CREATE_FAIL:
       return {
         ...state,
         errors: action.payload?.errors,
         isLoading: false,
+        createdEvent: false,
       };
-
+    case EVENT.EVENT_CREATE_CHANGE_VALUE:
+      return {
+        ...state,
+        createdEvent: false,
+      };
     case EVENT.GET_EVENTS_REQUEST:
       return {
         ...state,
         eventsList: [],
         loadingEvents: true,
+        limit: action.payload?.limit,
+        offset: action.payload?.offset,
       };
     case EVENT.GET_EVENTS_SUCCESS:
       return {
         ...state,
         eventsList: action.payload?.eventsList,
         loadingEvents: false,
+        prevLimit: action.payload?.prevLimit,
+        prevOffset: action.payload?.prevOffset,
       };
     case EVENT.GET_EVENTS_FAIL:
       return {
@@ -65,28 +90,35 @@ export default (state = eventsInitialState, action: eventAction) => {
         eventsList: [],
         loadingEvents: false,
       };
-    case EVENT.GET_EVENT_BY_ID_REQUEST:
+    case EVENT.SET_LIMIT:
       return {
         ...state,
-        eventsByIdData: [],
+        limit: action?.payload?.limit,
+        offset: action.payload?.offset,
+      };
+    case EVENT.GET_EVENT_BY_COMMUNITY_REQUEST:
+      return {
+        ...state,
+        eventsByIdCommunity: [],
         loadingEvents: true,
       };
-    case EVENT.GET_EVENT_BY_ID_SUCCESS:
+    case EVENT.GET_EVENT_BY_COMMUNITY_SUCCESS:
       return {
         ...state,
-        eventsByIdData: action.payload?.eventsByIdData,
+        eventsByIdCommunity: action.payload?.eventsByIdCommunity,
         loadingEvents: false,
       };
-    case EVENT.GET_EVENT_BY_ID_FAIL:
+    case EVENT.GET_EVENT_BY_COMMUNITY_FAIL:
       return {
         ...state,
-        eventsByIdData: [],
+        eventsByIdCommunity: [],
         loadingEvents: false,
       };
     case EVENT.START_ATTEND_EVENT_REQUEST:
       return {
         ...state,
         loadingAttend: true,
+        eventUid: action.payload?.eventUid,
       };
     case EVENT.START_ATTEND_EVENT_SUCCESS:
       return {
@@ -95,6 +127,23 @@ export default (state = eventsInitialState, action: eventAction) => {
       };
 
     case EVENT.START_ATTEND_EVENT_FAIL:
+      return {
+        ...state,
+        loadingAttend: false,
+      };
+    case EVENT.END_ATTEND_EVENT_REQUEST:
+      return {
+        ...state,
+        loadingAttend: true,
+        eventUid: action.payload?.eventUid,
+      };
+    case EVENT.END_ATTEND_EVENT_SUCCESS:
+      return {
+        ...state,
+        loadingAttend: false,
+      };
+
+    case EVENT.END_ATTEND_EVENT_FAIL:
       return {
         ...state,
         loadingAttend: false,
@@ -113,6 +162,7 @@ export default (state = eventsInitialState, action: eventAction) => {
         eventDate: action?.payload?.eventDate,
         place: action?.payload?.place,
         typeEvent: action?.payload?.typeEvent,
+        price: action?.payload?.price,
         saveChanges: false,
       };
     case EVENT.CHANGE_INFORMATION_EVENT_SUCCESS:
@@ -133,6 +183,66 @@ export default (state = eventsInitialState, action: eventAction) => {
       return {
         ...state,
         saveChanges: false,
+      };
+    case EVENT.GET_EVENT_BY_ID_REQUEST:
+      return {
+        ...state,
+        eventById: null,
+        loadingById: true,
+        isFollowed: false,
+      };
+    case EVENT.GET_EVENT_BY_ID_SUCCESS:
+      return {
+        ...state,
+        eventById: action.payload?.eventById,
+        loadingById: false,
+        isFollowed: action?.payload?.isFollowed,
+      };
+    case EVENT.GET_EVENT_BY_ID_FAIL:
+      return {
+        ...state,
+        eventById: null,
+        loadingById: false,
+        errorsById: action.payload?.errorsById,
+        isFollowed: false,
+      };
+    case EVENT.GET_EVENT_BY_ID_CLEAR:
+      return {
+        ...state,
+        eventById: null,
+        isFollowed: false,
+      };
+    case EVENT.GET_MANAGING_EVENTS_REQUEST:
+      return {
+        ...state,
+        loadingManaging: true,
+        managingEvents: [],
+      };
+    case EVENT.GET_MANAGING_EVENTS_SUCCESS:
+      return {
+        ...state,
+        loadingManaging: false,
+        managingEvents: action.payload?.managingEvents,
+      };
+    case EVENT.GET_MANAGING_EVENTS_FAIL:
+      return {
+        ...state,
+        loadingManaging: false,
+        managingEvents: [],
+      };
+    case EVENT.GET_PERSONAL_EVENTS_REQUEST:
+      return {
+        ...state,
+      };
+    case EVENT.GET_PERSONAL_EVENTS_SUCCESS:
+      return {
+        ...state,
+        personalEvents: action.payload?.personalEvents,
+      };
+    case EVENT.GET_PERSONAL_EVENTS_FAIL:
+      return {
+        ...state,
+        personalEvents: [],
       };
     default:
       return state;

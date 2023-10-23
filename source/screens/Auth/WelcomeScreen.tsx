@@ -3,7 +3,7 @@ import * as RN from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 import {AuthStackNavigationParamList} from '../../navigation/types';
-import {authButtons} from './btnsConstans';
+import {authButtons} from '../../utils/btnsConstans';
 import AuthButton from '../../components/authBtn';
 import colors from '../../utils/colors';
 import useRegistration from '../../hooks/useRegistration';
@@ -19,24 +19,28 @@ const WeclomeScreen = (): JSX.Element => {
     userUid,
     isUserExists,
     authorizationWithApple,
+    saveEmail
   } = useRegistration();
-  const {setLoading} = useAppStateHook();
+  const {setLoading, getDanceStyles} = useAppStateHook();
+  useEffect(() => {
+    getDanceStyles();
+  }, []);
 
   const onPressLogin = () => {
     navigation.navigate('AUTH');
   };
   useEffect(() => {
     if (userUid && !isUserExists) {
-      navigation.navigate('ONBOARDING');
+      navigation.navigate('ONBOARDING', {email: saveEmail, password: userUid});
     }
     if (isUserExists) {
       navigation.navigate('HOME');
     }
-    console.log('isUserExists', isUserExists);
+    console.log('isUserExists', isUserExists, userUid);
   }, [userUid, navigation, isUserExists]);
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
-    setLoading(true);
+    // setLoading(true);
     if (iconName === 'google') {
       authorizationWithGoogle();
     }
@@ -79,7 +83,7 @@ const WeclomeScreen = (): JSX.Element => {
             <RN.Text
               style={styles.privacyP}
               onPress={() =>
-                RN.Linking.openURL('https://www.danceconnect.online/privacy')
+                RN.Linking.openURL('https://danceconnect.online/privacy.html')
               }>
               Privacy Policy
             </RN.Text>
@@ -100,7 +104,7 @@ const WeclomeScreen = (): JSX.Element => {
             <RN.Text
               style={styles.licenceTextOrange}
               onPress={() =>
-                RN.Linking.openURL('https://www.danceconnect.online/terms')
+                RN.Linking.openURL('https://danceconnect.online/terms.html')
               }>
               {' '}
               terms and conditions

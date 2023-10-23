@@ -1,14 +1,21 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import * as RN from 'react-native';
-import {statusBarHeight} from '../../utils/constants';
 import colors from '../../utils/colors';
 import CommunityCard from '../../components/communityCard';
 import {useNavigation} from '@react-navigation/native';
 import {useCommunities} from '../../hooks/useCommunitites';
+import SkeletonCommunityCard from '../../components/skeleton/communityCard-Skeleton';
+import {isAndroid} from '../../utils/constants';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const ManagingCommunities = () => {
-  const {managingCommunity} = useCommunities();
+  const {managingCommunity, getManagingCommunities, isLoadManaging} =
+    useCommunities();
+  const lengthEmptyEvents = new Array(3).fill('');
   const navigation = useNavigation();
+  useEffect(() => {
+    getManagingCommunities();
+  }, []);
 
   const header = () => {
     return (
@@ -22,28 +29,61 @@ const ManagingCommunities = () => {
       </RN.TouchableOpacity>
     );
   };
+
   const renderEmpty = () => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
+        {isLoadManaging &&
+          lengthEmptyEvents.map(() => {
+            return (
+              <>
+                <RN.View style={{marginVertical: 8}}>
+                  <SkeletonCommunityCard />
+                </RN.View>
+              </>
+            );
+          })}
+        {!isLoadManaging && (
+          <RN.Text style={styles.emptyText}>
+            You haven’t created any communities yet
+          </RN.Text>
+        )}
       </RN.View>
     );
   };
-
   const renderItemCommunity = useCallback((item: any) => {
-    return <CommunityCard item={item} key={item.index + item.item.id} />;
+    return (
+      <CommunityCard
+        item={item}
+        key={item?.item?.id ?? item?.id}
+        isProfileScreen
+      />
+    );
   }, []);
   return (
     <RN.SafeAreaView style={styles.container}>
       {header()}
-      <RN.FlatList
+      <ScrollView style={{paddingTop: 24}}>
+        {managingCommunity?.length > 0 &&
+          managingCommunity?.map((item: any) => {
+            return (
+              <RN.View style={styles.flatList}>
+                {renderItemCommunity(item)}
+              </RN.View>
+            );
+          })}
+        {!managingCommunity?.length && renderEmpty()}
+      </ScrollView>
+
+      {/* <RN.FlatList
         style={styles.flatList}
         data={managingCommunity}
         showsVerticalScrollIndicator={false}
         renderItem={renderItemCommunity}
         keyExtractor={(item, _index) => `${item.item?.id}/${_index}`}
         ListEmptyComponent={renderEmpty()}
-      />
+      /> */}
     </RN.SafeAreaView>
   );
 };
@@ -54,11 +94,13 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
   },
   flatList: {
-    paddingVertical: 24,
+    flex: 1,
+    // paddingVertical: 24,
+    marginHorizontal: isAndroid ? 14 : 0,
   },
   backIcon: {
-    height: 24,
-    width: 28,
+    height: 16,
+    width: 19,
   },
   headerWrapper: {
     flexDirection: 'row',
@@ -69,8 +111,8 @@ const styles = RN.StyleSheet.create({
   },
   headerText: {
     color: colors.textPrimary,
-    fontSize: 24,
-    lineHeight: 28.8,
+    fontSize: 20,
+    lineHeight: 24,
     fontFamily: 'Mulish-Regular',
     paddingLeft: 16,
     fontWeight: '600',
@@ -87,7 +129,7 @@ const styles = RN.StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'Mulish-Regular',
     textAlign: 'center',
-    paddingVertical: 16,
+    padding: 16,
   },
 });
 export default ManagingCommunities;

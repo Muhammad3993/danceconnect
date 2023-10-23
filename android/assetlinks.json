@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.danceconnect",
+    "sha256_cert_fingerprints":
+    ["AA:32:C7:E5:BE:36:91:FB:9D:BB:91:05:E0:46:ED:AF:1F:B8:57:BC:E0:3F:F5:74:F6:E0:46:12:A2:CD:6F:21"]
+  }
+}]

@@ -10,3 +10,11 @@ export const selectEventTypes = (state: IRootState) =>
 
 export const selectCountries = (state: IRootState) =>
   state.appState.countries ?? [];
+
+export const selectIsVisibleNoticeError = (state: IRootState) =>
+  state.appState?.isVisible ?? false;
+export const selectNoticeErrorMessage = (state: IRootState) =>
+  state.appState?.errorMessage ?? '';
+
+export const selectCurrentCountry = (state: IRootState) =>
+  state.appState?.currentCountry ?? null;

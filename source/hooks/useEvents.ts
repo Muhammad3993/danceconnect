@@ -1,23 +1,36 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
   changeInformationEventRequestAction,
+  createEventChangeValue,
+  endAttendEventRequestAction,
   eventParams,
   followingParams,
-  getEventByIdRequestAction,
+  getEventByIdClearAction,
+  getEventByIdCommunityRequestAction,
   getEventsRequestAction,
+  getEventsSuccessAction,
+  getManagingEventsRequestAction,
+  getPersonalEventsRequestAction,
+  setLimit,
   startAttendEventRequestAction,
 } from '../store/actions/eventActions';
 import {createEventRequestAction} from '../store/actions/eventActions';
 import {
+  getPreCreateEvent,
   selectAttentingEvents,
-  selectEventByIdData,
+  selectEventByIdCommunity,
   selectEventList,
+  selectIsCreatedEvent,
   selectIsSaveChanges,
   selectLoadingChangeInformationEvent,
   selectLoadingEvents,
+  selectLoadingManagingEvents,
   selectLoadingattendEvent,
   selectManagingEvents,
   selectPassedEvents,
+  selectPersonalEvents,
+  selectPrevLimit,
+  selectPrevOffset,
   selectUpcomingEvents,
   selectUpcomingEventsWithUserUid,
   selectWithManagingEvents,
@@ -27,8 +40,9 @@ import {useProfile} from './useProfile';
 
 const useEvents = () => {
   const dispatch = useDispatch();
+  const personalEvents = useSelector(selectPersonalEvents);
   const eventList = useSelector(selectEventList) ?? [];
-  const eventsDataById = useSelector(selectEventByIdData);
+  const eventsDataByCommunityId = useSelector(selectEventByIdCommunity);
   const loadingEvents = useSelector(selectLoadingEvents);
   const loadingAttend = useSelector(selectLoadingattendEvent);
   const userId = useSelector(selectUserUid);
@@ -36,13 +50,18 @@ const useEvents = () => {
     selectLoadingChangeInformationEvent,
   );
   const isSaveChanges = useSelector(selectIsSaveChanges);
+  const isCreatedEvent = useSelector(selectIsCreatedEvent);
 
-  const managingEvents = selectManagingEvents(userId);
+  const managingEvents = useSelector(selectManagingEvents);
+  const isLoadManaging = useSelector(selectLoadingManagingEvents);
+  const getManagingEvents = () => {
+    dispatch(getManagingEventsRequestAction());
+  };
   const attentingsEvents = selectAttentingEvents(userId);
   const attendEventWithUserUid = selectUpcomingEventsWithUserUid(userId);
   const upcomingEvents = selectUpcomingEvents();
   const passingEvents = selectPassedEvents();
-  const managingEventsWithPassed = useSelector(selectWithManagingEvents);
+  const managingEventsWithPassed = selectWithManagingEvents(userId);
   const {individualStyles} = useProfile();
   const maybeEvents = upcomingEvents?.filter(
     i =>
@@ -52,18 +71,30 @@ const useEvents = () => {
   );
 
   const attendingEventsForCommunity =
-    eventsDataById?.filter(
+    eventsDataByCommunityId?.filter(
       (item: any) =>
         item?.attendedPeople?.length > 0 &&
         item?.attendedPeople?.find((user: any) => user.userUid === userId),
     ) ?? [];
+
+  const prevLimit = useSelector(selectPrevLimit);
+  const prevOffset = useSelector(selectPrevOffset);
   const getEvents = () => {
-    dispatch(getEventsRequestAction());
+    dispatch(getEventsRequestAction({limit: prevLimit, offset: prevOffset}));
+  };
+  const setEventLimit = () => {
+    dispatch(
+      setLimit({limit: prevLimit + prevLimit, offset: prevOffset + prevLimit}),
+    );
+  };
+  const setDefaultEventLimit = () => {
+    dispatch(setLimit({limit: 2, offset: 0}));
+  };
+  const getEventByIdCommunity = (uid: string) => {
+    dispatch(getEventByIdCommunityRequestAction({eventUid: uid}));
   };
 
-  const getEventById = (uid: string) => {
-    dispatch(getEventByIdRequestAction({eventUid: uid}));
-  };
+  const preCreatedEvent = useSelector(getPreCreateEvent);
   const createEvent = ({
     name,
     description,
@@ -76,6 +107,8 @@ const useEvents = () => {
     images,
     eventDate,
     typeEvent,
+    price,
+    type,
   }: eventParams) => {
     dispatch(
       createEventRequestAction({
@@ -90,19 +123,34 @@ const useEvents = () => {
         images: images,
         eventDate: eventDate,
         typeEvent: typeEvent,
+        price: price,
+        type: type,
       }),
     );
   };
-  const attendEvent = ({communityUid, userUid, eventUid}: followingParams) => {
+
+  const setSocketEvents = (data: string[]) => {
+    dispatch(getEventsSuccessAction({eventsList: Object.values(data)}));
+  };
+  const attendEvent = (eventUid: string) => {
+    // console.log('attendEvent', eventUid);
     dispatch(
       startAttendEventRequestAction({
-        communityUid: communityUid,
-        userUid: userUid,
+        eventUid: eventUid,
+      }),
+    );
+  };
+  const unAttendEvent = (eventUid: string) => {
+    dispatch(
+      endAttendEventRequestAction({
         eventUid: eventUid,
       }),
     );
   };
 
+  const onClearEventDataById = () => {
+    dispatch(getEventByIdClearAction());
+  };
   const changeInformation = ({
     name,
     description,
@@ -114,32 +162,42 @@ const useEvents = () => {
     place,
     eventUid,
     typeEvent,
+    price,
   }: eventParams) => {
     dispatch(
       changeInformationEventRequestAction({
-        name,
-        description,
+        name: name,
+        description: description,
         // country,
-        location,
-        categories,
-        images,
-        eventDate,
-        place,
-        eventUid,
-        typeEvent,
+        location: location,
+        categories: categories,
+        images: images,
+        eventDate: eventDate,
+        place: place,
+        eventUid: eventUid,
+        typeEvent: typeEvent,
+        price: price,
       }),
     );
+  };
+
+  const getPersonalEvents = () => {
+    dispatch(getPersonalEventsRequestAction());
+  };
+  const changeCreatedValue = () => {
+    dispatch(createEventChangeValue());
   };
 
   return {
     createEvent,
     eventList,
     getEvents,
-    getEventById,
-    eventsDataById,
+    getEventByIdCommunity,
+    eventsDataByCommunityId,
     loadingEvents,
     loadingAttend,
     attendEvent,
+    unAttendEvent,
     attendingEventsForCommunity,
     changeInformation,
     loadingWithChangeInformation,
@@ -150,7 +208,18 @@ const useEvents = () => {
     passingEvents,
     attendEventWithUserUid,
     maybeEvents,
-    managingEventsWithPassed
+    managingEventsWithPassed,
+    isLoadManaging,
+    getManagingEvents,
+    setSocketEvents,
+    onClearEventDataById,
+    setEventLimit,
+    setDefaultEventLimit,
+    preCreatedEvent,
+    getPersonalEvents,
+    personalEvents,
+    isCreatedEvent,
+    changeCreatedValue,
   };
 };
 export default useEvents;

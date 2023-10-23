@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Platform, Share } from 'react-native';
 export const validateEmail = (email: string) => {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))?/;
@@ -64,7 +65,16 @@ export const setErrors = (valueError: string) => {
       type: ['password'],
     };
   }
-  return '';
+  if (valueError?.includes('Invalid credentials')) {
+    return {
+      message: 'Invalid e-mail or password',
+      type: ['email', 'password'],
+    };
+  }
+  return {
+    message: valueError,
+    type: ['email', 'password'],
+  };
 };
 
 export const getIcon = (name: string, isFocused: boolean) => {
@@ -81,3 +91,10 @@ export const getIcon = (name: string, isFocused: boolean) => {
       break;
   }
 };
+// export const getMoneyString = (value: string) => {
+//   const formatString = new Intl.NumberFormat('en-US', {
+//     style: 'decimal',
+//     currency: 'USD',
+//   });
+//   return formatString.format(Number(value));
+// };

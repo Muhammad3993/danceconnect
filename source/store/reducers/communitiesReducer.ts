@@ -24,6 +24,8 @@ export type communititesAction = {
     communityUid?: string;
     isLoadingChangeInformation?: boolean;
     saveChanges?: boolean;
+    isManagingLoading?: boolean;
+    managingCommunities?: string[];
   };
 };
 
@@ -35,6 +37,7 @@ export default (
     case COMMUNITIES.GET_DATA_REQUEST:
       return {
         ...state,
+        dataCommunities: [],
         isLoading: true,
         errors: null,
       };
@@ -87,65 +90,31 @@ export default (
     case COMMUNITIES.START_FOLLOWING_REQUEST:
       return {
         ...state,
-        following: {
-          isLoadingFollow: true,
-          userUid: action.payload?.following?.userUid,
-          userImg: action.payload?.following?.userImg,
-          communityUid: action.payload?.following?.communityUid,
-        },
+        communityUid: action.payload?.following?.communityUid,
       };
     case COMMUNITIES.START_FOLLOWING_SUCCESS:
       return {
         ...state,
-        dataCommunities: state.dataCommunities,
-        following: {
-          isLoadingFollow: false,
-          userUid: '',
-          userImg: '',
-          communityUid: '',
-        },
+        communityUid: '',
         followingCommunities: action.payload?.followingCommunities,
       };
     case COMMUNITIES.START_FOLLOWING_FAIL:
       return {
         ...state,
-        following: {
-          isLoadingFollow: false,
-          userUid: '',
-          userImg: '',
-          communityUid: '',
-        },
       };
 
     case COMMUNITIES.CANCEL_FOLLOWING_REQUEST:
       return {
         ...state,
-        following: {
-          isLoadingFollow: true,
-          userUid: action.payload?.following?.userUid,
-          userImg: action.payload?.following?.userImg,
-          communityUid: action.payload?.following?.communityUid,
-        },
+        communityUid: action.payload?.communityUid,
       };
     case COMMUNITIES.CANCEL_FOLLOWING_SUCCESS:
       return {
         ...state,
-        following: {
-          isLoadingFollow: false,
-          userUid: '',
-          userImg: '',
-          communityUid: '',
-        },
       };
     case COMMUNITIES.CANCEL_FOLLOWING_FAIL:
       return {
         ...state,
-        following: {
-          isLoadingFollow: false,
-          userUid: '',
-          userImg: '',
-          communityUid: '',
-        },
       };
     case COMMUNITIES.GET_COMMUNITY_BY_ID_REQUEST:
       return {
@@ -159,7 +128,7 @@ export default (
         ...state,
         isLoadingById: false,
         communityByIdData: action.payload?.communityByIdData,
-        communityUid: '',
+        // communityUid: '',
       };
     case COMMUNITIES.GET_COMMUNITY_BY_ID_FAIL:
       return {
@@ -167,6 +136,11 @@ export default (
         communityByIdData: null,
         isLoadingById: false,
         communityUid: '',
+      };
+    case COMMUNITIES.GET_COMMUNITY_BY_ID_CLEAR:
+      return {
+        ...state,
+        communityByIdData: null,
       };
     case COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_REQUEST:
       return {
@@ -202,6 +176,24 @@ export default (
       return {
         ...state,
         ...communitiesInitialState,
+      };
+    case COMMUNITIES.GET_MANAGING_COMMUNITIES_REQUEST:
+      return {
+        ...state,
+        isManagingLoading: true,
+        managingCommunities: [],
+      };
+    case COMMUNITIES.GET_MANAGING_COMMUNITIES_SUCCESS:
+      return {
+        ...state,
+        isManagingLoading: false,
+        managingCommunities: action.payload?.managingCommunities,
+      };
+    case COMMUNITIES.GET_MANAGING_COMMUNITIES_FAIL:
+      return {
+        ...state,
+        isManagingLoading: false,
+        managingCommunities: [],
       };
     default:
       return state;

@@ -4,159 +4,89 @@ import {useProfile} from '../hooks/useProfile';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import CreateCommunityButton from '../components/createCommunityBtn';
-import {SCREEN_HEIGHT, isAndroid} from '../utils/constants';
+import {isAndroid} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import EventCard from '../components/eventCard';
 import EmptyContainer from '../components/emptyCommunitiesMain';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
-import database from '@react-native-firebase/database';
 import VerticalCard from '../components/verticalEventCard';
-import moment from 'moment';
 import useAppStateHook from '../hooks/useAppState';
+import {apiUrl} from '../api/serverRequests';
+import useTickets from '../hooks/useTickets';
+import FastImage from 'react-native-fast-image';
 
 const HomeScreen = () => {
-  const {userImgUrl, individualStyles, getCurrentUser, userCommunities} =
-    useProfile();
-  const {userUid} = useRegistration();
+  const {userImgUrl} = useProfile();
+  const routeProps = useRoute();
+  const isFocused = useIsFocused();
+  const {logout} = useRegistration();
   const navigation = useNavigation();
-  const {eventTypes, getDanceStyles} = useAppStateHook();
+  const {eventTypes, getDanceStyles, setMessageNotice, setVisibleNotice} =
+    useAppStateHook();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const {attendEventWithUserUid, loadingEvents, getEvents, eventList} =
-    useEvents();
-  const [events, setEvents] = useState(
-    !loadingEvents && attendEventWithUserUid,
-  );
+  const {getManagingEvents, personalEvents, getPersonalEvents} = useEvents();
+  const [events, setEvents] = useState<string[]>(personalEvents);
+  const {getPurchasedTickets} = useTickets();
 
-  // const [maybeEvents, setMaybeEvents] = useState([]);
+  const [maybeEvents, setMaybeEvents] = useState([]); //TODO verticalCard
   useEffect(() => {
     setTabs(['All', ...eventTypes]);
-  }, [eventTypes?.length]);
+  }, [eventTypes, eventTypes.length]);
+
+  useEffect(() => {
+    if (routeProps?.params && routeProps.params?.logout) {
+      setMessageNotice('Token expire');
+      setVisibleNotice(true);
+      logout();
+    }
+  }, [isFocused, routeProps.params?.logout, routeProps.params]);
 
   useEffect(() => {
     getDanceStyles();
-    setCurrentTab('All');
-    getCurrentUser();
-    setEvents(
-      attendEventWithUserUid?.concat(
-        eventList?.filter((event: {communityUid: string}) =>
-          userCommunities?.includes(event?.communityUid),
-        ),
-      ),
-    );
+    getManagingEvents();
+    getPersonalEvents();
+    getPurchasedTickets();
   }, []);
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getEvents();
-      setEvents(
-        attendEventWithUserUid?.concat(
-          eventList?.filter((event: {communityUid: string}) =>
-            userCommunities?.includes(event?.communityUid),
-          ),
-        ),
-      );
-    });
 
-    // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, [attendEventWithUserUid, eventList, navigation, userCommunities]);
-  // Get events for the current tab and filter out those that have already been attending or are
-  useFocusEffect(
-    useCallback(() => {
-      const onValueChange = database()
-        .ref('events/')
-        .on('value', snapshot => {
-          if (snapshot?.val()?.length > 0) {
-            const array = Object.values(snapshot.val());
-            const attendedPeople = array?.filter(
-              i =>
-                i?.attendedPeople?.find(
-                  (user: any) => user.userUid === userUid,
-                ) &&
-                moment(i.eventDate?.startDate).format('YYYY-MM-DD') >
-                  moment(new Date()).format('YYYY-MM-DD'),
-            );
-            setEvents(
-              attendedPeople?.concat(
-                eventList?.filter((event: {communityUid: string}) =>
-                  userCommunities?.includes(event?.communityUid),
-                ),
-              ),
-            );
-          }
-        });
+  useEffect(() => {
+    if (personalEvents?.length > 0) {
+      setEvents(personalEvents);
+    }
+  }, [personalEvents?.length]);
+  const goToCommunities = () => navigation.navigate('Communities');
+  useEffect(() => {
+    onPressTab('All');
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  }, []);
+
+  const onPressTab = useCallback(
+    (value: string) => {
       RN.LayoutAnimation.configureNext(
         RN.LayoutAnimation.Presets.easeInEaseOut,
       );
-
-      return () => database().ref('events/').off('value', onValueChange);
-    }, [eventList, userCommunities, userUid]),
+      setCurrentTab(value);
+      if (value === 'All') {
+        setEvents(personalEvents);
+      } else {
+        setEvents(
+          personalEvents?.filter(
+            (event: {typeEvent: string}) => event?.typeEvent === value,
+          ),
+        );
+      }
+    },
+    [personalEvents],
   );
-  // console.log(individualStyles);
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const onValueChange = database()
-  //       .ref(`users/${userUid}/goingEvent`)
-  //       .on('value', snapshot => {
-  //         if (snapshot?.val() !== null) {
-  //           const array = Object.values(snapshot?.val());
-  //           setMaybeEvents(
-  //             eventList?.filter(
-  //               ev =>
-  //                 !array?.includes(ev.eventUid) && ev?.creatorUid !== userUid,
-  //             ),
-  //           );
-  //         } else {
-  //           const ev = eventList?.filter(
-  //             event =>
-  //               event?.categories?.some(st => individualStyles?.includes(st)) &&
-  //               event?.creatorUid !== userUid,
-  //           );
-  //           setMaybeEvents(ev);
-  //         }
-  //       });
-  //     RN.LayoutAnimation.configureNext(
-  //       RN.LayoutAnimation.Presets.easeInEaseOut,
-  //     );
-
-  //     return () =>
-  //       database()
-  //         .ref(`users/${userUid}/goingEvent`)
-  //         .off('value', onValueChange);
-  //   }, [eventList, events, individualStyles, userUid]),
-  // );
-
-  const goToCommunities = () => navigation.navigate('Communities');
   useEffect(() => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  }, []);
-  const onPressTab = (value: string) => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    setCurrentTab(value);
-    if (value === 'All') {
-      getEvents();
-      setEvents(
-        attendEventWithUserUid?.concat(
-          eventList?.filter((event: {communityUid: string}) =>
-            userCommunities?.includes(event?.communityUid),
-          ),
-        ),
-      );
-    } else {
-      setEvents(
-        attendEventWithUserUid
-          ?.filter((event: any) => event?.typeEvent?.includes(value))
-          .concat(
-            eventList?.filter(
-              (event: {communityUid: string}) =>
-                userCommunities?.includes(event?.communityUid) &&
-                event?.typeEvent?.includes(value),
-            ),
-          ),
-      );
+    if (isFocused) {
+      onPressTab('All');
     }
-  };
+    if (currentTab !== 'All') {
+      onPressTab(currentTab);
+    }
+  }, [isFocused, currentTab, onPressTab]);
   const renderHeader = () => {
     return (
       <>
@@ -169,14 +99,14 @@ const HomeScreen = () => {
             style={{justifyContent: 'center'}}
             activeOpacity={0.7}
             onPress={() => navigation.navigate('Profile')}>
-            <RN.Image
-              source={
-                userImgUrl
-                  ? {uri: 'data:image/png;base64,' + userImgUrl?.base64}
-                  : require('../assets/images/defaultuser.png')
-              }
-              style={{height: 40, width: 40, borderRadius: 50}}
+            <FastImage
+              source={{
+                uri: apiUrl + userImgUrl,
+                cache: FastImage.cacheControl.immutable,
+                priority: FastImage.priority.high,
+              }}
               defaultSource={require('../assets/images/defaultuser.png')}
+              style={{height: 40, width: 40, borderRadius: 50}}
             />
           </RN.TouchableOpacity>
         </RN.View>
@@ -209,7 +139,7 @@ const HomeScreen = () => {
     );
   };
   const renderItem = (item: any) => {
-    return <EventCard item={item?.item} key={item.index} />;
+    return <EventCard item={item} key={item?.id} />;
   };
   const renderEmpty = () => {
     return <EmptyContainer onPressButton={goToCommunities} />;
@@ -249,16 +179,14 @@ const HomeScreen = () => {
             horizontal
           />
         </RN.View>
-        <RN.FlatList
-          showsVerticalScrollIndicator={false}
-          data={events}
-          renderItem={renderItem}
-          keyExtractor={(item, _index) => `${item}${_index}`}
-          ListEmptyComponent={renderEmpty()}
-          ListFooterComponent={() => {
-            return <RN.View style={{paddingBottom: SCREEN_HEIGHT / 10}} />;
-          }}
-        />
+        <ScrollView>
+          {events?.length > 0 &&
+            events?.map((item: any) => {
+              return <RN.View>{renderItem(item)}</RN.View>;
+            })}
+          {!events?.length && renderEmpty()}
+          <RN.View style={{paddingBottom: 24}} />
+        </ScrollView>
       </ScrollView>
     </RN.View>
   );
@@ -269,7 +197,6 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     // backgroundColor: colors.white,
     backgroundColor: '#FAFAFA',
-    paddingTop: isAndroid ? 40 : 44,
     // paddingHorizontal: 20,
   },
   interestedWrapper: {
@@ -325,10 +252,11 @@ const styles = RN.StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 10,
+    // paddingTop: 10,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(238, 238, 238, 1)',
+    paddingTop: isAndroid ? 14 : 44,
     paddingBottom: 8,
     // marginBottom: 8,
     backgroundColor: colors.white,

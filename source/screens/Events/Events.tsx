@@ -11,7 +11,7 @@ import ManagingTab from './tabs/managing';
 import PassingTab from './tabs/passed';
 import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {Portal} from 'react-native-portalize';
 import FindCity from '../../components/findCity';
 
@@ -26,15 +26,16 @@ const EventsScreen = () => {
     managingEvents,
     attentingsEvents,
     passingEvents,
+    // setDefaultEventLimit,
   } = useEvents();
   const routeProps = useRoute();
-
+  const navigation = useNavigation();
   const [currentTab, setCurrentTab] = useState(TABS[0]);
 
   const [searchValue, onSearch] = useState('');
   const [openModal, setOpenModal] = useState(false);
   const {currentCity, onChoosedCity} = useAppStateHook();
-  const [communititesSearch, setCommunitiesSearch] = useState<string[]>([]);
+  const [eventsSearch, setEventsSearch] = useState<string[]>([]);
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
   const createdEvent = routeProps.params?.createdEvent ?? null;
 
@@ -45,13 +46,6 @@ const EventsScreen = () => {
   useEffect(() => {
     onPressTab(TABS[0]);
   }, []);
-
-  useMemo(() => {
-    if (createdEvent) {
-      onPressTab('Managing');
-      // getCommunitites();
-    }
-  }, [createdEvent]);
 
   const upcomingEvents = eventList
     ?.filter(
@@ -74,7 +68,10 @@ const EventsScreen = () => {
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
-        setCommunitiesSearch(search);
+        setEventsSearch(search);
+        if (!value?.length) {
+          setEventsSearch(upcomingEvents);
+        }
       }
       if (currentTab === 'Attending') {
         const searchJoin = attentingsEvents.filter((item: any) => {
@@ -84,7 +81,10 @@ const EventsScreen = () => {
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
-        setCommunitiesSearch(searchJoin);
+        setEventsSearch(searchJoin);
+        if (!value?.length) {
+          setEventsSearch(attentingsEvents);
+        }
       }
       if (currentTab === 'Managing') {
         const searchManaging = managingEvents.filter((item: any) => {
@@ -94,7 +94,10 @@ const EventsScreen = () => {
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
-        setCommunitiesSearch(searchManaging);
+        setEventsSearch(searchManaging);
+        if (!value?.length) {
+          setEventsSearch(managingEvents);
+        }
       }
       if (currentTab === 'Passing') {
         const searchPassed = passingEvents.filter((item: any) => {
@@ -104,7 +107,10 @@ const EventsScreen = () => {
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
-        setCommunitiesSearch(searchPassed);
+        setEventsSearch(searchPassed);
+        if (!value?.length) {
+          setEventsSearch(passingEvents);
+        }
       }
     },
     [
@@ -117,14 +123,20 @@ const EventsScreen = () => {
   );
 
   const onPressTab = (value: string) => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     if (searchValue?.length) {
       RN.Keyboard.dismiss();
-      setCommunitiesSearch([]);
+      setEventsSearch([]);
       onSearch('');
     }
     setCurrentTab(value);
   };
+
+  useMemo(() => {
+    if (createdEvent) {
+      onPressTab('Managing');
+    }
+  }, [createdEvent]);
 
   const renderHeader = () => {
     const renderTab = ({item}: any) => {
@@ -135,7 +147,6 @@ const EventsScreen = () => {
             styles.itemTabContainer,
             {
               borderBottomWidth: currentTab === item ? 3 : 0,
-              marginBottom: -1,
               paddingHorizontal: 16,
               paddingBottom: 8,
             },
@@ -154,25 +165,34 @@ const EventsScreen = () => {
     };
     return (
       <>
-        <RN.View style={{marginHorizontal: 20}}>
+        <RN.View
+          style={{
+            paddingHorizontal: isAndroid ? 12 : 20,
+            marginTop: isAndroid ? 14 : 0,
+          }}>
           <RN.TouchableOpacity
             style={styles.userLocationWrapper}
             onPress={() => setOpenModal(true)}>
-            <RN.Image
-              source={{uri: 'locate'}}
-              style={{height: 16, width: 16}}
-            />
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image
+                source={{uri: 'locate'}}
+                style={{height: 16, width: 16}}
+              />
+            </RN.View>
             <RN.Text style={styles.userLocationText}>{currentCity}</RN.Text>
-            <RN.Image
-              source={{uri: 'downlight'}}
-              style={{height: 16, width: 16, marginLeft: 6}}
-            />
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image
+                source={{uri: 'downlight'}}
+                style={{height: 16, width: 16, marginLeft: 6}}
+              />
+            </RN.View>
           </RN.TouchableOpacity>
           <Search
+            onPressAdd={() => navigation.navigate('CreateEvent')}
             onSearch={onChangeTextSearch}
             searchValue={searchValue}
             placeholder="Event name, dance style, place..."
-            visibleAddBtn={false}
+            visibleAddBtn
           />
         </RN.View>
         <RN.View style={styles.tabsWrapper}>
@@ -199,43 +219,28 @@ const EventsScreen = () => {
     switch (currentTab) {
       case 'Upcomming':
         return (
-          <UpcommingTab
-            searchValue={searchValue}
-            eventsSearch={communititesSearch}
-          />
+          <UpcommingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
 
       case 'Attending':
         return (
-          <AttentingTab
-            searchValue={searchValue}
-            eventsSearch={communititesSearch}
-          />
+          <AttentingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
 
       case 'Managing':
         return (
-          <ManagingTab
-            searchValue={searchValue}
-            eventsSearch={communititesSearch}
-          />
+          <ManagingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
       case 'Passed':
         return (
-          <PassingTab
-            searchValue={searchValue}
-            eventsSearch={communititesSearch}
-          />
+          <PassingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
       default:
         return (
-          <UpcommingTab
-            searchValue={searchValue}
-            eventsSearch={communititesSearch}
-          />
+          <UpcommingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
     }
-  }, [currentTab, communititesSearch, searchValue]);
+  }, [currentTab, eventsSearch, searchValue]);
 
   return (
     <RN.SafeAreaView style={styles.container}>
@@ -250,7 +255,7 @@ const EventsScreen = () => {
       {openModal && (
         <Portal>
           <FindCity
-            selectedLocation={currentCity}
+            // selectedLocation={currentCity}
             setSelectedLocation={onChoosedCity}
             onClosed={() => setOpenModal(false)}
             communityScreen
@@ -308,13 +313,14 @@ const styles = RN.StyleSheet.create({
   itemTabContainer: {
     borderBottomWidth: 1,
     borderBottomColor: colors.purple,
-    paddingBottom: 6,
+    alignSelf: 'center',
+    // paddingHorizontal: 16,
   },
   itemTabText: {
     fontSize: 16,
-    lineHeight: 28.2,
+    lineHeight: 25.2,
     // letterSpacing: 0.2,
-    paddingHorizontal: 10,
+    paddingHorizontal: 4,
     fontWeight: '500',
     textAlign: 'center',
   },

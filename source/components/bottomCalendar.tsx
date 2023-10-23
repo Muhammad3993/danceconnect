@@ -64,6 +64,7 @@ const BottomCalendar = ({
     hours: 0,
     minutes: 0,
   });
+  const [onPressedTime, setOnPressedTime] = useState(false);
   const minDate = new Date().toDateString();
   const onOpen = () => {
     modalizeRef.current?.open();
@@ -203,6 +204,13 @@ const BottomCalendar = ({
   };
 
   const onPressFinished = () => {
+    if (!onPressedTime) {
+      const nowTime = moment(new Date(time).getTime()).format('HH:mm');
+      const hours = Number(nowTime?.slice(0, 2));
+      const minutes = Number(nowTime?.slice(3, 5));
+      const endTime = new Date(startDate).setHours(hours, minutes);
+      setTime(endTime);
+    }
     setStart(startDate);
     setEnd(endDate);
     onClosed();
@@ -245,22 +253,25 @@ const BottomCalendar = ({
         adjustToContentHeight>
         <RN.View>
           {renderHeader()}
-          {startDate !== null && (
-            <RN.View style={styles.nameTitle}>
-              <RN.View style={{justifyContent: 'center'}}>
+          <RN.View style={styles.nameTitle}>
+            <RN.View style={{justifyContent: 'center'}}>
+              {startDate !== null && (
                 <RN.Text style={[styles.title, {fontSize: 15}]}>
                   {dateEvent}
                 </RN.Text>
-              </RN.View>
-              <RN.TouchableOpacity
-                style={styles.timeContainer}
-                onPress={() => setOpeningTime(v => !v)}>
-                <RN.Text style={styles.timeText}>
-                  {moment(time).format('HH:mm')}
-                </RN.Text>
-              </RN.TouchableOpacity>
+              )}
             </RN.View>
-          )}
+            <RN.TouchableOpacity
+              style={styles.timeContainer}
+              onPress={() => {
+                setOnPressedTime(v => !v);
+                setOpeningTime(v => !v);
+              }}>
+              <RN.Text style={styles.timeText}>
+                {moment(time).format('HH:mm')}
+              </RN.Text>
+            </RN.TouchableOpacity>
+          </RN.View>
           {openingTime ? (
             isAndroid ? (
               renderTimePicker()

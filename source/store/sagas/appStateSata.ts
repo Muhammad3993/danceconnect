@@ -1,28 +1,28 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
-import {getConstantsFromFirebase} from '../../api/functions';
 import {
   setCountriesAction,
   setDanceStylesAction,
   setEventTypesAction,
 } from '../actions/appStateActions';
 import {APP_STATE} from '../actionTypes/appStateActionTypes';
+import {getConstants} from '../../api/serverRequests';
 
 function* getDanceStylesRequest() {
   try {
-    const data = yield call(getConstantsFromFirebase);
+    const response = yield call(getConstants);
     yield put(
       setDanceStylesAction({
-        danceStyles: data.danceStyles,
+        danceStyles: response[0]?.danceStyles ?? [],
       }),
     );
     yield put(
       setEventTypesAction({
-        eventTypes: data.typesEvents,
+        eventTypes: response[0]?.typesEvents ?? [],
       }),
     );
     yield put(
       setCountriesAction({
-        countries: data.countries,
+        countries: response[0]?.countries ?? [],
       }),
     );
   } catch (error) {

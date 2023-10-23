@@ -6,27 +6,27 @@ import {isAndroid} from '../../../utils/constants';
 import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useProfile} from '../../../hooks/useProfile';
 import useAppStateHook from '../../../hooks/useAppState';
+import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
+import {ScrollView} from 'react-native-gesture-handler';
+import EmptyContainer from '../../../components/emptyCommunitiesMain';
 
 type props = {
   communititesSearch: string[];
   searchValue: string;
+  onPressTabAll: () => void;
 };
 
-const JoinTab = ({communititesSearch, searchValue}: props) => {
+const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
   const navigation = useNavigation();
-  const {joinedCommunities} = useCommunities();
+  const {joinedCommunities, isLoading, getCommunitites} = useCommunities();
+  const lengthEmptyCommunities = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
-  const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
+  // console.log('joinedCommunities', joinedCommunities)
   const [communitites, setCommunitites] = useState(
     joinedCommunities
-      ?.filter(
-        i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-      )
+      ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
       .map(ev => ev),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
@@ -35,6 +35,18 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
     new Array(0).fill(''),
   );
 
+  // useEffect(() => {
+  //   socket
+  //     .emit('joined_update', currentCity)
+  //     .on('updated_communities', communities => {
+  //       console.log('joined_update', communities);
+  //       setCommunitites(communities);
+  //     });
+
+  //   // socket.on('joined_update', communities => {
+  //   //   console.log('joined_update', communities);
+  //   // });
+  // }, []);
   useEffect(() => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
@@ -43,21 +55,17 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   useEffect(() => {
     setCommunitites(
       joinedCommunities
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
+        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
         .map(ev => ev),
     );
   }, [currentCity]);
 
   const onClear = () => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setCommunitites(
-      joinedCommunities?.filter(i =>
-        i?.location?.toLowerCase().includes(currentCity.toLowerCase()),
+      joinedCommunities?.filter(
+        i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
       ),
     );
   };
@@ -66,26 +74,38 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
       const data = joinedCommunities.filter(
         (item: any) =>
           item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
-          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          item?.location?.substr(item?.location?.length - 2) ===
-            lastSymUserCountry,
+          item?.location?.toLowerCase() === currentCity.toLowerCase(),
       );
       setCommunitites(data);
     } else {
       setCommunitites(
         joinedCommunities?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+          i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
         ),
       );
     }
   };
   const renderEmpty = () => {
     return (
-      <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no communities yet</RN.Text>
-      </RN.View>
+      <EmptyContainer onPressButton={onPressTabAll} />
+
+      // <RN.View style={styles.emptyContainer}>
+      //   {isLoading &&
+      //     lengthEmptyCommunities.map(() => {
+      //       return (
+      //         <>
+      //           <RN.View style={{marginVertical: 8}}>
+      //             <SkeletonCommunityCard />
+      //           </RN.View>
+      //         </>
+      //       );
+      //     })}
+      //   {!isLoading && (
+      //     <RN.Text style={styles.emptyText}>
+      //       There are no communities yet
+      //     </RN.Text>
+      //   )}
+      // </RN.View>
     );
   };
   useFocusEffect(
@@ -98,7 +118,7 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
   );
 
   const renderItemCommunity = useCallback((item: any) => {
-    return <CommunityCard item={item} key={item.index + item.item.id} />;
+    return <CommunityCard item={item} key={item?.id} />;
   }, []);
   const renderFilters = () => {
     return (
@@ -134,16 +154,29 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
       </RN.View>
     );
   };
+  const refreshControl = () => {
+    return (
+      <RN.RefreshControl
+        onRefresh={() => {
+          onClear();
+          getCommunitites();
+        }}
+        refreshing={isLoading}
+      />
+    );
+  };
   return (
     <>
-      <RN.FlatList
-        data={communitites}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderFilters()}
-        renderItem={renderItemCommunity}
-        keyExtractor={(item, _index) => `${item.item?.id}/${_index}`}
-        ListEmptyComponent={renderEmpty()}
-      />
+        refreshControl={refreshControl()}>
+        {communitites?.length > 0 && renderFilters()}
+        {communitites?.length > 0 &&
+          communitites?.map((item: any) => {
+            return <RN.View>{renderItemCommunity(item)}</RN.View>;
+          })}
+        {!communitites?.length && renderEmpty()}
+      </ScrollView>
       <FiltersBottom
         onOpening={openingFilters}
         onClose={() => setOpeningFilters(false)}
@@ -159,7 +192,7 @@ const JoinTab = ({communititesSearch, searchValue}: props) => {
 const styles = RN.StyleSheet.create({
   filterWrapper: {
     paddingVertical: 14,
-    paddingHorizontal: isAndroid ? 0 : 20,
+    paddingHorizontal: isAndroid ? 4 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

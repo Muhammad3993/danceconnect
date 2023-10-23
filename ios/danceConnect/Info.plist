@@ -32,6 +32,26 @@
 				<string>com.googleusercontent.apps.510785169210-tfjjn0dsov6rv1qeu5t068p3aar5aqdp</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>danceconnect.online</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>danceconnect.online</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.incode.danceconnect</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>danceconnect.online</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>2</string>
@@ -39,6 +59,8 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
@@ -48,6 +70,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>To install images in the community and events, allow the application access to camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To install images in the community and events, allow the application access to photos</string>
 	<key>UIAppFonts</key>

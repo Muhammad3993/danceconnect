@@ -2,7 +2,7 @@
 import React, {useLayoutEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
-import { isAndroid } from '../utils/constants';
+import {isAndroid} from '../utils/constants';
 
 type InputProp = {
   value: string;
@@ -17,6 +17,7 @@ type InputProp = {
   multiLine?: boolean;
   autoComplete?: string;
   autoFocus?: boolean;
+  onFocusInput?: (val: boolean) => void;
 };
 
 export const Input = ({
@@ -32,6 +33,7 @@ export const Input = ({
   multiLine = false,
   autoComplete,
   autoFocus = false,
+  onFocusInput,
 }: InputProp) => {
   const [backgroundColor, setBackgroundColor] = useState(colors.lightGray);
   const [borderColor, setBorderColor] = useState(colors.gray);
@@ -87,10 +89,12 @@ export const Input = ({
       <RN.TouchableOpacity
         style={styles.rightIconWrapper}
         onPress={() => setVisiblePassword(val => !val)}>
-        <RN.Image
-          source={{uri: 'eye'}}
-          style={[styles.rightIcon, {tintColor: tintColorEye}]}
-        />
+        <RN.View style={{justifyContent: 'center'}}>
+          <RN.Image
+            source={{uri: 'eye'}}
+            style={[styles.rightIcon, {tintColor: tintColorEye}]}
+          />
+        </RN.View>
       </RN.TouchableOpacity>
     );
   };
@@ -100,6 +104,9 @@ export const Input = ({
     setBorderColor(colors.orange);
     setBackgroundColor(colors.tranparentOrange);
     setTintColoEye(colors.orange);
+    if (onFocusInput) {
+      onFocusInput();
+    }
   };
   const onBlur = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
@@ -127,7 +134,12 @@ export const Input = ({
       <RN.TextInput
         style={[
           styles.container,
-          {borderColor, backgroundColor, paddingLeft: iconName ? 46 : 16},
+          {
+            borderColor,
+            backgroundColor,
+            paddingLeft: iconName ? 46 : 16,
+            lineHeight: multiLine ? 28 : 20.4,
+          },
         ]}
         maxLength={maxLength}
         editable={editable}
@@ -137,7 +149,7 @@ export const Input = ({
         placeholder={placeholder}
         keyboardType={keyboardType}
         onFocus={onFocus}
-        placeholderTextColor={colors.darkGray}
+        placeholderTextColor={colors.grayScale}
         onBlur={onBlur}
         multiline={multiLine}
         autoComplete={autoComplete}
@@ -155,10 +167,11 @@ const styles = RN.StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 16,
+    paddingVertical: 17,
     // paddingLeft: 46,
     color: colors.textPrimary,
     fontSize: 16,
-    lineHeight: 22.4,
+    lineHeight: 20.4,
     fontWeight: '400',
     letterSpacing: 0.2,
     marginBottom: 24,
@@ -179,7 +192,7 @@ const styles = RN.StyleSheet.create({
   rightIconWrapper: {
     position: 'absolute',
     zIndex: 2,
-    top: 22,
+    top: 20.4,
     paddingRight: 16,
     alignSelf: 'flex-end',
   },

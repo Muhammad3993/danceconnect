@@ -15,6 +15,9 @@ import eventsReducer from './reducers/eventsReducer';
 import eventsInitialState from './initialState/eventsInitialState';
 import appStateInitialState from './initialState/appStateInitialState';
 import appStateReducer from './reducers/appStateReducer';
+import {saveAuthToken} from '../api/serverRequests';
+import ticketsReducer from './reducers/ticketsReducer';
+import ticketsINitialState from './initialState/ticketsINitialState';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
@@ -25,6 +28,7 @@ const appReducer = combineReducers({
   communities: communitiesReducer,
   events: eventsReducer,
   appState: appStateReducer,
+  tickets: ticketsReducer,
 });
 const rootState = {
   registration: registrationInitialState,
@@ -32,6 +36,7 @@ const rootState = {
   communities: communitiesInitialState,
   events: eventsInitialState,
   appState: appStateInitialState,
+  tickets: ticketsINitialState,
 };
 
 const rootPersistConfig = {
@@ -40,9 +45,9 @@ const rootPersistConfig = {
   timeout: 3600000,
   // blacklist: ['communities'],
 };
-let middleware = applyMiddleware(sagaMiddleware);
+let middleware = applyMiddleware(sagaMiddleware, saveAuthToken);
 if (__DEV__) {
-  middleware = applyMiddleware(sagaMiddleware, loggerMiddleware);
+  middleware = applyMiddleware(sagaMiddleware, loggerMiddleware, saveAuthToken);
 }
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);
 const store = createStore(persistedReducer, rootState, middleware);

@@ -4,11 +4,13 @@ import useEvents from '../../../hooks/useEvents';
 import sotrtBy from 'lodash.sortby';
 import EventCard from '../../../components/eventCard';
 import colors from '../../../utils/colors';
-import {SCREEN_HEIGHT} from '../../../utils/constants';
+import {SCREEN_HEIGHT, isAndroid} from '../../../utils/constants';
 import FiltersBottomForEvents from '../../../components/bottomFiltersEvents';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
 import useAppStateHook from '../../../hooks/useAppState';
+import SkeletonEventCard from '../../../components/skeleton/eventCard-Skeleton';
+import {RefreshControl, ScrollView} from 'react-native-gesture-handler';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -16,10 +18,14 @@ type props = {
   searchValue: string;
 };
 const ManagingTab = ({searchValue, eventsSearch}: props) => {
-  const {managingEvents} = useEvents();
+  const {managingEvents, isLoadManaging, getManagingEvents} = useEvents();
+  const lengthEmptyEvents = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
+  useEffect(() => {
+    getManagingEvents();
+  }, []);
   const [events, setEvents] = useState(
     managingEvents
       ?.filter(
@@ -39,10 +45,23 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
+        {isLoadManaging &&
+          lengthEmptyEvents.map(() => {
+            return (
+              <>
+                <RN.View style={{marginVertical: 8}}>
+                  <SkeletonEventCard />
+                </RN.View>
+              </>
+            );
+          })}
+        {!isLoadManaging && (
+          <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
+        )}
       </RN.View>
     );
   };
+
   useEffect(() => {
     if (searchValue?.length > 0 && eventsSearch) {
       setEvents(eventsSearch);
@@ -61,7 +80,7 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
   }, [currentCity]);
 
   const onClear = () => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setAddedStyles([]);
     setEventType('All');
     setEventDate({start: null, end: null});
@@ -127,7 +146,7 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
     }
   };
   const renderItem = (item: any) => {
-    return <EventCard item={item?.item} key={item.index} />;
+    return <EventCard item={item} key={item.id} />;
   };
   const renderFilters = () => {
     return (
@@ -158,19 +177,30 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
       </RN.View>
     );
   };
+  const refreshControl = () => {
+    return (
+      <RefreshControl
+        onRefresh={() => {
+          onClear();
+          getManagingEvents();
+        }}
+        refreshing={isLoadManaging}
+      />
+    );
+  };
   return (
     <>
-      <RN.FlatList
-        showsVerticalScrollIndicator={false}
-        data={sotrtBy(events, 'eventDate.startDate')}
-        renderItem={renderItem}
-        ListHeaderComponent={renderFilters()}
-        keyExtractor={(item, _index) => `${item}${_index}`}
-        ListEmptyComponent={renderEmpty()}
-        ListFooterComponent={() => {
-          return <RN.View style={{paddingBottom: SCREEN_HEIGHT / 10}} />;
-        }}
-      />
+      <ScrollView
+        refreshControl={refreshControl()}
+        showsVerticalScrollIndicator={false}>
+        {renderFilters()}
+        {events?.length > 0 &&
+          sotrtBy(events, 'eventDate.startDate')?.map((item: any) => {
+            return <RN.View>{renderItem(item)}</RN.View>;
+          })}
+        {!events?.length && renderEmpty()}
+        <RN.View style={{paddingBottom: 24}} />
+      </ScrollView>
       <FiltersBottomForEvents
         onOpening={openingFilters}
         onClose={() => setOpeningFilters(false)}
@@ -192,6 +222,7 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'center',
+    paddingTop: 14,
     // alignItems: 'center',
   },
   emptyText: {
@@ -204,7 +235,7 @@ const styles = RN.StyleSheet.create({
   },
   filterWrapper: {
     paddingTop: 14,
-    paddingHorizontal: 20,
+    paddingHorizontal: isAndroid ? 16 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

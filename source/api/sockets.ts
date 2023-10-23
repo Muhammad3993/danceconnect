@@ -1,10 +1,9 @@
-import database from '@react-native-firebase/database';
+import io from 'socket.io-client';
+import {apiUrl} from './serverRequests';
 
-export const communityDataRealtime = (uid: string) => {
-  return database()
-    .ref(`community/${uid}`)
-    .on('value', snapshot => snapshot.val());
-};
-export const clearRealTime = (uid: string, onValueChange: any) => {
-  return database().ref(`community/${uid}`).off('value', onValueChange);
-};
+const socket = io(apiUrl, {
+  transports: ['websocket'],
+  autoConnect: true,
+}).connect();
+
+export default socket;

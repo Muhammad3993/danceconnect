@@ -1,11 +1,22 @@
 import React, {useCallback, memo, useRef, useState} from 'react';
-import {FlatList, View, StyleSheet, Image, LayoutAnimation} from 'react-native';
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  Image,
+  LayoutAnimation,
+  Touchable,
+  TouchableOpacity,
+} from 'react-native';
 import colors from '../utils/colors';
 import {SCREEN_WIDTH} from '../utils/constants';
+import {apiUrl} from '../api/serverRequests';
+import FastImage from 'react-native-fast-image';
+import {useNavigation} from '@react-navigation/native';
 
 type itemProp = {
-  base64: string;
   data: any;
+  key: number;
 };
 type paginationProp = {
   index: number;
@@ -14,8 +25,14 @@ type paginationProp = {
 const Slide = memo(function Slide(data: itemProp) {
   return (
     <View style={styles.slide}>
-      <Image
-        source={{uri: 'data:image/png;base64,' + data.data.item?.base64}}
+      <FastImage
+        source={{
+          uri: apiUrl + data?.data?.item,
+          cache: FastImage.cacheControl.immutable,
+          priority: FastImage.priority.high,
+        }}
+        resizeMode={FastImage.resizeMode.cover}
+        defaultSource={require('../assets/images/default.jpeg')}
         style={styles.slideImage}
       />
     </View>
@@ -45,6 +62,7 @@ const Pagination = ({index, data}: paginationProp) => {
 };
 
 const Carousel = ({items}: any) => {
+  const navigation = useNavigation();
   const [index, setIndex] = useState(0);
   const indexRef = useRef(index);
   indexRef.current = index;
@@ -80,7 +98,18 @@ const Carousel = ({items}: any) => {
   };
 
   const renderItem = useCallback(function renderItem(item: any) {
-    return <Slide data={item} base64={item.base64} />;
+    return (
+      // <TouchableOpacity
+      //   activeOpacity={0.9}
+      //   onPress={idx =>
+      //     navigation.navigate('ImageView', {
+      //       idx,
+      //       images: items,
+      //     })
+      //   }>
+        <Slide data={item} key={items.indexOf(item)} />
+      // </TouchableOpacity>
+    );
   }, []);
 
   if (!items?.length) {
@@ -115,12 +144,12 @@ const Carousel = ({items}: any) => {
 
 const styles = StyleSheet.create({
   slide: {
-    height: 450,
+    height: 340,
     // width: SCREEN_WIDTH,
   },
   slideImage: {
     width: SCREEN_WIDTH,
-    height: 450,
+    height: 340,
   },
   pagination: {
     justifyContent: 'flex-end',

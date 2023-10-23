@@ -4,4 +4,7 @@ export default {
   danceStyles: [],
   eventTypes: [],
   countries: [],
+  currentCountry: '',
+  isVisible: false,
+  errorMessage: '',
 };

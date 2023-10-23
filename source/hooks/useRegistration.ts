@@ -14,6 +14,7 @@ import {
   selectIsAuthorizedRegistration,
   selectIsLoadingRegistration,
   selectIsSuccessRegistration,
+  selectPasswordUser,
   selectUser,
   selectUserName,
   selectUserUid,
@@ -26,6 +27,7 @@ const useRegistration = () => {
   const isAuthorized = useSelector(selectIsAuthorizedRegistration);
   const isLoading = useSelector(selectIsLoadingRegistration);
   const saveEmail = useSelector(selectEmailUser);
+  const pass = useSelector(selectPasswordUser);
   const currentUser = useSelector(selectUser);
   const userUid = useSelector(selectUserUid);
   const isRegistrationsSuccess = useSelector(selectIsSuccessRegistration);
@@ -33,8 +35,8 @@ const useRegistration = () => {
   const isUserExists = useSelector(selectUserExist);
   const isErrors = useSelector(selectorErrors);
 
-  const registration = (email: string, password: string) => {
-    dispatch(registrationWithEmailRequest({email, password}));
+  const registration = (data: any) => {
+    dispatch(registrationWithEmailRequest(data));
   };
   const authorizaton = (email: string, password: string) => {
     dispatch(authorizationWithEmailRequest({email, password}));
@@ -91,6 +93,7 @@ const useRegistration = () => {
     isErrors,
     clearErrors,
     authorizationWithApple,
+    pass,
   };
 };
 

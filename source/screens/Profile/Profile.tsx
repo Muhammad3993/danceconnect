@@ -3,46 +3,40 @@ import * as RN from 'react-native';
 import useRegistration from '../../hooks/useRegistration';
 import {useProfile} from '../../hooks/useProfile';
 import colors from '../../utils/colors';
-import {
-  SCREEN_HEIGHT,
-  SCREEN_WIDTH,
-  statusBarHeight,
-} from '../../utils/constants';
-import database from '@react-native-firebase/database';
+import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
 import {useCommunities} from '../../hooks/useCommunitites';
-import {CommonActions, useNavigation} from '@react-navigation/native';
-import {navigationRef} from '../../navigation/types';
+import {useNavigation} from '@react-navigation/native';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import FindCity from '../../components/findCity';
-import {setUserCountry} from '../../api/functions';
 import useAppStateHook from '../../hooks/useAppState';
 import {removeAccount} from '../../api/authSocial';
 import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
-// import axios from 'axios';
-// import { createUser } from '../../api/serverRequests';
+import {apiUrl, deleteUser} from '../../api/serverRequests';
+import useTickets from '../../hooks/useTickets';
 
 const ProfileScreen = () => {
   const {logout} = useRegistration();
   const {
-    userCountry,
     userImgUrl,
-    userName,
     isSuccessChangePassword,
     onChangePassword,
     errorsWithChangePassword,
     isSocialAuth,
-    getCurrentUser,
+    onChangeUserCountry,
+    getUser,
   } = useProfile();
   const {onChoosedCity} = useAppStateHook();
   const dispatch = useDispatch();
-  const {managingCommunity} = useCommunities();
+  const {managingCommunity, getManagingCommunities, isLoadManaging} =
+    useCommunities();
+  const {purchasedTickets, getPurchasedTickets} = useTickets();
+
   const navigation = useNavigation();
-  const [userData, setUserData] = useState();
-  const {userUid} = useRegistration();
+  const {userUid, currentUser} = useRegistration();
   const [newPassword, setNewPassword] = useState('');
   const [visibleError, setVisibleError] = useState(false);
   const [openLocation, setOpenLocation] = useState(false);
@@ -52,37 +46,46 @@ const ProfileScreen = () => {
   const changePassRefModalize = useRef<Modalize>(null);
   const successChangePassRefModalize = useRef<Modalize>(null);
   const deleteAccountModazile = useRef<Modalize>(null);
-
-  // const onPressAuth = () => {
-  //   // const data = {
-  //   //   email: 'y.balaev@ya.ru',
-  //   //   password: 'qwerty123',
-  //   //   fullName: 'Yanis Balaev',
-  //   //   mobile_phone: '12314',
-  //   // };
-  //   const data = {
-  //     mobile_phone: '+79817770964',
-  //     fullName: 'Yanis Balaev',
-  //     email: 'y.balaev@yandex.ru',
-  //     password: 'qwerty123',
-  //   };
-
-  //   createUser(data);
-  // };
-
+  const [countTickets, setCountTickets] = useState<number>(
+    purchasedTickets?.length,
+  );
+  const [sourceDimensions, setSourceDimensions] = useState({
+    height: 0,
+    width: 0,
+  });
+  RN.Image.getSizeWithHeaders(
+    apiUrl + userImgUrl,
+    {},
+    (width, height) => {
+      // console.log(`The image dimensions are ${width}x${height}`);
+      if (sourceDimensions.height === 0) {
+        setSourceDimensions({
+          height: height,
+          width: width,
+        });
+      }
+    },
+    error => {
+      console.error(`Couldn't get the image size: ${error}`);
+    },
+  );
   useEffect(() => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    const onValueChange = database()
-      .ref(`users/${userUid}`)
-      .on('value', snapshot => {
-        setUserData(snapshot.val());
-      });
-
-    return () => database().ref(`users/${userUid}`).off('value', onValueChange);
-  }, [userUid]);
+    getUser();
+    getPurchasedTickets();
+  }, []);
   const onPressChangeProfile = () => {
     navigation.navigate('ChangeProfile');
   };
+  // const renderSmallLoading = () => {
+  //   return (
+  //     <RN.ActivityIndicator
+  //       size={'small'}
+  //       style={{marginLeft: 46}}
+  //       color={colors.darkGray}
+  //       // animating={isLoadManaging}
+  //     />
+  //   );
+  // };
 
   useEffect(() => {
     if (isSuccessChangePassword) {
@@ -108,33 +111,10 @@ const ProfileScreen = () => {
   };
 
   const onPressCommunities = () => {
-    // navigationRef.current?.dispatch(
-    //   CommonActions.reset({
-    //     index: 1,
-    //     routes: [
-    //       {name: 'Profile'},
-    //       {
-    //         name: 'CommunitiesMain',
-    //         key: 'CommunitiesMain',
-    //         params: {createdCommunity: true},
-    //       },
-    //       // {
-    //       //   name: 'CommunitiesMain',
-    //       //   params: {createdCommunity: true},
-    //       // },
-    //     ],
-    //   }),
-    // );
-    // navigationRef.current?.dispatch(
-    //   CommonActions.navigate({
-    //     name: 'Communities',
-    //     params: {
-    //       createdCommunity: true,
-    //     },
-    //   }),
-    // );
-    // console.log('createdCommunity: true');
     navigation.navigate('ManagingCommunities');
+  };
+  const onPressTickets = () => {
+    navigation.navigate('Tickets');
   };
   const onPressDanceStyles = () => {
     navigation.navigate('ProfileDanceStyles');
@@ -146,19 +126,26 @@ const ProfileScreen = () => {
     // console.log(value);
     onChoosedCity(value);
     setSelectedLocation(value);
-    setUserCountry(value);
-    getCurrentUser();
+    onChangeUserCountry(value);
+    // setUserCountry(value);
+    // getCurrentUser();
   };
 
   const onPressDeleteAccount = () => {
     deleteAccountModazile.current?.close();
+    deleteUser(userUid);
     removeAccount();
     dispatch(logoutSuccess());
   };
 
-  useEffect(() => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  }, []);
+  // useEffect(() => {
+  //   getTickets().then(ticketsList => {
+  //     setCountTickets(ticketsList.paidEvents.flat().length);
+  //     // console.log('tick', ticketsList);
+  //     // setTickets(ticketsList.paidEvents.flat());
+  //   });
+  //   RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  // }, []);
 
   return (
     <>
@@ -166,9 +153,9 @@ const ProfileScreen = () => {
         <RN.View style={styles.header}>
           <RN.Image
             source={
-              userImgUrl?.base64?.length > 0
+              sourceDimensions.height !== 0
                 ? {
-                    uri: 'data:image/png;base64,' + userImgUrl?.base64,
+                    uri: apiUrl + userImgUrl,
                   }
                 : require('../../assets/images/defaultuser.png')
             }
@@ -176,10 +163,10 @@ const ProfileScreen = () => {
           />
           <RN.View style={{maxWidth: SCREEN_WIDTH - 100}}>
             <RN.Text numberOfLines={1} style={styles.userName}>
-              {userName}
+              {currentUser?.userName}
             </RN.Text>
             <RN.Text numberOfLines={1} style={styles.userEmail}>
-              {userData?.auth_data?.email}
+              {currentUser?.email}
             </RN.Text>
             <RN.TouchableOpacity
               style={styles.editProfileBtn}
@@ -198,12 +185,20 @@ const ProfileScreen = () => {
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemText}>
                   Manage my communities
+                  {/* {isLoadManaging ? (
+                    renderSmallLoading()
+                  ) : (
+                    <> */}
                   {managingCommunity?.length > 0 && (
                     <RN.Text
                       style={{
                         color: colors.darkGray,
+                        fontWeight: '400',
+                        fontSize: 16,
                       }}>{` (${managingCommunity?.length})`}</RN.Text>
                   )}
+                  {/* </> */}
+                  {/* )} */}
                 </RN.Text>
               </RN.View>
             </RN.View>
@@ -219,11 +214,36 @@ const ProfileScreen = () => {
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemText}>
                   Manage my dance styles
-                  {userData?.individualStyles?.length > 0 && (
+                  {currentUser?.individualStyles?.length > 0 && (
                     <RN.Text
                       style={{
                         color: colors.darkGray,
-                      }}>{` (${userData?.individualStyles?.length})`}</RN.Text>
+                        fontWeight: '400',
+                        fontSize: 16,
+                      }}>{` (${currentUser?.individualStyles?.length})`}</RN.Text>
+                  )}
+                </RN.Text>
+              </RN.View>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+            </RN.View>
+          </RN.TouchableOpacity>
+          <RN.TouchableOpacity
+            style={styles.listItemWrapper}
+            onPress={onPressTickets}>
+            <RN.View style={{flexDirection: 'row'}}>
+              <RN.Image source={{uri: 'ticketoutline'}} style={styles.icon} />
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.listItemText}>
+                  My tickets
+                  {countTickets !== 0 && (
+                    <RN.Text
+                      style={{
+                        color: colors.darkGray,
+                        fontWeight: '400',
+                        fontSize: 16,
+                      }}>{` (${countTickets})`}</RN.Text>
                   )}
                 </RN.Text>
               </RN.View>
@@ -246,10 +266,15 @@ const ProfileScreen = () => {
             <RN.View style={{flexDirection: 'row'}}>
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.locationText}>
-                  {userData?.country}
+                  {currentUser?.userCountry}
                 </RN.Text>
               </RN.View>
-              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Image
+                  source={{uri: 'arrowright'}}
+                  style={styles.iconRight}
+                />
+              </RN.View>
             </RN.View>
           </RN.TouchableOpacity>
           {isSocialAuth && <RN.View style={{marginTop: -12}} />}
@@ -276,7 +301,7 @@ const ProfileScreen = () => {
           <RN.TouchableOpacity
             style={styles.listItemWrapper}
             onPress={() => {
-              RN.Linking.openURL('https://www.danceconnect.online/terms');
+              RN.Linking.openURL('https://danceconnect.online/terms.html');
             }}>
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'info'}} style={styles.icon} />
@@ -293,7 +318,7 @@ const ProfileScreen = () => {
           <RN.TouchableOpacity
             style={styles.listItemWrapper}
             onPress={() => {
-              RN.Linking.openURL('https://www.danceconnect.online/privacy');
+              RN.Linking.openURL('https://danceconnect.online/privacy.html');
             }}>
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'info'}} style={styles.icon} />
@@ -390,6 +415,7 @@ const ProfileScreen = () => {
       {openLocation && (
         <Portal>
           <FindCity
+            communityScreen
             selectedLocation={selectedLocation}
             setSelectedLocation={onPressChoosedCountry}
             onClosed={() => setOpenLocation(false)}
@@ -455,7 +481,7 @@ const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingTop: statusBarHeight * 2,
+    paddingTop: isAndroid ? statusBarHeight : statusBarHeight * 2,
     paddingHorizontal: 24,
   },
   deleteText: {
@@ -656,6 +682,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 25.2,
     paddingLeft: 20,
     color: colors.textPrimary,
+    fontWeight: '500',
   },
   listItemTextLogout: {
     fontSize: 18,
@@ -670,8 +697,8 @@ const styles = RN.StyleSheet.create({
     color: colors.darkGray,
   },
   iconRight: {
-    height: 20,
-    width: 20,
+    height: 14,
+    width: 14,
     tintColor: colors.textPrimary,
   },
   logoutIcon: {
@@ -682,7 +709,7 @@ const styles = RN.StyleSheet.create({
   icon: {
     height: 28,
     width: 28,
-    tintColor: colors.textPrimary,
+    tintColor: '#424242',
   },
 });
 

@@ -16,32 +16,52 @@ interface city {
   terms: [{offset: 0; value: ''}, {offset: 1; value: ''}];
 }
 type props = {
-  setSelectedLocation: (value: city) => void;
-  // selectedLocation?: city;
-  onClosed: (val: boolean) => void;
+  setSelectedLocation: (value: any) => void;
+  selectedLocation?: any;
+  onClosed?: (val: boolean) => void;
   communityScreen?: boolean;
   boardScreen?: boolean;
+  countryCode?: string;
+  setCurrentCountry?: (value: any) => {};
 };
 const FindCity = ({
   setSelectedLocation,
-  // selectedLocation,
+  selectedLocation,
   onClosed,
   communityScreen = false,
   boardScreen = false,
+  countryCode = '',
+  setCurrentCountry,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
-  const {userLocation, getCurrentUser} = useProfile();
+  const {userCountry} = useProfile();
   const {countries} = useAppStateHook();
   const [openCountry, setOpenCountry] = useState(false);
   const [openLocation, setOpenLocation] = useState(false);
   const [country, setCountry] = useState(
-    countries.find(c => c.country === userLocation),
+    countries.find(
+      (c: {country: string}) => c.country === userCountry.split(',')[0],
+    ),
   );
   const [crntLocation, setCrntLocation] = useState<string | string[]>();
-
+ 
   useEffect(() => {
-    if (!userLocation) {
-      setCountry(countries[0]);
+    // if (!userCountry) {
+    //   setCountry(countries[0]);
+    // }
+    if (selectedLocation) {
+      let country = '';
+      country = countries.find(
+        (c: {country: string}) =>
+          c.country === selectedLocation?.split(', ')[1],
+      );
+      if (!country) {
+        country = countries.find(
+          (c: {country: string}) =>
+            c.country === selectedLocation?.split(', ')[0],
+        );
+      }
+      setCountry(country);
     }
   }, []);
   useEffect(() => {
@@ -62,7 +82,9 @@ const FindCity = ({
 
   const onClose = () => {
     modalizeRef?.current?.close();
-    onClosed(false);
+    if (onClosed) {
+      onClosed(false);
+    }
     if (!country?.availableSearchString) {
       if (country?.cities instanceof Array) {
         setSelectedLocation(country?.country + ', ' + crntLocation);
@@ -70,16 +92,26 @@ const FindCity = ({
         setSelectedLocation(country?.country + ', ' + country?.cities);
       }
     }
-    getCurrentUser();
+    if (setCurrentCountry) {
+      setCurrentCountry(country);
+    }
+    // getCurrentUser();
   };
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
-    searchCity(searchValue, country?.countryCode).then((places: any) => {
-      RN.LayoutAnimation.configureNext(
-        RN.LayoutAnimation.Presets.easeInEaseOut,
-      );
-      setFindCity(places);
-    });
+    if (countryCode?.length > 0) {
+      searchCity(searchValue, countryCode).then((places: any) => {
+        setFindCity(places);
+      });
+    } else {
+      searchCity(searchValue, country?.countryCode).then((places: any) => {
+        // RN.LayoutAnimation.configureNext(
+        //   RN.LayoutAnimation.Presets.easeInEaseOut,
+        // );
+        setFindCity(places);
+      });
+    }
+
     if (value?.length > 0) {
       setFindCity([]);
     }
@@ -90,26 +122,29 @@ const FindCity = ({
     if (boardScreen) {
       setSelectedLocation(item);
       modalizeRef?.current?.close();
-      onClosed(false);
     } else {
       setSelectedLocation(
         item?.structured_formatting?.main_text + ', ' + item?.terms[1].value,
       );
     }
-
+    if (onClosed) {
+      onClosed(false);
+    }
     RN.Keyboard.dismiss();
     setFindCity([]);
     setSearchValue(item?.structured_formatting?.main_text);
   };
   const onCancel = () => {
-    onClosed(false);
+    if (onClosed) {
+      onClosed(false);
+    }
     modalizeRef?.current?.close();
   };
   const headerLocation = () => {
     return (
       <>
         <RN.View style={styles.headerDanceStyle}>
-          <RN.TouchableOpacity onPress={onCancel}>
+          <RN.TouchableOpacity onPress={onCancel} disabled={communityScreen}>
             <RN.Image
               source={{uri: 'backicon'}}
               style={{

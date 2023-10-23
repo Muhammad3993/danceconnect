@@ -12,11 +12,13 @@ import {
 } from '../store/selectors/profileSelector';
 import {
   changePasswordRequestAction,
+  changeUserCountryRequestAction,
   changeUserDanceStylesRequestAction,
   changeUserInformationRequestAction,
   getUserByIdRequestAction,
   getUserDataRequestAction,
 } from '../store/actions/profileActions';
+import {selectorSocialProvider} from '../store/selectors/registrationSelector';
 
 export const useProfile = () => {
   const dispatch = useDispatch();
@@ -30,31 +32,34 @@ export const useProfile = () => {
   const isSuccessChangePassword = useSelector(isSuccessResetPassword);
   const errorsWithChangePassword = useSelector(changePasswordErrors);
   const userCommunities = user?.joinedCommunities;
-  const isAuthGoogle =
-    user?.auth_data?.providerData[0]?.providerId === 'google.com';
-  const isAuthApple =
-    user?.auth_data?.providerData[0]?.providerId === 'apple.com';
+  const authProdiver = useSelector(selectorSocialProvider);
+  const isSocialAuth = authProdiver !== 'email';
 
-  const isSocialAuth = isAuthApple || isAuthGoogle;
   const getCurrentUser = () => {
     dispatch(getUserDataRequestAction());
   };
-  const getUser = (uid: string) => {
-    dispatch(getUserByIdRequestAction(uid));
+  const getUser = () => {
+    dispatch(getUserByIdRequestAction());
   };
   const onChange = (name: string, gender: string, profileImg: object) => {
-    dispatch(
-      changeUserInformationRequestAction({
-        name: name,
-        gender: gender,
-        profileImg: profileImg,
-      }),
-    );
+    const data = {
+      name: name,
+      gender: gender,
+      profileImg: profileImg ?? null,
+    };
+    dispatch(changeUserInformationRequestAction(data));
   };
   const onChangeDanceStyles = (danceStyles: string[]) => {
     dispatch(
       changeUserDanceStylesRequestAction({
         danceStyles: danceStyles,
+      }),
+    );
+  };
+  const onChangeUserCountry = (country: string) => {
+    dispatch(
+      changeUserCountryRequestAction({
+        userCountry: country,
       }),
     );
   };
@@ -82,5 +87,6 @@ export const useProfile = () => {
     errorsWithChangePassword,
     userCommunities,
     isSocialAuth,
+    onChangeUserCountry,
   };
 };

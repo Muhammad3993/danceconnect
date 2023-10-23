@@ -2,19 +2,22 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import * as RN from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {genders, statusBarHeight} from '../../utils/constants';
+import {genders, isAndroid, statusBarHeight} from '../../utils/constants';
 import colors from '../../utils/colors';
 import {useProfile} from '../../hooks/useProfile';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
+import useRegistration from '../../hooks/useRegistration';
+import { apiUrl } from '../../api/serverRequests';
 
 const ChangeProfile = () => {
   const navigation = useNavigation();
-  const {userImgUrl, userName, user, onChange} = useProfile();
+  const {userImgUrl, user, onChange} = useProfile();
+  const {userName, currentUser} = useRegistration();
   const [userImg, setUserImg] = useState(userImgUrl ?? '');
   const [changeName, setChangeName] = useState(userName);
   const [openGenders, setOpenGenders] = useState(false);
-  const [choosedGender, setGender] = useState(user?.gender);
+  const [choosedGender, setGender] = useState(currentUser?.userGender);
 
   const onBack = () => {
     navigation.goBack();
@@ -65,9 +68,11 @@ const ChangeProfile = () => {
         activeOpacity={0.7}>
         <RN.Image
           source={
-            userImg?.base64?.length > 0
+            userImg
               ? {
-                  uri: 'data:image/png;base64,' + userImg?.base64,
+                  uri: userImg?.base64
+                    ? 'data:image/png;base64,' + userImg?.base64
+                    : apiUrl + userImg,
                 }
               : require('../../assets/images/defaultuser.png')
           }
@@ -170,11 +175,11 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
   },
   backIcon: {
-    height: 24,
-    width: 28,
+    height: 16,
+    width: 19,
   },
   headerWrapper: {
-    marginTop: statusBarHeight,
+    marginTop: isAndroid ? 0 : statusBarHeight,
     flexDirection: 'row',
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -183,8 +188,8 @@ const styles = RN.StyleSheet.create({
   },
   headerText: {
     color: colors.textPrimary,
-    fontSize: 24,
-    lineHeight: 28.8,
+    fontSize: 20,
+    lineHeight: 24,
     fontFamily: 'Mulish-Regular',
     paddingLeft: 16,
     fontWeight: '600',
@@ -217,6 +222,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 16,
     lineHeight: 22.4,
     letterSpacing: 0.2,
+    color: colors.textPrimary,
   },
   editiconImg: {
     height: 35,

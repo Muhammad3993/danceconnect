@@ -1,4 +1,4 @@
-import {call, debounce, put, select, takeLatest} from 'redux-saga/effects';
+import {call, put, takeLatest} from 'redux-saga/effects';
 
 import {
   AUTHORIZATION_WITH_APPLE,
@@ -8,20 +8,15 @@ import {
   REGISTRATION_WITH_EMAIL,
 } from '../actionTypes/authorizationActionTypes';
 import {
-  logInWithEmail,
   logout,
   onAppleButtonPress,
   setInitialDataUser,
   signWithGoogle,
-  sinUpWithEmail,
 } from '../../api/authSocial';
 import {
-  authWithAppleFail,
-  authWithAppleSuccess,
   authWithGoogleFail,
   authWithGoogleSuccess,
   authorizationWithEmailFail,
-  authorizationWithEmailSuccess,
   logoutFail,
   logoutSuccess,
   registrationWithEmailFail,
@@ -29,7 +24,6 @@ import {
   setRegistrationDataFailAction,
   setRegistrationDataSuccessAction,
 } from '../actions/authorizationActions';
-import {userExists} from '../../api/functions';
 import {setErrors} from '../../utils/helpers';
 import {
   clearChangePassData,
@@ -40,22 +34,49 @@ import {
   clearCommunititesData,
   getCommunitiesRequestAction,
 } from '../actions/communityActions';
-import {getEventsRequestAction} from '../actions/eventActions';
+import {
+  getEventsRequestAction,
+  getPersonalEventsRequestAction,
+} from '../actions/eventActions';
 import {choosedCityAction, setLoadingAction} from '../actions/appStateActions';
+import {
+  createUser,
+  loginByEmail,
+  loginBySocial,
+} from '../../api/serverRequests';
+// import {firebase} from '@react-native-firebase/database';
+import {io} from 'socket.io-client';
+import {clearPurchasedTicketsValue} from '../actions/ticketActions';
+const socket = io('http://localhost:3000', {autoConnect: true});
+// socket.connect();
 
 function* registrationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
-    const userCredentials = yield call(sinUpWithEmail, email, password);
-    const {uid} = userCredentials?._user;
-    const exists = yield call(userExists, uid);
+    const data = action.payload;
+    const response = yield call(createUser, data);
+    // console.log('registrationEmail', response, data);
+    if (!response) {
+      yield put(
+        registrationWithEmailFail(setErrors('auth/network-request-failed')),
+      );
+    } else if (response && response?.status === 201) {
+      const auth = yield call(loginBySocial, email, password);
+      // console.log('loginBySocial', auth);
+      yield put(
+        registrationWithEmailSuccess({
+          currentUser: response?.data,
+          isUserExists: true,
+          token: auth?.data?.accessToken,
+          authProvider: 'email',
+        }),
+      );
+    }
 
-    yield put(
-      registrationWithEmailSuccess({
-        currentUser: userCredentials._user,
-        isUserExists: exists,
-      }),
-    );
+    // const userCredentials = yield call(sinUpWithEmail, email, password);
+    // const {uid} = userCredentials?._user;
+    // const exists = yield call(userExists, uid);
+
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     console.log('registrationWithEmailFail error', error);
@@ -66,25 +87,30 @@ function* registrationEmail(action: any) {
 function* authorizationEmail(action: any) {
   try {
     const {email, password} = action?.payload;
-    const userCredentials = yield call(logInWithEmail, email, password);
-    const {uid} = userCredentials?._user;
-    // yield put(getCommunitiesRequestAction());
-    yield put(getEventsRequestAction());
-    // const userData = yield call(getUserData, uid);
-    // console.log('authorizationEmail', userData);
-    const exists = yield call(userExists, uid);
-    yield put(
-      authorizationWithEmailSuccess({
-        currentUser: userCredentials._user,
-        isUserExists: exists,
-      }),
-    );
-    yield put(getUserDataRequestAction());
-    yield put(getCommunitiesRequestAction());
+    const auth = yield call(loginByEmail, email, password);
+    if (auth?.status === 200) {
+      yield put(
+        registrationWithEmailSuccess({
+          currentUser: auth?.data?.user,
+          isUserExists: true,
+          authProvider: 'email',
+          token: auth?.data?.accessToken,
+        }),
+      );
+      yield put(getEventsRequestAction({limit: 1, offset: 0}));
+      yield put(getPersonalEventsRequestAction());
+    }
+
+    if (auth?.response?.status === 401) {
+      const message = auth?.response?.data?.message;
+      yield put(authorizationWithEmailFail(setErrors(message)));
+    }
     yield put(setLoadingAction({onLoading: false}));
-  } catch (error: string | undefined | unknown) {
-    console.log('authorizationEmail error', error);
-    yield put(authorizationWithEmailFail(setErrors(error?.toString())));
+  } catch (error: any) {
+    console.log('authorizationEmail error', error?.response?.data?.message);
+    yield put(
+      authorizationWithEmailFail(setErrors(error?.response?.data?.message)),
+    );
     yield put(setLoadingAction({onLoading: false}));
   }
 }
@@ -115,7 +141,7 @@ function* registrationSetData(action: any) {
     );
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
-    console.log('registrationSetData error', error);
+    // console.log('registrationSetData error', error);
     yield put(setLoadingAction({onLoading: false}));
     yield put(setRegistrationDataFailAction(error));
   }
@@ -123,12 +149,17 @@ function* registrationSetData(action: any) {
 
 function* logoutUser() {
   try {
-    yield call(logout);
+    // const user = firebase.auth().currentUser?._user;
+    // if (user) {
+    //   yield call(logout);
+    // }
+    // logoutApple();
     yield put(logoutSuccess());
     yield put(clearChangePassData({changePasswordSuccess: false}));
     yield put(clearUserDataInStorage());
     yield put(clearCommunititesData());
     yield put(choosedCityAction({currentCity: ''}));
+    yield put(clearPurchasedTicketsValue());
   } catch (error) {
     yield put(logoutFail(error));
   }
@@ -136,21 +167,46 @@ function* logoutUser() {
 function* authWthGoogle() {
   try {
     const response = yield call(signWithGoogle);
-    console.log('authWthGoogle saga', response._user);
-    const {uid} = response?._user;
-    const exists = yield call(userExists, uid);
-    yield put(
-      authWithGoogleSuccess({
-        currentUser: response._user,
-        isUserExists: exists,
-      }),
+    // console.log('authWthGoogle response', response);
+    const auth = yield call(
+      loginBySocial,
+      response?._user?.email,
+      response?._user?.uid,
     );
-    yield put(getUserDataRequestAction());
-    yield put(getCommunitiesRequestAction());
-    yield put(getEventsRequestAction());
-    yield put(setLoadingAction({onLoading: false}));
+    console.log('authWthGoogle auth', auth);
+
+    if (auth?.response?.status === 401) {
+      yield put(
+        registrationWithEmailSuccess({
+          // currentUser: auth?.data?.user?.user,
+          currentUser: {
+            ...response._user,
+            _id: response?._user?.uid,
+          },
+          isUserExists: false,
+          // token: auth?.data?.accessToken,
+          authProvider: 'google',
+        }),
+      );
+    }
+    if (auth?.status === 200) {
+      yield put(
+        authWithGoogleSuccess({
+          currentUser: {
+            ...auth?.data?.user,
+            _id: auth?.data?.user?._id,
+          },
+          isUserExists: true,
+          token: auth?.data?.accessToken,
+          authProvider: 'google',
+        }),
+      );
+      yield put(getEventsRequestAction({limit: 1, offset: 0}));
+      yield put(getPersonalEventsRequestAction());
+    }
   } catch (error: string | undefined | unknown) {
-    console.log('authWthGoogle error', error);
+    // console.log('authWthGoogle error', error);
+
     yield put(authWithGoogleFail(setErrors(error?.toString())));
     yield put(setLoadingAction({onLoading: false}));
   }
@@ -158,31 +214,46 @@ function* authWthGoogle() {
 function* authWthApple() {
   try {
     const response = yield call(onAppleButtonPress);
-    console.log('authWthApple saga', response);
-    let name = response?.user?.displayName;
-    if (response?.user?.displayName === 'null null') {
-      name = '';
+    const auth = yield call(loginBySocial, response?.email, response?.uid);
+    // console.log('authWthApple auth', auth, email, uid);
+    if (auth?.response?.status === 401) {
+      yield put(
+        registrationWithEmailSuccess({
+          // currentUser: auth?.data?.user?.user,
+          currentUser: {
+            // ...response.user,
+            email: response?.email,
+            _id: response?.uid,
+            userName: response?.userName,
+          },
+          isUserExists: false,
+          // token: auth?.data?.accessToken,
+          authProvider: 'apple',
+        }),
+      );
     }
-    const user = {
-      uid: response?.user?._user?.uid,
-      email: response?.additionalUserInfo?.profile?.email,
-      username: name,
-    };
-    // const {uid} = response?._user;
-    const exists = yield call(userExists, response?.user?._user.uid);
-    yield put(
-      authWithAppleSuccess({
-        currentUser: user,
-        isUserExists: exists,
-      }),
-    );
-    yield put(getUserDataRequestAction());
-    yield put(getCommunitiesRequestAction());
-    yield put(getEventsRequestAction());
+    if (auth?.status === 200) {
+      yield put(
+        authWithGoogleSuccess({
+          currentUser: {
+            ...auth?.data?.user,
+            _id: auth?.data?.user?._id,
+            id: auth?.data?.user?._id,
+          },
+          isUserExists: true,
+          token: auth?.data?.accessToken,
+          authProvider: 'apple',
+        }),
+      );
+      yield put(getEventsRequestAction({limit: 1, offset: 0}));
+      yield put(getPersonalEventsRequestAction());
+    }
+
+    yield put(getEventsRequestAction({limit: 1, offset: 0}));
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
-    console.log('authWthApple error', error);
-    yield put(authWithAppleFail(setErrors(error?.toString())));
+    // console.log('authWthApple error', error);
+    // yield put(authWithAppleFail(setErrors(error?.toString())));
     yield put(setLoadingAction({onLoading: false}));
   }
 }

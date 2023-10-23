@@ -19,12 +19,10 @@ export const selectLoadingChangeInformationCommunity = (state: IRootState) =>
 export const selectIsSaveChanges = (state: IRootState) =>
   state?.communities?.saveChanges ?? false;
 
-export const selectManagingCommunities = (userUid: string) =>
-  store
-    .getState()
-    ?.communities?.dataCommunities?.filter(
-      (item: any) => item?.creatorUid === userUid,
-    ) ?? [];
+export const selectManagingCommunities = (state: IRootState) =>
+  state.communities?.managingCommunities ?? [];
+export const selectLoadingManagingCommunities = (state: IRootState) =>
+  state.communities?.isManagingLoading ?? false;
 export const selectJoinedCommunitites = (userUid: string) =>
   store
     .getState()
