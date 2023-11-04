@@ -18,3 +18,6 @@ export const selectNoticeErrorMessage = (state: IRootState) =>
 
 export const selectCurrentCountry = (state: IRootState) =>
   state.appState?.currentCountry ?? null;
+
+export const selectStripeKey = (state: IRootState) =>
+  state.appState?.stripe_key ?? '';

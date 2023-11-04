@@ -8,6 +8,7 @@ import {useProfile} from '../hooks/useProfile';
 // import {countries} from '../utils/constants';
 import {Button} from './Button';
 import useAppStateHook from '../hooks/useAppState';
+import {statusBarHeight} from '../utils/constants';
 
 interface city {
   structured_formatting: {
@@ -22,7 +23,7 @@ type props = {
   communityScreen?: boolean;
   boardScreen?: boolean;
   countryCode?: string;
-  setCurrentCountry?: (value: any) => {};
+  setCurrentCountry: (value: any) => void;
 };
 const FindCity = ({
   setSelectedLocation,
@@ -38,30 +39,21 @@ const FindCity = ({
   const {countries} = useAppStateHook();
   const [openCountry, setOpenCountry] = useState(false);
   const [openLocation, setOpenLocation] = useState(false);
-  const [country, setCountry] = useState(
-    countries.find(
-      (c: {country: string}) => c.country === userCountry.split(',')[0],
-    ),
-  );
+  const [country, setCountry] = useState();
   const [crntLocation, setCrntLocation] = useState<string | string[]>();
- 
+
   useEffect(() => {
-    // if (!userCountry) {
-    //   setCountry(countries[0]);
-    // }
-    if (selectedLocation) {
-      let country = '';
-      country = countries.find(
-        (c: {country: string}) =>
-          c.country === selectedLocation?.split(', ')[1],
+    const c = countries.find(
+      (c: {country: string}) => c.country === userCountry?.split(', ')[0],
+    );
+    if (c !== undefined) {
+      setCountry(c);
+    } else {
+      setCountry(
+        countries.find(
+          (c: {country: string}) => c.country === userCountry?.split(', ')[1],
+        ),
       );
-      if (!country) {
-        country = countries.find(
-          (c: {country: string}) =>
-            c.country === selectedLocation?.split(', ')[0],
-        );
-      }
-      setCountry(country);
     }
   }, []);
   useEffect(() => {
@@ -70,7 +62,7 @@ const FindCity = ({
     } else {
       setCrntLocation(country?.cities);
     }
-  }, []);
+  }, [country]);
   // console.log('selectedLocation', crntLocation, country?.cities);
   const [searchValue, setSearchValue] = useState<string>();
   const [findCity, setFindCity] = useState([]);
@@ -92,10 +84,6 @@ const FindCity = ({
         setSelectedLocation(country?.country + ', ' + country?.cities);
       }
     }
-    if (setCurrentCountry) {
-      setCurrentCountry(country);
-    }
-    // getCurrentUser();
   };
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
@@ -105,9 +93,6 @@ const FindCity = ({
       });
     } else {
       searchCity(searchValue, country?.countryCode).then((places: any) => {
-        // RN.LayoutAnimation.configureNext(
-        //   RN.LayoutAnimation.Presets.easeInEaseOut,
-        // );
         setFindCity(places);
       });
     }
@@ -118,18 +103,12 @@ const FindCity = ({
   };
   // searchPlaces
   const onPressLocate = (item: any) => {
-    // console.log(item);
-    if (boardScreen) {
-      setSelectedLocation(item);
-      modalizeRef?.current?.close();
-    } else {
-      setSelectedLocation(
-        item?.structured_formatting?.main_text + ', ' + item?.terms[1].value,
-      );
-    }
-    if (onClosed) {
-      onClosed(false);
-    }
+    setSelectedLocation(
+      item?.structured_formatting?.main_text + ', ' + item?.terms[1].value,
+    );
+
+    modalizeRef?.current?.close();
+    setCurrentCountry(item.description);
     RN.Keyboard.dismiss();
     setFindCity([]);
     setSearchValue(item?.structured_formatting?.main_text);
@@ -165,49 +144,13 @@ const FindCity = ({
       </>
     );
   };
-  if (boardScreen) {
-    return (
-      <Modalize
-        handlePosition="inside"
-        handleStyle={handleStyle}
-        ref={modalizeRef}
-        onClosed={onCancel}
-        HeaderComponent={headerLocation()}>
-        <RN.View style={{paddingHorizontal: 20}}>
-          <Search
-            autoFocus
-            onSearch={onChangeTextSearch}
-            searchValue={searchValue}
-            placeholder="Search location"
-            visibleAddBtn={false}
-          />
-          {findCity?.map((item: city) => {
-            return (
-              <RN.TouchableOpacity
-                style={{paddingVertical: 8}}
-                onPress={() => onPressLocate(item)}>
-                <RN.Text
-                  style={{
-                    fontSize: 16,
-                    color: colors.textPrimary,
-                    lineHeight: 22.4,
-                  }}>
-                  {item?.structured_formatting?.main_text +
-                    ', ' +
-                    item?.terms[1]?.value}
-                </RN.Text>
-              </RN.TouchableOpacity>
-            );
-          })}
-        </RN.View>
-      </Modalize>
-    );
-  }
+
   return (
     <Modalize
       handlePosition="inside"
       handleStyle={handleStyle}
       ref={modalizeRef}
+      modalStyle={{marginTop: statusBarHeight}}
       onClosed={onCancel}
       HeaderComponent={headerLocation()}>
       <RN.View style={{paddingHorizontal: 20}}>

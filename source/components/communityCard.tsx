@@ -30,6 +30,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
   const [countFollowers, setCountFollowers] = useState(0);
 
   const isMyCommunity = data?.creator?.uid === userUid;
+  const isManager = data?.managers?.find(i => i === userUid);
   const [displayedData, setDisplayedData] = useState(data);
 
   const [isFollowed, setIsFollowed] = useState(false);
@@ -41,26 +42,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
   const [loadSubscribe, setLoadSubscribe] = useState(false);
   const index = communitiesData?.findIndex((itm: any) => itm.id === data?.id);
   const [attendedImgs, setAttendedImgs] = useState(displayedData?.userImages);
-  const [sourceDimensions, setSourceDimensions] = useState({
-    height: 0,
-    width: 0,
-  });
-  RN.Image.getSizeWithHeaders(
-    apiUrl + data?.images[0],
-    {},
-    (width, height) => {
-      // console.log(`The image dimensions are ${width}x${height}`);
-      if (sourceDimensions.height === 0) {
-        setSourceDimensions({
-          height: height,
-          width: width,
-        });
-      }
-    },
-    error => {
-      console.error(`Couldn't get the image size: ${error}`);
-    },
-  );
+
   const goToCommunity = () => {
     navigation.navigate('CommunityScreen', {data, isProfileScreen});
   };
@@ -129,10 +111,9 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
     return (
       <RN.View style={{flexDirection: 'row', paddingVertical: 8}}>
         {attendedImgs?.slice(0, 3)?.map((img, idx) => {
-          // console.log('img', img, idx);
           const imgUri =
-            typeof img !== 'undefined'
-              ? {uri: 'data:image/png;base64,' + img?.userImage?.base64}
+            img?.userImage?.length > 0
+              ? {uri: apiUrl + img?.userImage}
               : require('../assets/images/defaultuser.png');
           return (
             <RN.View
@@ -174,7 +155,9 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
           );
         })}
         {tags?.length > 2 && (
-          <RN.Text style={styles.tagsItem}>{`+${tags?.length - 2}`}</RN.Text>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text style={styles.tagsItem}>{`+${tags?.length - 2}`}</RN.Text>
+          </RN.View>
         )}
       </RN.View>
     );
@@ -225,11 +208,15 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
           </RN.Text>
         </RN.View>
         <FastImage
-          source={{
-            uri: apiUrl + data?.images[0],
-            cache: FastImage.cacheControl.immutable,
-            priority: FastImage.priority.high,
-          }}
+          source={
+            data?.images[0]
+              ? {
+                  uri: apiUrl + data?.images[0],
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.high,
+                }
+              : require('../assets/images/default.jpeg')
+          }
           defaultSource={require('../assets/images/default.jpeg')}
           style={styles.itemImg}
         />
@@ -256,10 +243,10 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
                 />
               </RN.View> */}
               <RN.Text style={styles.joinedText}>
-                {isMyCommunity ? 'Managing' : 'Joined'}
+                {isMyCommunity || isManager ? 'Managing' : 'Joined'}
               </RN.Text>
             </RN.View>
-          ) : isMyCommunity ? null : (
+          ) : isMyCommunity || isManager ? null : (
             <RN.TouchableOpacity
               onPress={() => onPressJoin(data?.id, index)}
               key={index}

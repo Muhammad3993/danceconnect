@@ -5,7 +5,6 @@ import colors from '../../../utils/colors';
 import {
   MERCHANT_ID,
   SCREEN_WIDTH,
-  STRIPE_PUBLIC_KEY,
   isAndroid,
   statusBarHeight,
 } from '../../../utils/constants';
@@ -32,12 +31,14 @@ import {Modalize} from 'react-native-modalize';
 import useEvents from '../../../hooks/useEvents';
 import {useEventById} from '../../../hooks/useEventById';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import useAppStateHook from '../../../hooks/useAppState';
 
 const BuyTickets = () => {
   const routeProps = useRoute();
   const navigation = useNavigation();
   const {saveEmail} = useRegistration();
   const {attendEvent} = useEvents();
+  const {STRIPE_PUBLIC_KEY, getStripeKey} = useAppStateHook();
   const tickets = routeProps?.params?.tickets;
   const eventUid = routeProps?.params?.eventUid;
   const {isFollowed} = useEventById(eventUid);
@@ -62,6 +63,7 @@ const BuyTickets = () => {
   // console.log('isApplePaySupported', tickets);
   useEffect(() => {
     clearBasket();
+    getStripeKey();
   }, []);
   const confirmPaymentByCard = () => {
     const billingDetails: BillingDetails = {

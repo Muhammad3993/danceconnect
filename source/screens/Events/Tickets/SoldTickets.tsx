@@ -53,13 +53,13 @@ const SoldTickets = () => {
       <RN.View style={styles.ticketContainer}>
         <RN.View style={styles.ticketTitleWrapper}>
           <RN.View style={{flexDirection: 'row'}}>
-            <RN.View style={{justifyContent: 'center'}}>
+            <RN.View style={{justifyContent: 'flex-start'}}>
               <RN.Image
                 source={{uri: 'ticketfull'}}
                 style={styles.ticketIcon}
               />
             </RN.View>
-            <RN.View style={{justifyContent: 'center'}}>
+            <RN.View style={{justifyContent: 'center', marginTop: -4}}>
               <RN.Text numberOfLines={2} style={styles.ticketTitle}>
                 {ticket?.name}
                 <RN.Text

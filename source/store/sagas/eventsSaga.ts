@@ -1,6 +1,7 @@
 import {
   all,
   call,
+  debounce,
   fork,
   put,
   race,
@@ -48,6 +49,7 @@ import {
   getTicketByEventUid,
   unSubscribeEvent,
   updateEventById,
+  subscribeEvent,
 } from '../../api/serverRequests';
 import {
   setLoadingAction,
@@ -57,7 +59,7 @@ import {
 import {selectUserUid} from '../selectors/registrationSelector';
 import socket from '../../api/sockets';
 import {selectCurrentCity} from '../selectors/appStateSelector';
-import {selectEventList} from '../selectors/eventsSelector';
+import {selectEventById, selectEventList} from '../selectors/eventsSelector';
 import moment from 'moment';
 
 function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
@@ -68,8 +70,8 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
     const data: string[] = yield all(
       eventsList.map((event: any) =>
         (function* () {
+          const tickets: string[] = yield call(getTickets, event.id);
           try {
-            const tickets: string[] = yield call(getTickets, event.id);
             const prices = tickets?.map((ticket: any) => ticket?.price);
             const minPriceTickets = Math.min(...prices);
             const maxPriceTickets = Math.max(...prices);
@@ -103,24 +105,21 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
 function* getEventForCommunity(action: any) {
   const {eventUid} = action.payload;
 
-  // console.log('eventId', eventUid);
   const requests = eventUid.map((eventId: string) =>
     call(getEventById, eventId),
   );
   try {
     if (eventUid?.length > 0) {
       const events: string[] = yield all(requests);
-      if (events[0] !== null) {
+      if (events.length) {
         const data: string[] = yield all(
           events.map((event: any) =>
             (function* () {
               try {
                 const tickets: string[] = yield call(getTickets, event.id);
-                const prices = tickets?.map(
-                  (ticket: any) => ticket?.price,
-                );
+                const prices = tickets?.map((ticket: any) => ticket?.price);
                 const minPriceTickets = Math.min(...prices);
-                // const maxPriceTickets = Math.max(...prices);
+                // const maxPriceTickets = Math.max(...prices)
                 const eventData = {
                   ...event,
                   minPriceTickets:
@@ -160,32 +159,49 @@ function* getEventForCommunity(action: any) {
 function* attendEvent(action: any) {
   const {eventUid} = action?.payload;
   try {
-    // const response = yield call(subscribeEvent, eventUid);
+    yield put(setLoadingAction({onLoading: true}));
+    // const response = yield call(getEventById, eventUid);
     const userUid: string = yield select(selectUserUid);
-    // console.log('attendEvent saga', socket);
     socket.emit('follow_event', eventUid, userUid);
-    const response = yield call(getEventById, eventUid);
+    // yield put(setLoadingAction({onLoading: false}));
     // const imagesEv = yield call(getUsersImagesFromEvent, response.id);
     // const eventData = {
     //   ...response,
     //   userImages: Object.values(imagesEv),
     // };
-    const isFollowed = response.attendedPeople?.findIndex(
-      (i: {userUid: string}) => i.userUid === userUid,
-    );
-    yield put(
-      getEventByIdSuccessAction({
-        eventById: response,
-        isFollowed: isFollowed !== -1 ? true : false,
-      }),
-    );
+    // const isFollowed = response.attendedPeople?.findIndex(
+    //   (i: {userUid: string}) => i.userUid === userUid,
+    // );
+    // yield put(
+    //   getEventByIdSuccessAction({
+    //     eventById: response,
+    //   }),
+    // );
     // socket.emit('updated_events');
+    yield put(getEventsRequestAction({limit: 1, offset: 0}));
     yield put(startAttendEventSuccessAction());
-    yield put(getPersonalEventsRequestAction());
+    // yield put(getPersonalEventsRequestAction());
   } catch (error) {
     console.log('startFollowingCommunity', error);
     yield put(startAttendEventFailAction());
   }
+}
+
+function* getEventAfterSubscribe() {
+  const event = yield select(selectEventById);
+  const eventUid = event?.id;
+  const response = yield call(getEventById, eventUid);
+  const userUid: string = yield select(selectUserUid);
+  const isFollowed = response.attendedPeople?.findIndex(
+    (i: {userUid: string}) => i.userUid === userUid,
+  );
+  yield put(
+    getEventByIdSuccessAction({
+      eventById: response,
+      isFollowed: isFollowed !== -1 ? true : false,
+    }),
+  );
+  yield put(setLoadingAction({onLoading: false}));
 }
 function* unAttendEvent(action: any) {
   const {eventUid} = action?.payload;
@@ -387,8 +403,8 @@ function* getManagingEvents() {
     const data: string[] = yield all(
       response.map((event: any) =>
         (function* () {
+          const tickets: string[] = yield call(getTickets, event.id);
           try {
-            const tickets: string[] = yield call(getTickets, event.id);
             const prices = tickets?.map((ticket: any) => ticket?.price);
             const minPriceTickets = Math.min(...prices);
             // const maxPriceTickets = Math.max(...prices);
@@ -404,6 +420,7 @@ function* getManagingEvents() {
         })(),
       ),
     );
+
     yield put(
       getManagingEventsSuccessAction({
         managingEvents: data,
@@ -426,6 +443,9 @@ function* removeEventRquest(action: any) {
     navigationRef.current?.dispatch(
       CommonActions.navigate({
         name: 'Events',
+        params: {
+          createdEvent: true,
+        },
       }),
     );
     yield put(setLoadingAction({onLoading: false}));
@@ -486,6 +506,8 @@ function* eventSaga() {
   yield takeLatest(EVENT.GET_EVENTS_REQUEST, getEventsRequest);
   yield takeLatest(EVENT.GET_EVENT_BY_COMMUNITY_REQUEST, getEventForCommunity);
   yield takeLatest(EVENT.START_ATTEND_EVENT_REQUEST, attendEvent);
+  yield debounce(100, EVENT.START_ATTEND_EVENT_SUCCESS, getEventAfterSubscribe);
+  // yield takeLatest(EVENT.START_ATTEND_EVENT_SUCCESS, getEventAfterSubscribe);
   yield takeLatest(EVENT.END_ATTEND_EVENT_REQUEST, unAttendEvent);
   yield takeLatest(EVENT.CHANGE_INFORMATION_EVENT_REQUEST, changeInformation);
   yield takeLatest(EVENT.GET_EVENT_BY_ID_REQUEST, getEventByIdRequest);

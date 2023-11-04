@@ -5,6 +5,7 @@ import Search from './search';
 import {searchPlacesInEvent} from '../api/cities';
 import colors from '../utils/colors';
 import useAppStateHook from '../hooks/useAppState';
+import { statusBarHeight } from '../utils/constants';
 
 interface city {
   structured_formatting: {
@@ -38,16 +39,23 @@ const FindPlace = ({
 
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
-    console.log('onChangeTextSearch', crntCity, currentCountry);
-    const country =
+    let country =
       currentCountry?.countryCode ??
       countries.find(
         (c: {country: string}) => c.country === crntCity?.split(', ')[0],
       )?.countryCode;
     const city = crntCity?.structured_formatting?.main_text ?? crntCity;
     searchPlacesInEvent(city, searchValue, country).then((places: any) => {
-      // console.log(places);
       setFindPlices(places);
+      if (!places?.length) {
+        country = countries.find(
+          (c: {country: string}) => c.country === crntCity?.split(', ')[1],
+        )?.countryCode;
+        searchPlacesInEvent(city, searchValue, country).then((places: any) => {
+          // console.log(places);
+          setFindPlices(places);
+        });
+      }
     });
     if (value?.length > 0) {
       setFindPlices([]);
@@ -87,6 +95,7 @@ const FindPlace = ({
     <Modalize
       handlePosition="inside"
       handleStyle={handleStyle}
+      modalStyle={{marginTop: statusBarHeight}}
       ref={modalizeRef}
       onClosed={onCancel}
       HeaderComponent={headerLocation()}>

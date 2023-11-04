@@ -11,7 +11,7 @@ import ManagingTab from './tabs/managing';
 import PassingTab from './tabs/passed';
 import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import {Portal} from 'react-native-portalize';
 import FindCity from '../../components/findCity';
 
@@ -26,11 +26,14 @@ const EventsScreen = () => {
     managingEvents,
     attentingsEvents,
     passingEvents,
+    getManagingEvents,
+    getPersonalEvents,
     // setDefaultEventLimit,
   } = useEvents();
   const routeProps = useRoute();
   const navigation = useNavigation();
   const [currentTab, setCurrentTab] = useState(TABS[0]);
+  const isFocused = useIsFocused();
 
   const [searchValue, onSearch] = useState('');
   const [openModal, setOpenModal] = useState(false);
@@ -39,6 +42,12 @@ const EventsScreen = () => {
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
   const createdEvent = routeProps.params?.createdEvent ?? null;
 
+  useMemo(() => {
+    console.log('isFocused', currentTab, isFocused);
+    if (isFocused && currentTab === 'Attending') {
+      getPersonalEvents();
+    }
+  }, [currentTab, isFocused]);
   useEffect(() => {
     getEvents();
   }, []);
@@ -64,7 +73,7 @@ const EventsScreen = () => {
         const search = upcomingEvents.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
-          )} ${item?.name?.toLowerCase()}`;
+          )} ${item?.title?.toLowerCase()}`;
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
@@ -77,7 +86,7 @@ const EventsScreen = () => {
         const searchJoin = attentingsEvents.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
-          )} ${item?.name?.toLowerCase()}`;
+          )} ${item?.title?.toLowerCase()}`;
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
@@ -87,10 +96,15 @@ const EventsScreen = () => {
         }
       }
       if (currentTab === 'Managing') {
-        const searchManaging = managingEvents.filter((item: any) => {
+        const ev = managingEvents?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+        );
+        const searchManaging = ev.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
-          )} ${item?.name?.toLowerCase()}`;
+          )} ${item?.title?.toLowerCase()}`;
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
@@ -99,11 +113,16 @@ const EventsScreen = () => {
           setEventsSearch(managingEvents);
         }
       }
-      if (currentTab === 'Passing') {
-        const searchPassed = passingEvents.filter((item: any) => {
+      if (currentTab === 'Passed') {
+        const ev = passingEvents?.filter(
+          i =>
+            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
+        );
+        const searchPassed = ev.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
-          )} ${item?.name?.toLowerCase()}`;
+          )} ${item?.title?.toLowerCase()}`;
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
@@ -134,6 +153,7 @@ const EventsScreen = () => {
 
   useMemo(() => {
     if (createdEvent) {
+      getManagingEvents();
       onPressTab('Managing');
     }
   }, [createdEvent]);
@@ -259,6 +279,7 @@ const EventsScreen = () => {
             setSelectedLocation={onChoosedCity}
             onClosed={() => setOpenModal(false)}
             communityScreen
+            setCurrentCountry={() => console.log('setCurrentCountry')}
           />
         </Portal>
       )}

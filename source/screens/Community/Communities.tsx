@@ -80,7 +80,7 @@ const CommunitiesScreen = () => {
         const search = communitiesData.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
-          )} ${item?.name?.toLowerCase()}`;
+          )} ${item?.title?.toLowerCase()}`;
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
@@ -93,7 +93,7 @@ const CommunitiesScreen = () => {
         const searchJoin = joinedCommunities.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
-          )} ${item?.name?.toLowerCase()}`;
+          )} ${item?.title?.toLowerCase()}`;
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
@@ -106,7 +106,7 @@ const CommunitiesScreen = () => {
         const searchManaging = managingCommunity.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
-          )} ${item?.name?.toLowerCase()}`;
+          )} ${item?.title?.toLowerCase()}`;
           const textData = value?.toLowerCase();
           return itemData.indexOf(textData) > -1;
         });
@@ -235,7 +235,6 @@ const CommunitiesScreen = () => {
   return (
     <RN.SafeAreaView style={styles.container}>
       {renderHeader()}
-      {/* {isLoading && !isLoadingWithFollow && renderLoading()} */}
       {renderWrapper()}
       {openModal && (
         <Portal>
@@ -243,15 +242,11 @@ const CommunitiesScreen = () => {
             selectedLocation={currentCity}
             setSelectedLocation={onChoosedCity}
             onClosed={onPressChange}
+            setCurrentCountry={() => console.log('setCurrentCountry')}
             communityScreen
           />
         </Portal>
       )}
-      {/* <CitySelector
-        opening={openModal}
-        onClose={() => setOpenModal(false)}
-        onChoosedCity={onChoosedCity}
-      /> */}
     </RN.SafeAreaView>
   );
 };

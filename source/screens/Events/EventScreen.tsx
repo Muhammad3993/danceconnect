@@ -30,14 +30,18 @@ const EventScreen = () => {
   const {attendEvent, onClearEventDataById} = useEvents();
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
   // const [displayedData, setDisplayedData] = useState(eventData);
-  const isPassedEvent = eventData?.eventDate?.time < new Date().getTime();
-
+  const isPassedEvent =
+    moment(eventData?.eventDate?.startDate).format('YYYY-MM-DD') <
+    moment(new Date()).format('YYYY-MM-DD');
   const [loadSubscribe, setLoadSubscribe] = useState(false);
   const [attendedImgs, setAttendedImgs] = useState([]);
 
+  const isManager = eventData?.managers?.find(i => i === userUid);
   const isAdmin = eventData?.creator?.uid === userUid;
 
   const [tickets, setTickers] = useState([]);
+
+  const [myTicketsByEvent, setMyTicketsByEvent] = useState([]);
 
   const prices = ticketsList?.map((ticket: any) => ticket?.price);
   const minPriceTickets = Math.min(...prices);
@@ -47,18 +51,27 @@ const EventScreen = () => {
       getTicketByEventUid(eventData?.id).then(res => {
         setTickers(res);
       });
-      getTickets(eventData?.id);
+      // getTickets(eventData?.id);
+      getTicketByEventUid(eventData?.id).then(res => {
+        setMyTicketsByEvent(res);
+      });
+      setAttendedImgs(eventData?.userImages);
     }
   }, [eventData, eventData?.id]);
 
+  useEffect(() => {
+    if (!loadingById && eventData && eventData?.id) {
+      getTickets(eventData.id);
+    }
+  }, [loadingById]);
   useEffect(() => {
     if (pressBtnAttend) {
       onPressAttend();
     }
   }, [pressBtnAttend]);
+
   useEffect(() => {
     getEvent();
-    // getTickets(data?.id);
   }, [linkId]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -75,22 +88,24 @@ const EventScreen = () => {
     setOpeningDescription(v => !v);
   };
 
-  useEffect(() => {
-    setAttendedImgs(eventData?.userImages);
-  }, [eventData?.userImages]);
+  // useEffect(() => {
+  //   setAttendedImgs(eventData?.userImages);
+  // }, [eventData?.userImages]);
 
-  useEffect(() => {
-    socket.on('subscribed_event', socket_data => {
-      // console.log('currentEvent data', socket_data);
-      // if (socket_data?.currentEvent) {
-      // setDisplayedData(socket_data?.currentEvent);
-      RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
-      // setAttendedImgs(socket_data?.userImages);
-      // setFollowed(socket_data?.currentEvent?.attendedPeople);
-      // // socket.emit('updated_events');
-      setAttendedImgs(socket_data?.userImages);
-    });
-  }, []);
+  // useEffect(() => {
+  //   socket.on('subscribed_event', socket_data => {
+  //     // console.log('currentEvent data', socket_data);
+  //     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
+  //     setAttendedImgs(socket_data?.userImages);
+  //     if (socket_data?.currentEvent) {
+  //       const follow = socket_data?.currentEvent?.attendedPeople?.findIndex(
+  //         (i: {userUid: string}) => i.userUid === userUid,
+  //       );
+  //       getEventSuccess(socket_data.currentEvent, follow);
+  //       setLoading(false);
+  //     }
+  //   });
+  // }, []);
 
   useEffect(() => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -99,7 +114,18 @@ const EventScreen = () => {
   const onPressAttend = async () => {
     socket.connect();
     if (isFollowed) {
-      onPressTicket();
+      if (!myTicketsByEvent.length) {
+        if (ticketsList.length > 0) {
+          navigation.navigate('BuyTickets', {
+            tickets: ticketsList,
+            eventUid: eventData.id,
+          });
+        } else {
+          attendEvent(eventData?.id);
+        }
+      } else {
+        onPressTicket();
+      }
     } else if (ticketsList.length > 0) {
       navigation.navigate('BuyTickets', {
         tickets: ticketsList,
@@ -165,13 +191,17 @@ const EventScreen = () => {
     {
       key: 'edit',
       icon: 'edit',
-      isEnabled: !isPassedEvent && isAdmin,
+      isEnabled: !isPassedEvent && (isAdmin || isManager),
       onPress: onPressEditEvent,
     },
     {
       key: 'more',
       icon: 'more',
-      isEnabled: isAdmin
+      isEnabled: !isPassedEvent
+        ? false
+        : isManager
+        ? false
+        : isAdmin
         ? ticketsList?.length <= 0
         : isFollowed
         ? ticketsList?.length > 0
@@ -241,9 +271,11 @@ const EventScreen = () => {
                 style={{height: 20, width: 20}}
               />
             </RN.View>
-            <RN.Text style={styles.unFollowText}>
-              {isAdmin ? 'Remove Event' : 'Un-attend'}
-            </RN.Text>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text style={styles.unFollowText}>
+                {isAdmin ? 'Remove Event' : 'Un-attend'}
+              </RN.Text>
+            </RN.View>
           </RN.TouchableOpacity>
         )}
         {/* </RN.Animated.View> */}
@@ -267,7 +299,23 @@ const EventScreen = () => {
                 marginLeft: idx !== 0 ? -12 : 0,
                 zIndex: idx !== 0 ? idx : -idx,
               }}>
-              <FastImage
+              {img?.userImage !== null ? (
+                <FastImage
+                  source={{
+                    uri: apiUrl + img?.userImage,
+                    cache: FastImage.cacheControl.immutable,
+                    priority: FastImage.priority.high,
+                  }}
+                  defaultSource={require('../../assets/images/defaultuser.png')}
+                  style={styles.attendPeopleImg}
+                />
+              ) : (
+                <RN.Image
+                  source={require('../../assets/images/defaultuser.png')}
+                  style={styles.attendPeopleImg}
+                />
+              )}
+              {/* <FastImage
                 source={{
                   uri: apiUrl + img?.userImage,
                   cache: FastImage.cacheControl.immutable,
@@ -275,7 +323,7 @@ const EventScreen = () => {
                 }}
                 defaultSource={require('../../assets/images/defaultuser.png')}
                 style={styles.attendPeopleImg}
-              />
+              /> */}
             </RN.View>
           );
         })}
@@ -358,8 +406,8 @@ const EventScreen = () => {
   };
   const onOpenMaps = () => {
     const url = isAndroid
-      ? `geo:0,0?q=${eventData.place}`
-      : `maps:0,0?q=${eventData.place}`;
+      ? `geo:0,0?q=${eventData?.place}`
+      : `maps:0,0?q=${eventData?.place}`;
     RN.Linking.openURL(url);
   };
   // console.log('ticketsList.filter(i => i.items.length > 0)', ticketsList.filter(i => i.items.length > 0));
@@ -369,15 +417,22 @@ const EventScreen = () => {
         <RN.View style={styles.organizerContainer}>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.View style={{justifyContent: 'center'}}>
-              <FastImage
-                source={{
-                  uri: apiUrl + eventData?.creator?.userImage,
-                  cache: FastImage.cacheControl.immutable,
-                  priority: FastImage.priority.high,
-                }}
-                defaultSource={require('../../assets/images/defaultuser.png')}
-                style={styles.organizerImg}
-              />
+              {eventData?.creator?.userImage !== null ? (
+                <FastImage
+                  source={{
+                    uri: apiUrl + eventData?.creator?.userImage,
+                    cache: FastImage.cacheControl.immutable,
+                    priority: FastImage.priority.high,
+                  }}
+                  defaultSource={require('../../assets/images/defaultuser.png')}
+                  style={styles.organizerImg}
+                />
+              ) : (
+                <RN.Image
+                  source={require('../../assets/images/defaultuser.png')}
+                  style={styles.organizerImg}
+                />
+              )}
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.organizerName}>
@@ -435,39 +490,41 @@ const EventScreen = () => {
           </RN.View>
         </RN.TouchableOpacity>
         {renderPrice()}
-        {isAdmin && ticketsList?.length > 0 && (
-          <>
-            <Button
-              title="Manage tickets"
-              disabled
-              onPress={() =>
-                navigation.navigate('EditEvent', {
-                  ...eventData,
-                  isEditTicket: true,
-                })
-              }
-              buttonStyle={styles.manageTicketsBtn}
-            />
-            {ticketsList.filter(i => i.items.length > 0).length > 0 && (
-              <RN.TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('SoldTickets', {
-                    ticketsList: ticketsList,
-                    eventUid: eventData.id,
-                  });
-                }}>
-                <RN.Text
-                  style={{
-                    textAlign: 'center',
-                    color: colors.purple,
-                    fontSize: 18,
+        {!isPassedEvent &&
+          (isAdmin || isManager) &&
+          ticketsList?.length > 0 && (
+            <>
+              <Button
+                title="Manage tickets"
+                disabled
+                onPress={() =>
+                  navigation.navigate('EditEvent', {
+                    ...eventData,
+                    isEditTicket: true,
+                  })
+                }
+                buttonStyle={styles.manageTicketsBtn}
+              />
+              {ticketsList.filter(i => i.items.length > 0).length > 0 && (
+                <RN.TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('SoldTickets', {
+                      ticketsList: ticketsList,
+                      eventUid: eventData.id,
+                    });
                   }}>
-                  See tickets sold
-                </RN.Text>
-              </RN.TouchableOpacity>
-            )}
-          </>
-        )}
+                  <RN.Text
+                    style={{
+                      textAlign: 'center',
+                      color: colors.purple,
+                      fontSize: 18,
+                    }}>
+                    See tickets sold
+                  </RN.Text>
+                </RN.TouchableOpacity>
+              )}
+            </>
+          )}
       </>
     );
   };
@@ -593,6 +650,9 @@ const EventScreen = () => {
     if (isFollowed && !ticketsList.length) {
       return null;
     }
+    if (isManager) {
+      return null;
+    }
     if (isPassedEvent) {
       return (
         <RN.Text
@@ -605,6 +665,16 @@ const EventScreen = () => {
           }}>
           This event has passed
         </RN.Text>
+      );
+    }
+    if (isFollowed && !myTicketsByEvent?.length) {
+      return (
+        <Button
+          title={ticketsList.length > 0 ? 'Get Tickets' : 'Attend'}
+          disabled={!isPassedEvent}
+          buttonStyle={styles.attendBtn}
+          onPress={onPressAttend}
+        />
       );
     }
     return (
@@ -778,6 +848,7 @@ const styles = RN.StyleSheet.create({
     marginHorizontal: 22,
     borderTopWidth: 1,
     borderTopColor: colors.gray,
+    paddingTop: 16,
   },
   organizerName: {
     fontSize: 16,
@@ -785,7 +856,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 22.4,
     letterSpacing: 0.2,
     fontWeight: '700',
-    paddingTop: 16,
+    // paddingTop: 16,
   },
   organizerImg: {
     height: 40,

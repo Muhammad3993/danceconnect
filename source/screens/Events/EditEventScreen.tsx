@@ -76,11 +76,7 @@ const EditEventScreen = () => {
   const [imgs, setImages] = useState(images);
   const [selectedPlace, setSelectedPlace] = useState<string>(place ?? '');
   const [selectedLocation, setSelectedLocation] = useState(location);
-  const [currentCountry, setCurrentCountry] = useState(
-    countries.find(
-      (c: {country: string}) => c.country === selectedLocation?.split(', ')[1],
-    ),
-  );
+  const [currentCountry, setCurrentCountry] = useState();
 
   const [tickets, setTickets] = useState(ticketsList);
   const [ticketType, setTicketType] = useState(
@@ -97,6 +93,7 @@ const EditEventScreen = () => {
   const [isErrorPlace, setIsErrorPlace] = useState(false);
   const [paidTicketsErrors, setPaidTicketsErrors] = useState(false);
   const [loadImg, setLoadImg] = useState(false);
+  const [categoriesError, setCategoriesError] = useState(false);
 
   const basicInfo = currentScreen === 0;
   const details = currentScreen === 1;
@@ -109,6 +106,31 @@ const EditEventScreen = () => {
     current: description?.length,
     maxSymbols: 350,
   });
+  useEffect(() => {
+    const c = countries.find(
+      (c: {country: string}) => c.country === selectedLocation?.split(', ')[0],
+    );
+    if (c !== undefined) {
+      setCurrentCountry(c);
+    } else {
+      const c1 = countries.find(
+        (c: {country: string}) =>
+          c.country === selectedLocation?.split(', ')[1],
+      );
+      if (c1 !== undefined) {
+        setCurrentCountry(c1);
+      } else {
+        const cCode = countries.find(
+          (c: {country: string}) =>
+            c.country === currentCountry?.split(', ')[2],
+        ).countryCode;
+        setCurrentCountry({
+          city: selectedLocation,
+          countryCode: cCode,
+        });
+      }
+    }
+  }, [selectedLocation]);
   useEffect(() => {
     getTickets(id);
   }, [id]);
@@ -159,6 +181,8 @@ const EditEventScreen = () => {
         setIsErrorName(true);
       } else if (!description.length) {
         setIsDescriptionError(true);
+      } else if (!addedStyles.length) {
+        setCategoriesError(true);
       } else {
         setCurrentScreen(v => v + 1);
       }
@@ -211,39 +235,7 @@ const EditEventScreen = () => {
         typeEvent: typeEventEdit,
         price: price,
       });
-      // setTimeout(() => {
-      //   // goBackBtn();
-      //   onClear();
-      // }, 2000);
     }
-    // const eventDate = {
-    //   time: time ?? new Date().getTime(),
-    //   startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
-    //   endDate: endDate ?? null,
-    // };
-    // const locationEdt =
-    //   selectedLocation?.structured_formatting?.main_text?.length > 0
-    //     ? selectedLocation?.structured_formatting?.main_text +
-    //       ', ' +
-    //       (selectedLocation?.structured_formatting?.main_text?.length > 0
-    //         ? selectedLocation?.terms[1].value
-    //         : '')
-    //     : selectedLocation ?? communityData?.location ?? currentCity;
-    // const priceTicket = tickets?.length > 0 ? tickets[0].price : 0;
-    // createEvent({
-    //   name: name,
-    //   description: description,
-    //   // country: country,
-    //   location: locationEdt,
-    //   categories: addedStyles,
-    //   images: images,
-    //   // place: 'selectedPlace',
-    //   place: selectedPlace,
-    //   communityUid: communityData ? communityData?._id : '',
-    //   eventDate: eventDate,
-    //   typeEvent: typeEvent,
-    //   price: priceTicket,
-    // });
   };
 
   useEffect(() => {
@@ -287,6 +279,7 @@ const EditEventScreen = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   };
   const onChoosheDanceStyle = (value: string) => {
+    setCategoriesError(false);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const isAvailable = addedStyles?.includes(value);
     if (isAvailable) {
@@ -307,7 +300,7 @@ const EditEventScreen = () => {
   };
   const onChooseImage = async () => {
     let options = {
-      mediaType: 'image',
+      mediaType: 'photo',
       maxWidth: 300,
       maxHeight: 550,
       quality: 1,
@@ -492,12 +485,24 @@ const EditEventScreen = () => {
     return (
       <RN.View style={{paddingVertical: 14, paddingBottom: 0}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>
+          <RN.Text
+            style={[
+              styles.title,
+              {
+                color: categoriesError ? colors.redError : colors.textPrimary,
+              },
+            ]}>
             Choose Category
             <RN.Text style={styles.countMaxSymbols}> can select few</RN.Text>
           </RN.Text>
         </RN.View>
-        <RN.Text style={styles.definition}>
+        <RN.Text
+          style={[
+            styles.definition,
+            {
+              marginBottom: addedStyles?.length > 0 ? 0 : 12,
+            },
+          ]}>
           Create and share events, discuss them with your group members
         </RN.Text>
         {addedStyles?.length > 0 && (
@@ -839,120 +844,143 @@ const EditEventScreen = () => {
       </RN.View>
     );
   };
+  const renderTicket = (ticket: {
+    name: string;
+    description: string;
+    items: string[];
+    startDate: Date;
+    endDate: Date;
+    quantity: number;
+    enabled: boolean;
+    price: number;
+    initialPrice: number;
+  }) => {
+    return (
+      <RN.View style={styles.ticketContainer}>
+        <RN.View style={{flexDirection: 'row'}}>
+          <RN.View style={{justifyContent: 'flex-start'}}>
+            <RN.Image
+              source={{uri: 'ticketfull'}}
+              style={{height: 18.19, width: 18.19}}
+            />
+          </RN.View>
+          <RN.View style={{justifyContent: 'center', marginTop: -2}}>
+            <RN.Text numberOfLines={2} style={styles.ticketTitle}>
+              {ticket.name}
+            </RN.Text>
+          </RN.View>
+        </RN.View>
+        {ticket?.description?.length > 0 && (
+          <RN.Text
+            style={{
+              fontSize: 14,
+              lineHeight: 18.9,
+              color: colors.darkGray,
+              paddingTop: 12,
+            }}>
+            {ticket?.description}
+          </RN.Text>
+        )}
+        <RN.Text
+          style={{
+            fontSize: 13,
+            color: colors.textPrimary,
+            lineHeight: 18.9,
+            paddingTop: 4,
+            maxWidth: SCREEN_WIDTH - 100,
+          }}>
+          Starts{' '}
+          <RN.Text style={{fontWeight: '600'}}>{`${moment(
+            ticket.startDate,
+          ).format('MMM Do, YYYY')} / `}</RN.Text>
+          Ends{' '}
+          <RN.Text style={{fontWeight: '600'}}>{`${moment(
+            ticket.endDate,
+          ).format('MMM Do, YYYY')}`}</RN.Text>
+        </RN.Text>
+        <RN.Text
+          style={{
+            fontSize: 13,
+            color: colors.textPrimary,
+            lineHeight: 18.9,
+            paddingTop: 4,
+            maxWidth: SCREEN_WIDTH - 100,
+          }}>
+          Limit <RN.Text style={{fontWeight: '600'}}>{ticket.quantity}</RN.Text>
+          {' / '}Sold{' '}
+          <RN.Text style={{fontWeight: '600'}}>{ticket.items.length}</RN.Text>
+        </RN.Text>
+        {ticket.initialPrice > 0 && (
+          <RN.Text
+            style={{
+              fontSize: 13,
+              color: colors.textPrimary,
+              lineHeight: 18.9,
+              paddingTop: 4,
+              maxWidth: SCREEN_WIDTH - 100,
+            }}>
+            Price{' '}
+            <RN.Text style={{fontWeight: '600'}}>
+              {ticket.initialPrice + ' USD '}
+            </RN.Text>
+            <RN.Text style={{color: colors.darkGray}}>
+              +{' '}
+              {`${((ticket.initialPrice * 10) / 100 + 0.3).toFixed(2)} USD Fee`}
+            </RN.Text>
+          </RN.Text>
+        )}
+        <RN.View
+          style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text
+              style={{
+                fontWeight: '700',
+                fontSize: 18,
+                lineHeight: 22.4,
+                color: colors.textPrimary,
+                paddingVertical: 10,
+              }}>
+              {ticket.price.toFixed(2) + ' USD'}
+            </RN.Text>
+          </RN.View>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.TouchableOpacity
+              style={{justifyContent: 'center'}}
+              onPress={() => navigation.navigate('EditTicket', ticket)}>
+              <RN.Image
+                source={{uri: 'edit'}}
+                style={{
+                  height: 24,
+                  width: 24,
+                  tintColor: colors.darkGray,
+                }}
+              />
+            </RN.TouchableOpacity>
+            {ticket?.items?.length <= 0 && (
+              <RN.TouchableOpacity
+                style={{justifyContent: 'center'}}
+                onPress={() => onPressDeleteTicket(ticket)}>
+                <RN.Image
+                  source={{uri: 'basket'}}
+                  style={{
+                    height: 24,
+                    width: 24,
+                    tintColor: colors.darkGray,
+                    marginLeft: 8,
+                  }}
+                />
+              </RN.TouchableOpacity>
+            )}
+          </RN.View>
+        </RN.View>
+      </RN.View>
+    );
+  };
   const renderTickets = () => {
     return (
       <RN.View style={{marginHorizontal: 20}}>
         {tickets.map((tick, idx) => {
-          return (
-            <RN.View key={idx} style={styles.ticketContainer}>
-              <RN.View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <RN.View style={{flexDirection: 'row'}}>
-                  <RN.View style={{justifyContent: 'center'}}>
-                    <RN.Image
-                      source={{uri: 'ticketfull'}}
-                      style={{height: 18.19, width: 18.19}}
-                    />
-                  </RN.View>
-                  <RN.Text numberOfLines={2} style={styles.ticketTitle}>
-                    {tick.name}
-                  </RN.Text>
-                </RN.View>
-                <RN.View style={{flexDirection: 'row'}}>
-                  <RN.TouchableOpacity
-                    onPress={() => navigation.navigate('EditTicket', tick)}>
-                    <RN.Image
-                      source={{uri: 'edit'}}
-                      style={{
-                        height: 24,
-                        width: 24,
-                        tintColor: colors.darkGray,
-                      }}
-                    />
-                  </RN.TouchableOpacity>
-                  {tick.items?.length <= 0 && (
-                    <RN.TouchableOpacity
-                      onPress={() => onPressDeleteTicket(tick)}>
-                      <RN.Image
-                        source={{uri: 'basket'}}
-                        style={{
-                          height: 24,
-                          width: 24,
-                          tintColor: colors.darkGray,
-                          marginLeft: 8,
-                        }}
-                      />
-                    </RN.TouchableOpacity>
-                  )}
-                </RN.View>
-              </RN.View>
-              <RN.Text
-                style={{
-                  fontSize: 14,
-                  color: colors.textPrimary,
-                  lineHeight: 18.9,
-                  paddingTop: 4,
-                }}>
-                {`Starts ${moment(tick.startDate).format('MMM Do, YYYY')} `}
-              </RN.Text>
-              <RN.Text
-                style={{
-                  fontSize: 14,
-                  color: colors.textPrimary,
-                  lineHeight: 18.9,
-                  paddingTop: 4,
-                }}>
-                {`Ends ${moment(tick.endDate).format('MMM Do, YYYY')}`}
-              </RN.Text>
-              <RN.Text
-                style={{
-                  fontSize: 14,
-                  color: colors.textPrimary,
-                  lineHeight: 18.9,
-                  paddingTop: 4,
-                }}>
-                {`Limit ${tick?.quantity}`}
-              </RN.Text>
-              <RN.Text
-                style={{
-                  fontSize: 14,
-                  color: colors.textPrimary,
-                  lineHeight: 18.9,
-                  paddingTop: 4,
-                }}>
-                {`Sold ${tick?.items.length}`}
-              </RN.Text>
-              {tick?.description?.length > 0 && (
-                <RN.Text
-                  style={{
-                    fontSize: 14,
-                    lineHeight: 18.9,
-                    color: colors.darkGray,
-                    paddingTop: 12,
-                  }}>
-                  {tick?.description}
-                </RN.Text>
-              )}
-              <RN.View
-                style={{
-                  paddingTop: 8,
-                  flexDirection: 'row',
-                  justifyContent: tick?.enabled ? 'flex-end' : 'space-between',
-                }}>
-                {!tick?.enabled && <RN.Text>On Hold</RN.Text>}
-                <RN.Text
-                  style={{
-                    fontWeight: '700',
-                    fontSize: 16,
-                    lineHeight: 22.4,
-                    letterSpacing: 0.2,
-                    color: colors.textPrimary,
-                  }}>
-                  {tick?.price ? `$${Number(tick?.price).toFixed(2)}` : '$0'}
-                </RN.Text>
-              </RN.View>
-            </RN.View>
-          );
+          return renderTicket(tick);
         })}
       </RN.View>
     );
@@ -1263,7 +1291,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 22.4,
     letterSpacing: 0.2,
     paddingLeft: 4,
-    maxWidth: SCREEN_WIDTH - 150,
+    maxWidth: SCREEN_WIDTH - 100,
     color: colors.textPrimary,
   },
 });

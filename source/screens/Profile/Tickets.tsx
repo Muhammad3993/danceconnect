@@ -67,6 +67,7 @@ const TicketsScreen = () => {
     event: any;
   }) => {
     const ticket = item;
+    const price = Number(ticket.price);
     const dateEvent = `${String(
       moment(ticket.event?.eventDate?.startDate).format('MMM Do'),
     )} • ${moment(ticket.event?.eventDate?.time).format('HH:mm')}`;
@@ -81,7 +82,7 @@ const TicketsScreen = () => {
         </RN.View>
         <RN.View style={styles.ticketTitleWrapper}>
           <RN.View style={{flexDirection: 'row'}}>
-            <RN.View style={{justifyContent: 'center'}}>
+            <RN.View style={{justifyContent: 'flex-start'}}>
               <RN.Image
                 source={{uri: 'ticketfull'}}
                 style={styles.ticketIcon}
@@ -91,9 +92,9 @@ const TicketsScreen = () => {
               {ticket?.name}
             </RN.Text>
           </RN.View>
-          <RN.View style={{justifyContent: 'center'}}>
+          <RN.View style={{justifyContent: 'flex-start'}}>
             <RN.Text style={styles.ticketTitle}>
-              {'$' + Number(ticket?.price).toFixed(2) * ticket?.quantity}
+              {`$${(price * ticket?.quantity).toFixed(2)}`}
             </RN.Text>
           </RN.View>
         </RN.View>
@@ -136,7 +137,7 @@ const TicketsScreen = () => {
         {tickets.map(ticket => {
           return renderItem(ticket);
         })}
-        {!loading && tickets.length < 0 && renderEmpty()}
+        {!loading && tickets.length <= 0 && renderEmpty()}
         <RN.View style={{marginBottom: 40}} />
       </RN.ScrollView>
     </RN.View>
@@ -212,6 +213,7 @@ const styles = RN.StyleSheet.create({
     maxWidth: SCREEN_WIDTH - 190,
     fontFamily: 'Mulish-Regular',
     color: colors.textPrimary,
+    marginTop: -4,
   },
   eventTitle: {
     fontSize: 16,

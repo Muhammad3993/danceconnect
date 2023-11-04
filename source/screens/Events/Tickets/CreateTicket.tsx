@@ -197,17 +197,17 @@ const CreateTicket = () => {
     );
   };
   const renderPriceTicket = () => {
+    const percent = 10;
+    const total = Number(priceTicket) + (priceTicket * percent) / 100 + 0.3;
+
     return (
       <RN.View style={{marginHorizontal: 4}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>
-            Set Event Price
-            <RN.Text style={styles.countMaxSymbols}>
-              {' '}
-              (10% fee will be added)
-            </RN.Text>
-          </RN.Text>
+          <RN.Text style={styles.title}>Set Event Price</RN.Text>
         </RN.View>
+        <RN.Text style={styles.feeText}>
+          10% + 30¢ fees will be included to the final price
+        </RN.Text>
         <RN.View>
           <Input
             value={priceTicket}
@@ -220,6 +220,14 @@ const CreateTicket = () => {
           />
           <RN.Text style={styles.usd}>USD</RN.Text>
         </RN.View>
+        {Number(priceTicket) > 0 && (
+          <RN.Text style={styles.finalPrice}>
+            Final ticket price for customer{' '}
+            <RN.Text style={{fontWeight: '700'}}>{`${total.toFixed(
+              2,
+            )} USD`}</RN.Text>
+          </RN.Text>
+        )}
       </RN.View>
     );
   };
@@ -472,6 +480,20 @@ const styles = RN.StyleSheet.create({
     fontSize: 14,
     lineHeight: 19.6,
     fontWeight: '400',
+  },
+  feeText: {
+    fontSize: 14,
+    lineHeight: 19.6,
+    fontWeight: '400',
+    color: colors.darkGray,
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+  },
+  finalPrice: {
+    marginTop: -12,
+    paddingBottom: 12,
+    paddingHorizontal: 18,
+    color: colors.textPrimary,
   },
   usd: {
     right: 26,

@@ -25,7 +25,6 @@ const AuthButton = ({
     backgroundColor: isAvailable ? 'tranparent' : colors.lightGray,
     opacity: isAvailable ? 1 : 0.5,
   };
-
   const onPressBtn = () => {
     if (navigateTo) {
       navigation.navigate(navigateTo);

@@ -8,8 +8,8 @@ import moment from 'moment';
 
 const TicketScreen = () => {
   const routeProps = useRoute();
-  const {event, user, name} = routeProps.params;
-  // console.log('ticket', routeProps.params);
+  const {event, user, name, eventOrganizer} = routeProps.params;
+  console.log('ticket', routeProps.params);
   const navigation = useNavigation();
   // const [tickets, setTickets] = useState(
   //   new Array(routeProps.params?.quantity).fill(routeProps.params),
@@ -49,7 +49,7 @@ const TicketScreen = () => {
               <RN.Text style={styles.meduimText}>{event?.place}</RN.Text>
               <RN.Text style={styles.smallText}>Event Organizer</RN.Text>
               <RN.Text style={styles.meduimText}>
-                {event?.creator?.name}
+                {eventOrganizer?.userName}
               </RN.Text>
             </RN.View>
           );

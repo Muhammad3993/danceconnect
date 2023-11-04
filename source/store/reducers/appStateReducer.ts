@@ -10,6 +10,7 @@ export type appStateAction = {
     eventTypes: string[];
     countries: string[];
     currentCountry: any;
+    stripe_key: string;
 
     isVisible?: boolean;
     errorMessage?: string;
@@ -57,6 +58,11 @@ export default (state = appStateInitialState, action: appStateAction) => {
       return {
         ...state,
         currentCountry: action.payload.currentCountry,
+      };
+    case APP_STATE.SET_STRIPE_KEY:
+      return {
+        ...state,
+        stripe_key: action.payload.stripe_key,
       };
     default:
       return state;

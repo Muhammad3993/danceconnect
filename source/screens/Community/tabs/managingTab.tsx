@@ -46,6 +46,9 @@ const ManagingTab = ({
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
     }
+    if (searchValue.length <= 0) {
+      setCommunitites(managingCommunity);
+    }
   }, [communititesSearch, searchValue]);
   useEffect(() => {
     setCommunitites(

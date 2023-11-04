@@ -44,6 +44,10 @@ const EditCommunity = () => {
   const [selectedLocation, setSelectedLocation] = useState<city>(location);
   const [loadImg, setLoadImg] = useState(false);
 
+  const [titleError, setTitleError] = useState(false);
+  const [descriptionError, setDescriptionError] = useState(false);
+  const [categoriesError, setCategoriesError] = useState(false);
+
   const [countNameSymbols, setCountNameSymbols] = useState({
     current: title?.length,
     maxSymbols: 100,
@@ -81,6 +85,7 @@ const EditCommunity = () => {
     setImgs(filter);
   };
   const onChoosheDanceStyle = (value: string) => {
+    setCategoriesError(false);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const isAvailable = addedStyles?.includes(value);
     if (isAvailable) {
@@ -97,7 +102,7 @@ const EditCommunity = () => {
 
   const onChooseImage = async () => {
     let options = {
-      mediaType: 'image',
+      mediaType: 'photo',
       quality: 1,
       includeBase64: true,
     };
@@ -130,15 +135,24 @@ const EditCommunity = () => {
             ? selectedLocation?.terms[1].value
             : '')
         : selectedLocation;
-    changeInformation({
-      name: title,
-      description: desc,
-      // country: countryEdit,
-      location: locationEdt,
-      categories: addedStyles,
-      followers: followers,
-      images: imgs,
-    });
+    if (title?.length <= 0) {
+      setTitleError(true);
+    } else if (desc?.length <= 0) {
+      setDescriptionError(true);
+    } else if (!addedStyles.length) {
+      setCategoriesError(true);
+    } else {
+      changeInformation({
+        name: title,
+        description: desc,
+        // country: countryEdit,
+        location: locationEdt,
+        categories: addedStyles,
+        followers: followers,
+        images: imgs,
+      });
+    }
+
     // goBack();
   };
 
@@ -190,6 +204,8 @@ const EditCommunity = () => {
           onChange={onChangeValueName}
           placeholder="Name"
           maxLength={countNameSymbols.maxSymbols}
+          isErrorBorder={titleError}
+          onFocusInput={() => setTitleError(false)}
         />
       </>
     );
@@ -221,6 +237,8 @@ const EditCommunity = () => {
           onChange={onChangeValueDescription}
           placeholder="Description"
           maxLength={countDescSymbols.maxSymbols}
+          isErrorBorder={descriptionError}
+          onFocusInput={() => setDescriptionError(false)}
         />
       </RN.View>
     );
@@ -312,7 +330,13 @@ const EditCommunity = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>
+          <RN.Text
+            style={[
+              styles.title,
+              {
+                color: categoriesError ? colors.redError : colors.textPrimary,
+              },
+            ]}>
             Choose Category
             <RN.Text style={styles.countMaxSymbols}> can select few</RN.Text>
           </RN.Text>
@@ -373,7 +397,7 @@ const EditCommunity = () => {
                       ', ' +
                       selectedLocation?.terms[1]?.value
                     }`
-                  : location}
+                  : selectedLocation}
               </RN.Text>
 
               <RN.View
@@ -394,6 +418,7 @@ const EditCommunity = () => {
           selectedLocation={selectedLocation}
           setSelectedLocation={setSelectedLocation}
           onClosed={() => setOpenLocation(false)}
+          setCurrentCountry={() => console.log('setCurrentCountry')}
         />
       )}
       {visibleFooter && renderFooter()}

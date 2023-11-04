@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
@@ -17,6 +17,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useProfile} from '../../hooks/useProfile';
 import FindCity from '../../components/findCity';
 import FastImage from 'react-native-fast-image';
+import {navigationRef} from '../../navigation/types';
 interface city {
   structured_formatting: {
     main_text: '';
@@ -37,8 +38,8 @@ const CreateCommunity = () => {
   const [visibleFooter, setVisibleFooter] = useState(true);
   const [isErrorName, setIsErrorName] = useState(false);
   const [isDescriptionError, setIsDescriptionError] = useState(false);
-  const [isCountryError, setIsCountryError] = useState(false);
-  const [isCityError, setIsCityError] = useState(false);
+  const [categoriesError, setCategoriesError] = useState(false);
+
   const [loadImg, setLoadImg] = useState(false);
 
   const [countNameSymbols, setCountNameSymbols] = useState({
@@ -53,8 +54,9 @@ const CreateCommunity = () => {
   const [images, setImages] = useState(new Array(0).fill(''));
   const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(userCountry);
-  // console.log('userCountry', userLocation);
+
   const onChoosheDanceStyle = (value: string) => {
+    setCategoriesError(false);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     const isAvailable = addedStyles?.includes(value);
     if (isAvailable) {
@@ -75,14 +77,25 @@ const CreateCommunity = () => {
     setImages(filter);
   };
 
-  // useEffect(() => {
-  //   setIsDescriptionError(false);
-  //   setIsErrorName(false);
-  //   setIsCountryError(false);
-  //   setIsCityError(false);
-  //   // onClear();
-  // }, [isErrorName, isDescriptionError, isCityError, isCountryError]);
-
+  useEffect(() => {
+    RN.DeviceEventEmitter.addListener('upload_progress', (percent: number) => {
+      // console.log(percent);
+      if (percent >= 99) {
+        // console.log('percent', percent);
+        RN.DeviceEventEmitter.addListener('upload_finished', (data: any) => {
+          // navigation.navigate('CommunityScreen', data);
+          navigationRef.current?.dispatch(
+            CommonActions.navigate({
+              name: 'CommunityScreen',
+              params: {
+                data: data,
+              },
+            }),
+          );
+        });
+      }
+    });
+  }, []);
   useEffect(() => {
     onClear();
   }, []);
@@ -100,6 +113,8 @@ const CreateCommunity = () => {
       setIsErrorName(true);
     } else if (description?.length <= 0) {
       setIsDescriptionError(true);
+    } else if (!addedStyles.length) {
+      setCategoriesError(true);
     } else {
       create({
         name: name,
@@ -266,12 +281,24 @@ const CreateCommunity = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>
+          <RN.Text
+            style={[
+              styles.title,
+              {
+                color: categoriesError ? colors.redError : colors.textPrimary,
+              },
+            ]}>
             Choose Category
             <RN.Text style={styles.countMaxSymbols}> can select few</RN.Text>
           </RN.Text>
         </RN.View>
-        <RN.Text style={styles.definition}>
+        <RN.Text
+          style={[
+            styles.definition,
+            {
+              marginBottom: addedStyles?.length > 0 ? 0 : 12,
+            },
+          ]}>
           Create and share events, discuss them with your group members
         </RN.Text>
         {addedStyles?.length > 0 && (
@@ -488,6 +515,7 @@ const CreateCommunity = () => {
           selectedLocation={selectedLocation}
           setSelectedLocation={setSelectedLocation}
           onClosed={() => setOpenLocation(false)}
+          setCurrentCountry={() => console.log('setCurrentCountry')}
         />
       )}
       {visibleFooter && renderFooter()}

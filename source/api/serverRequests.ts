@@ -4,11 +4,10 @@ import {
   LOGOUT,
   REGISTRATION_WITH_EMAIL,
 } from '../store/actionTypes/authorizationActionTypes';
-import {logoutRequest} from '../store/actions/authorizationActions';
-import store from '../store';
 import {navigationRef} from '../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {isAndroid} from '../utils/constants';
+import {DeviceEventEmitter} from 'react-native';
 // import socketIoClient from 'socket.io-client';
 // const socket = socketIoClient('http://localhost:3000', {autoConnect: false});
 // export const apiUrl = isAndroid
@@ -32,50 +31,51 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.get['Content-Type'] = 'application/json';
 
-axios.interceptors.response.use(
-  response => {
-    // console.log('axios.interceptors.response.use', response);
-    return response;
-  },
-  error => {
-    console.log('axios.interceptors.response.use error', error);
-    if (error.response.status === 401) {
-      console.log(401, '401');
-      // navigationRef.current?.dispatch(
-      //   CommonActions.navigate({
-      //     name: 'Home',
-      //     params: {logout: true},
-      //   }),
-      // );
-      // return navigationRef.current?.dispatch(
-      //   CommonActions.navigate({
-      //     name: 'Home',
-      //     params: {logout: true},
-      //   }),
-      // );
-      return error;
-    } else if (error.response.status === 403) {
-      console.log(403, '403');
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'Home',
-          params: {logout: true},
-        }),
-      );
-      return navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'Home',
-          params: {logout: true},
-        }),
-      );
-      // return error;
-    } else {
-      console.log(error);
-      // throw new Error(error);
-      return error;
-    }
-  },
-);
+// axios.interceptors.response.use(
+//   response => {
+//     // console.log('axios.interceptors.response.use', response);
+//     return response;
+//   },
+//   error => {
+//     console.log('axios.interceptors.response.use error', error);
+//     // if (error.response.status === 401) {
+//     //   console.log(401, '401');
+//     //   // navigationRef.current?.dispatch(
+//     //   //   CommonActions.navigate({
+//     //   //     name: 'Home',
+//     //   //     params: {logout: true},
+//     //   //   }),
+//     //   // );
+//     //   // return navigationRef.current?.dispatch(
+//     //   //   CommonActions.navigate({
+//     //   //     name: 'Home',
+//     //   //     params: {logout: true},
+//     //   //   }),
+//     //   // );
+//     //   return error;
+//     // } else if (error.response.status === 403) {
+//     //   console.log(403, '403');
+//     //   navigationRef.current?.dispatch(
+//     //     CommonActions.navigate({
+//     //       name: 'Home',
+//     //       params: {logout: true},
+//     //     }),
+//     //   );
+//     //   return navigationRef.current?.dispatch(
+//     //     CommonActions.navigate({
+//     //       name: 'Home',
+//     //       params: {logout: true},
+//     //     }),
+//     //   );
+//     //   // return error;
+//     // } else {
+//     //   console.log(error);
+//     //   // return error;
+//     // throw new Error(error);
+//     // }
+//     return error;
+//   },
+// );
 
 export const isUserExist = (email: string) => {
   axios
@@ -96,6 +96,7 @@ export const loginByEmail = async (email: string, password: string) => {
     return response;
   } catch (error) {
     console.log('loginByEmailerror ', error);
+    return error;
   }
 };
 export const loginBySocial = async (email: string, password: string) => {
@@ -205,11 +206,23 @@ export const getManagingCommunity = async () => {
     return console.log('getManagingCommunity er', er);
   }
 };
+const config = {
+  onUploadProgress: (progressEvent: any) => {
+    DeviceEventEmitter.emit(
+      'upload_progress',
+      Math.floor(100 * (progressEvent.loaded / progressEvent.total)),
+    );
+  },
+};
 export const createCommunityWithMongo = async (data: object) => {
   try {
-    const response = await axios.post(`${apiUrl}communities`, {
-      data: data,
-    });
+    const response = await axios.post(
+      `${apiUrl}communities`,
+      {
+        data: data,
+      },
+      config,
+    );
     return response.data;
   } catch (error) {
     return console.log('createCommunityWithMongo er', error);
@@ -220,7 +233,7 @@ export const getCommunityById = async (id: string) => {
     const response = await axios.get(`${apiUrl}community/${id}`);
     console.log('getCommunityById', response.data);
     return {
-      community: response?.data[0],
+      community: response?.data,
     };
     // return response.data[0];
   } catch (error) {
@@ -286,9 +299,7 @@ export const getUsersImagesFromCommunity = async (communityUid: string) => {
 };
 export const createEventWithMongo = async (data: object) => {
   try {
-    const response = await axios.post(`${apiUrl}events`, {
-      data: data,
-    });
+    const response = await axios.post(`${apiUrl}events`, data);
     // const response = await axios.post(`${apiUrl}events`, {data: data});
     return response.data;
   } catch (error) {
@@ -482,5 +493,30 @@ export const getTicketByEventUid = async (eventUid: string) => {
 };
 export const getPurchasedTickets = async () => {
   const response = await axios.get(`${apiUrl}tickets/getAllMyTickets`);
+  return response.data;
+};
+
+export const addManagerToCommunity = async (
+  communityUid: string,
+  email: string,
+) => {
+  const response = await axios.post(
+    `${apiUrl}community/manager/${communityUid}?email=${email}`,
+  );
+  return response.data;
+};
+export const deleteManagerToCommunity = async (
+  communityUid: string,
+  email: string,
+) => {
+  const response = await axios.delete(
+    `${apiUrl}community/manager/${communityUid}?email=${email}`,
+  );
+  return response.data;
+};
+export const getManagersForCommunityUid = async (communityUid: string) => {
+  const response = await axios.get(
+    `${apiUrl}community/managers/${communityUid}`,
+  );
   return response.data;
 };

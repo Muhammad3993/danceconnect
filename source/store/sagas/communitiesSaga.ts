@@ -32,7 +32,6 @@ import {
   getCommunitiesWithMongo,
   getCommunityById,
   getManagingCommunity,
-  getUsersImagesFromCommunity,
   updateCommunityById,
 } from '../../api/serverRequests';
 
@@ -40,34 +39,12 @@ import {selectCurrentCity} from '../selectors/appStateSelector';
 // import {io} from 'socket.io-client';
 import {selectUser, selectUserUid} from '../selectors/registrationSelector';
 import socket from '../../api/sockets';
-// const socket = io('http://localhost:3000', {autoConnect: true});
-// socket.connect();
+import {DeviceEventEmitter} from 'react-native';
 
 function* getCommunitiesRequest() {
   try {
     const location = yield select(selectCurrentCity);
     const communities = yield call(getCommunitiesWithMongo, location);
-    // console.log('data', Object.values(communities));
-    // const communities = response;
-    // const data: string[] = yield all(
-    //   communities.map(community =>
-    //     (function* () {
-    //       try {
-    //         const imagesEv: string[] = yield call(
-    //           getUsersImagesFromCommunity,
-    //           community?.id,
-    //         );
-    //         const communityata = {
-    //           ...community,
-    //           userImages: Object.values(imagesEv),
-    //         };
-    //         return communityata;
-    //       } catch (e) {
-    //         return console.log('errro', e);
-    //       }
-    //     })(),
-    //   ),
-    // );
     yield put(
       getCommunitiesSuccessAction({
         dataCommunities: Object.values(communities),
@@ -94,7 +71,7 @@ function* createCommunityRequest(action: any) {
       images: images,
     };
     const response = yield call(createCommunityWithMongo, data);
-    console.log('createCommunityRequest', response);
+
     if (!response) {
       yield put(setNoticeVisible({isVisible: true}));
       yield put(
@@ -102,20 +79,13 @@ function* createCommunityRequest(action: any) {
           errorMessage: 'Server error',
         }),
       );
-    } else {
+    }
+    if (response) {
+      DeviceEventEmitter.emit('upload_finished', response);
       yield put(createCommunitySuccessAction());
       yield put(getCommunitiesRequestAction());
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'CommunityScreen',
-          params: {
-            data: response,
-          },
-        }),
-      );
       yield put(getManagingCommunitiesRequestAction());
     }
-
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     console.log('createCommunityRequest error', error);
@@ -208,11 +178,11 @@ function* cancelFollowingCommunity(action: any) {
 
 function* getCommunityByIdRequest(action: any) {
   const {communityUid} = action?.payload;
-    // console.log('getCommunityByIdRequest', communityUid);
-    const {community} = yield call(getCommunityById, communityUid);
-    // console.log('getCommunityByIdRequest', community);
+  // console.log('getCommunityByIdRequest', communityUid);
+  const {community} = yield call(getCommunityById, communityUid);
+  // console.log('getCommunityByIdRequest', community);
 
-    try {
+  try {
     // console.log('getCommunityByIdRequest', communityUid, community);
     // const response = yield call(getCommunityById, communityUid);
     // console.log('getCommunityById', response[0]);
@@ -290,7 +260,7 @@ function* changeInformation(action: any) {
     images: images,
   };
   try {
-    // yield put(setLoadingAction({onLoading: true}));
+    yield put(setLoadingAction({onLoading: true}));
     const response = yield call(updateCommunityById, communityUid, data);
     // const response = yield call(getCommunityById, communityUid);
     console.log('changeInformation', response);
@@ -318,6 +288,7 @@ function* changeInformation(action: any) {
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     yield put(cancelFollowedCommunityFailAction());
+    yield put(setLoadingAction({onLoading: false}));
   }
 }
 
@@ -330,13 +301,12 @@ function* removeCommunityRequest(action: any) {
     yield put(getManagingCommunitiesRequestAction());
     navigationRef.current?.dispatch(
       CommonActions.navigate({
-        name: 'Communities',
+        name: 'CommunitiesMain',
         params: {
           removedCommunity: true,
         },
       }),
     );
-    yield put(getManagingCommunitiesRequestAction());
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     yield put(setLoadingAction({onLoading: false}));

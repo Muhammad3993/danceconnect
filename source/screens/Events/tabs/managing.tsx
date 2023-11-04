@@ -66,6 +66,18 @@ const ManagingTab = ({searchValue, eventsSearch}: props) => {
     if (searchValue?.length > 0 && eventsSearch) {
       setEvents(eventsSearch);
     }
+    if (searchValue.length <= 0) {
+      setEvents(
+        managingEvents
+          ?.filter(
+            i =>
+              i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
+              i?.location?.substr(i?.location?.length - 2) ===
+                lastSymUserCountry,
+          )
+          .map(ev => ev),
+      );
+    }
   }, [eventsSearch, searchValue]);
 
   useEffect(() => {

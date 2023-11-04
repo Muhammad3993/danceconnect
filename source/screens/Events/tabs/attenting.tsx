@@ -19,13 +19,13 @@ type props = {
   searchValue: string;
 };
 const AttentingTab = ({searchValue, eventsSearch}: props) => {
-  const {attentingsEvents, loadingEvents, getEvents} = useEvents();
+  const {personalEvents, loadingEvents, getPersonalEvents} = useEvents();
   const lengthEmptyEvents = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
   const [events, setEvents] = useState(
-    attentingsEvents
+    personalEvents
       ?.filter(
         i =>
           i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
@@ -65,10 +65,13 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
     if (searchValue?.length > 0 && eventsSearch) {
       setEvents(eventsSearch);
     }
+    if (searchValue.length <= 0) {
+      setEvents(personalEvents);
+    }
   }, [eventsSearch, searchValue]);
 
   useEffect(() => {
-    const locationData = attentingsEvents
+    const locationData = personalEvents
       ?.filter(
         i =>
           i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
@@ -84,7 +87,7 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
     setEventType('All');
     setEventDate({start: null, end: null});
     setEvents(
-      attentingsEvents
+      personalEvents
         ?.filter(
           i =>
             i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
@@ -104,7 +107,7 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
       );
       setEvents(data);
     } else if (eventType !== 'All') {
-      const evData = attentingsEvents?.filter(
+      const evData = personalEvents?.filter(
         i =>
           i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
           i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry &&
@@ -136,7 +139,7 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
       }
     } else {
       setEvents(
-        attentingsEvents?.filter(
+        personalEvents?.filter(
           i =>
             i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
             i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
@@ -181,7 +184,7 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
       <RefreshControl
         onRefresh={() => {
           onClear();
-          getEvents();
+          getPersonalEvents();
         }}
         refreshing={loadingEvents}
       />

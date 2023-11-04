@@ -17,6 +17,8 @@ import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
 import {apiUrl, deleteUser} from '../../api/serverRequests';
 import useTickets from '../../hooks/useTickets';
+import LocationSelector from '../../components/locationSelector';
+import FastImage from 'react-native-fast-image';
 
 const ProfileScreen = () => {
   const {logout} = useRegistration();
@@ -39,7 +41,6 @@ const ProfileScreen = () => {
   const {userUid, currentUser} = useRegistration();
   const [newPassword, setNewPassword] = useState('');
   const [visibleError, setVisibleError] = useState(false);
-  const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState();
 
   const logoutRefModalize = useRef<Modalize>(null);
@@ -119,17 +120,6 @@ const ProfileScreen = () => {
   const onPressDanceStyles = () => {
     navigation.navigate('ProfileDanceStyles');
   };
-  // console.log(selectedLocation);
-  const onPressChoosedCountry = (value: any) => {
-    // const country =
-    //   value?.structured_formatting?.main_text + ', ' + value?.terms[1].value;
-    // console.log(value);
-    onChoosedCity(value);
-    setSelectedLocation(value);
-    onChangeUserCountry(value);
-    // setUserCountry(value);
-    // getCurrentUser();
-  };
 
   const onPressDeleteAccount = () => {
     deleteAccountModazile.current?.close();
@@ -138,27 +128,19 @@ const ProfileScreen = () => {
     dispatch(logoutSuccess());
   };
 
-  // useEffect(() => {
-  //   getTickets().then(ticketsList => {
-  //     setCountTickets(ticketsList.paidEvents.flat().length);
-  //     // console.log('tick', ticketsList);
-  //     // setTickets(ticketsList.paidEvents.flat());
-  //   });
-  //   RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  // }, []);
-
   return (
     <>
-      <RN.ScrollView style={styles.container}>
+      <RN.ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}>
         <RN.View style={styles.header}>
-          <RN.Image
-            source={
-              sourceDimensions.height !== 0
-                ? {
-                    uri: apiUrl + userImgUrl,
-                  }
-                : require('../../assets/images/defaultuser.png')
-            }
+          <FastImage
+            source={{
+              uri: apiUrl + userImgUrl,
+              cache: FastImage.cacheControl.immutable,
+              priority: FastImage.priority.high,
+            }}
+            defaultSource={require('../../assets/images/defaultuser.png')}
             style={styles.image}
           />
           <RN.View style={{maxWidth: SCREEN_WIDTH - 100}}>
@@ -254,29 +236,10 @@ const ProfileScreen = () => {
           </RN.TouchableOpacity>
           <RN.View style={styles.line} />
           {isSocialAuth && <RN.View style={{marginTop: -12}} />}
-          <RN.TouchableOpacity
-            style={styles.listItemWrapper}
-            onPress={() => setOpenLocation(true)}>
-            <RN.View style={{flexDirection: 'row'}}>
-              <RN.Image source={{uri: 'locateoutline'}} style={styles.icon} />
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.listItemText}>Location</RN.Text>
-              </RN.View>
-            </RN.View>
-            <RN.View style={{flexDirection: 'row'}}>
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.locationText}>
-                  {currentUser?.userCountry}
-                </RN.Text>
-              </RN.View>
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Image
-                  source={{uri: 'arrowright'}}
-                  style={styles.iconRight}
-                />
-              </RN.View>
-            </RN.View>
-          </RN.TouchableOpacity>
+          <LocationSelector
+            isProfileScreen
+            setSelectedLocation={setSelectedLocation}
+          />
           {isSocialAuth && <RN.View style={{marginTop: -12}} />}
           {!isSocialAuth && (
             <RN.TouchableOpacity
@@ -333,6 +296,36 @@ const ProfileScreen = () => {
 
           <RN.TouchableOpacity
             style={styles.listItemWrapper}
+            onPress={() => {
+              RN.Linking.openURL('https://danceconnect.online/payouts.html');
+            }}>
+            <RN.View style={{flexDirection: 'row'}}>
+              <RN.Image source={{uri: 'info'}} style={styles.icon} />
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.listItemText}>Payouts</RN.Text>
+              </RN.View>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+            </RN.View>
+          </RN.TouchableOpacity>
+          <RN.TouchableOpacity
+            style={styles.listItemWrapper}
+            onPress={() => {
+              RN.Linking.openURL('mailto:dance.connect@incode-systems.com');
+            }}>
+            <RN.View style={{flexDirection: 'row'}}>
+              <RN.Image source={{uri: 'message'}} style={styles.icon} />
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.listItemText}>Contact Us</RN.Text>
+              </RN.View>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+            </RN.View>
+          </RN.TouchableOpacity>
+          <RN.TouchableOpacity
+            style={styles.listItemWrapper}
             onPress={() => logoutRefModalize?.current?.open()}>
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'logout'}} style={styles.logoutIcon} />
@@ -355,6 +348,7 @@ const ProfileScreen = () => {
             </RN.View>
           </RN.TouchableOpacity>
         </RN.View>
+        <RN.View style={{paddingBottom: 140}} />
       </RN.ScrollView>
       <Portal>
         <Modalize
@@ -412,16 +406,6 @@ const ProfileScreen = () => {
           />
         </Modalize>
       </Portal>
-      {openLocation && (
-        <Portal>
-          <FindCity
-            communityScreen
-            selectedLocation={selectedLocation}
-            setSelectedLocation={onPressChoosedCountry}
-            onClosed={() => setOpenLocation(false)}
-          />
-        </Portal>
-      )}
       <Portal>
         <Modalize
           withHandle={false}

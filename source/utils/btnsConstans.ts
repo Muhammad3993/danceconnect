@@ -10,6 +10,7 @@ export const authButtons = [
     key: 0,
     title: 'Continue with Google',
     icon: 'google',
+    isAvailable: true,
   },
   {
     key: 1,
@@ -30,5 +31,6 @@ export const authButtons = [
     title: 'Sign up with Email',
     icon: 'mail',
     navigateTo: 'REGISTRATION',
+    isAvailable: true,
   },
 ];

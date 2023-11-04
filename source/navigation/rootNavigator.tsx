@@ -42,6 +42,7 @@ import EditEventScreen from '../screens/Events/EditEventScreen';
 import BuyTickets from '../screens/Events/Tickets/BuyTickets';
 import ImageView from '../components/imageView';
 import SoldTickets from '../screens/Events/Tickets/SoldTickets';
+import Managers from '../screens/Community/Managers';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -86,6 +87,7 @@ const CommunityNavigator = () => {
         }}
       />
       <CommunityStack.Screen name="SoldTickets" component={SoldTickets} />
+      <CommunityStack.Screen name="Managers" component={Managers} />
     </CommunityStack.Navigator>
   );
 };
@@ -156,6 +158,7 @@ const HomeNavigator = () => {
         }}
       />
       <HomeStack.Screen name="SoldTickets" component={SoldTickets} />
+      <HomeStack.Screen name="Managers" component={Managers} />
     </HomeStack.Navigator>
   );
 };
@@ -198,6 +201,7 @@ const ProfileNavigator = () => {
         }}
       />
       <ProfileStack.Screen name="SoldTickets" component={SoldTickets} />
+      <ProfileStack.Screen name="Managers" component={Managers} />
     </ProfileStack.Navigator>
   );
 };
@@ -239,6 +243,9 @@ const TabsNavigator = () => {
           if (routeName === 'BuyTickets') {
             return {display: 'none'};
           }
+          if (routeName === 'Managers') {
+            return {display: 'none'};
+          }
           // if (routeName === 'Ticket') {
           //   return {display: 'none'};
           // }
@@ -256,14 +263,16 @@ const TabsNavigator = () => {
 
 const AuthNavigor = () => {
   return (
-    <AuthStack.Navigator
-      initialRouteName={'WELCOME'}
-      screenOptions={{headerShown: false, gestureEnabled: false}}>
-      <AuthStack.Screen name={'WELCOME'} component={WeclomeScreen} />
-      <AuthStack.Screen name={'REGISTRATION'} component={RegistraionScreen} />
-      <AuthStack.Screen name={'AUTH'} component={AuthorizationScreen} />
-      <AuthStack.Screen name={'ONBOARDING'} component={Board} />
-    </AuthStack.Navigator>
+    <Host>
+      <AuthStack.Navigator
+        initialRouteName={'WELCOME'}
+        screenOptions={{headerShown: false, gestureEnabled: false}}>
+        <AuthStack.Screen name={'WELCOME'} component={WeclomeScreen} />
+        <AuthStack.Screen name={'REGISTRATION'} component={RegistraionScreen} />
+        <AuthStack.Screen name={'AUTH'} component={AuthorizationScreen} />
+        <AuthStack.Screen name={'ONBOARDING'} component={Board} />
+      </AuthStack.Navigator>
+    </Host>
   );
 };
 const MainNavigator = () => {

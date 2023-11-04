@@ -7,6 +7,7 @@ type appStateParams = {
   eventTypes?: string[];
   countries?: string[];
   currentCountry?: any;
+  stripe_key?: string;
 
   isVisible?: boolean;
   errorMessage?: string;
@@ -65,5 +66,15 @@ export const setCurrentCountryAction = ({currentCountry}: appStateParams) => ({
   type: APP_STATE.SET_CURRENT_COUNTRY,
   payload: {
     currentCountry: currentCountry,
+  },
+});
+
+export const getStripeKeyAction = () => ({
+  type: APP_STATE.GET_STRIPE_KEY,
+});
+export const setStripeKeyAction = ({stripe_key}: appStateParams) => ({
+  type: APP_STATE.SET_STRIPE_KEY,
+  payload: {
+    stripe_key: stripe_key,
   },
 });

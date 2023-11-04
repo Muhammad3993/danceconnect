@@ -5,6 +5,7 @@ export default {
   eventTypes: [],
   countries: [],
   currentCountry: '',
+  stripe_key: '',
   isVisible: false,
   errorMessage: '',
 };

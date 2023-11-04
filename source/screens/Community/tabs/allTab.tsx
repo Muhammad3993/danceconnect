@@ -34,6 +34,9 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
     }
+    if (searchValue.length <= 0) {
+      setCommunitites(communitiesData);
+    }
   }, [communititesSearch, searchValue]);
   // useEffect(() => {
   //   setCommunitites(

@@ -81,7 +81,11 @@ export const selectLoadingEventById = (state: IRootState) =>
   state?.events?.loadingById ?? false;
 
 export const selectManagingEvents = (state: IRootState) =>
-  state.events?.managingEvents ?? [];
+  state.events?.managingEvents?.filter(
+    (item: any) =>
+      moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >
+      moment(new Date()).format('YYYY-MM-DD'),
+  ) ?? [];
 export const selectLoadingManagingEvents = (state: IRootState) =>
   state.events?.loadingManaging ?? false;
 

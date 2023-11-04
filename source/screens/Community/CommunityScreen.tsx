@@ -1,5 +1,5 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import {Button} from '../../components/Button';
@@ -15,10 +15,13 @@ import {apiUrl} from '../../api/serverRequests';
 import CommunityEvents from '../../components/communityEvents';
 import FastImage from 'react-native-fast-image';
 import {Animated} from 'react-native';
+import {Modalize} from 'react-native-modalize';
+import {Portal} from 'react-native-portalize';
 
 const CommunityScreen = ({route}) => {
   const routeProps = useRoute();
   const navigation = useNavigation();
+  const removeModalizeRef = useRef<Modalize>(null);
   const {userUid} = useRegistration();
   const {startFollowed, isSaveChanges, onClearCommunityDataById} =
     useCommunities();
@@ -34,28 +37,10 @@ const CommunityScreen = ({route}) => {
 
   const {getEventByIdCommunity, loadingEvents} = useEvents();
   const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
-  const [currentTab, setCurrentTab] = useState<string>(TABS[0]);
+  const [currentTab, setCurrentTab] = useState<string | boolean>(TABS[0]);
   const [loadSubscribe, setLoadSubscribe] = useState(false);
-  const [sourceDimensions, setSourceDimensions] = useState({
-    height: 0,
-    width: 0,
-  });
-  RN.Image.getSizeWithHeaders(
-    apiUrl + communityData?.creator?.userImage,
-    {},
-    (width, height) => {
-      // console.log(`The image dimensions are ${width}x${height}`);
-      if (sourceDimensions.height === 0) {
-        setSourceDimensions({
-          height: height,
-          width: width,
-        });
-      }
-    },
-    error => {
-      console.error(`Couldn't get the image size: ${error}`);
-    },
-  );
+  const isManager = communityData?.managers?.find(i => i === userUid);
+
   useEffect(() => {
     getCommunity();
   }, []);
@@ -120,6 +105,14 @@ const CommunityScreen = ({route}) => {
     remove();
     // navigation.navigate('CommunitiesMain', {removedCommunity: true});
   };
+  const onPressRemoveCommunity = () => {
+    setUnFollowOpen(v => !v);
+    removeModalizeRef.current?.open();
+  };
+  const onPressAddMenegers = () => {
+    setUnFollowOpen(v => !v);
+    navigation.navigate('Managers', {id: communityId});
+  };
   const onPressBack = () => {
     if (isProfileScreen) {
       navigation.goBack();
@@ -179,17 +172,39 @@ const CommunityScreen = ({route}) => {
     {
       key: 'edit',
       icon: 'edit',
-      isEnabled: isAdmin,
+      isEnabled: isAdmin || isManager,
       onPress: onPressEditCommunity,
     },
     {
       key: 'more',
       icon: 'more',
-      isEnabled: isAdmin ? true : isJoined,
+      isEnabled: isAdmin ? true : isManager ? false : isJoined,
       onPress: () => setUnFollowOpen(v => !v),
+      options: [
+        {
+          key: 'add',
+          label: 'Add Managers',
+          onPress: () => onPressAddMenegers(),
+          icon: 'members',
+          visible: isAdmin,
+          iconColor: colors.textPrimary,
+        },
+        {
+          key: 'unfollow',
+          label: isAdmin ? 'Remove Community' : 'Unfollow',
+          onPress: isAdmin ? onPressRemoveCommunity : onPressUnfollow,
+          icon: 'closesquare',
+          visible: true,
+          iconColor: colors.redError,
+        },
+      ],
     },
     {key: 'share', icon: 'share', isEnabled: true, onPress: onPressShare},
   ];
+  const moreActions = headerOptionButtons
+    .filter(i => i?.options)
+    .map(i => i.options)
+    .flat(1);
   const opacity = new RN.Animated.Value(0);
 
   const onScroll = (ev: RN.NativeSyntheticEvent<RN.NativeScrollEvent>) => {
@@ -234,19 +249,41 @@ const CommunityScreen = ({route}) => {
           })}
         </RN.View>
         {unFolloweOpen && (
-          <RN.TouchableOpacity
-            style={styles.unFollowContainer}
-            onPress={isAdmin ? onPressRemove : onPressUnfollow}>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image
-                source={{uri: 'closesquare'}}
-                style={{height: 20, width: 20}}
-              />
-            </RN.View>
-            <RN.Text style={styles.unFollowText}>
-              {isAdmin ? 'Remove Community' : 'Unfollow'}
-            </RN.Text>
-          </RN.TouchableOpacity>
+          <RN.View style={{position: 'absolute', right: SCREEN_WIDTH / 10}}>
+            {moreActions.map(item => {
+              const isLast = moreActions[moreActions.length - 1]?.key;
+              const isVisible = item?.visible;
+              if (!isVisible) {
+                return null;
+              }
+              return (
+                <RN.TouchableOpacity
+                  key={item?.key}
+                  onPress={item?.onPress}
+                  style={[
+                    styles.unFollowContainer,
+                    {
+                      borderBottomLeftRadius: isLast === item?.key ? 8 : 0,
+                      borderBottomRightRadius: isLast === item?.key ? 8 : 0,
+                      borderTopLeftRadius:
+                        isLast === item?.key ? (isAdmin ? 0 : 8) : 8,
+                      borderTopRightRadius: isLast === item?.key ? 0 : 8,
+                      borderBottomWidth: isLast === item?.key ? 0 : 0.5,
+                    },
+                  ]}>
+                  <RN.View style={{justifyContent: 'center'}}>
+                    <RN.Image
+                      source={{uri: item?.icon}}
+                      style={{height: 20, width: 20, tintColor: item.iconColor}}
+                    />
+                  </RN.View>
+                  <RN.View style={{justifyContent: 'center'}}>
+                    <RN.Text style={styles.unFollowText}>{item?.label}</RN.Text>
+                  </RN.View>
+                </RN.TouchableOpacity>
+              );
+            })}
+          </RN.View>
         )}
       </RN.View>
     );
@@ -296,7 +333,7 @@ const CommunityScreen = ({route}) => {
     );
   };
 
-  const onPressTab = (value: string) => {
+  const onPressTab = (value: string | boolean) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setCurrentTab(value);
   };
@@ -306,7 +343,7 @@ const CommunityScreen = ({route}) => {
         style={styles.tabsWrapper}
         horizontal
         showsHorizontalScrollIndicator={false}>
-        {TABS.map((item: string, index: number) => {
+        {TABS.map((item: string | boolean, index: number) => {
           return (
             <RN.TouchableOpacity
               onPress={() => onPressTab(item)}
@@ -364,15 +401,22 @@ const CommunityScreen = ({route}) => {
                 marginLeft: idx !== 0 ? -12 : 0,
                 zIndex: idx !== 0 ? idx : -idx,
               }}>
-              <FastImage
-                source={{
-                  uri: apiUrl + img?.userImage,
-                  cache: FastImage.cacheControl.immutable,
-                  priority: FastImage.priority.high,
-                }}
-                defaultSource={require('../../assets/images/defaultuser.png')}
-                style={styles.attendPeopleImg}
-              />
+              {img?.userImage !== null ? (
+                <FastImage
+                  source={{
+                    uri: apiUrl + img?.userImage,
+                    cache: FastImage.cacheControl.immutable,
+                    priority: FastImage.priority.high,
+                  }}
+                  defaultSource={require('../../assets/images/defaultuser.png')}
+                  style={styles.attendPeopleImg}
+                />
+              ) : (
+                <RN.Image
+                  source={require('../../assets/images/defaultuser.png')}
+                  style={styles.attendPeopleImg}
+                />
+              )}
             </RN.View>
           );
         })}
@@ -427,15 +471,22 @@ const CommunityScreen = ({route}) => {
         <RN.View style={styles.organizerContainer}>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.View style={{justifyContent: 'center'}}>
-              <FastImage
-                source={{
-                  uri: apiUrl + communityData?.creator?.image,
-                  cache: FastImage.cacheControl.immutable,
-                  priority: FastImage.priority.high,
-                }}
-                defaultSource={require('../../assets/images/defaultuser.png')}
-                style={styles.organizerImg}
-              />
+              {communityData?.creator?.image !== null ? (
+                <FastImage
+                  source={{
+                    uri: apiUrl + communityData?.creator?.image,
+                    cache: FastImage.cacheControl.immutable,
+                    priority: FastImage.priority.high,
+                  }}
+                  defaultSource={require('../../assets/images/defaultuser.png')}
+                  style={styles.organizerImg}
+                />
+              ) : (
+                <RN.Image
+                  source={require('../../assets/images/defaultuser.png')}
+                  style={styles.organizerImg}
+                />
+              )}
             </RN.View>
 
             <RN.View style={{justifyContent: 'center'}}>
@@ -474,7 +525,8 @@ const CommunityScreen = ({route}) => {
         {loadSubscribe
           ? renderLoading()
           : !isAdmin &&
-            !isJoined && (
+            !isJoined &&
+            !isManager && (
               <RN.View style={styles.btnJoin}>
                 <Button
                   onPress={onPressJoin}
@@ -486,7 +538,7 @@ const CommunityScreen = ({route}) => {
                 />
               </RN.View>
             )}
-        {isAdmin && (
+        {(isAdmin || isManager) && (
           <RN.View style={styles.btnJoin}>
             <Button
               onPress={() =>
@@ -508,6 +560,32 @@ const CommunityScreen = ({route}) => {
           isAdmin={isAdmin}
         />
       </RN.ScrollView>
+      <Portal>
+        <Modalize
+          withHandle={false}
+          adjustToContentHeight
+          closeOnOverlayTap={false}
+          panGestureEnabled={false}
+          modalStyle={styles.modalContainer}
+          ref={removeModalizeRef}>
+          <RN.Text style={styles.removeCommunityTitle}>
+            Do you really want to delete your community?
+          </RN.Text>
+          <RN.View
+            style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            <RN.TouchableOpacity
+              style={styles.removeCommunityBtnCancel}
+              onPress={() => removeModalizeRef?.current?.close()}>
+              <RN.Text style={styles.deleteTextCancel}>Cancel</RN.Text>
+            </RN.TouchableOpacity>
+            <RN.TouchableOpacity
+              style={styles.removeCommunityBtn}
+              onPress={onPressRemove}>
+              <RN.Text style={styles.deleteText}>Yes, delete</RN.Text>
+            </RN.TouchableOpacity>
+          </RN.View>
+        </Modalize>
+      </Portal>
     </>
   );
 };
@@ -518,6 +596,61 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
   },
 
+  modalContainer: {
+    position: 'absolute',
+    right: 20,
+    left: 20,
+    bottom: '50%',
+    borderRadius: 12,
+  },
+  removeCommunityBtnCancel: {
+    borderRadius: 100,
+    backgroundColor: colors.orange,
+    marginVertical: 22,
+    marginTop: 0,
+  },
+  removeCommunityBtn: {
+    borderRadius: 100,
+    backgroundColor: colors.redError,
+    marginVertical: 22,
+    marginTop: 0,
+    justifyContent: 'center',
+  },
+  removeCommunityTitle: {
+    textAlign: 'center',
+    padding: 18,
+    fontSize: 22,
+    lineHeight: 24.6,
+    fontWeight: '600',
+    paddingTop: 34,
+    color: colors.textPrimary,
+  },
+  removeCommunityDesc: {
+    textAlign: 'center',
+    padding: 18,
+    fontSize: 18,
+    lineHeight: 24.6,
+    paddingTop: 0,
+    color: colors.textPrimary,
+  },
+  deleteText: {
+    paddingHorizontal: 34,
+    fontSize: 18,
+    lineHeight: 22.4,
+    color: colors.white,
+    textAlign: 'center',
+    paddingVertical: 14,
+    fontWeight: '600',
+  },
+  deleteTextCancel: {
+    paddingHorizontal: 34,
+    fontSize: 18,
+    lineHeight: 22.4,
+    color: colors.white,
+    textAlign: 'center',
+    paddingVertical: 14,
+    fontWeight: '600',
+  },
   attendPeopleImg: {
     height: 38,
     width: 38,
@@ -610,6 +743,7 @@ const styles = RN.StyleSheet.create({
     borderBottomColor: colors.gray,
     marginBottom: 14,
     paddingHorizontal: 14,
+    paddingTop: 18,
   },
   itemTabContainer: {
     borderBottomWidth: 1,
@@ -728,13 +862,13 @@ const styles = RN.StyleSheet.create({
   unFollowContainer: {
     backgroundColor: colors.white,
     flexDirection: 'row',
-    position: 'absolute',
+    // position: 'relative',
     zIndex: 3,
-    right: 94,
+    right: 54,
     top: isAndroid ? 100 : 126,
-    borderRadius: 8,
-    borderTopRightRadius: 0,
+    // borderRadius: 8,
     padding: 14,
+    borderBottomColor: colors.darkGray,
   },
   unFollowText: {
     color: colors.textPrimary,

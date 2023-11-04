@@ -3,7 +3,7 @@ import * as RN from 'react-native';
 import colors from '../utils/colors';
 import moment from 'moment';
 import {Button} from './Button';
-import {MERCHANT_ID, SCREEN_WIDTH, STRIPE_PUBLIC_KEY} from '../utils/constants';
+import {MERCHANT_ID, SCREEN_WIDTH} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import useRegistration from '../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
@@ -50,6 +50,7 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
     (itm: any) => itm?.eventUid === eventData?.id,
   );
   const isAdmin = eventData?.creator?.uid === userUid;
+  const isManager = eventData?.managers?.find(i => i === userUid);
 
   const dateEvent = `${String(
     minWeekDay.weekdaysMin(moment(eventData?.eventDate?.startDate)),
@@ -92,20 +93,20 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
     }
   }, [isFollowed]);
 
-  useEffect(() => {
-    socket.on('subscribed_event', socket_data => {
-      if (socket_data?.currentEvent?.id === data?.id) {
-        setEventData(socket_data?.currentEvent);
-        // setAttendedImgs(socket_data?.userImages);
-        setIsFollowed(
-          socket_data?.currentEvent?.attendedPeople?.find(
-            (i: {userUid: string}) => i.userUid === userUid,
-          ),
-        );
-        // setSocketEvents(socket_data?.events);
-      }
-    });
-  }, [data?.id, loadSubscribe]);
+  // useEffect(() => {
+  //   socket.on('subscribed_event', socket_data => {
+  //     if (socket_data?.currentEvent?.id === data?.id) {
+  //       setEventData(socket_data?.currentEvent);
+  //       // setAttendedImgs(socket_data?.userImages);
+  //       setIsFollowed(
+  //         socket_data?.currentEvent?.attendedPeople?.find(
+  //           (i: {userUid: string}) => i.userUid === userUid,
+  //         ),
+  //       );
+  //       // setSocketEvents(socket_data?.events);
+  //     }
+  //   });
+  // }, [data?.id, loadSubscribe]);
 
   const renderTags = (tags: string[]) => {
     return (
@@ -318,7 +319,7 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
               </RN.View> */}
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.joinedText}>
-                  {isAdmin ? 'Managing' : 'Going'}
+                  {isAdmin || isManager ? 'Managing' : 'Going'}
                 </RN.Text>
               </RN.View>
             </RN.View>

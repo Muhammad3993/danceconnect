@@ -167,7 +167,7 @@ const EditEvent = () => {
 
   const onChooseImage = async () => {
     let options = {
-      mediaType: 'image',
+      mediaType: 'photo',
       maxWidth: 300,
       maxHeight: 550,
       quality: 1,

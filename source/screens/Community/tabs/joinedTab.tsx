@@ -51,6 +51,9 @@ const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
     }
+    if (searchValue.length <= 0) {
+      setCommunitites(joinedCommunities);
+    }
   }, [communititesSearch, searchValue]);
   useEffect(() => {
     setCommunitites(

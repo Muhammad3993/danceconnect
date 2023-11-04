@@ -62,26 +62,17 @@ const EditTicket = () => {
     maxSymbols: 350,
   });
 
-  const [startSaleDate, setStartSaleDate] = useState(
-    moment(ticketProps?.startDate).format('DD-MM-YYYY'),
-  );
-  const [endSaleDate, setEndSaleDate] = useState(
-    moment(ticketProps?.endDate).format('DD-MM-YYYY'),
-  );
+  const [startSaleDate, setStartSaleDate] = useState(ticketProps?.startDate);
+  const [endSaleDate, setEndSaleDate] = useState(ticketProps?.endDate);
   const [openStartSaleDate, setOpenStartSaleDate] = useState(false);
   const [openEndSaleDate, setOpenEndSaleDate] = useState(false);
 
   const [quantityError, setQuantityError] = useState(false);
-  useEffect(() => {
-    setEndSaleDate(moment(Date.now()).add(10, 'days').toISOString());
-    setStartSaleDate(moment(Date.now()).toISOString());
-  }, []);
 
   const onOpenCalendar = () => {
     calendarModalizeRef.current?.open();
   };
 
-  console.log('ticketProps', ticketProps);
   const onSelectDay = (day: DateData) => {
     if (openStartSaleDate) {
       setStartSaleDate(day?.dateString);
@@ -133,7 +124,7 @@ const EditTicket = () => {
     return (
       <RN.TouchableOpacity style={styles.headerContainer} onPress={onPressBack}>
         <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
-        <RN.Text style={styles.headerTitle}>Create Ticket</RN.Text>
+        <RN.Text style={styles.headerTitle}>Change Ticket</RN.Text>
       </RN.TouchableOpacity>
     );
   };
@@ -157,7 +148,7 @@ const EditTicket = () => {
     return (
       <RN.View style={{marginTop: 30}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Create Ticket Name</RN.Text>
+          <RN.Text style={styles.title}>Change Ticket Name</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -186,17 +177,16 @@ const EditTicket = () => {
     );
   };
   const renderPriceTicket = () => {
+    const percent = 10;
+    const total = Number(priceTicket) + (priceTicket * percent) / 100 + 0.3;
     return (
       <RN.View style={{marginHorizontal: 4}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>
-            Set Event Price{' '}
-            <RN.Text style={styles.countMaxSymbols}>
-              {' '}
-              (10% fee will be added)
-            </RN.Text>
-          </RN.Text>
+          <RN.Text style={styles.title}>Change Event Price</RN.Text>
         </RN.View>
+        <RN.Text style={styles.feeText}>
+          10% + 30¢ fees will be included to the final price
+        </RN.Text>
         <RN.View>
           <Input
             value={priceTicket}
@@ -204,10 +194,17 @@ const EditTicket = () => {
             onChange={setPriceTicket}
             placeholder="0"
             keyboardType={'numeric'}
+            editable={!ticketProps?.items?.length}
             // onFocusInput={() => setPriceTicket(0)}
           />
           <RN.Text style={styles.usd}>USD</RN.Text>
         </RN.View>
+        <RN.Text style={styles.finalPrice}>
+          Final ticket price for customer{' '}
+          <RN.Text style={{fontWeight: '700'}}>{`${total.toFixed(
+            2,
+          )} USD`}</RN.Text>
+        </RN.Text>
       </RN.View>
     );
   };
@@ -460,6 +457,20 @@ const styles = RN.StyleSheet.create({
     lineHeight: 19.6,
     fontWeight: '400',
     color: colors.darkGray,
+  },
+  feeText: {
+    fontSize: 14,
+    lineHeight: 19.6,
+    fontWeight: '400',
+    color: colors.darkGray,
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+  },
+  finalPrice: {
+    marginTop: -12,
+    paddingBottom: 12,
+    paddingHorizontal: 18,
+    color: colors.textPrimary,
   },
   countCurrentSymbols: {
     fontSize: 14,

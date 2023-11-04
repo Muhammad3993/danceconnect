@@ -100,7 +100,6 @@ function* authorizationEmail(action: any) {
       yield put(getEventsRequestAction({limit: 1, offset: 0}));
       yield put(getPersonalEventsRequestAction());
     }
-
     if (auth?.response?.status === 401) {
       const message = auth?.response?.data?.message;
       yield put(authorizationWithEmailFail(setErrors(message)));

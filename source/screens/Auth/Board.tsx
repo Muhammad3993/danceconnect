@@ -13,6 +13,8 @@ import useAppStateHook from '../../hooks/useAppState';
 import {removeAccount} from '../../api/authSocial';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
 import {useDispatch} from 'react-redux';
+import {Portal} from 'react-native-portalize';
+import LocationSelector from '../../components/locationSelector';
 // import { createUser } from '../../api/serverRequests';
 
 interface city {
@@ -30,17 +32,11 @@ const Board = () => {
   const {onChoosedCity, getDanceStyles, countries} = useAppStateHook();
   const [name, setName] = useState<string>(userName);
   const [gender, setGender] = useState();
-  const [country, setCountry] = useState();
-  const [openCountry, setOpenCountry] = useState(false);
   const [role, setRole] = useState<string[]>(new Array(0).fill(''));
   const [addedStyles, setAddedStyles] = useState<string[]>([]);
-  const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<city>(Object);
   const navigation = useNavigation<AuthStackNavigationParamList>();
-  const [crntLocation, setCrntLocation] = useState<string | string[]>();
-  const [openCities, setOpenCities] = useState(false);
 
-  // console.log(routeProps);
   useEffect(() => {
     getDanceStyles();
   }, []);
@@ -59,35 +55,17 @@ const Board = () => {
   }, [isRegistrationsSuccess, navigation]);
 
   const onPressFinish = () => {
-    let location = '';
-    // const location =
-    //   selectedLocation?.structured_formatting?.main_text +
-    //   ', ' +
-    //   selectedLocation?.terms[1].value;
-
-    if (!country?.availableSearchString) {
-      if (country?.cities instanceof Array) {
-        location = country?.country + ', ' + crntLocation;
-      } else {
-        location = country?.country + ', ' + country?.cities;
-      }
-    } else {
-      location =
-        selectedLocation?.structured_formatting?.main_text +
-        ', ' +
-        selectedLocation?.terms[1].value;
-    }
-    onChoosedCity(location);
+    onChoosedCity(selectedLocation);
     const email = routeProps?.params?.email;
     const password = routeProps?.params?.password;
-    console.log('e', email, password);
+    // console.log('e', email, password);
 
     const data = {
       email: email,
       password: password,
       userName: name,
       userGender: gender?.title,
-      userCountry: location,
+      userCountry: selectedLocation,
       userRole: role,
       individualStyles: addedStyles,
       userImage: null,
@@ -204,166 +182,10 @@ const Board = () => {
             );
           })}
         </RN.ScrollView>
-        <RN.Text style={styles.placeholderTitle}>Country</RN.Text>
-        <RN.TouchableOpacity
-          style={[
-            styles.selectLocationBtn,
-            {
-              borderBottomLeftRadius: openCountry ? 0 : 8,
-              borderBottomRightRadius: openCountry ? 0 : 8,
-            },
-          ]}
-          onPress={() => {
-            setOpenCountry(v => !v);
-            RN.LayoutAnimation.configureNext(
-              RN.LayoutAnimation.Presets.easeInEaseOut,
-            );
-          }}>
-          <RN.Text style={styles.locationText}>
-            {country?.country ?? 'Choose country'}
-          </RN.Text>
-          <RN.View
-            style={{
-              justifyContent: 'center',
-            }}>
-            <RN.Image
-              source={{uri: 'arrowdown'}}
-              style={{height: 20, width: 20}}
-            />
-          </RN.View>
-        </RN.TouchableOpacity>
-        <RN.View style={{marginTop: -12}}>
-          {openCountry &&
-            countries.map(c => {
-              const isLast = countries[countries.length - 1].id;
-              return (
-                <RN.TouchableOpacity
-                  style={[
-                    styles.selectLocationBtn,
-                    {
-                      marginVertical: 0,
-                      borderRadius: 0,
-                      borderBottomLeftRadius: isLast === c.id ? 8 : 0,
-                      borderBottomRightRadius: isLast === c.id ? 8 : 0,
-                    },
-                  ]}
-                  onPress={() => {
-                    setCountry(c);
-                    setOpenCountry(v => !v);
-                    if (c?.cities instanceof Array) {
-                      setCrntLocation(c.cities[0]?.name);
-                    }
-                    RN.LayoutAnimation.configureNext(
-                      RN.LayoutAnimation.Presets.easeInEaseOut,
-                    );
-                  }}>
-                  <RN.Text style={styles.locationText}>{c.country}</RN.Text>
-                </RN.TouchableOpacity>
-              );
-            })}
-        </RN.View>
-
-        {/* {country?.countryCode !== 'USA' && ()} */}
-        {country?.availableSearchString ? (
-          <>
-            <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
-            <RN.TouchableOpacity
-              onPress={() => setOpenLocation(true)}
-              style={styles.selectLocationBtn}>
-              {selectedLocation?.structured_formatting?.main_text?.length >
-              0 ? (
-                <RN.Text style={styles.locationText}>{`${
-                  selectedLocation?.structured_formatting?.main_text +
-                    ', ' +
-                    selectedLocation?.terms[1]?.value ?? ''
-                }`}</RN.Text>
-              ) : (
-                <RN.Text style={styles.locationText}>Choose location</RN.Text>
-              )}
-              <RN.View
-                style={{
-                  justifyContent: 'center',
-                }}>
-                <RN.Image
-                  source={{uri: 'arrowdown'}}
-                  style={{height: 20, width: 20}}
-                />
-              </RN.View>
-            </RN.TouchableOpacity>
-          </>
-        ) : (
-          <>
-            {!openCountry && country && (
-              <>
-                <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
-                {country?.cities instanceof Array ? (
-                  <RN.TouchableOpacity
-                    style={[
-                      styles.selectLocationBtn,
-                      {
-                        borderBottomLeftRadius: openLocation ? 0 : 8,
-                        borderBottomRightRadius: openLocation ? 0 : 8,
-                      },
-                    ]}
-                    onPress={() => {
-                      setOpenCities(v => !v);
-                      RN.LayoutAnimation.configureNext(
-                        RN.LayoutAnimation.Presets.easeInEaseOut,
-                      );
-                    }}>
-                    <RN.Text style={styles.locationText}>
-                      {crntLocation}
-                    </RN.Text>
-                    <RN.View
-                      style={{
-                        justifyContent: 'center',
-                      }}>
-                      <RN.Image
-                        source={{uri: 'arrowdown'}}
-                        style={{height: 20, width: 20}}
-                      />
-                    </RN.View>
-                  </RN.TouchableOpacity>
-                ) : (
-                  <RN.View style={styles.selectLocationBtn}>
-                    <RN.Text style={styles.locationText}>
-                      {country?.cities ? country?.cities : country}
-                    </RN.Text>
-                  </RN.View>
-                )}
-              </>
-            )}
-            <RN.View style={{marginTop: -12}}>
-              {openCities &&
-                country?.cities instanceof Array &&
-                country?.cities?.map(c => {
-                  const isLast =
-                    country?.cities[country?.cities.length - 1]?.key;
-                  return (
-                    <RN.TouchableOpacity
-                      style={[
-                        styles.selectLocationBtn,
-                        {
-                          marginVertical: 0,
-                          borderRadius: 0,
-                          borderBottomLeftRadius: isLast === c?.key ? 8 : 0,
-                          borderBottomRightRadius: isLast === c?.key ? 8 : 0,
-                        },
-                      ]}
-                      onPress={() => {
-                        setCrntLocation(c?.name);
-                        setOpenCities(v => !v);
-                        RN.LayoutAnimation.configureNext(
-                          RN.LayoutAnimation.Presets.easeInEaseOut,
-                        );
-                      }}>
-                      <RN.Text style={styles.locationText}>{c?.name}</RN.Text>
-                    </RN.TouchableOpacity>
-                  );
-                })}
-            </RN.View>
-          </>
-        )}
+        <LocationSelector
+          isProfileScreen={false}
+          setSelectedLocation={setSelectedLocation}
+        />
         <RN.Text style={[styles.placeholderTitle, {marginTop: -4}]}>
           Define yourself can select few
         </RN.Text>
@@ -465,15 +287,6 @@ const Board = () => {
     <RN.SafeAreaView style={styles.container}>
       {header()}
       {crntSlide === 0 ? fieldsSlide() : stylesSlide()}
-      {openLocation && (
-        <FindCity
-          boardScreen
-          selectedLocation={selectedLocation}
-          setSelectedLocation={setSelectedLocation}
-          onClosed={() => setOpenLocation(false)}
-          countryCode={country?.countryCode}
-        />
-      )}
     </RN.SafeAreaView>
   );
 };

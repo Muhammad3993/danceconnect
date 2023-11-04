@@ -132,7 +132,7 @@ const ChangeProfile = () => {
   const renderEmailContainer = () => {
     return (
       <RN.View style={styles.emailWrapper}>
-        <RN.Text style={styles.selectedText}>{user?.auth_data?.email}</RN.Text>
+        <RN.Text style={styles.selectedText}>{currentUser.email}</RN.Text>
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Image
             source={{uri: 'message'}}

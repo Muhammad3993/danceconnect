@@ -8,10 +8,12 @@ import {
   selectIsVisibleNoticeError,
   selectLoading,
   selectNoticeErrorMessage,
+  selectStripeKey,
 } from '../store/selectors/appStateSelector';
 import {
   choosedCityAction,
   getDanceStylesAction,
+  getStripeKeyAction,
   setCurrentCountryAction,
   setLoadingAction,
   setNoticeMessage,
@@ -27,6 +29,8 @@ const useAppStateHook = () => {
   const userCountry = useSelector(getUserCountry);
   const currentCountry = useSelector(selectCurrentCountry);
 
+  const STRIPE_PUBLIC_KEY = useSelector(selectStripeKey);
+
   const danceStyles = useSelector(selectDanceStyles);
   const countries = useSelector(selectCountries);
   const eventTypes = useSelector(selectEventTypes);
@@ -39,6 +43,10 @@ const useAppStateHook = () => {
       dispatch(choosedCityAction({currentCity: userCountry}));
     }
   }, []);
+
+  const getStripeKey = () => {
+    dispatch(getStripeKeyAction());
+  };
 
   const onChoosedCity = (city: object) => {
     let cityStr = '';
@@ -84,6 +92,8 @@ const useAppStateHook = () => {
     setCurrentCountry,
     currentCountry,
     userCountry,
+    STRIPE_PUBLIC_KEY,
+    getStripeKey,
   };
 };
 export default useAppStateHook;

@@ -82,6 +82,9 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     if (searchValue?.length > 0 && eventsSearch) {
       setEvents(eventsSearch);
     }
+    if (searchValue.length <= 0) {
+      setEvents(upcomingEvents);
+    }
   }, [eventsSearch, searchValue]);
   useEffect(() => {
     setEvents(
