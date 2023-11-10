@@ -225,7 +225,9 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
         {renderFilters()}
         {events?.length > 0 &&
           sotrtBy(events, 'eventDate.startDate')?.map((item: any) => {
-            return <RN.View>{renderItem(item)}</RN.View>;
+            return (
+              <RN.View style={{minHeight: 260}}>{renderItem(item)}</RN.View>
+            );
           })}
         {!events?.length && renderEmpty()}
         <RN.View style={{paddingBottom: 24}} />

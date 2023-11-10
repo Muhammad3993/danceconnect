@@ -58,14 +58,14 @@ const HomeScreen = () => {
   const goToCommunities = () => navigation.navigate('Communities');
   useEffect(() => {
     onPressTab('All');
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
   }, []);
 
   const onPressTab = useCallback(
     (value: string) => {
-      RN.LayoutAnimation.configureNext(
-        RN.LayoutAnimation.Presets.easeInEaseOut,
-      );
+      // RN.LayoutAnimation.configureNext(
+      // RN.LayoutAnimation.Presets.easeInEaseOut,
+      // );
       setCurrentTab(value);
       if (value === 'All') {
         setEvents(personalEvents);
@@ -145,9 +145,11 @@ const HomeScreen = () => {
     return <EmptyContainer onPressButton={goToCommunities} />;
   };
   return (
-    <RN.View style={styles.container}>
-      {renderHeader()}
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      style={{flex: 1, backgroundColor: '#FAFAFA'}}>
+      <RN.View style={styles.container}>
+        {renderHeader()}
         {/* {maybeEvents?.length > 0 && (
           <RN.View style={styles.interestedWrapper}>
             <RN.Text style={styles.interestedText}>
@@ -179,22 +181,26 @@ const HomeScreen = () => {
             horizontal
           />
         </RN.View>
-        <ScrollView>
-          {events?.length > 0 &&
-            events?.map((item: any) => {
-              return <RN.View>{renderItem(item)}</RN.View>;
-            })}
-          {!events?.length && renderEmpty()}
-          <RN.View style={{paddingBottom: 24}} />
-        </ScrollView>
-      </ScrollView>
-    </RN.View>
+        {/* <ScrollView style={{ paddingTop: 8, paddingBottom: SCREEN_HEIGHT / 2}}> */}
+        {events?.length > 0 &&
+          events?.map((item: any) => {
+            return (
+              <RN.View style={{paddingTop: 8, minHeight: 260}}>
+                {renderItem(item)}
+              </RN.View>
+            );
+          })}
+        {events?.length <= 0 && renderEmpty()}
+        {/* </ScrollView> */}
+      </RN.View>
+      <RN.View style={{paddingBottom: 24, backgroundColor: '#FAFAFA'}} />
+    </ScrollView>
   );
 };
 
 const styles = RN.StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     // backgroundColor: colors.white,
     backgroundColor: '#FAFAFA',
     // paddingHorizontal: 20,

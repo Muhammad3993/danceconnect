@@ -285,8 +285,16 @@ const EventScreen = () => {
   const renderAttendedImgs = () => {
     const countPeople =
       attendedImgs?.length > 6 ? `+${attendedImgs?.length - 6} going` : 'going';
+    const onPressAttended = () => {
+      navigation.navigate('AttendedPeople', {
+        usersArray: attendedImgs,
+        header: 'Participants',
+      });
+    };
     return (
-      <RN.View
+      <RN.TouchableOpacity
+        onPress={onPressAttended}
+        activeOpacity={0.7}
         style={{
           flexDirection: 'row',
           marginHorizontal: 20,
@@ -330,7 +338,7 @@ const EventScreen = () => {
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Text style={styles.attendPeopleText}>{countPeople}</RN.Text>
         </RN.View>
-      </RN.View>
+      </RN.TouchableOpacity>
     );
   };
   const renderTitle = () => {
@@ -406,8 +414,8 @@ const EventScreen = () => {
   };
   const onOpenMaps = () => {
     const url = isAndroid
-      ? `geo:0,0?q=${eventData?.place}`
-      : `maps:0,0?q=${eventData?.place}`;
+      ? `geo:0,0?q=${eventData?.place},${eventData?.location}`
+      : `maps:0,0?q=${eventData?.place},${eventData?.location}`;
     RN.Linking.openURL(url);
   };
   // console.log('ticketsList.filter(i => i.items.length > 0)', ticketsList.filter(i => i.items.length > 0));

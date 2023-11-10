@@ -43,6 +43,7 @@ import BuyTickets from '../screens/Events/Tickets/BuyTickets';
 import ImageView from '../components/imageView';
 import SoldTickets from '../screens/Events/Tickets/SoldTickets';
 import Managers from '../screens/Community/Managers';
+import AttendedPeople from '../screens/AttendedPeople';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -88,6 +89,7 @@ const CommunityNavigator = () => {
       />
       <CommunityStack.Screen name="SoldTickets" component={SoldTickets} />
       <CommunityStack.Screen name="Managers" component={Managers} />
+      <CommunityStack.Screen name="AttendedPeople" component={AttendedPeople} />
     </CommunityStack.Navigator>
   );
 };
@@ -124,6 +126,7 @@ const EventsNavigator = () => {
       />
       {/* <EventsStack.Screen name="ImageView" component={ImageView} /> */}
       <EventsStack.Screen name="SoldTickets" component={SoldTickets} />
+      <EventsStack.Screen name="AttendedPeople" component={AttendedPeople} />
     </EventsStack.Navigator>
   );
 };
@@ -159,6 +162,7 @@ const HomeNavigator = () => {
       />
       <HomeStack.Screen name="SoldTickets" component={SoldTickets} />
       <HomeStack.Screen name="Managers" component={Managers} />
+      <HomeStack.Screen name="AttendedPeople" component={AttendedPeople} />
     </HomeStack.Navigator>
   );
 };
@@ -202,6 +206,7 @@ const ProfileNavigator = () => {
       />
       <ProfileStack.Screen name="SoldTickets" component={SoldTickets} />
       <ProfileStack.Screen name="Managers" component={Managers} />
+      <ProfileStack.Screen name="AttendedPeople" component={AttendedPeople} />
     </ProfileStack.Navigator>
   );
 };
@@ -244,6 +249,9 @@ const TabsNavigator = () => {
             return {display: 'none'};
           }
           if (routeName === 'Managers') {
+            return {display: 'none'};
+          }
+          if (routeName === 'AttendedPeople') {
             return {display: 'none'};
           }
           // if (routeName === 'Ticket') {

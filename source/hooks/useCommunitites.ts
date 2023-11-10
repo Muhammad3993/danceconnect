@@ -28,7 +28,7 @@ export const useCommunities = () => {
   const isLoading = useSelector(selectLoadingInCreateCommunity);
   const isLoadingWithFollow = useSelector(selectIsLoadingWithFollow);
   const followingCommunities = useSelector(selectFollowingCommunities);
-  const userId = useSelector(selectUserUid);
+  const userUid = useSelector(selectUserUid);
   const isSaveChanges = useSelector(selectIsSaveChanges);
 
   const managingCommunity = useSelector(selectManagingCommunities);
@@ -42,7 +42,7 @@ export const useCommunities = () => {
   //     ) ?? [];
   //   return filter;
   // });
-  const joinedCommunities = selectJoinedCommunitites(userId);
+  const joinedCommunities = selectJoinedCommunitites(userUid);
   const getManagingCommunities = () => {
     dispatch(getManagingCommunitiesRequestAction());
   };

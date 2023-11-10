@@ -67,6 +67,7 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
   try {
     const {eventsList} = yield call(getEventsWithMongo);
 
+    // console.log('getEventsRequest', eventsList);
     const data: string[] = yield all(
       eventsList.map((event: any) =>
         (function* () {
@@ -467,7 +468,7 @@ function* getPersonalEvents() {
               moment(new Date()).format('YYYY-MM-DD') &&
             event?.attendedPeople?.length > 0 &&
             event?.attendedPeople?.find(
-              (user: {userUid: string}) => user.userUid === userUid,
+              (user: {userUid: string}) => user?.userUid === userUid,
             ),
         )
         .map((item: any) => item) ?? [];

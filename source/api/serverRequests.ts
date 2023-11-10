@@ -13,7 +13,7 @@ import {DeviceEventEmitter} from 'react-native';
 // export const apiUrl = isAndroid
 //   ? 'http://192.168.1.101:4000/'
 //   : 'http://localhost:4000/';
-export const apiUrl = 'http://165.22.126.209:4000/';
+export const apiUrl = 'https://api.danceconnect.online/';
 
 // const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
 
@@ -191,7 +191,7 @@ export const getCommunitiesWithMongo = async (location: string) => {
     const response = await axios.get(
       `${apiUrl}communities?location=${location}`,
     );
-    console.log('getCommunitiesWithMongo', response);
+    // console.log('getCommunitiesWithMongo', response);
     return response?.data;
   } catch (er) {
     return console.log('er', er);

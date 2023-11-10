@@ -18,6 +18,7 @@ export type communityParams = {
   communityUid?: string;
   managingCommunities?: string[];
   loadingManaging?: boolean;
+  screen?: string;
 };
 export type followingParams = {
   isLoadingFollow?: boolean;
@@ -182,10 +183,12 @@ export const changeInformationValueAction = () => ({
 
 export const removeCommunityRequestAction = ({
   communityUid,
+  screen,
 }: communityParams) => ({
   type: COMMUNITIES.REMOVE_COMMUNITY_REQUEST,
   payload: {
     uid: communityUid,
+    screen: screen,
   },
 });
 export const removeCommunitySuccessAction = () => ({

@@ -21,7 +21,7 @@ const App = () => {
     GoogleSignin.configure({
       scopes: ['email'],
       webClientId:
-        '510785169210-nuvgcms1kiglc2vqe2stgpub06le22q7.apps.googleusercontent.com',
+        '510785169210-lf70g9qu4i2htf64g20emmqs2elosoal.apps.googleusercontent.com',
       offlineAccess: true,
     });
   }, []);

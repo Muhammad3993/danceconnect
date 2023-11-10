@@ -45,8 +45,8 @@ export const useCommunityById = (id: string) => {
     );
   };
 
-  const remove = () => {
-    dispatch(removeCommunityRequestAction({communityUid: id}));
+  const remove = (screen: string) => {
+    dispatch(removeCommunityRequestAction({communityUid: id, screen: screen}));
   };
 
   return {

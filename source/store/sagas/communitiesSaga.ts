@@ -1,9 +1,8 @@
-import {call, put, select, takeLatest, all} from 'redux-saga/effects';
+import {call, put, select, takeLatest, all, debounce} from 'redux-saga/effects';
 import {COMMUNITIES} from '../actionTypes/communityActionTypes';
 import {
   cancelFollowedCommunityFailAction,
   changeInformationCommunitySuccessAction,
-  changeInformationValueAction,
   createCommunityFailAction,
   createCommunitySuccessAction,
   getCommunitiesFailAction,
@@ -31,15 +30,20 @@ import {
   deleteCommunityById,
   getCommunitiesWithMongo,
   getCommunityById,
+  getEventById,
+  getEventsWithMongo,
   getManagingCommunity,
+  getTickets,
   updateCommunityById,
 } from '../../api/serverRequests';
 
 import {selectCurrentCity} from '../selectors/appStateSelector';
-// import {io} from 'socket.io-client';
-import {selectUser, selectUserUid} from '../selectors/registrationSelector';
+import {selectUserUid} from '../selectors/registrationSelector';
 import socket from '../../api/sockets';
 import {DeviceEventEmitter} from 'react-native';
+import {getPersonalEventsSuccessAction} from '../actions/eventActions';
+import moment from 'moment';
+import {EVENT} from '../actionTypes/eventActionTypes';
 
 function* getCommunitiesRequest() {
   try {
@@ -99,45 +103,8 @@ function* startFollowingCommunity(action: any) {
   try {
     const userUid: string = yield select(selectUserUid);
     // socket.connect();
-    console.log('cosket', socket);
     socket.emit('follow_community', communityUid, userUid);
-    // socket.disconnect();
-    // yield put(
-    //   getCommunitiesSuccessAction({
-    //     dataCommunities: Object.values(data),
-    //   }),
-    // );
-    // setTimeout(() => {
-    //   socket.disconnect();
-    // }, 1000);
-
-    // socket.on('subscribed', ({community}) => {
-    //   console.log('socket subscribed', community);
-    // });
-
-    // const response = yield call(subscribeCommunity, communityUid);
-    // const creatorId = response?.creatorUid ?? response?.creator?.uid;
-    // const user = yield call(getUserById, creatorId);
-
-    // const data = {
-    //   ...response,
-    //   creator: {
-    //     uid: creatorId,
-    //     image: user?.image || user?.userImage,
-    //     name: user?.fullName || user?.userName || user?.name,
-    //   },
-    // };
-    // yield put(
-    //   getCommunityByIdSuccessAction({
-    //     communityByIdData: data,
-    //   }),
-    // );
     yield put(startFollowedCommunitySuccessAction());
-    // socket.emit('joined_update', location);
-
-    // yield put(getCommunitiesRequestAction());
-    // yield put(getUserDataRequestAction());
-    // yield put(getCommunityByIdRequestAction(communityUid));
   } catch (error) {
     console.log('startFollowingCommunity', error);
     yield put(startFollowedCommunityFailAction());
@@ -149,31 +116,70 @@ function* cancelFollowingCommunity(action: any) {
     const userUid = yield select(selectUserUid);
     // socket.connect();
     socket.emit('follow_community', communityUid, userUid);
-    // socket.disconnect();
-
-    // const response = yield call(unSubscribeCommunity, communityUid);
-    // console.log('res', response);
-    // // const creatorId = response?.creatorUid ?? response?.creator?.uid;
-    // // const user = yield call(getUserById, creatorId);
-
-    // // const data = {
-    // //   ...response,
-    // //   creator: {
-    // //     uid: creatorId,
-    // //     image: user?.image || user?.userImage,
-    // //     name: user?.fullName || user?.userName || user?.name,
-    // //   },
-    // // };
-    // yield put(
-    //   getCommunityByIdSuccessAction({
-    //     communityByIdData: response,
-    //   }),
-    // );
-    // yield put(getCommunitiesRequestAction());
   } catch (error) {
     console.log('cancelFollowingCommunity', error);
     yield put(cancelFollowedCommunityFailAction());
   }
+}
+function* getCommunitiesAndEventsAfterSubscribe() {
+  const userUid = yield select(selectUserUid);
+  const location = yield select(selectCurrentCity);
+  const communities = yield call(getCommunitiesWithMongo, location);
+  const {eventsList} = yield call(getEventsWithMongo);
+
+  const followingCommunities = communities?.filter(
+    (item: {followers: string[]}) =>
+      item?.followers &&
+      item?.followers?.find(user => user?.userUid === userUid),
+  );
+  const maybeEventsIds: string[] = followingCommunities
+    ?.map((community: {eventsIds: string[]}) => community?.eventsIds)
+    ?.flat(1);
+  const requests = maybeEventsIds.map((eventId: string) =>
+    call(getEventById, eventId),
+  );
+  const attendPersonalEvents =
+    eventsList
+      .filter(
+        (event: {attendedPeople: string[]; eventDate: {startDate: Date}}) =>
+          moment(event.eventDate?.startDate).format('YYYY-MM-DD') >=
+            moment(new Date()).format('YYYY-MM-DD') &&
+          event?.attendedPeople?.length > 0 &&
+          event?.attendedPeople?.find(
+            (user: {_id: string}) => user?._id === userUid,
+          ),
+      )
+      .map((item: any) => item) ?? [];
+  const events: string[] = yield all(requests);
+  const data: string[] = yield all(
+    events.map((event: any) =>
+      (function* () {
+        try {
+          const tickets: string[] = yield call(getTickets, event.id);
+          const prices = tickets?.map((ticket: any) => ticket?.price);
+          const minPriceTickets = Math.min(...prices);
+          // const maxPriceTickets = Math.max(...prices)
+          const eventData = {
+            ...event,
+            minPriceTickets:
+              minPriceTickets === Infinity ? null : minPriceTickets,
+          };
+          return eventData;
+        } catch (e) {
+          return console.log('error', e);
+        }
+      })(),
+    ),
+  );
+  const ids = data.concat(attendPersonalEvents).map(({id}) => id);
+  const filtered = data
+    .concat(attendPersonalEvents)
+    .filter(({id}, index) => !ids.includes(id, index + 1));
+  yield put(
+    getPersonalEventsSuccessAction({
+      personalEvents: filtered,
+    }),
+  );
 }
 
 function* getCommunityByIdRequest(action: any) {
@@ -299,14 +305,18 @@ function* removeCommunityRequest(action: any) {
     yield put(removeCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
     yield put(getManagingCommunitiesRequestAction());
-    navigationRef.current?.dispatch(
-      CommonActions.navigate({
-        name: 'CommunitiesMain',
-        params: {
-          removedCommunity: true,
-        },
-      }),
-    );
+    if (action?.payload?.screen === 'Profile') {
+      navigationRef.current?.dispatch(CommonActions.goBack());
+    } else {
+      navigationRef.current?.dispatch(
+        CommonActions.navigate({
+          name: 'CommunitiesMain',
+          params: {
+            removedCommunity: true,
+          },
+        }),
+      );
+    }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     yield put(setLoadingAction({onLoading: false}));
@@ -340,6 +350,17 @@ function* communititesSaga() {
   yield takeLatest(
     COMMUNITIES.START_FOLLOWING_REQUEST,
     startFollowingCommunity,
+  );
+  yield debounce(
+    500,
+    // COMMUNITIES.GET_DATA_SUCCESS,
+    EVENT.GET_MANAGING_EVENTS_SUCCESS,
+    getCommunitiesAndEventsAfterSubscribe,
+  );
+  yield debounce(
+    500,
+    COMMUNITIES.START_FOLLOWING_SUCCESS,
+    getCommunitiesAndEventsAfterSubscribe,
   );
   yield takeLatest(
     COMMUNITIES.CANCEL_FOLLOWING_REQUEST,

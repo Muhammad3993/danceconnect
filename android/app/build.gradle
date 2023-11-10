@@ -139,8 +139,8 @@ android {
         applicationId "com.danceconnect"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0"
+        versionCode 7
+        versionName "4.1"
 //        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         // if (isNewArchitectureEnabled()) {
@@ -213,10 +213,10 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file('release.keystore')
+            storePassword 'danceconnect'
+            keyAlias 'key0'
+            keyPassword 'danceconnect'
         }
         release {
             storeFile file('release.keystore')
@@ -269,7 +269,6 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'  // From node_modules
     // implementation 'com.android.support:appcompat-v7:+'
 //    compile 'com.android.support:appcompat-v7:+'
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
@@ -325,3 +324,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 //     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 // }
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply plugin: 'com.google.gms.google-services'

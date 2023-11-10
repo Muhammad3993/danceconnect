@@ -1,123 +1,75 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
 import moment from 'moment';
-import {Button} from './Button';
-import {MERCHANT_ID, SCREEN_WIDTH} from '../utils/constants';
+import {SCREEN_WIDTH} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import useRegistration from '../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
 import {minWeekDay} from '../utils/helpers';
 import SkeletonEventCard from './skeleton/eventCard-Skeleton';
-import {apiUrl, diablePayEvent, payEvent} from '../api/serverRequests';
-import {
-  BillingDetails,
-  CardField,
-  PlatformPay,
-  PlatformPayButton,
-  StripeProvider,
-  confirmPayment,
-  confirmPlatformPayPayment,
-} from '@stripe/stripe-react-native';
-import socket from '../api/sockets';
-import {Portal} from 'react-native-portalize';
-import {Modalize} from 'react-native-modalize';
+import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 
-type props = {
-  item?: any;
-  isTicket?: boolean;
-  currentTicket?: any;
-};
-const EventCard = ({item, isTicket, currentTicket}: props) => {
+const EventCard = ({item}: any) => {
   const data = item;
-  const [eventData, setEventData] = useState(data);
+  // const [data, setdata] = useState(data);
   const navigation = useNavigation();
-  const openPaymentModal = useRef<Modalize>(null);
-  // const [openPaymentModal, setOpenPaymenModal] = useState(true);
-  const {userUid, saveEmail} = useRegistration();
-  const isPassedEvent = data?.eventDate?.time < new Date().getTime();
-  const {
-    loadingAttend,
-    attendEvent,
-    eventsDataByCommunityId,
-    loadingEvents,
-    eventList,
-    setSocketEvents,
-  } = useEvents();
-  const [crntIndex, setCrntIndex] = useState(null);
-  const index = eventList?.findIndex(
-    (itm: any) => itm?.eventUid === eventData?.id,
-  );
-  const isAdmin = eventData?.creator?.uid === userUid;
-  const isManager = eventData?.managers?.find(i => i === userUid);
+  const {userUid} = useRegistration();
+  const {loadingEvents} = useEvents();
+  const isAdmin = data?.creator?.uid === userUid;
+  const isManager =
+    data?.managers?.length > 0 && data?.managers?.find(i => i === userUid);
 
   const dateEvent = `${String(
-    minWeekDay.weekdaysMin(moment(eventData?.eventDate?.startDate)),
+    minWeekDay.weekdaysMin(moment(data?.eventDate?.startDate)),
   ).toUpperCase()}, ${String(
-    moment(eventData?.eventDate?.startDate).format('MMM Do'),
-  ).toUpperCase()} • ${moment(eventData?.eventDate?.time).format('HH:mm')}`;
+    moment(data?.eventDate?.startDate).format('MMM Do'),
+  ).toUpperCase()} • ${moment(data?.eventDate?.time).format('HH:mm')}`;
 
-  const total = (Number(data?.price) / 100) * 10 + Number(data?.price);
-  const [attendedImgs, setAttendedImgs] = useState(eventData?.userImages);
+  const [attendedImgs, setAttendedImgs] = useState([]);
   const displayedPlaceText =
-    eventData?.place?.length > 16
-      ? eventData?.place?.slice(0, 16) + '...'
-      : eventData?.place;
+    data?.place?.length > 16 ? data?.place?.slice(0, 16) + '...' : data?.place;
 
   const goToEvent = () => {
-    if (isTicket) {
-      navigation.navigate('Ticket', currentTicket);
-    } else {
-      navigation.navigate('EventScreen', {data});
-    }
+    navigation.navigate('EventScreen', {data});
   };
-  const [loadSubscribe, setLoadSubscribe] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
 
-  const [cardDisabled, setCardDisabled] = useState(true);
-  const [paymentError, setPaymentError] = useState('');
-  const [disablePaymentBtn, setDisablePaymentBtn] = useState(false);
-  // console.log('data?.userImages', data?.userImages);
   useEffect(() => {
     setIsFollowed(
-      eventData?.attendedPeople?.find(
+      data?.attendedPeople?.find(
         (i: {userUid: string}) => i.userUid === userUid,
       ),
     );
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  }, [eventData?.attendedPeople, userUid]);
-  useEffect(() => {
-    if (isFollowed) {
-      setLoadSubscribe(false);
-    }
-  }, [isFollowed]);
+    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  }, [data?.attendedPeople, userUid]);
 
-  // useEffect(() => {
-  //   socket.on('subscribed_event', socket_data => {
-  //     if (socket_data?.currentEvent?.id === data?.id) {
-  //       setEventData(socket_data?.currentEvent);
-  //       // setAttendedImgs(socket_data?.userImages);
-  //       setIsFollowed(
-  //         socket_data?.currentEvent?.attendedPeople?.find(
-  //           (i: {userUid: string}) => i.userUid === userUid,
-  //         ),
-  //       );
-  //       // setSocketEvents(socket_data?.events);
-  //     }
-  //   });
-  // }, [data?.id, loadSubscribe]);
+  useEffect(() => {
+    if (data?.userImages?.length > 0) {
+      setAttendedImgs(data?.userImages);
+    }
+  }, [data?.userImages]);
 
   const renderTags = (tags: string[]) => {
     return (
       <RN.View style={styles.tagsContainer}>
-        {tags?.slice(0, 2)?.map(tag => {
-          return (
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Text style={styles.tagsItem}>{tag}</RN.Text>
-            </RN.View>
-          );
-        })}
+        {tags.length <= 1 &&
+          tags?.map(tag => {
+            return (
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.tagsItem}>{tag}</RN.Text>
+              </RN.View>
+            );
+          })}
+        {tags.length >= 2 &&
+          tags?.slice(0, 2)?.map(tag => {
+            return (
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.tagsItem}>{tag}</RN.Text>
+              </RN.View>
+            );
+          })}
         {tags?.length > 3 && (
           <RN.View style={{justifyContent: 'center'}}>
             <RN.View style={styles.tagMoreItemContainer}>
@@ -142,9 +94,10 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
       <RN.View style={{flexDirection: 'row'}}>
         {attendedImgs?.slice(0, 3)?.map((img, idx) => {
           const imgUri =
-            img?.userImage?.length > 0
+            typeof img === 'object'
               ? {uri: apiUrl + img?.userImage}
-              : require('../assets/images/defaultuser.png');
+              : {uri: apiUrl + img};
+          // : require('../assets/images/defaultuser.png');
           return (
             <RN.View
               style={{
@@ -165,163 +118,15 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
       </RN.View>
     );
   };
-  const confirmPaymentByCard = () => {
-    const billingDetails: BillingDetails = {
-      email: saveEmail,
-    };
-    setLoadSubscribe(true);
-    setDisablePaymentBtn(true);
-    socket.connect();
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    // attendEvent(eventData?.id);
-    const amount = Math.floor(total * 100);
-    payEvent(eventData?.id, amount).then(async res => {
-      const {clientSecret} = res;
-      const {paymentIntent, error} = await confirmPayment(clientSecret, {
-        paymentMethodType: 'Card',
-        paymentMethodData: {
-          billingDetails,
-        },
-      });
-      if (error) {
-        console.log('payEvent er', error);
-        diablePayEvent(paymentIntent?.id).then();
-        RN.LayoutAnimation.configureNext(
-          RN.LayoutAnimation.Presets.easeInEaseOut,
-        );
-        setLoadSubscribe(false);
-        setPaymentError(error?.localizedMessage);
-        setDisablePaymentBtn(false);
-      } else {
-        if (paymentIntent?.status === 'Succeeded') {
-          attendEvent(eventData?.id);
-          openPaymentModal.current?.close();
-          setDisablePaymentBtn(false);
-        }
-      }
-      // console.log('res', res);
-    });
-  };
-
-  const onPressApplePayBtn = () => {
-    setLoadSubscribe(true);
-    // socket.connect();
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    const amount = Math.floor(total * 100);
-    payEvent(eventData?.id, amount).then(async res => {
-      const {clientSecret} = res;
-
-      const {error, paymentIntent} = await confirmPlatformPayPayment(
-        clientSecret,
-        {
-          applePay: {
-            cartItems: [
-              {
-                label: eventData?.title,
-                amount: total.toString(),
-                paymentType: PlatformPay.PaymentType.Immediate,
-              },
-              {
-                label: 'Dance Connect',
-                amount: total.toString(),
-                paymentType: PlatformPay.PaymentType.Immediate,
-              },
-            ],
-            merchantCountryCode: 'US',
-            currencyCode: 'USD',
-            requiredBillingContactFields: [
-              PlatformPay.ContactField.EmailAddress,
-            ],
-          },
-        },
-      );
-      if (error) {
-        // console.log('payEvent er', error, paymentIntent);
-        diablePayEvent(res?.id).then();
-        RN.LayoutAnimation.configureNext(
-          RN.LayoutAnimation.Presets.easeInEaseOut,
-        );
-        setLoadSubscribe(false);
-        // handle error
-      } else {
-        if (paymentIntent?.status === 'Succeeded') {
-          attendEvent(eventData?.id);
-          openPaymentModal.current?.close();
-        }
-        setLoadSubscribe(false);
-        // console.log('paymentIntent', paymentIntent);
-      }
-      // console.log('res', res);
-    });
-    // }
-  };
-  const onPressAttend = async (idx: number) => {
-    // navigation.navigate('')
-    navigation.navigate('EventScreen', {data: eventData, pressBtnAttend: true});
-    socket.connect();
-    // setCrntIndex(idx);
-    // setLoadSubscribe(true);
-    // if (Number(eventData?.price) > 0) {
-    //   openPaymentModal.current?.open();
-    // } else {
-    //   attendEvent(eventData?.id);
-    //   setLoadSubscribe(false);
-    // }
-  };
-
-  const onPressTicket = (eventUid: string) => {
-    // getTickets().then(ticketsList => {
-    //   const tickets = Object.values(ticketsList).flat();
-    //   const currentTicket = tickets.find(
-    //     ticket => ticket?.currentTicket?.eventUid === eventUid,
-    //   );
-    //   navigation.navigate('Ticket', currentTicket?.currentTicket);
-    // });
-  };
-  const renderLoading = () => {
-    return (
-      <RN.ActivityIndicator
-        size={'small'}
-        color={colors.orange}
-        animating={loadSubscribe}
-        key={index}
-        style={{marginRight: 20, marginVertical: 7.5}}
-      />
-    );
-  };
-  useMemo(() => {
-    if (!loadSubscribe) {
-      setCrntIndex(null);
-    }
-  }, [loadSubscribe]);
-  useMemo(() => {
-    if (paymentError.length > 0) {
-      setTimeout(() => {
-        setPaymentError('');
-      }, 5000);
-    }
-  }, [paymentError]);
   const renderAttendBtn = () => {
     return (
-      <RN.View style={{}}>
+      <RN.View>
         <RN.View>
-          {loadSubscribe ? (
-            <>{renderLoading()}</>
-          ) : isFollowed ? (
-            <RN.View style={{flexDirection: 'row', paddingTop: 4}}>
-              {/* <RN.View style={{justifyContent: 'center'}}>
-                {!isAdmin && (
-                  <RN.Image
-                    source={{uri: 'tick'}}
-                    style={{height: 12, width: 12}}
-                  />
-                )}
-              </RN.View> */}
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.joinedText}>
-                  {isAdmin || isManager ? 'Managing' : 'Going'}
-                </RN.Text>
-              </RN.View>
+          {isFollowed ? (
+            <RN.View style={{justifyContent: 'center', paddingTop: 4}}>
+              <RN.Text style={styles.joinedText}>
+                {isAdmin || isManager ? 'Managing' : 'Going'}
+              </RN.Text>
             </RN.View>
           ) : null}
         </RN.View>
@@ -332,11 +137,11 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
     return (
       <RN.View style={{flexDirection: 'row'}}>
         <RN.View style={styles.typeEventContainer}>
-          <RN.Text style={styles.typeEventText}>{eventData?.typeEvent}</RN.Text>
+          <RN.Text style={styles.typeEventText}>{data?.typeEvent}</RN.Text>
         </RN.View>
         <RN.View style={styles.priceContainer}>
           <RN.Text style={styles.priceText}>
-            {eventData?.tickets?.length > 0 && data?.minPriceTickets >= 0
+            {data?.tickets?.length > 0 && data?.minPriceTickets >= 0
               ? '$ ' + data?.minPriceTickets
               : 'Free'}
           </RN.Text>
@@ -345,7 +150,6 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
     );
   };
   if (loadingEvents) {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     return (
       <RN.View style={{marginTop: 16}}>
         <SkeletonEventCard />
@@ -361,7 +165,7 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
         <RN.View
           style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <RN.View style={{maxWidth: SCREEN_WIDTH / 1.5}}>
-            {eventData?.typeEvent && type()}
+            {data?.typeEvent && type()}
             <RN.View style={styles.dateEventContainer}>
               <RN.Image
                 source={{uri: 'calendar'}}
@@ -371,19 +175,19 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
             </RN.View>
             <RN.View>
               <RN.Text numberOfLines={2} style={styles.nameEvent}>
-                {eventData?.title}
+                {data?.title}
               </RN.Text>
               <RN.Text numberOfLines={2} style={styles.description}>
-                {eventData?.description}
+                {data?.description}
               </RN.Text>
             </RN.View>
           </RN.View>
           <RN.View>
             <FastImage
               source={
-                eventData?.images?.length > 0
+                data?.images?.length > 0
                   ? {
-                      uri: apiUrl + eventData?.images[0],
+                      uri: apiUrl + data?.images[0],
                       cache: FastImage.cacheControl.immutable,
                       priority: FastImage.priority.high,
                     }
@@ -409,103 +213,18 @@ const EventCard = ({item, isTicket, currentTicket}: props) => {
                   maxWidth: SCREEN_WIDTH / 1.8,
                 }}>
                 <RN.Text numberOfLines={1} style={styles.placeName}>
-                  {eventData?.place}
+                  {data?.place}
                 </RN.Text>
               </RN.View>
             </RN.View>
           )}
-          {eventData?.attendedPeople?.length > 0 &&
-            !isTicket &&
-            renderAttendedImgs()}
+          {data?.attendedPeople?.length > 0 && renderAttendedImgs()}
         </RN.View>
         <RN.View style={styles.footerContainer}>
-          {renderTags(eventData?.categories)}
-          {!isAdmin && loadSubscribe ? renderLoading() : renderAttendBtn()}
+          {renderTags(data?.categories)}
+          {renderAttendBtn()}
         </RN.View>
       </RN.TouchableOpacity>
-      {/* {openPaymentModal &&  (
-          <PaymentScreen onClose={() => setOpenPaymenModal(false)} />
-        )} */}
-      <Portal>
-        <Modalize
-          ref={openPaymentModal}
-          onClosed={() => setLoadSubscribe(false)}
-          handlePosition="inside"
-          modalStyle={styles.paymentModal}
-          disableScrollIfPossible={false}
-          adjustToContentHeight={true}>
-          <RN.View style={{paddingVertical: 14, paddingBottom: 24}}>
-            <RN.View style={{alignItems: 'center', marginTop: 24}}>
-              <PlatformPayButton
-                onPress={onPressApplePayBtn}
-                type={PlatformPay.ButtonType.Continue}
-                appearance={PlatformPay.ButtonStyle.WhiteOutline}
-                borderRadius={8}
-                style={{
-                  width: '90%',
-                  height: 50,
-                }}
-              />
-            </RN.View>
-            <CardField
-              postalCodeEnabled={false}
-              placeholders={{
-                number: '4242 4242 4242 4242',
-              }}
-              cardStyle={{
-                backgroundColor: '#FFFFFF',
-                textColor: '#000000',
-              }}
-              style={{
-                width: '100%',
-                height: 50,
-                marginVertical: 30,
-              }}
-              onCardChange={cardDetails => {
-                // console.log('cardDetails', cardDetails);
-                if (cardDetails?.complete) {
-                  setCardDisabled(false);
-                } else {
-                  setCardDisabled(true);
-                }
-              }}
-              // onFocus={focusedField => {
-              //   console.log('focusField', focusedField);
-              // }}
-            />
-            {paymentError?.length > 0 && (
-              <RN.Text
-                style={{
-                  textAlign: 'center',
-                  color: colors.redError,
-                  marginTop: -10,
-                }}>
-                {paymentError}
-              </RN.Text>
-            )}
-            {disablePaymentBtn ? (
-              <>{renderLoading()}</>
-            ) : (
-              <Button
-                title={`Confirm pay ${total} $`}
-                disabled={!cardDisabled}
-                onPress={confirmPaymentByCard}
-              />
-            )}
-          </RN.View>
-        </Modalize>
-      </Portal>
-      {/* <Portal>
-        <Modalize
-          withHandle={false}
-          // adjustToContentHeight
-          closeOnOverlayTap={false}
-          panGestureEnabled={false}
-          modalStyle={{flex: 1}}
-          ref={openPaymentModal}>
-          <PaymentScreen onClose={() => openPaymentModal?.current?.close()} />
-        </Modalize>
-      </Portal> */}
     </>
   );
 };
@@ -516,7 +235,7 @@ const styles = RN.StyleSheet.create({
   container: {
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    marginTop: 16,
+    marginVertical: 8,
     marginHorizontal: 10,
     padding: 11,
     paddingBottom: 8,

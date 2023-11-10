@@ -176,6 +176,9 @@ const RegistraionScreen = (): JSX.Element => {
             </RN.View> */}
             <RN.View style={styles.btnsWrapper}>
               {btns?.map(btn => {
+                if (!btn?.isAvailable) {
+                  return null;
+                }
                 return (
                   <AuthButton
                     icon={btn.icon}

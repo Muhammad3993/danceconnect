@@ -35,22 +35,15 @@ const CommunityScreen = ({route}) => {
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
   const isAdmin = communityData?.creator?.uid === userUid;
 
-  const {getEventByIdCommunity, loadingEvents} = useEvents();
-  const TABS = ['Upcoming Events', !isAdmin && 'Attending', 'Passed'];
-  const [currentTab, setCurrentTab] = useState<string | boolean>(TABS[0]);
   const [loadSubscribe, setLoadSubscribe] = useState(false);
-  const isManager = communityData?.managers?.find(i => i === userUid);
+  const isManager =
+    communityData?.managers?.length > 0 &&
+    communityData?.managers?.find(i => i === userUid);
 
   useEffect(() => {
     getCommunity();
   }, []);
-  // console.log('com', routeProps.params, linkId);
-  useEffect(() => {
-    // getCommunity();
-    if (communityData !== null) {
-      getEventByIdCommunity(communityData?.eventsIds);
-    }
-  }, [communityData]);
+
   useEffect(() => {
     if (isSaveChanges) {
       getCommunity();
@@ -61,24 +54,25 @@ const CommunityScreen = ({route}) => {
 
   useEffect(() => {
     if (communityData !== null) {
-      setAttendedImgs(communityData?.userImages);
+      setAttendedImgs(communityData?.followers);
     }
-  }, [communityData, communityData?.userImages]);
+  }, [communityData, communityData?.followers]);
 
   useEffect(() => {
     setIsJoined(
       communityData?.followers?.find(
-        (user: {userUid: any}) => user?.userUid === userUid,
+        (user: {_id: any}) => user?._id === userUid,
       ),
     );
   }, [communityData?.followers, userUid]);
   useEffect(() => {
     socket.on('subscribed', socket_data => {
+      // console.log('socket_data?.currentCommunity', socket_data);
       if (socket_data?.currentCommunity?.id === communityId) {
         setIsJoined(
-          socket_data?.currentCommunity?.followers
-            ?.map(u => u)
-            .some(user => user.userUid === userUid),
+          socket_data?.currentCommunity?.followers.find(
+            (user: {userUid: any}) => user?.userUid === userUid,
+          ),
         );
         // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
         setAttendedImgs(socket_data?.userImages);
@@ -102,7 +96,7 @@ const CommunityScreen = ({route}) => {
   };
   const onPressRemove = async () => {
     setUnFollowOpen(v => !v);
-    remove();
+    remove(isProfileScreen ? 'Profile' : 'Community');
     // navigation.navigate('CommunitiesMain', {removedCommunity: true});
   };
   const onPressRemoveCommunity = () => {
@@ -155,9 +149,9 @@ const CommunityScreen = ({route}) => {
           horizontal
           style={styles.scrollTags}
           showsHorizontalScrollIndicator={false}>
-          {communityData?.categories?.map((item: string) => {
+          {communityData?.categories?.map((item: string, idx: number) => {
             return (
-              <RN.View style={styles.tagItem}>
+              <RN.View style={styles.tagItem} key={idx}>
                 <RN.Text style={{color: colors.white}}>{item}</RN.Text>
               </RN.View>
             );
@@ -333,46 +327,6 @@ const CommunityScreen = ({route}) => {
     );
   };
 
-  const onPressTab = (value: string | boolean) => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    setCurrentTab(value);
-  };
-  const renderTabs = () => {
-    return (
-      <RN.ScrollView
-        style={styles.tabsWrapper}
-        horizontal
-        showsHorizontalScrollIndicator={false}>
-        {TABS.map((item: string | boolean, index: number) => {
-          return (
-            <RN.TouchableOpacity
-              onPress={() => onPressTab(item)}
-              key={index}
-              style={[
-                styles.itemTabContainer,
-                {
-                  borderBottomWidth: currentTab === item ? 3 : 0,
-                  marginBottom: -1,
-                  paddingHorizontal: 16,
-                  paddingBottom: 8,
-                },
-              ]}>
-              <RN.Text
-                style={[
-                  styles.itemTabText,
-                  {
-                    color:
-                      currentTab === item ? colors.purple : colors.darkGray,
-                  },
-                ]}>
-                {item}
-              </RN.Text>
-            </RN.TouchableOpacity>
-          );
-        })}
-      </RN.ScrollView>
-    );
-  };
   const renderLoading = () => {
     return <RN.ActivityIndicator size={'small'} color={colors.orange} />;
   };
@@ -387,8 +341,16 @@ const CommunityScreen = ({route}) => {
       attendedImgs?.length > 6
         ? `+${attendedImgs?.length - 6} joined`
         : 'joined';
+    const onPressAttended = () => {
+      navigation.navigate('AttendedPeople', {
+        usersArray: attendedImgs,
+        header: 'Community Members',
+      });
+    };
     return (
-      <RN.View
+      <RN.TouchableOpacity
+        onPress={onPressAttended}
+        activeOpacity={0.7}
         style={{
           flexDirection: 'row',
           marginHorizontal: 24,
@@ -397,6 +359,7 @@ const CommunityScreen = ({route}) => {
         {attendedImgs?.slice(0, 6)?.map((img, idx) => {
           return (
             <RN.View
+              key={idx}
               style={{
                 marginLeft: idx !== 0 ? -12 : 0,
                 zIndex: idx !== 0 ? idx : -idx,
@@ -423,7 +386,7 @@ const CommunityScreen = ({route}) => {
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Text style={styles.attendPeopleText}>{countPeople}</RN.Text>
         </RN.View>
-      </RN.View>
+      </RN.TouchableOpacity>
     );
   };
   const renderMapInfoOrganizer = () => {
@@ -552,13 +515,12 @@ const CommunityScreen = ({route}) => {
             />
           </RN.View>
         )}
-        {renderTabs()}
-        {loadingEvents && renderLoading()}
-        <CommunityEvents
-          currentTab={currentTab}
-          communityUid={communityId}
-          isAdmin={isAdmin}
-        />
+        {!loadingById && (
+          <CommunityEvents
+            isAdmin={isAdmin}
+            eventsIds={communityData?.eventsIds}
+          />
+        )}
       </RN.ScrollView>
       <Portal>
         <Modalize

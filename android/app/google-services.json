@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "510785169210-75hq61ss5u34n39j87pgumg9rk4qcl5r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.danceconnect",
+            "certificate_hash": "497446112967a89466e9c782455997c4887de5e3"
+          }
+        },
+        {
+          "client_id": "510785169210-bs4bp846jgjibsjsq4o88ck9vt1a9hns.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.danceconnect",
+            "certificate_hash": "eac955c82893d0fdd0849d985527aef901947e48"
+          }
+        },
+        {
           "client_id": "510785169210-nuvgcms1kiglc2vqe2stgpub06le22q7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
