@@ -3,15 +3,49 @@ import * as RN from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 import {AuthStackNavigationParamList} from '../../navigation/types';
-import {authButtons} from '../../utils/btnsConstans';
+// import {authButtons} from '../../utils/btnsConstans';
 import AuthButton from '../../components/authBtn';
 import colors from '../../utils/colors';
 import useRegistration from '../../hooks/useRegistration';
-import {SCREEN_HEIGHT} from '../../utils/constants';
+import {SCREEN_HEIGHT, isAndroid} from '../../utils/constants';
 import useAppStateHook from '../../hooks/useAppState';
+import {useTranslation} from 'react-i18next';
+import {onAppleButtonPress} from '../../api/authSocial';
 
 const WeclomeScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
+  const {t} = useTranslation();
+  const authButtons = [
+    {
+      key: 0,
+      title: t('auth_btn_goolge'),
+      icon: 'google',
+      isAvailable: true,
+    },
+    {
+      key: 1,
+      title: t('auth_btn_apple'),
+      icon: 'apple',
+      onPress: () => onAppleButtonPress(),
+      isAvailable: !isAndroid,
+    },
+    // {
+    //   key: 2,
+    //   title: 'Continue with Facebook',
+    //   icon: 'facebook',
+    //   isAvailable: false,
+    //   // onPress: () => onFacebookButtonPress(),
+    // },
+    {
+      key: 2,
+      title: t('auth_btn_email'),
+      // title: 'Sign up with Email',
+      icon: 'mail',
+      navigateTo: 'REGISTRATION',
+      isAvailable: true,
+    },
+  ];
+
   const btns = authButtons.slice(0, 2);
   const lastBtn = authButtons[authButtons.length - 1];
   const {
@@ -19,7 +53,7 @@ const WeclomeScreen = (): JSX.Element => {
     userUid,
     isUserExists,
     authorizationWithApple,
-    saveEmail
+    saveEmail,
   } = useRegistration();
   const {setLoading, getDanceStyles} = useAppStateHook();
   useEffect(() => {
@@ -29,6 +63,10 @@ const WeclomeScreen = (): JSX.Element => {
   const onPressLogin = () => {
     navigation.navigate('AUTH');
   };
+
+  const onPressChangeLG = () => {
+    navigation.navigate('LANGUAGE');
+  };
   useEffect(() => {
     if (userUid && !isUserExists) {
       navigation.navigate('ONBOARDING', {email: saveEmail, password: userUid});
@@ -36,7 +74,7 @@ const WeclomeScreen = (): JSX.Element => {
     if (isUserExists) {
       navigation.navigate('HOME');
     }
-    console.log('isUserExists', isUserExists, userUid);
+    // console.log('isUserExists', isUserExists, userUid);
   }, [userUid, navigation, isUserExists]);
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
@@ -56,7 +94,7 @@ const WeclomeScreen = (): JSX.Element => {
             source={require('../../assets/images/logoauth.png')}
             style={styles.logo}
           />
-          <RN.Text style={styles.welcome}>Where dance meets community</RN.Text>
+          <RN.Text style={styles.welcome}>{t('welcome_text')}</RN.Text>
           {btns?.map(btn => {
             return (
               <AuthButton
@@ -70,7 +108,7 @@ const WeclomeScreen = (): JSX.Element => {
           })}
           <RN.View style={styles.linesWrapper}>
             <RN.View style={styles.line} />
-            <RN.Text style={styles.or}>or</RN.Text>
+            <RN.Text style={styles.or}>{t('or')}</RN.Text>
             <RN.View style={styles.line} />
           </RN.View>
           <RN.View style={{paddingTop: 24}}>
@@ -85,29 +123,34 @@ const WeclomeScreen = (): JSX.Element => {
               onPress={() =>
                 RN.Linking.openURL('https://danceconnect.online/privacy.html')
               }>
-              Privacy Policy
+              {t('privacy')}
             </RN.Text>
           </RN.View>
         </RN.View>
         <RN.View style={styles.bottomWrapper}>
-          <RN.Text style={styles.alreadyAccountText}>
-            Already have an account?
-          </RN.Text>
+          <RN.Text style={styles.alreadyAccountText}>{t('already')}</RN.Text>
           <RN.TouchableOpacity onPress={onPressLogin}>
-            <RN.Text style={styles.logInText}>Log in</RN.Text>
+            <RN.Text style={styles.logInText}>{t('login')}</RN.Text>
           </RN.TouchableOpacity>
         </RN.View>
+{/* 
+        <RN.View style={styles.bottomWrapperLg}>
+          <RN.Text style={styles.alreadyAccountText}>{t('language')}</RN.Text>
+          <RN.TouchableOpacity onPress={onPressChangeLG}>
+            <RN.Text style={styles.logInText}>{t('languageName')}</RN.Text>
+          </RN.TouchableOpacity>
+        </RN.View> */}
 
         <RN.View style={{paddingHorizontal: 20}}>
           <RN.Text style={styles.licenceText}>
-            By registering in the application, you agree to the
+            {t('terms_first')}
             <RN.Text
               style={styles.licenceTextOrange}
               onPress={() =>
                 RN.Linking.openURL('https://danceconnect.online/terms.html')
               }>
               {' '}
-              terms and conditions
+              {t('terms_second')}
             </RN.Text>
           </RN.Text>
         </RN.View>
@@ -190,6 +233,12 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     paddingTop: 100,
+    paddingBottom: 20,
+  },
+  bottomWrapperLg: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    // paddingTop: 100,
     paddingBottom: 40,
   },
   alreadyAccountText: {

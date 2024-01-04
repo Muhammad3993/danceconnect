@@ -10,11 +10,13 @@ import {minWeekDay} from '../utils/helpers';
 import SkeletonEventCard from './skeleton/eventCard-Skeleton';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
+import {useTranslation} from 'react-i18next';
 
 const EventCard = ({item}: any) => {
   const data = item;
   // const [data, setdata] = useState(data);
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const {userUid} = useRegistration();
   const {loadingEvents} = useEvents();
   const isAdmin = data?.creator?.uid === userUid;
@@ -86,32 +88,38 @@ const EventCard = ({item}: any) => {
   const renderAttendedImgs = () => {
     const countPeople =
       attendedImgs?.length > 3
-        ? `+${attendedImgs?.length - 3} going`
+        ? `+${attendedImgs?.length - 3}` + t('going')
         : attendedImgs?.length
-        ? 'going'
+        ? t('going')
         : '';
     return (
       <RN.View style={{flexDirection: 'row'}}>
-        {attendedImgs?.slice(0, 3)?.map((img, idx) => {
-          const imgUri =
-            typeof img === 'object'
-              ? {uri: apiUrl + img?.userImage}
-              : {uri: apiUrl + img};
-          // : require('../assets/images/defaultuser.png');
-          return (
-            <RN.View
-              style={{
-                marginLeft: idx !== 0 ? -8 : 0,
-                zIndex: idx !== 0 ? -idx : idx,
-              }}>
-              <RN.Image
-                source={imgUri}
-                style={styles.attendPeopleImg}
-                defaultSource={require('../assets/images/defaultuser.png')}
-              />
-            </RN.View>
-          );
-        })}
+        {attendedImgs
+          ?.slice(0, 3)
+          ?.map((img: {userImage: string} | any, idx) => {
+            let imgUri =
+              typeof img === 'object'
+                ? {uri: apiUrl + img?.userImage}
+                : {uri: apiUrl + img};
+
+            if (img?.userImage === null || img === null) {
+              // console.log(imgUri);
+              imgUri = require('../assets/images/defaultuser.png');
+            }
+            return (
+              <RN.View
+                style={{
+                  marginLeft: idx !== 0 ? -8 : 0,
+                  zIndex: idx !== 0 ? -idx : idx,
+                }}>
+                <RN.Image
+                  source={imgUri}
+                  style={styles.attendPeopleImg}
+                  defaultSource={require('../assets/images/defaultuser.png')}
+                />
+              </RN.View>
+            );
+          })}
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Text style={styles.attendPeopleText}>{countPeople}</RN.Text>
         </RN.View>
@@ -125,7 +133,7 @@ const EventCard = ({item}: any) => {
           {isFollowed ? (
             <RN.View style={{justifyContent: 'center', paddingTop: 4}}>
               <RN.Text style={styles.joinedText}>
-                {isAdmin || isManager ? 'Managing' : 'Going'}
+                {isAdmin || isManager ? t('managing') : t('going')}
               </RN.Text>
             </RN.View>
           ) : null}

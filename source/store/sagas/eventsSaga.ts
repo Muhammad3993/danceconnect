@@ -50,6 +50,7 @@ import {
   unSubscribeEvent,
   updateEventById,
   subscribeEvent,
+  getEventsWithMongoByArray,
 } from '../../api/serverRequests';
 import {
   setLoadingAction,
@@ -58,41 +59,77 @@ import {
 } from '../actions/appStateActions';
 import {selectUserUid} from '../selectors/registrationSelector';
 import socket from '../../api/sockets';
-import {selectCurrentCity} from '../selectors/appStateSelector';
+import {selectCurrentCity, selectRegions} from '../selectors/appStateSelector';
 import {selectEventById, selectEventList} from '../selectors/eventsSelector';
-import moment from 'moment';
+import moment, {min} from 'moment';
 
 function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
   const {limit, offset} = action.payload;
   try {
-    const {eventsList} = yield call(getEventsWithMongo);
-
-    // console.log('getEventsRequest', eventsList);
-    const data: string[] = yield all(
-      eventsList.map((event: any) =>
-        (function* () {
-          const tickets: string[] = yield call(getTickets, event.id);
-          try {
-            const prices = tickets?.map((ticket: any) => ticket?.price);
-            const minPriceTickets = Math.min(...prices);
-            const maxPriceTickets = Math.max(...prices);
-            const eventData = {
-              ...event,
-              minPriceTickets:
-                minPriceTickets === Infinity
-                  ? maxPriceTickets > 0
-                    ? 0
-                    : null
-                  : minPriceTickets,
-            };
-            return eventData;
-          } catch (e) {
-            return console.log('error', e);
-          }
-        })(),
-      ),
+    const location = yield select(selectCurrentCity);
+    const regions = yield select(selectRegions);
+    const isRegionCountries = regions.find(
+      (i: {name: string}) => i.name === location,
     );
-    yield put(getEventsSuccessAction({eventsList: data}));
+    if (isRegionCountries) {
+      const {eventsList} = yield call(
+        getEventsWithMongoByArray,
+        isRegionCountries?.countries,
+      );
+      const data: string[] = yield all(
+        eventsList.map((event: any) =>
+          (function* () {
+            const tickets: string[] = yield call(getTickets, event.id);
+            try {
+              const prices = tickets?.map((ticket: any) => ticket?.price);
+              const minPriceTickets = Math.min(...prices);
+              const maxPriceTickets = Math.max(...prices);
+              const eventData = {
+                ...event,
+                minPriceTickets:
+                  minPriceTickets === Infinity
+                    ? maxPriceTickets > 0
+                      ? 0
+                      : null
+                    : minPriceTickets,
+              };
+              return eventData;
+            } catch (e) {
+              return console.log('error', e);
+            }
+          })(),
+        ),
+      );
+      yield put(getEventsSuccessAction({eventsList: data}));
+    } else {
+      const {eventsList} = yield call(getEventsWithMongoByArray, [location]);
+      const data: string[] = yield all(
+        eventsList.map((event: any) =>
+          (function* () {
+            const tickets: string[] = yield call(getTickets, event.id);
+            try {
+              const prices = tickets?.map((ticket: any) => ticket?.price);
+              const minPriceTickets = Math.min(...prices);
+              const maxPriceTickets = Math.max(...prices);
+              const eventData = {
+                ...event,
+                minPriceTickets:
+                  minPriceTickets === Infinity
+                    ? maxPriceTickets > 0
+                      ? 0
+                      : null
+                    : minPriceTickets,
+              };
+              return eventData;
+            } catch (e) {
+              return console.log('error', e);
+            }
+          })(),
+        ),
+      );
+      yield put(getEventsSuccessAction({eventsList: data}));
+    }
+
     // console.log('userImages', data);
   } catch (error: any) {
     console.log('er', error);
@@ -242,6 +279,8 @@ function* createEventRequest(action: any) {
     communityUid,
     price,
     type,
+    inAppTickets,
+    externalLink,
   } = action?.payload;
   try {
     const data = {
@@ -258,10 +297,12 @@ function* createEventRequest(action: any) {
       communityUid: communityUid,
       price: price,
       type: type,
+      inAppTickets: inAppTickets,
+      link: externalLink,
     };
     yield put(setLoadingAction({onLoading: true}));
     const response = yield call(createEventWithMongo, data);
-    console.log('createEventRequest', response);
+    console.log('createEventRequest', response, data);
     if (!response) {
       yield put(setNoticeVisible({isVisible: true}));
       yield put(
@@ -308,6 +349,8 @@ function* changeInformation(action: any) {
     typeEvent,
     eventUid,
     type,
+    inAppTickets,
+    externalLink,
   } = action.payload;
   try {
     const data = {
@@ -321,6 +364,8 @@ function* changeInformation(action: any) {
       place: place,
       typeEvent: typeEvent,
       type: type,
+      inAppTickets: inAppTickets,
+      link: externalLink,
     };
     // console.log('updateEventById', eventUid);
     yield put(setLoadingAction({onLoading: true}));
@@ -461,17 +506,15 @@ function* getPersonalEvents() {
     const userUid = yield select(selectUserUid);
     const {eventsList} = yield call(getEventsWithMongo);
     const personalEvents =
-      eventsList
-        .filter(
-          (event: {attendedPeople: string[]; eventDate: {startDate: Date}}) =>
-            moment(event.eventDate?.startDate).format('YYYY-MM-DD') >=
-              moment(new Date()).format('YYYY-MM-DD') &&
-            event?.attendedPeople?.length > 0 &&
-            event?.attendedPeople?.find(
-              (user: {userUid: string}) => user?.userUid === userUid,
-            ),
-        )
-        .map((item: any) => item) ?? [];
+      eventsList.filter(
+        (event: {attendedPeople: string[]; eventDate: {endDate: Date}}) =>
+          moment(event.eventDate?.endDate).format('YYYY-MM-DD') >=
+            moment(new Date()).format('YYYY-MM-DD') &&
+          event?.attendedPeople?.length > 0 &&
+          event?.attendedPeople?.find(
+            (user: {_id: string}) => user?._id === userUid,
+          ),
+      ) ?? [];
     const data: string[] = yield all(
       personalEvents.map((event: any) =>
         (function* () {
@@ -508,6 +551,7 @@ function* eventSaga() {
   yield takeLatest(EVENT.GET_EVENT_BY_COMMUNITY_REQUEST, getEventForCommunity);
   yield takeLatest(EVENT.START_ATTEND_EVENT_REQUEST, attendEvent);
   yield debounce(100, EVENT.START_ATTEND_EVENT_SUCCESS, getEventAfterSubscribe);
+  yield debounce(500, EVENT.START_ATTEND_EVENT_SUCCESS, getPersonalEvents);
   // yield takeLatest(EVENT.START_ATTEND_EVENT_SUCCESS, getEventAfterSubscribe);
   yield takeLatest(EVENT.END_ATTEND_EVENT_REQUEST, unAttendEvent);
   yield takeLatest(EVENT.CHANGE_INFORMATION_EVENT_REQUEST, changeInformation);

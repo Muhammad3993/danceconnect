@@ -9,6 +9,7 @@ import moment from 'moment';
 import BottomCalendarForEvents from './bottomCalendarForEvents';
 import {Portal} from 'react-native-portalize';
 import useAppStateHook from '../hooks/useAppState';
+import {useTranslation} from 'react-i18next';
 
 type props = {
   onClose: () => void;
@@ -46,6 +47,7 @@ const FiltersBottomForEvents = ({
   const danceStyleModalizeRef = useRef<Modalize>(null);
   const dateModalizeRef = useRef<Modalize>(null);
   const {eventTypes} = useAppStateHook();
+  const {t} = useTranslation();
 
   const typesEventData = ['All', ...eventTypes];
   const [choosedType, setChoosedType] = useState(eventType ?? 'All');
@@ -125,7 +127,7 @@ const FiltersBottomForEvents = ({
           paddingTop: 35,
         }}>
         <RN.View style={{alignSelf: 'center'}}>
-          <RN.Text style={styles.filtersText}>Filters</RN.Text>
+          <RN.Text style={styles.filtersText}>{t('filters')}</RN.Text>
         </RN.View>
         <RN.TouchableOpacity
           style={{alignSelf: 'flex-end', marginTop: -25}}
@@ -139,13 +141,13 @@ const FiltersBottomForEvents = ({
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title="Clear All"
+          title={t('clear')}
           disabled
           buttonStyle={styles.clearBtn}
           onPress={onPressClear}
         />
         <Button
-          title="Show Results"
+          title={t('results')}
           disabled
           buttonStyle={styles.createBtn}
           onPress={onPressFilter}
@@ -211,7 +213,7 @@ const FiltersBottomForEvents = ({
                 style={{height: 20, width: 24}}
               />
             </RN.TouchableOpacity>
-            <RN.Text style={styles.selectorTitle}>Dance styles</RN.Text>
+            <RN.Text style={styles.selectorTitle}>{t('dance_styles')}</RN.Text>
             <RN.TouchableOpacity onPress={onCancel}>
               <RN.Image
                 source={{uri: 'close'}}
@@ -230,7 +232,7 @@ const FiltersBottomForEvents = ({
       return (
         <RN.View style={{paddingBottom: 14}}>
           <Button
-            title="Apply"
+            title={t('apply')}
             onPress={onPressBack}
             disabled={selectedStyles?.length}
           />
@@ -297,7 +299,7 @@ const FiltersBottomForEvents = ({
       setStartDate(null);
       setEndDate(null);
     }
-    console.log('useEffect', startDate, endDate, endDate?.end);
+    // console.log('useEffect', startDate, endDate, endDate?.end);
   }, [startDate, endDate]);
 
   const renderCalendar = () => {
@@ -320,7 +322,7 @@ const FiltersBottomForEvents = ({
             padding: 25,
           }}>
           <RN.View style={{alignSelf: 'center', marginBottom: -24}}>
-            <RN.Text style={styles.filtersText}>Date</RN.Text>
+            <RN.Text style={styles.filtersText}>{t('date')}</RN.Text>
           </RN.View>
           <RN.TouchableOpacity
             style={{alignSelf: 'flex-end', marginBottom: 24}}
@@ -405,7 +407,7 @@ const FiltersBottomForEvents = ({
             <RN.View style={styles.selectorContainer}>
               <RN.View>
                 <RN.Text style={[styles.selectorTitle, {marginBottom: -8}]}>
-                  Event type
+                  {t('ev_type')}
                 </RN.Text>
               </RN.View>
             </RN.View>
@@ -415,7 +417,7 @@ const FiltersBottomForEvents = ({
               style={styles.selectorContainer}
               onPress={() => dateModalizeRef?.current?.open()}>
               <RN.View>
-                <RN.Text style={styles.selectorTitle}>Date</RN.Text>
+                <RN.Text style={styles.selectorTitle}>{t('date')}</RN.Text>
                 {startDate !== null && startDate?.start !== null && (
                   <RN.TouchableOpacity
                     style={styles.selectedDateWrapper}
@@ -459,7 +461,9 @@ const FiltersBottomForEvents = ({
               style={styles.selectorContainer}
               onPress={() => danceStyleModalizeRef?.current?.open()}>
               <RN.View>
-                <RN.Text style={styles.selectorTitle}>Dance Style</RN.Text>
+                <RN.Text style={styles.selectorTitle}>
+                  {t('dance_styles')}
+                </RN.Text>
                 <RN.View style={{marginTop: selectedStyles?.length && -16}}>
                   {renderSelectedDanceStyle()}
                 </RN.View>

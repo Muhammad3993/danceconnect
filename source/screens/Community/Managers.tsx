@@ -12,8 +12,11 @@ import {
   deleteManagerToCommunity,
   getManagersForCommunityUid,
 } from '../../api/serverRequests';
+import {useTranslation} from 'react-i18next';
+
 const Managers = () => {
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const props = useRoute();
   const communityUid = props?.params.id;
   const [email, setEmail] = useState('');
@@ -74,7 +77,7 @@ const Managers = () => {
     return (
       <RN.TouchableOpacity onPress={onBack} style={styles.headerContainer}>
         <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
-        <RN.Text style={styles.backTitle}>Managers</RN.Text>
+        <RN.Text style={styles.backTitle}>{t('managers')}</RN.Text>
       </RN.TouchableOpacity>
     );
   };
@@ -82,7 +85,7 @@ const Managers = () => {
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title="Save"
+          title={t('save_changes')}
           disabled
           buttonStyle={styles.createBtn}
           onPress={confirmBtn}
@@ -141,7 +144,9 @@ const Managers = () => {
                 <RN.TouchableOpacity
                   onPress={() => onPressRemoveManager(i.email)}
                   style={styles.memberDeleteBtn}>
-                  <RN.Text style={styles.memberDeleteText}>remove</RN.Text>
+                  <RN.Text style={styles.memberDeleteText}>
+                    {t('remove_manager')}
+                  </RN.Text>
                 </RN.TouchableOpacity>
               </RN.View>
             );

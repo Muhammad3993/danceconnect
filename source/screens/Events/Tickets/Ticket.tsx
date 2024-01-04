@@ -4,10 +4,12 @@ import colors from '../../../utils/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {statusBarHeight} from '../../../utils/constants';
 import moment from 'moment';
+import {useTranslation} from 'react-i18next';
 // import {getTicketById} from '../../api/serverRequests';
 
 const TicketScreen = () => {
   const routeProps = useRoute();
+  const {t} = useTranslation();
   const {event, user, name, eventOrganizer} = routeProps.params;
   console.log('ticket', routeProps.params);
   const navigation = useNavigation();
@@ -33,9 +35,9 @@ const TicketScreen = () => {
         {tickets.map((item: any) => {
           return (
             <RN.View style={styles.eventContainer}>
-              <RN.Text style={styles.smallText}>Event</RN.Text>
+              <RN.Text style={styles.smallText}>{t('event')}</RN.Text>
               <RN.Text style={styles.meduimText}>{event?.title}</RN.Text>
-              <RN.Text style={styles.smallText}>Date and Hour</RN.Text>
+              <RN.Text style={styles.smallText}>{t('date_time')}</RN.Text>
               <RN.Text style={styles.meduimText}>
                 {`${moment(event?.eventDate?.startDate).format(
                   'dddd',
@@ -45,9 +47,11 @@ const TicketScreen = () => {
                     : ''
                 } • ${moment(event?.eventDate?.time).format('HH:mm')}`}
               </RN.Text>
-              <RN.Text style={styles.smallText}>Event Location</RN.Text>
+              <RN.Text style={styles.smallText}>{t('ev_location')}</RN.Text>
               <RN.Text style={styles.meduimText}>{event?.place}</RN.Text>
-              <RN.Text style={styles.smallText}>Event Organizer</RN.Text>
+              <RN.Text style={styles.smallText}>
+                {t('event') + t('organizator')}
+              </RN.Text>
               <RN.Text style={styles.meduimText}>
                 {eventOrganizer?.userName}
               </RN.Text>

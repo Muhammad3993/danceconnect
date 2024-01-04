@@ -3,6 +3,8 @@ import * as RN from 'react-native';
 import {getLogoImg} from '../../utils';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../utils/colors';
+import i18n from '../i18n/i118n';
+import {Trans} from 'react-i18next';
 
 type authType = {
   title?: string;
@@ -47,14 +49,16 @@ const AuthButton = ({
     return null;
   }
   return (
-    <RN.TouchableOpacity
-      activeOpacity={0.7}
-      disabled={!isAvailable || disabled}
-      onPress={onPressBtn}
-      style={[styles.wrapper, isAvailableBtnStyle]}>
-      <RN.Image source={getLogoImg(icon)} style={styles.logotype} />
-      <RN.Text style={styles.title}>{title}</RN.Text>
-    </RN.TouchableOpacity>
+    <Trans i18n={i18n} i18nKey={title}>
+      <RN.TouchableOpacity
+        activeOpacity={0.7}
+        disabled={!isAvailable || disabled}
+        onPress={onPressBtn}
+        style={[styles.wrapper, isAvailableBtnStyle]}>
+        <RN.Image source={getLogoImg(icon)} style={styles.logotype} />
+        <RN.Text style={styles.title}>{i18n.t(title)}</RN.Text>
+      </RN.TouchableOpacity>
+    </Trans>
   );
 };
 

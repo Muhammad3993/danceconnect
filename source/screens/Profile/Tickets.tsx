@@ -2,18 +2,15 @@ import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {
-  SCREEN_HEIGHT,
-  SCREEN_WIDTH,
-  isAndroid,
-  statusBarHeight,
-} from '../../utils/constants';
+import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
 import useTickets from '../../hooks/useTickets';
 import QuantityTicketValue from '../../components/quantityTicket';
 import {getTicketByEventUid} from '../../api/serverRequests';
 import moment from 'moment';
+import {useTranslation} from 'react-i18next';
 
 const TicketsScreen = () => {
+  const {t} = useTranslation();
   const [loading, setLoading] = useState(false);
   const routeProps = useRoute();
   const eventUid = routeProps?.params?.eventUid;
@@ -51,7 +48,7 @@ const TicketsScreen = () => {
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.View>
-        <RN.Text style={styles.headerTitle}>My Tickets</RN.Text>
+        <RN.Text style={styles.headerTitle}>{t('my_tickets')}</RN.Text>
       </RN.TouchableOpacity>
     );
   };
@@ -111,7 +108,7 @@ const TicketsScreen = () => {
     return (
       <RN.View style={styles.emptyContainer}>
         {!loading && (
-          <RN.Text style={styles.emptyText}>There are no tickets yet</RN.Text>
+          <RN.Text style={styles.emptyText}>{t('no_tickets')}</RN.Text>
         )}
       </RN.View>
     );

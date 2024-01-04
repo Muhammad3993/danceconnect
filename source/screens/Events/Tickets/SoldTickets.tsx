@@ -8,9 +8,11 @@ import {
   isAndroid,
   statusBarHeight,
 } from '../../../utils/constants';
+import {useTranslation} from 'react-i18next';
 
 const SoldTickets = () => {
   const routeProps = useRoute();
+  const {t} = useTranslation();
   const eventUid = routeProps?.params?.eventUid;
   const [tickets, setTickets] = useState([]);
   const [loadTickets, setLoadTickets] = useState(false);
@@ -36,7 +38,7 @@ const SoldTickets = () => {
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.View>
-        <RN.Text style={styles.headerTitle}>Sold Tickets</RN.Text>
+        <RN.Text style={styles.headerTitle}>{t('sold_tickets_title')}</RN.Text>
       </RN.TouchableOpacity>
     );
   };
@@ -107,7 +109,7 @@ const SoldTickets = () => {
               styles.emptyText,
               {fontWeight: '400', fontSize: 16, marginHorizontal: 24},
             ]}>
-            Payouts will be made within 5 business days after event ends
+            {t('payouts_info')}
           </RN.Text>
         </RN.View>
       </RN.ScrollView>

@@ -1,5 +1,6 @@
 import moment from 'moment';
-import { Platform, Share } from 'react-native';
+import {Platform, Share} from 'react-native';
+import i18n from '../i18n/i118n';
 export const validateEmail = (email: string) => {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))?/;
@@ -79,13 +80,13 @@ export const setErrors = (valueError: string) => {
 
 export const getIcon = (name: string, isFocused: boolean) => {
   switch (name) {
-    case 'Home':
+    case 'home_tab':
       return isFocused ? 'homefull' : 'homeoutline';
-    case 'Communities':
+    case 'communities_tab':
       return isFocused ? 'comfull' : 'comoutline';
-    case 'Events':
+    case 'events_tab':
       return isFocused ? 'ticketfull' : 'ticketoutline';
-    case 'Profile':
+    case 'profile_tab':
       return isFocused ? 'profilefull' : 'profileoutline';
     default:
       break;
@@ -98,3 +99,9 @@ export const getIcon = (name: string, isFocused: boolean) => {
 //   });
 //   return formatString.format(Number(value));
 // };
+
+export const isValidUrl = (url: string) => {
+  const urlPattern =
+    /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+  return urlPattern.test(url);
+};

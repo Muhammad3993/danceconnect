@@ -12,7 +12,7 @@ import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import useAppStateHook from '../../hooks/useAppState';
 import {userExists} from '../../api/serverRequests';
-
+import {useTranslation} from 'react-i18next';
 const RegistraionScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
   const btns = authButtons.slice(0, 2);
@@ -22,7 +22,7 @@ const RegistraionScreen = (): JSX.Element => {
   const [errorExist, setErrorExist] = useState('');
   const errorViewHeight = new RN.Animated.Value(0);
   const {setLoading} = useAppStateHook();
-
+  const {t} = useTranslation();
   const translateY = errorViewHeight.interpolate({
     inputRange: [0, 1],
     outputRange: [-24, 24],
@@ -132,12 +132,12 @@ const RegistraionScreen = (): JSX.Element => {
               source={require('../../assets/images/logoauth.png')}
               style={styles.logo}
             />
-            <RN.Text style={styles.welcome}>Create New Account</RN.Text>
+            <RN.Text style={styles.welcome}>{t('create_account')}</RN.Text>
             <Input
-              value={email.toLowerCase()}
-              onChange={(v: string) => setEmail(v)}
+              value={email}
+              onChange={setEmail}
               isErrorBorder={isErrors?.type?.includes('email')}
-              placeholder="Email"
+              placeholder={t('email')}
               keyboardType="email-address"
               iconName="inbox"
             />
@@ -150,20 +150,20 @@ const RegistraionScreen = (): JSX.Element => {
               isErrorBorder={errorExist?.length > 0}
               value={password}
               onChange={(v: string) => setPassword(v)}
-              placeholder="Password"
+              placeholder={t('password')}
               keyboardType="default"
               iconName="lock"
               secureText
             />
             <Button
-              title="Sign up"
+              title={t('sign_up')}
               disabled={email.length > 0 && password.length > 0}
               onPress={onPressSignUp}
               isLoading={isLoading}
             />
             <RN.View style={styles.linesWrapper}>
               <RN.View style={styles.line} />
-              <RN.Text style={styles.or}>or continue with</RN.Text>
+              <RN.Text style={styles.or}>{t('or_continue')}</RN.Text>
               <RN.View style={styles.line} />
             </RN.View>
             {/* <RN.View style={{paddingTop: 24}}>
@@ -192,23 +192,21 @@ const RegistraionScreen = (): JSX.Element => {
           </RN.View>
 
           <RN.View style={styles.bottomWrapper}>
-            <RN.Text style={styles.alreadyAccountText}>
-              Already have an account?
-            </RN.Text>
+            <RN.Text style={styles.alreadyAccountText}>{t('already')}</RN.Text>
             <RN.TouchableOpacity onPress={onPressLogin}>
-              <RN.Text style={styles.logInText}>Log in</RN.Text>
+              <RN.Text style={styles.logInText}>{t('login')}</RN.Text>
             </RN.TouchableOpacity>
           </RN.View>
           <RN.View style={{paddingHorizontal: 20}}>
             <RN.Text style={styles.licenceText}>
-              By registering in the application, you agree to the
+              {t('terms_first')}
               <RN.Text
                 style={styles.licenceTextOrange}
                 onPress={() =>
                   RN.Linking.openURL('https://danceconnect.online/terms.html')
                 }>
                 {' '}
-                terms and conditions
+                {t('terms_second')}
               </RN.Text>
             </RN.Text>
           </RN.View>

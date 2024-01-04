@@ -9,6 +9,7 @@ import SkeletonCommunityCard from './skeleton/communityCard-Skeleton';
 import socket from '../api/sockets';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
+import { useTranslation } from 'react-i18next';
 
 type props = {
   item: any;
@@ -18,6 +19,7 @@ type props = {
 const CommunityCard = ({item, isProfileScreen}: any) => {
   const {userUid} = useRegistration();
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const data = item?.item ?? item;
   const {
     isLoadingWithFollow,
@@ -136,8 +138,8 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
             }}>
             {countFollowers > 0
               ? countFollowers > 3
-                ? '+' + `${countFollowers - 3} followers`
-                : ' already followed'
+                ? '+' + t('followers', {count: countFollowers - 3})
+                : t('followed')
               : 'no subscribers yet'}
           </RN.Text>
         </RN.View>
@@ -243,7 +245,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
                 />
               </RN.View> */}
               <RN.Text style={styles.joinedText}>
-                {isMyCommunity || isManager ? 'Managing' : 'Joined'}
+                {isMyCommunity || isManager ? t('managing') : t('joined')}
               </RN.Text>
             </RN.View>
           ) : isMyCommunity || isManager ? null : (
@@ -251,7 +253,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
               onPress={() => onPressJoin(data?.id, index)}
               key={index}
               style={styles.joinBtn}>
-              <RN.Text style={{color: colors.white}}>Join</RN.Text>
+              <RN.Text style={{color: colors.white}}>{t('join_small')}</RN.Text>
             </RN.TouchableOpacity>
           )}
         </RN.View>

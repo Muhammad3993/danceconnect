@@ -23,4 +23,6 @@ export default {
   isFollowed: false,
   personalEvents: [],
   createdEvent: false,
+  inAppTickets: true,
+  externalLink: '',
 };

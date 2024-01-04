@@ -14,7 +14,6 @@ import {DeviceEventEmitter} from 'react-native';
 //   ? 'http://192.168.1.101:4000/'
 //   : 'http://localhost:4000/';
 export const apiUrl = 'https://api.danceconnect.online/';
-
 // const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
 
 type user = {
@@ -123,7 +122,8 @@ export const createUser = async (data: user) => {
     // login(email, password).then();
     return response;
   } catch (er) {
-    return console.log('createUser er', er, data);
+    console.log('createUser er', er, data);
+    return er;
   }
 };
 export const deleteUser = async (id: string) => {
@@ -191,10 +191,21 @@ export const getCommunitiesWithMongo = async (location: string) => {
     const response = await axios.get(
       `${apiUrl}communities?location=${location}`,
     );
-    // console.log('getCommunitiesWithMongo', response);
+    console.log('getCommunitiesWithMongo', response);
     return response?.data;
   } catch (er) {
     return console.log('er', er);
+  }
+};
+
+export const getCommunitiesWithMongoByArray = async (locations: string[]) => {
+  try {
+    const response = await axios.post(`${apiUrl}communitiesByLocation`, {
+      locations: locations,
+    });
+    return response.data;
+  } catch (er) {
+    return console.log('getCommunitiesWithMongoByArray er', er);
   }
 };
 export const getManagingCommunity = async () => {
@@ -326,6 +337,22 @@ export const getEventsWithMongo = async (
     return console.log('er', er);
   }
 };
+
+export const getEventsWithMongoByArray = async (locations: string[]) => {
+  try {
+    const response = await axios.post(`${apiUrl}eventsByLocation`, {
+      locations: locations,
+    });
+    console.log('getEventsWithMongoByArray', response);
+    return {
+      eventsList: response.data,
+      prevOffset: Number(response.data?.prevOffset),
+      prevLimit: Number(response.data?.prevLimit),
+    };
+  } catch (er) {
+    return console.log('getEventsWithMongoByArray er', er);
+  }
+};
 export const getUsersImagesFromEvent = async (eventUid: string) => {
   try {
     const response = await axios.get(
@@ -428,6 +455,14 @@ export const getConstants = async () => {
   }
 };
 
+export const getPercentage = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}priceConfig`);
+    return response.data;
+  } catch (error) {
+    console.log('error', error);
+  }
+};
 export const payEvent = async (id: string, amount: string) => {
   const data = {
     amount: amount,

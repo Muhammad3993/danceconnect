@@ -15,13 +15,9 @@ import {
   BillingDetails,
   CardField,
   PlatformPay,
-  PlatformPayButton,
   StripeProvider,
   confirmPayment,
   confirmPlatformPayPayment,
-  isPlatformPaySupported,
-  presentPaymentSheet,
-  useStripe,
 } from '@stripe/stripe-react-native';
 import useRegistration from '../../../hooks/useRegistration';
 import socket from '../../../api/sockets';
@@ -30,12 +26,13 @@ import {Portal} from 'react-native-portalize';
 import {Modalize} from 'react-native-modalize';
 import useEvents from '../../../hooks/useEvents';
 import {useEventById} from '../../../hooks/useEventById';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import useAppStateHook from '../../../hooks/useAppState';
+import {useTranslation} from 'react-i18next';
 
 const BuyTickets = () => {
   const routeProps = useRoute();
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const {saveEmail} = useRegistration();
   const {attendEvent} = useEvents();
   const {STRIPE_PUBLIC_KEY, getStripeKey} = useAppStateHook();
@@ -279,7 +276,7 @@ const BuyTickets = () => {
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.View>
-        <RN.Text style={styles.headerTitle}>Select a ticket</RN.Text>
+        <RN.Text style={styles.headerTitle}>{t('select_tickets')}</RN.Text>
         <RN.View style={{paddingRight: 24}} />
       </RN.TouchableOpacity>
     );
@@ -294,7 +291,7 @@ const BuyTickets = () => {
     errorMessages?: string;
   }) => {
     const ticket = item;
-    console.log('ticket', ticket);
+    // console.log('ticket', ticket);
     if (!ticket.isVisible) {
       // console.log('ti', ticket.errorMessages);
       return null;
@@ -337,8 +334,8 @@ const BuyTickets = () => {
           <Button
             title={
               totalToBuy === 0
-                ? 'Get Tickets'
-                : `Pay $${totalToBuy?.toFixed(2)}`
+                ? t('get_tickets')
+                : t('pay') + ` $${totalToBuy?.toFixed(2)}`
             }
             onPress={() => {
               if (totalToBuy === 0) {
@@ -364,9 +361,7 @@ const BuyTickets = () => {
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyContainer}>
-        <RN.Text style={styles.emptyText}>
-          There are no tickets available now
-        </RN.Text>
+        <RN.Text style={styles.emptyText}>{t('no_tickets')}</RN.Text>
       </RN.View>
     );
   };
@@ -459,7 +454,7 @@ const BuyTickets = () => {
           ) : (
             <RN.View style={{paddingBottom: 14}}>
               <Button
-                title={`Confirm pay ${totalToBuy} $`}
+                title={t('pay') + ` ${totalToBuy} $`}
                 disabled={!cardDisabled}
                 onPress={confirmPaymentByCard}
               />

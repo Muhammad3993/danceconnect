@@ -29,6 +29,7 @@ import {
   createCommunityWithMongo,
   deleteCommunityById,
   getCommunitiesWithMongo,
+  getCommunitiesWithMongoByArray,
   getCommunityById,
   getEventById,
   getEventsWithMongo,
@@ -37,7 +38,7 @@ import {
   updateCommunityById,
 } from '../../api/serverRequests';
 
-import {selectCurrentCity} from '../selectors/appStateSelector';
+import {selectCurrentCity, selectRegions} from '../selectors/appStateSelector';
 import {selectUserUid} from '../selectors/registrationSelector';
 import socket from '../../api/sockets';
 import {DeviceEventEmitter} from 'react-native';
@@ -48,13 +49,32 @@ import {EVENT} from '../actionTypes/eventActionTypes';
 function* getCommunitiesRequest() {
   try {
     const location = yield select(selectCurrentCity);
-    const communities = yield call(getCommunitiesWithMongo, location);
-    yield put(
-      getCommunitiesSuccessAction({
-        dataCommunities: Object.values(communities),
-      }),
+    const regions = yield select(selectRegions);
+    const isRegionCountries = regions.find(
+      (i: {name: string}) => i.name === location,
     );
-    yield put(getManagingCommunitiesRequestAction());
+    if (isRegionCountries) {
+      const communities = yield call(
+        getCommunitiesWithMongoByArray,
+        isRegionCountries?.countries,
+      );
+      yield put(
+        getCommunitiesSuccessAction({
+          dataCommunities: Object.values(communities),
+        }),
+      );
+      yield put(getManagingCommunitiesRequestAction());
+    } else {
+      const communities = yield call(getCommunitiesWithMongoByArray, [
+        location,
+      ]);
+      yield put(
+        getCommunitiesSuccessAction({
+          dataCommunities: Object.values(communities),
+        }),
+      );
+      yield put(getManagingCommunitiesRequestAction());
+    }
   } catch (error: any) {
     console.log('getCommunitites', error);
     yield put(getCommunitiesFailAction(error));

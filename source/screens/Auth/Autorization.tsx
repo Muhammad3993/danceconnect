@@ -12,9 +12,10 @@ import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {forgotPassword} from '../../api/authSocial';
 import useAppStateHook from '../../hooks/useAppState';
-
+import {useTranslation} from 'react-i18next';
 const AuthorizationScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
+  const {t} = useTranslation();
   // const btns = authButtons[0];
   // const lastBtn = authButtons[authButtons.length - 1];
 
@@ -120,13 +121,13 @@ const AuthorizationScreen = (): JSX.Element => {
               source={require('../../assets/images/logoauth.png')}
               style={styles.logo}
             />
-            <RN.Text style={styles.welcome}>Login</RN.Text>
+            <RN.Text style={styles.welcome}>{t('login')}</RN.Text>
             <Input
               autoComplete={'email'}
               isErrorBorder={isErrors?.type?.includes('email')}
-              value={email.toLowerCase()}
-              onChange={(v: string) => setEmail(v)}
-              placeholder="Email"
+              value={email}
+              onChange={setEmail}
+              placeholder={t('email')}
               keyboardType="email-address"
               iconName="inbox"
             />
@@ -141,13 +142,13 @@ const AuthorizationScreen = (): JSX.Element => {
               value={password}
               onChange={(v: string) => setPassword(v)}
               isErrorBorder={isErrors?.type?.includes('password')}
-              placeholder="Password"
+              placeholder={t('password')}
               keyboardType="default"
               iconName="lock"
               secureText
             />
             <Button
-              title="Login"
+              title={t('login')}
               disabled={email.length > 0 && password.length > 0}
               onPress={onPressLogin}
               isLoading={isLoading}
@@ -162,7 +163,7 @@ const AuthorizationScreen = (): JSX.Element => {
             </RN.TouchableOpacity> */}
             <RN.View style={styles.linesWrapper}>
               <RN.View style={styles.line} />
-              <RN.Text style={styles.or}>or continue with</RN.Text>
+              <RN.Text style={styles.or}>{t('or_continue')}</RN.Text>
               <RN.View style={styles.line} />
             </RN.View>
             {/* <RN.View style={{paddingTop: 24}}>
@@ -193,10 +194,10 @@ const AuthorizationScreen = (): JSX.Element => {
 
           <RN.View style={styles.bottomWrapper}>
             <RN.Text style={styles.alreadyAccountText}>
-              Don’t have an account?
+              {t('dont_account')}
             </RN.Text>
             <RN.TouchableOpacity onPress={goSignUp}>
-              <RN.Text style={styles.logInText}>Sign up</RN.Text>
+              <RN.Text style={styles.logInText}>{t('sign_up')}</RN.Text>
             </RN.TouchableOpacity>
           </RN.View>
         </RN.ScrollView>

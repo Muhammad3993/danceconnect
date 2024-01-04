@@ -2,6 +2,8 @@ import React from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
+import {SCREEN_WIDTH} from '../utils/constants';
 
 type props = {
   onPress?: () => void;
@@ -9,6 +11,7 @@ type props = {
 
 const CreateCommunityButton = ({onPress}: props) => {
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const onPressBtn = () => {
     navigation.navigate('CreateCommunity');
   };
@@ -17,16 +20,20 @@ const CreateCommunityButton = ({onPress}: props) => {
       style={styles.container}
       activeOpacity={0.7}
       onPress={onPress ?? onPressBtn}>
-      <RN.View style={styles.circleWrapper}>
-        <RN.Image source={{uri: 'comfull'}} style={styles.communityIcon} />
-        <RN.View style={styles.circlePlus}>
-          <RN.Image source={{uri: 'plus'}} style={styles.plusIcon} />
+      <RN.View style={{justifyContent: 'center'}}>
+        <RN.View style={styles.circleWrapper}>
+          <RN.Image source={{uri: 'comfull'}} style={styles.communityIcon} />
+          <RN.View style={styles.circlePlus}>
+            <RN.Image source={{uri: 'plus'}} style={styles.plusIcon} />
+          </RN.View>
         </RN.View>
       </RN.View>
       <RN.View style={{marginLeft: -10, justifyContent: 'center'}}>
-        <RN.Text style={styles.title}>Start a new community</RN.Text>
-        <RN.Text style={styles.description}>
-          to create and manage your own events
+        <RN.Text numberOfLines={2} style={styles.title}>
+          {t('create_community_first')}
+        </RN.Text>
+        <RN.Text numberOfLines={3} style={styles.description}>
+          {t('create_community_second')}
         </RN.Text>
       </RN.View>
       <RN.View style={{justifyContent: 'center'}}>
@@ -56,6 +63,7 @@ const styles = RN.StyleSheet.create({
   circleWrapper: {
     backgroundColor: colors.purple,
     borderRadius: 40,
+    justifyContent: 'center',
   },
   communityIcon: {
     height: 26,
@@ -73,6 +81,8 @@ const styles = RN.StyleSheet.create({
     fontWeight: '400',
     color: colors.darkGray,
     fontFamily: 'Mulish-Regular',
+    whiteSpace: 'pre-wrap',
+    maxWidth: SCREEN_WIDTH - 140,
   },
   circlePlus: {
     position: 'absolute',

@@ -30,6 +30,8 @@ export type eventParams = {
   prevOffset?: number;
   type?: string;
   personalEvents?: string[];
+  inAppTickets?: boolean;
+  externalLink?: string;
 };
 
 export type followingParams = {
@@ -52,6 +54,8 @@ export const createEventRequestAction = ({
   communityUid,
   price,
   type,
+  inAppTickets,
+  externalLink,
 }: eventParams) => ({
   type: EVENT.EVENT_CREATE_REQUEST,
   payload: {
@@ -68,6 +72,8 @@ export const createEventRequestAction = ({
     communityUid: communityUid,
     price: price,
     type: type,
+    inAppTickets: inAppTickets,
+    externalLink: externalLink,
   },
 });
 export const createEventSuccessAction = (event: any) => ({
@@ -163,6 +169,8 @@ export const changeInformationEventRequestAction = ({
   eventUid,
   price,
   type,
+  inAppTickets,
+  externalLink,
 }: eventParams) => ({
   type: EVENT.CHANGE_INFORMATION_EVENT_REQUEST,
   payload: {
@@ -178,6 +186,8 @@ export const changeInformationEventRequestAction = ({
     eventUid: eventUid,
     price: price,
     type: type,
+    inAppTickets: inAppTickets,
+    externalLink: externalLink,
   },
 });
 export const changeInformationEventSuccessAction = () => ({

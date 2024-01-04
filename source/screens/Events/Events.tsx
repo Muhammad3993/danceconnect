@@ -13,9 +13,11 @@ import useAppStateHook from '../../hooks/useAppState';
 import CitySelector from '../../components/citySelector';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import {Portal} from 'react-native-portalize';
-import FindCity from '../../components/findCity';
+import FindCity from '../../components/findCity copy';
+import {useTranslation} from 'react-i18next';
+import i18n from '../../i18n/i118n';
 
-const TABS = ['Upcoming', 'Attending', 'Managing', 'Passed'];
+// const TABS = ['Upcoming', 'Attending', 'Managing', 'Passed'];
 
 const EventsScreen = () => {
   const {
@@ -30,9 +32,12 @@ const EventsScreen = () => {
     getPersonalEvents,
     // setDefaultEventLimit,
   } = useEvents();
+  const {t} = useTranslation();
+  const TABS = [t('upcoming'), t('attending'), t('managing'), t('passed')];
+  const [tabs, setTabs] = useState(TABS);
   const routeProps = useRoute();
   const navigation = useNavigation();
-  const [currentTab, setCurrentTab] = useState(TABS[0]);
+  const [currentTab, setCurrentTab] = useState(tabs[0]);
   const isFocused = useIsFocused();
 
   const [searchValue, onSearch] = useState('');
@@ -41,16 +46,28 @@ const EventsScreen = () => {
   const [eventsSearch, setEventsSearch] = useState<string[]>([]);
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
   const createdEvent = routeProps.params?.createdEvent ?? null;
-
   useMemo(() => {
-    console.log('isFocused', currentTab, isFocused);
-    if (isFocused && currentTab === 'Attending') {
+    // console.log('isFocused', currentTab, isFocused);
+    if (isFocused && currentTab === t('attending')) {
       getPersonalEvents();
     }
   }, [currentTab, isFocused]);
   useEffect(() => {
+    i18n.on('languageChanged', lg => {
+      // i18n.reloadResources(lg);
+      // console.log(lg);
+      setTabs([
+        i18n.t('upcoming'),
+        i18n.t('attending'),
+        i18n.t('managing'),
+        i18n.t('passed'),
+      ]);
+      onPressTab(t('upcoming'));
+    });
+  }, [t]);
+  useEffect(() => {
     getEvents();
-  }, []);
+  }, [currentCity]);
 
   useEffect(() => {
     onPressTab(TABS[0]);
@@ -59,17 +76,15 @@ const EventsScreen = () => {
   const upcomingEvents = eventList
     ?.filter(
       (ev: any) =>
-        moment(ev.eventDate?.time).format('YYYY-MM-DD') >=
-          moment(new Date()).format('YYYY-MM-DD') &&
-        ev?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-        ev?.location?.substr(ev?.location?.length - 2) === lastSymUserCountry,
+        moment(ev.eventDate?.time).format('YYYY-MM-DD') >
+        moment(new Date()).format('YYYY-MM-DD'),
     )
     .map((item: any) => item);
 
   const onChangeTextSearch = useCallback(
     (value: string) => {
       onSearch(value);
-      if (currentTab === 'Upcoming') {
+      if (currentTab === t('upcoming')) {
         const search = upcomingEvents.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
@@ -82,7 +97,7 @@ const EventsScreen = () => {
           setEventsSearch(upcomingEvents);
         }
       }
-      if (currentTab === 'Attending') {
+      if (currentTab === t('attending')) {
         const searchJoin = attentingsEvents.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
@@ -95,13 +110,8 @@ const EventsScreen = () => {
           setEventsSearch(attentingsEvents);
         }
       }
-      if (currentTab === 'Managing') {
-        const ev = managingEvents?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        );
-        const searchManaging = ev.filter((item: any) => {
+      if (currentTab === t('managing')) {
+        const searchManaging = managingEvents.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
           )} ${item?.title?.toLowerCase()}`;
@@ -113,13 +123,8 @@ const EventsScreen = () => {
           setEventsSearch(managingEvents);
         }
       }
-      if (currentTab === 'Passed') {
-        const ev = passingEvents?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        );
-        const searchPassed = ev.filter((item: any) => {
+      if (currentTab === t('passed')) {
+        const searchPassed = passingEvents.filter((item: any) => {
           const itemData = `${item.categories?.map((m: any) =>
             m.toLowerCase(),
           )} ${item?.title?.toLowerCase()}`;
@@ -154,7 +159,7 @@ const EventsScreen = () => {
   useMemo(() => {
     if (createdEvent) {
       getManagingEvents();
-      onPressTab('Managing');
+      onPressTab(t('managing'));
     }
   }, [createdEvent]);
 
@@ -211,13 +216,13 @@ const EventsScreen = () => {
             onPressAdd={() => navigation.navigate('CreateEvent')}
             onSearch={onChangeTextSearch}
             searchValue={searchValue}
-            placeholder="Event name, dance style, place..."
+            placeholder={t('input_search_events')}
             visibleAddBtn
           />
         </RN.View>
         <RN.View style={styles.tabsWrapper}>
           <RN.FlatList
-            data={TABS}
+            data={tabs}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderTab}
@@ -227,31 +232,24 @@ const EventsScreen = () => {
       </>
     );
   };
-  const renderLoading = () => {
-    return (
-      <RN.View style={styles.loadingContainer}>
-        <RN.ActivityIndicator size={'large'} color={colors.orange} />
-      </RN.View>
-    );
-  };
 
   const renderWrapper = useCallback(() => {
     switch (currentTab) {
-      case 'Upcomming':
+      case t('upcomming'):
         return (
           <UpcommingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
 
-      case 'Attending':
+      case t('attending'):
         return (
           <AttentingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
 
-      case 'Managing':
+      case t('managing'):
         return (
           <ManagingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
-      case 'Passed':
+      case t('passed'):
         return (
           <PassingTab searchValue={searchValue} eventsSearch={eventsSearch} />
         );
@@ -275,9 +273,10 @@ const EventsScreen = () => {
       {openModal && (
         <Portal>
           <FindCity
-            // selectedLocation={currentCity}
+            selectedLocation={currentCity}
             setSelectedLocation={onChoosedCity}
             onClosed={() => setOpenModal(false)}
+            isTabScreen
             communityScreen
             setCurrentCountry={() => console.log('setCurrentCountry')}
           />

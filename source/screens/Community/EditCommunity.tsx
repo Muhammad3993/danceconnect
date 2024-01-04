@@ -12,12 +12,11 @@ import {
   isAndroid,
   statusBarHeight,
 } from '../../utils/constants';
-import {useCommunities} from '../../hooks/useCommunitites';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import FindCity from '../../components/findCity';
-import {useProfile} from '../../hooks/useProfile';
 import {apiUrl} from '../../api/serverRequests';
 import FastImage from 'react-native-fast-image';
+import {useTranslation} from 'react-i18next';
 
 interface city {
   structured_formatting: {
@@ -28,7 +27,7 @@ interface city {
 const EditCommunity = () => {
   const routeParams = useRoute();
   const navigation = useNavigation();
-  const {userLocation} = useProfile();
+  const {t} = useTranslation();
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
     routeParams?.params?._id,
   );
@@ -54,7 +53,7 @@ const EditCommunity = () => {
   });
   const [countDescSymbols, setCountDescSymbols] = useState({
     current: description?.length,
-    maxSymbols: 350,
+    maxSymbols: 1000,
   });
   const [addedStyles, setAddedStyles] = useState<string[]>(categories);
   const [visibleFooter, setVisibleFooter] = useState(true);
@@ -122,7 +121,7 @@ const EditCommunity = () => {
     setDesc(value);
     setCountDescSymbols({
       current: value.length,
-      maxSymbols: 350,
+      maxSymbols: 1000,
     });
   };
 
@@ -169,7 +168,7 @@ const EditCommunity = () => {
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title="Save changes"
+          title={t('save_changes')}
           disabled
           buttonStyle={styles.createBtn}
           onPress={onPressSaveChanges}
@@ -182,7 +181,7 @@ const EditCommunity = () => {
     return (
       <>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Change name</RN.Text>
+          <RN.Text style={styles.title}>{t('change_name')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -202,7 +201,7 @@ const EditCommunity = () => {
         <Input
           value={title}
           onChange={onChangeValueName}
-          placeholder="Name"
+          placeholder={t('create_name')}
           maxLength={countNameSymbols.maxSymbols}
           isErrorBorder={titleError}
           onFocusInput={() => setTitleError(false)}
@@ -214,7 +213,7 @@ const EditCommunity = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Change Description</RN.Text>
+          <RN.Text style={styles.title}>{t('change_description')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -235,7 +234,7 @@ const EditCommunity = () => {
           multiLine
           value={desc}
           onChange={onChangeValueDescription}
-          placeholder="Description"
+          placeholder={t('description')}
           maxLength={countDescSymbols.maxSymbols}
           isErrorBorder={descriptionError}
           onFocusInput={() => setDescriptionError(false)}
@@ -247,7 +246,7 @@ const EditCommunity = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Upload Cover Image</RN.Text>
+          <RN.Text style={styles.title}>{t('upload_img_title')}</RN.Text>
         </RN.View>
         {imgs?.length > 0 ? (
           <RN.ScrollView
@@ -300,7 +299,9 @@ const EditCommunity = () => {
               style={styles.uploadPictureBtn}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+              <RN.Text style={styles.uploadImgText}>
+                {t('upload_img_small')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </RN.ScrollView>
         ) : (
@@ -319,7 +320,9 @@ const EditCommunity = () => {
               style={styles.uploadImgContainer}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+              <RN.Text style={styles.uploadImgText}>
+                {t('upload_img_small')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </>
         )}
@@ -337,8 +340,8 @@ const EditCommunity = () => {
                 color: categoriesError ? colors.redError : colors.textPrimary,
               },
             ]}>
-            Choose Category
-            <RN.Text style={styles.countMaxSymbols}> can select few</RN.Text>
+            {t('choose_category_title')}
+            <RN.Text style={styles.countMaxSymbols}> {t('few')}</RN.Text>
           </RN.Text>
         </RN.View>
         {addedStyles?.length > 0 && (
@@ -386,7 +389,7 @@ const EditCommunity = () => {
             {renderDescription()}
             {renderChooseCategory()}
             {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
+            <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
             <RN.TouchableOpacity
               onPress={() => setOpenLocation(true)}
               style={styles.selectLocationBtn}>

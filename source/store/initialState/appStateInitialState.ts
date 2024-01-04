@@ -4,8 +4,12 @@ export default {
   danceStyles: [],
   eventTypes: [],
   countries: [],
+  regions: [],
   currentCountry: '',
   stripe_key: '',
   isVisible: false,
   errorMessage: '',
+  language: '',
+  ticket_percent: 0,
+  ticket_fix_price: 0,
 };

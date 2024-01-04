@@ -3,19 +3,16 @@ import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useCommunities} from '../../hooks/useCommunitites';
-import {useProfile} from '../../hooks/useProfile';
 import Search from '../../components/search';
 import ManagingTab from './tabs/managingTab';
 import JoinTab from './tabs/joinedTab';
 import AllTab from './tabs/allTab';
 import useAppStateHook from '../../hooks/useAppState';
-import CitySelector from '../../components/citySelector';
 import {Portal} from 'react-native-portalize';
-import FindCity from '../../components/findCity';
-import socket from '../../api/sockets';
+import FindCity from '../../components/findCity copy';
 import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
-
-const TABS = ['All', 'Joined', 'Managing'];
+import {useTranslation} from 'react-i18next';
+import i18n from '../../i18n/i118n';
 
 const CommunitiesScreen = () => {
   const {
@@ -26,10 +23,13 @@ const CommunitiesScreen = () => {
     isLoading,
     isLoadingWithFollow,
   } = useCommunities();
+  const {t} = useTranslation();
+  const TABS = [t('all_tab'), t('joined'), t('managing')];
   const routeProps = useRoute();
   const navigation = useNavigation();
   const [searchValue, onSearch] = useState('');
-  const [currentTab, setCurrentTab] = useState(TABS[0]);
+  const [tabs, setTabs] = useState(TABS);
+  const [currentTab, setCurrentTab] = useState(tabs[0]);
   const [communititesSearch, setCommunitiesSearch] = useState<string[]>([]);
 
   const [openModal, setOpenModal] = useState(false);
@@ -38,7 +38,6 @@ const CommunitiesScreen = () => {
   const removedCommunity = routeProps.params?.removedCommunity ?? null;
 
   const onPressTab = (value: string) => {
-    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     if (searchValue?.length) {
       RN.Keyboard.dismiss();
       setCommunitiesSearch([]);
@@ -47,69 +46,68 @@ const CommunitiesScreen = () => {
     setCurrentTab(value);
   };
   useEffect(() => {
+    i18n.on('languageChanged', lg => {
+      setTabs([i18n.t('all_tab'), i18n.t('joined'), i18n.t('managing')]);
+      onPressTab(t('all_tab'));
+    });
+  }, [t]);
+  useEffect(() => {
     getCommunitites();
   }, [currentCity]);
-  // useEffect(() => {
-  //   socket
-  //     // .emit('joined_update', currentCity)
-  //     .on('updated_communities', communities => {
-  //       console.log('joined_update', communities);
-  //       setUpdatedCommunities(communities);
-  //     });
 
-  //   // socket.on('joined_update', communities => {
-  //   //   console.log('joined_update', communities);
-  //   // });
-  // }, []);
-  // console.log('removedCommunity', removedCommunity, routeProps);
   useMemo(() => {
     if (removedCommunity) {
-      onPressTab('Managing');
-      // getCommunitites();
+      onPressTab(t('managing'));
     }
   }, [removedCommunity]);
 
   const onRefSearch = () => {
-    onPressTab('All');
+    onPressTab(t('all_tab'));
   };
 
   const onChangeTextSearch = useCallback(
     (value: string) => {
       onSearch(value);
-      if (currentTab === 'All') {
-        const search = communitiesData.filter((item: any) => {
-          const itemData = `${item.categories?.map((m: any) =>
-            m.toLowerCase(),
-          )} ${item?.title?.toLowerCase()}`;
-          const textData = value?.toLowerCase();
-          return itemData.indexOf(textData) > -1;
-        });
+      if (currentTab === t('all_tab')) {
+        const search = communitiesData.filter(
+          (item: {categories: string[]; title: string}) => {
+            const itemData = `${item.categories?.map((m: string) =>
+              m.toLowerCase(),
+            )} ${item?.title?.toLowerCase()}`;
+            const textData = value?.toLowerCase();
+            return itemData.indexOf(textData) > -1;
+          },
+        );
         setCommunitiesSearch(search);
         if (!value?.length) {
           setCommunitiesSearch(communitiesData);
         }
       }
-      if (currentTab === 'Joined') {
-        const searchJoin = joinedCommunities.filter((item: any) => {
-          const itemData = `${item.categories?.map((m: any) =>
-            m.toLowerCase(),
-          )} ${item?.title?.toLowerCase()}`;
-          const textData = value?.toLowerCase();
-          return itemData.indexOf(textData) > -1;
-        });
+      if (currentTab === t('joined')) {
+        const searchJoin = joinedCommunities.filter(
+          (item: {categories: string[]; title: string}) => {
+            const itemData = `${item.categories?.map((m: string) =>
+              m.toLowerCase(),
+            )} ${item?.title?.toLowerCase()}`;
+            const textData = value?.toLowerCase();
+            return itemData.indexOf(textData) > -1;
+          },
+        );
         setCommunitiesSearch(searchJoin);
         if (!value?.length) {
           setCommunitiesSearch(joinedCommunities);
         }
       }
-      if (currentTab === 'Managing') {
-        const searchManaging = managingCommunity.filter((item: any) => {
-          const itemData = `${item.categories?.map((m: any) =>
-            m.toLowerCase(),
-          )} ${item?.title?.toLowerCase()}`;
-          const textData = value?.toLowerCase();
-          return itemData.indexOf(textData) > -1;
-        });
+      if (currentTab === t('managing')) {
+        const searchManaging = managingCommunity.filter(
+          (item: {categories: string[]; title: string}) => {
+            const itemData = `${item.categories?.map((m: string) =>
+              m.toLowerCase(),
+            )} ${item?.title?.toLowerCase()}`;
+            const textData = value?.toLowerCase();
+            return itemData.indexOf(textData) > -1;
+          },
+        );
         setCommunitiesSearch(searchManaging);
         if (!value?.length) {
           setCommunitiesSearch(managingCommunity);
@@ -129,7 +127,6 @@ const CommunitiesScreen = () => {
             styles.itemTabContainer,
             {
               borderBottomWidth: currentTab === item ? 3 : 0,
-              // paddingHorizontal: 24,
               paddingBottom: 8,
             },
           ]}>
@@ -173,13 +170,13 @@ const CommunitiesScreen = () => {
             onFocus={onRefSearch}
             onSearch={onChangeTextSearch}
             searchValue={searchValue}
-            placeholder="Community name, dance style"
+            placeholder={t('input_search_communities')}
             onPressAdd={() => navigation.navigate('CreateCommunity')}
           />
           <RN.View style={styles.tabsWrapper}>
             <RN.FlatList
-              scrollEnabled={false}
-              data={TABS}
+              // scrollEnabled={false}
+              data={tabs}
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => index.toString()}
               renderItem={renderTab}
@@ -193,7 +190,7 @@ const CommunitiesScreen = () => {
 
   const renderWrapper = useCallback(() => {
     switch (currentTab) {
-      case 'All':
+      case t('all_tab'):
         return (
           <AllTab
             searchValue={searchValue}
@@ -201,7 +198,7 @@ const CommunitiesScreen = () => {
           />
         );
 
-      case 'Joined':
+      case t('joined'):
         return (
           <JoinTab
             searchValue={searchValue}
@@ -210,7 +207,7 @@ const CommunitiesScreen = () => {
           />
         );
 
-      case 'Managing':
+      case t('managing'):
         return (
           <ManagingTab
             searchValue={searchValue}
@@ -241,6 +238,7 @@ const CommunitiesScreen = () => {
           <FindCity
             selectedLocation={currentCity}
             setSelectedLocation={onChoosedCity}
+            isTabScreen
             onClosed={onPressChange}
             setCurrentCountry={() => console.log('setCurrentCountry')}
             communityScreen

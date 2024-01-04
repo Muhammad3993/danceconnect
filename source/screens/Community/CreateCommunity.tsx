@@ -8,7 +8,6 @@ import CategorySelector from '../../components/catregorySelector';
 import {
   dataDanceCategory,
   isAndroid,
-  locationData,
   statusBarHeight,
 } from '../../utils/constants';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -18,20 +17,17 @@ import {useProfile} from '../../hooks/useProfile';
 import FindCity from '../../components/findCity';
 import FastImage from 'react-native-fast-image';
 import {navigationRef} from '../../navigation/types';
-interface city {
-  structured_formatting: {
-    main_text: '';
-  };
-  terms: [{offset: 0; value: ''}, {offset: 1; value: ''}];
-}
+import {useTranslation} from 'react-i18next';
+
 const CreateCommunity = () => {
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const {create, isLoading} = useCommunities();
   const goBackBtn = () => {
     // navigation.navigate('CommunitiesMain');
     navigation.goBack();
   };
-  const {userCountry, individualStyles, userLocation} = useProfile();
+  const {userCountry, individualStyles} = useProfile();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -48,7 +44,7 @@ const CreateCommunity = () => {
   });
   const [countDescSymbols, setCountDescSymbols] = useState({
     current: description?.length,
-    maxSymbols: 350,
+    maxSymbols: 1000,
   });
   const [addedStyles, setAddedStyles] = useState<string[]>(individualStyles);
   const [images, setImages] = useState(new Array(0).fill(''));
@@ -137,7 +133,7 @@ const CreateCommunity = () => {
     });
     setCountDescSymbols({
       current: 0,
-      maxSymbols: 350,
+      maxSymbols: 1000,
     });
   };
 
@@ -181,7 +177,7 @@ const CreateCommunity = () => {
     setDescription(value);
     setCountDescSymbols({
       current: value.length,
-      maxSymbols: 350,
+      maxSymbols: 1000,
     });
   };
   const renderHeader = () => {
@@ -207,7 +203,7 @@ const CreateCommunity = () => {
           onPress={onClear}
         /> */}
         <Button
-          title="Create Community"
+          title={t('create_community')}
           disabled
           buttonStyle={styles.createBtn}
           onPress={onPressCreate}
@@ -237,9 +233,11 @@ const CreateCommunity = () => {
             />
           </RN.View>
         </RN.View>
-        <RN.Text style={styles.createTitle}>Create Your Community</RN.Text>
+        <RN.Text style={styles.createTitle}>
+          {t('create_community_card_title')}
+        </RN.Text>
         <RN.Text style={styles.createDescription}>
-          Create and share events, discuss them with your group members
+          {t('create_community_card_desc')}
         </RN.Text>
       </RN.View>
     );
@@ -249,7 +247,7 @@ const CreateCommunity = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Create Name</RN.Text>
+          <RN.Text style={styles.title}>{t('create_name')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -269,7 +267,7 @@ const CreateCommunity = () => {
         <Input
           value={name}
           onChange={onChangeValueName}
-          placeholder="Name"
+          placeholder={t('create_name')}
           maxLength={countNameSymbols.maxSymbols}
           isErrorBorder={isErrorName}
           onFocusInput={() => setIsErrorName(false)}
@@ -288,11 +286,11 @@ const CreateCommunity = () => {
                 color: categoriesError ? colors.redError : colors.textPrimary,
               },
             ]}>
-            Choose Category
-            <RN.Text style={styles.countMaxSymbols}> can select few</RN.Text>
+            {t('choose_category_title')}
+            <RN.Text style={styles.countMaxSymbols}>{t('few')}</RN.Text>
           </RN.Text>
         </RN.View>
-        <RN.Text
+        {/* <RN.Text
           style={[
             styles.definition,
             {
@@ -300,7 +298,7 @@ const CreateCommunity = () => {
             },
           ]}>
           Create and share events, discuss them with your group members
-        </RN.Text>
+        </RN.Text> */}
         {addedStyles?.length > 0 && (
           <RN.View style={styles.danceStyleContainer}>
             {addedStyles?.map(item => {
@@ -341,7 +339,7 @@ const CreateCommunity = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Add Description</RN.Text>
+          <RN.Text style={styles.title}>{t('description_title')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -359,13 +357,13 @@ const CreateCommunity = () => {
           </RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          Describe your community and add the necessary contact information
+          {t('description_desc')}
         </RN.Text>
         <Input
           multiLine
           value={description}
           onChange={onChangeValueDescription}
-          placeholder="Description"
+          placeholder={t('description')}
           maxLength={countDescSymbols.maxSymbols}
           isErrorBorder={isDescriptionError}
           onFocusInput={() => setIsDescriptionError(false)}
@@ -378,12 +376,12 @@ const CreateCommunity = () => {
       <RN.View>
         <RN.View style={styles.nameTitle}>
           <RN.Text style={styles.title}>
-            Upload Cover Image
-            <RN.Text style={styles.countMaxSymbols}> (Optional)</RN.Text>
+            {t('upload_img_title')}
+            <RN.Text style={styles.countMaxSymbols}> {t('optional')}</RN.Text>
           </RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          What picture is better to put here?
+          {t('upload_img_desc')}
         </RN.Text>
         {images?.length > 0 ? (
           <RN.ScrollView
@@ -443,7 +441,9 @@ const CreateCommunity = () => {
               }}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+              <RN.Text style={styles.uploadImgText}>
+                {t('upload_img_small')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </RN.ScrollView>
         ) : (
@@ -458,7 +458,9 @@ const CreateCommunity = () => {
               style={styles.uploadImgContainer}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+              <RN.Text style={styles.uploadImgText}>
+                {t('upload_img_small')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </>
         )}
@@ -483,7 +485,7 @@ const CreateCommunity = () => {
             {renderChooseCategory()}
             {renderDescription()}
             {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
+            <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
             <RN.TouchableOpacity
               onPress={() => setOpenLocation(true)}
               style={styles.selectLocationBtn}>

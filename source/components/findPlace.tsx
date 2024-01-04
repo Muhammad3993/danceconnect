@@ -6,6 +6,7 @@ import {searchPlacesInEvent} from '../api/cities';
 import colors from '../utils/colors';
 import useAppStateHook from '../hooks/useAppState';
 import { statusBarHeight } from '../utils/constants';
+import { useTranslation } from 'react-i18next';
 
 interface city {
   structured_formatting: {
@@ -28,6 +29,7 @@ const FindPlace = ({
   currentCountry,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
+  const {t} = useTranslation();
   const [searchValue, setSearchValue] = useState<string>(selectedPlace ?? '');
   const [findPlace, setFindPlices] = useState([]);
   const {countries} = useAppStateHook();
@@ -82,7 +84,7 @@ const FindPlace = ({
               style={{height: 20, width: 24}}
             />
           </RN.TouchableOpacity>
-          <RN.Text style={styles.selectorTitle}>Choose Place</RN.Text>
+          <RN.Text style={styles.selectorTitle}>{t('choose_place')}</RN.Text>
           <RN.TouchableOpacity onPress={onCancel}>
             <RN.Image source={{uri: 'close'}} style={{height: 24, width: 24}} />
           </RN.TouchableOpacity>
@@ -104,7 +106,7 @@ const FindPlace = ({
           autoFocus
           onSearch={onChangeTextSearch}
           searchValue={searchValue}
-          placeholder="Search place"
+          placeholder={t('search_city')}
           visibleAddBtn={false}
         />
         {findPlace?.map((item: city) => {

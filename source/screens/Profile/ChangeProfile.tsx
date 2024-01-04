@@ -8,10 +8,12 @@ import {useProfile} from '../../hooks/useProfile';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
-import { apiUrl } from '../../api/serverRequests';
+import {apiUrl} from '../../api/serverRequests';
+import {useTranslation} from 'react-i18next';
 
 const ChangeProfile = () => {
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const {userImgUrl, user, onChange} = useProfile();
   const {userName, currentUser} = useRegistration();
   const [userImg, setUserImg] = useState(userImgUrl ?? '');
@@ -56,7 +58,7 @@ const ChangeProfile = () => {
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.View>
-        <RN.Text style={styles.headerText}>Edit profile</RN.Text>
+        <RN.Text style={styles.headerText}>{t('edit_profile')}</RN.Text>
       </RN.TouchableOpacity>
     );
   };

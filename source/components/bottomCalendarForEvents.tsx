@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as RN from 'react-native';
-import {Modalize} from 'react-native-modalize';
 import colors from '../utils/colors';
-import {Calendar} from 'react-native-calendars';
+import {Calendar, LocaleConfig} from 'react-native-calendars';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
 import {Button} from './Button';
+import {useTranslation} from 'react-i18next';
 
 const moment = extendMoment(Moment);
 
@@ -50,6 +50,7 @@ const BottomCalendarForEvents = ({
   const minDate = new Date().toDateString();
   const [startDate, setStartDate] = useState(start);
   const [endDate, setEndDate] = useState(end);
+  const {t} = useTranslation();
 
   const onClosed = () => {
     setStart(null);
@@ -126,7 +127,7 @@ const BottomCalendarForEvents = ({
         <RN.View style={styles.nameTitle}>
           <RN.View>
             <RN.Text style={styles.title}>
-              Selected date:
+              {t('selected_date.title')}:
               <RN.Text style={{color: colors.darkGray}}>
                 {` ${moment(startDate).format('MMMM Do')}${
                   endDate !== null
@@ -182,7 +183,7 @@ const BottomCalendarForEvents = ({
       <RN.View style={{marginVertical: 12, marginBottom: 18}}>
         <Button
           disabled={startDate !== null}
-          title="Set the date"
+          title={t('selected_date.choosed')}
           onPress={onPressFinished}
         />
       </RN.View>

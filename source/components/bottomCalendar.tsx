@@ -10,6 +10,7 @@ import {TimePicker} from 'react-native-wheel-picker-android';
 import {Button} from './Button';
 import {isAndroid} from '../utils/constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {useTranslation} from 'react-i18next';
 
 const moment = extendMoment(Moment);
 let minWeekDay = moment.updateLocale('en', {
@@ -59,6 +60,7 @@ const BottomCalendar = ({
   setTime,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
+  const {t} = useTranslation();
   const [openingTime, setOpeningTime] = useState(false);
   const [value, setValue] = useState<RNTimePicker.ValueMap>({
     hours: 0,
@@ -106,7 +108,7 @@ const BottomCalendar = ({
         <RN.View style={{marginBottom: 18}}>
           <Button
             disabled
-            title="Set the time"
+            title={t('set_time')}
             onPress={() => onPressSetTime()}
           />
         </RN.View>
@@ -126,7 +128,7 @@ const BottomCalendar = ({
         <RN.View style={{marginBottom: 12}}>
           <Button
             disabled
-            title="Set the time"
+            title={t('set_time')}
             onPress={() => onPressSetTime()}
           />
         </RN.View>
@@ -213,11 +215,19 @@ const BottomCalendar = ({
     }
     setStart(startDate);
     setEnd(endDate);
+    if (endDate?.end === null) {
+      setEndDate(startDate);
+      setEnd(startDate);
+    }
     onClosed();
   };
   const onPressClose = () => {
     setStart(startDate);
     setEnd(endDate);
+    if (endDate?.end === null) {
+      setEndDate(startDate);
+      setEnd(startDate);
+    }
     modalizeRef?.current?.close('default');
   };
 
@@ -230,7 +240,7 @@ const BottomCalendar = ({
           paddingTop: 35,
         }}>
         <RN.View style={{alignSelf: 'center'}}>
-          <RN.Text style={styles.filtersText}>Date and Time</RN.Text>
+          <RN.Text style={styles.filtersText}>{t('date_time')}</RN.Text>
         </RN.View>
         <RN.TouchableOpacity
           style={{alignSelf: 'flex-end', marginTop: -25}}
@@ -325,7 +335,11 @@ const BottomCalendar = ({
           )}
           {!openingTime && (
             <RN.View style={{marginVertical: 12, marginBottom: 18}}>
-              <Button disabled title="Set the date" onPress={onPressFinished} />
+              <Button
+                disabled
+                title={t('selected_date.choosed')}
+                onPress={onPressFinished}
+              />
             </RN.View>
           )}
         </RN.View>

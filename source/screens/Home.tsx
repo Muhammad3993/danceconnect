@@ -15,6 +15,7 @@ import useAppStateHook from '../hooks/useAppState';
 import {apiUrl} from '../api/serverRequests';
 import useTickets from '../hooks/useTickets';
 import FastImage from 'react-native-fast-image';
+import {useTranslation} from 'react-i18next';
 
 const HomeScreen = () => {
   const {userImgUrl} = useProfile();
@@ -27,9 +28,10 @@ const HomeScreen = () => {
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
   const {getManagingEvents, personalEvents, getPersonalEvents} = useEvents();
-  const [events, setEvents] = useState<string[]>(personalEvents);
+  const [events, setEvents] = useState<string[]>();
   const {getPurchasedTickets} = useTickets();
 
+  const {t} = useTranslation();
   const [maybeEvents, setMaybeEvents] = useState([]); //TODO verticalCard
   useEffect(() => {
     setTabs(['All', ...eventTypes]);
@@ -45,7 +47,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     getDanceStyles();
-    getManagingEvents();
+    // getManagingEvents();
     getPersonalEvents();
     getPurchasedTickets();
   }, []);
@@ -54,7 +56,7 @@ const HomeScreen = () => {
     if (personalEvents?.length > 0) {
       setEvents(personalEvents);
     }
-  }, [personalEvents?.length]);
+  }, [personalEvents, personalEvents?.length]);
   const goToCommunities = () => navigation.navigate('Communities');
   useEffect(() => {
     onPressTab('All');
@@ -170,7 +172,7 @@ const HomeScreen = () => {
           <CreateCommunityButton />
         </RN.View>
         <RN.Text style={styles.upcomingEventsTitle}>
-          Your Upcoming Events
+          {t('your_upcoming')}
         </RN.Text>
         <RN.View style={styles.tabsWrapper}>
           <RN.FlatList
@@ -185,7 +187,11 @@ const HomeScreen = () => {
         {events?.length > 0 &&
           events?.map((item: any) => {
             return (
-              <RN.View style={{paddingTop: 8, minHeight: 260}}>
+              <RN.View
+                style={{
+                  paddingTop: 8,
+                  minHeight: events.length > 1 ? 200 : 260,
+                }}>
                 {renderItem(item)}
               </RN.View>
             );

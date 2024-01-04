@@ -11,6 +11,8 @@ import useTickets from '../../../hooks/useTickets';
 import {Modalize} from 'react-native-modalize';
 import {Calendar} from 'react-native-calendars';
 import {extendMoment} from 'moment-range';
+import {useTranslation} from 'react-i18next';
+import useAppStateHook from '../../../hooks/useAppState';
 
 const moment = extendMoment(Moment);
 
@@ -36,10 +38,12 @@ const setupEnd = {
 };
 const EditTicket = () => {
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const routeProps = useRoute();
   const {changeTicket} = useTickets();
   const calendarModalizeRef = useRef<Modalize>(null);
 
+  const {getTicketPricePercent, priceFix, pricePercent} = useAppStateHook();
   const ticketProps = routeProps?.params;
   const onPressBack = () => navigation.goBack();
   const [enableTicket, setEnableTicket] = useState(ticketProps?.enabled);
@@ -68,7 +72,11 @@ const EditTicket = () => {
   const [openEndSaleDate, setOpenEndSaleDate] = useState(false);
 
   const [quantityError, setQuantityError] = useState(false);
+  const [toogleFinalPrice, setToogleFinalPrice] = useState(ticketProps?.isFinalPrice);
 
+  useEffect(() => {
+    getTicketPricePercent();
+  }, []);
   const onOpenCalendar = () => {
     calendarModalizeRef.current?.open();
   };
@@ -97,6 +105,7 @@ const EditTicket = () => {
       enabled: enableTicket,
       eventUid: ticketProps?.eventUid,
       timezone: ticketProps?.timezone,
+      isFinalPrice: toogleFinalPrice,
       id: ticketProps?.id,
     };
     if (quantityTicket?.length <= 0) {
@@ -124,7 +133,7 @@ const EditTicket = () => {
     return (
       <RN.TouchableOpacity style={styles.headerContainer} onPress={onPressBack}>
         <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
-        <RN.Text style={styles.headerTitle}>Change Ticket</RN.Text>
+        <RN.Text style={styles.headerTitle}>{t('change_ticket')}</RN.Text>
       </RN.TouchableOpacity>
     );
   };
@@ -139,7 +148,7 @@ const EditTicket = () => {
           value={enableTicket}
         />
         <RN.View style={{justifyContent: 'center'}}>
-          <RN.Text style={styles.toggleText}>Enable Ticket</RN.Text>
+          <RN.Text style={styles.toggleText}>{t('enable_ticket')}</RN.Text>
         </RN.View>
       </RN.View>
     );
@@ -148,7 +157,7 @@ const EditTicket = () => {
     return (
       <RN.View style={{marginTop: 30}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Change Ticket Name</RN.Text>
+          <RN.Text style={styles.title}>{t('change_ticket_name')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -169,7 +178,7 @@ const EditTicket = () => {
           <Input
             value={nameTicket}
             onChange={onChangeValueName}
-            placeholder="Name"
+            placeholder={t('create_name')}
             maxLength={countNameSymbols.maxSymbols}
           />
         </RN.View>
@@ -177,16 +186,36 @@ const EditTicket = () => {
     );
   };
   const renderPriceTicket = () => {
-    const percent = 10;
-    const total = Number(priceTicket) + (priceTicket * percent) / 100 + 0.3;
+    const percent = pricePercent * 100;
+    const total =
+      Number(priceTicket) + (priceTicket * percent) / 100 + priceFix;
+    const totalFinal =
+      Number(priceTicket) - (priceTicket * percent) / 100 - priceFix;
+
     return (
       <RN.View style={{marginHorizontal: 4}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Change Event Price</RN.Text>
+          <RN.Text style={styles.title}>{t('change_ticket_price')}</RN.Text>
+        </RN.View>
+        <RN.View style={styles.toggleFinalPrice}>
+          <RN.Switch
+            trackColor={{false: colors.gray, true: colors.orange}}
+            thumbColor={toogleFinalPrice ? colors.white : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={setToogleFinalPrice}
+            value={toogleFinalPrice}
+            style={{transform: [{scaleX: 0.5}, {scaleY: 0.5}]}}
+          />
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text>{t('set_final_price')}</RN.Text>
+          </RN.View>
         </RN.View>
         <RN.Text style={styles.feeText}>
-          10% + 30¢ fees will be included to the final price
+        {toogleFinalPrice
+            ? t('percent_final_price', {percent: percent, fix: priceFix * 100})
+            : t('percent_price', {percent: percent, fix: priceFix * 100})}
         </RN.Text>
+        {/* <RN.Text style={styles.feeText}>{t('percent_price')}</RN.Text> */}
         <RN.View>
           <Input
             value={priceTicket}
@@ -199,12 +228,14 @@ const EditTicket = () => {
           />
           <RN.Text style={styles.usd}>USD</RN.Text>
         </RN.View>
-        <RN.Text style={styles.finalPrice}>
-          Final ticket price for customer{' '}
-          <RN.Text style={{fontWeight: '700'}}>{`${total.toFixed(
-            2,
-          )} USD`}</RN.Text>
-        </RN.Text>
+        {Number(priceTicket) > 0 && (
+          <RN.Text style={styles.finalPrice}>
+            {toogleFinalPrice ? t('final_price_org') : t('final_price')}
+            <RN.Text style={{fontWeight: '700'}}>{` ${
+              toogleFinalPrice ? totalFinal.toFixed(2) : total.toFixed(2)
+            } USD`}</RN.Text>
+          </RN.Text>
+        )}
       </RN.View>
     );
   };
@@ -212,7 +243,7 @@ const EditTicket = () => {
     return (
       <RN.View style={{marginHorizontal: 4}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Quantity Available</RN.Text>
+          <RN.Text style={styles.title}>{t('quantity_availalbe')}</RN.Text>
         </RN.View>
         <Input
           value={quantityTicket}
@@ -233,8 +264,8 @@ const EditTicket = () => {
       <RN.View style={{marginHorizontal: 4}}>
         <RN.View style={styles.nameTitle}>
           <RN.Text style={styles.title}>
-            Add Description
-            <RN.Text style={styles.countMaxSymbols}> (Optional)</RN.Text>
+            {t('description_title')}
+            <RN.Text style={styles.countMaxSymbols}> {t('optional')}</RN.Text>
           </RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
@@ -255,7 +286,7 @@ const EditTicket = () => {
         <Input
           value={descriptionTicket}
           onChange={onChangeValueDescription}
-          placeholder="Description"
+          placeholder={t('description')}
           maxLength={countDescSymbols.maxSymbols}
           multiLine
         />
@@ -265,7 +296,7 @@ const EditTicket = () => {
   const renderFooter = () => {
     return (
       <RN.View style={styles.footerWrapper}>
-        <Button title="Save Changes" disabled onPress={onPressCreate} />
+        <Button title={t('save_changes')} disabled onPress={onPressCreate} />
       </RN.View>
     );
   };
@@ -273,7 +304,9 @@ const EditTicket = () => {
     return (
       <RN.View style={styles.saleDatesContainer}>
         <RN.View>
-          <RN.Text style={styles.saleDatesTitle}>Set Start Sale Date</RN.Text>
+          <RN.Text style={styles.saleDatesTitle}>
+            {t('start_sale_date')}
+          </RN.Text>
           <RN.TouchableOpacity
             style={styles.saleDatesBtn}
             onPress={() => {
@@ -296,7 +329,7 @@ const EditTicket = () => {
           </RN.TouchableOpacity>
         </RN.View>
         <RN.View>
-          <RN.Text style={styles.saleDatesTitle}>Set End Sale Date</RN.Text>
+          <RN.Text style={styles.saleDatesTitle}>{t('end_sale_date')}</RN.Text>
           <RN.TouchableOpacity
             style={styles.saleDatesBtn}
             onPress={() => {
@@ -410,6 +443,11 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     marginVertical: 8,
   },
+  toggleFinalPrice: {
+    flexDirection: 'row',
+    paddingHorizontal: 8,
+    paddingBottom: 4,
+  },
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
@@ -471,6 +509,7 @@ const styles = RN.StyleSheet.create({
     paddingBottom: 12,
     paddingHorizontal: 18,
     color: colors.textPrimary,
+    marginRight: 22,
   },
   countCurrentSymbols: {
     fontSize: 14,

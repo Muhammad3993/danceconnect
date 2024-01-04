@@ -1,4 +1,5 @@
 import {Dimensions, Platform, NativeModules, StatusBar} from 'react-native';
+import i18n from '../i18n/i118n';
 
 export const SCREEN_HEIGHT = Dimensions.get('screen').height;
 export const SCREEN_WIDTH = Dimensions.get('screen').width;
@@ -15,29 +16,29 @@ const {StatusBarManager} = NativeModules;
 export const genders = [
   {
     id: 1,
-    title: 'Male',
+    title: i18n.t('gender_select.male'),
   },
   {
     id: 2,
-    title: 'Female',
+    title: i18n.t('gender_select.female'),
   },
   {
     id: 3,
-    title: 'Nonbinary',
+    title: i18n.t('gender_select.nonbinary'),
   },
 ];
 export const roles = [
   {
     id: 0,
-    title: 'I’m Dancer',
+    title: i18n.t('role_dance'),
   },
   {
     id: 1,
-    title: 'I’m Teacher',
+    title: i18n.t('role_teacher'),
   },
   {
     id: 2,
-    title: 'I’m Organizer',
+    title: i18n.t('role_organizer'),
   },
 ];
 export const statusBarHeight = isAndroid

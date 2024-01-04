@@ -88,6 +88,12 @@ export const Input = ({
     return (
       <RN.TouchableOpacity
         style={styles.rightIconWrapper}
+        hitSlop={{
+          top: 30,
+          right: 40,
+          bottom: 30,
+          left: 40,
+        }}
         onPress={() => setVisiblePassword(val => !val)}>
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Image

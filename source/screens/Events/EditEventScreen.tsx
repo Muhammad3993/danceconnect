@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState, useTransition} from 'react';
 import * as RN from 'react-native';
 import {useProfile} from '../../hooks/useProfile';
 import colors from '../../utils/colors';
@@ -19,30 +19,31 @@ import useEvents from '../../hooks/useEvents';
 import useTickets from '../../hooks/useTickets';
 import {apiUrl} from '../../api/serverRequests';
 import FastImage from 'react-native-fast-image';
+import {useTranslation} from 'react-i18next';
+import { isValidUrl } from '../../utils/helpers';
 
-const SCREENS = [
-  {idx: 0, title: 'Change Basic Info'},
-  {idx: 1, title: 'Change Details'},
-  {idx: 2, title: 'Change Tickets'},
-];
-const TICKET_TYPES = [
-  {
-    idx: 0,
-    type: 'free',
-    title: 'Free Event. No tickets needed',
-    description:
-      'Guests don`t need tickets and the number of visitors is not limited.',
-  },
-  {
-    idx: 1,
-    type: 'paid',
-    title: 'Tickets needed',
-    description:
-      'Entrance is paid and there are one or more types of tickets or Entrance is free, but the number of visitors is limited.',
-  },
-];
 const EditEventScreen = () => {
   const navigation = useNavigation();
+  const {t} = useTranslation();
+  const SCREENS = [
+    {idx: 0, title: t('change_basic_info')},
+    {idx: 1, title: t('change_detail')},
+    {idx: 2, title: t('change_set_tickets')},
+  ];
+  const TICKET_TYPES = [
+    {
+      idx: 0,
+      type: 'free',
+      title: t('tt_free_title'),
+      description: t('tt_free_desc'),
+    },
+    {
+      idx: 1,
+      type: 'paid',
+      title: t('tt_paid_title'),
+      description: t('tt_paid_desc'),
+    },
+  ];
   const routeParams = useRoute();
   const {changeInformation, loadingWithChangeInformation, isSaveChanges} =
     useEvents();
@@ -59,10 +60,13 @@ const EditEventScreen = () => {
     typeEvent,
     price,
     isEditTicket,
+    inAppTickets,
+    link,
   } = routeParams?.params;
   const {removeTicket, ticketsList, getTickets} = useTickets();
 
-  const {eventTypes, countries} = useAppStateHook();
+  const {eventTypes, countries, getTicketPricePercent, priceFix, pricePercent} =
+    useAppStateHook();
   const [title, setName] = useState(routeParams?.params?.title ?? '');
   const [desc, setDescription] = useState(description);
   const [typeEventEdit, setTypeEvent] = useState(typeEvent);
@@ -95,6 +99,10 @@ const EditEventScreen = () => {
   const [loadImg, setLoadImg] = useState(false);
   const [categoriesError, setCategoriesError] = useState(false);
 
+  const [inAppTicketsEdit, setInAppTickets] = useState(inAppTickets);
+  const [externalLink, setExternalLink] = useState(link);
+  const [validUrl, setValidUrl] = useState(false);
+
   const basicInfo = currentScreen === 0;
   const details = currentScreen === 1;
   const ticketsInfo = currentScreen === 2;
@@ -104,8 +112,18 @@ const EditEventScreen = () => {
   });
   const [countDescSymbols, setCountDescSymbols] = useState({
     current: description?.length,
-    maxSymbols: 350,
+    maxSymbols: 1000,
   });
+
+  useEffect(() => {
+    getTicketPricePercent();
+  }, []);
+
+  useEffect(() => {
+    if (endDate === null) {
+      setEndDate(startDate);
+    }
+  }, [endDate, startDate]);
   useEffect(() => {
     const c = countries.find(
       (c: {country: string}) => c.country === selectedLocation?.split(', ')[0],
@@ -204,6 +222,7 @@ const EditEventScreen = () => {
     }
   };
   const onPressSaveChange = () => {
+    console.log(isValidUrl(externalLink), inAppTicketsEdit);
     const eventDateEd = {
       time: time,
       startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
@@ -221,6 +240,8 @@ const EditEventScreen = () => {
       setIsErrorName(true);
     } else if (description?.length <= 0) {
       setIsDescriptionError(true);
+    } else if (!inAppTicketsEdit && !isValidUrl(externalLink)) {
+      setValidUrl(true);
     } else {
       changeInformation({
         name: title,
@@ -234,6 +255,8 @@ const EditEventScreen = () => {
         eventUid: routeParams?.params?._id,
         typeEvent: typeEventEdit,
         price: price,
+        inAppTickets: inAppTicketsEdit,
+        externalLink: !inAppTicketsEdit ? externalLink : '',
       });
     }
   };
@@ -269,7 +292,7 @@ const EditEventScreen = () => {
     setDescription(value);
     setCountDescSymbols({
       current: value.length,
-      maxSymbols: 350,
+      maxSymbols: 1000,
     });
     setIsDescriptionError(false);
   };
@@ -301,8 +324,6 @@ const EditEventScreen = () => {
   const onChooseImage = async () => {
     let options = {
       mediaType: 'photo',
-      maxWidth: 300,
-      maxHeight: 550,
       quality: 1,
       includeBase64: true,
     };
@@ -384,7 +405,7 @@ const EditEventScreen = () => {
               ]}
             />
           </RN.TouchableOpacity>
-          <RN.Text style={styles.headerTitle}>Change Your Event</RN.Text>
+          <RN.Text style={styles.headerTitle}>{t('change_event')}</RN.Text>
           <RN.TouchableOpacity onPress={closeBtn}>
             <RN.Image source={{uri: 'close'}} style={styles.closeIcon} />
           </RN.TouchableOpacity>
@@ -397,7 +418,7 @@ const EditEventScreen = () => {
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title={currentScreen > 1 ? 'Save Changes' : 'Next'}
+          title={currentScreen > 1 ? t('save_changes') : t('next')}
           disabled
           onPress={onPressNextBtn}
         />
@@ -408,7 +429,7 @@ const EditEventScreen = () => {
     return (
       <RN.View style={{marginTop: 30}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Change Event Name</RN.Text>
+          <RN.Text style={styles.title}>{t('change_event_name')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -429,7 +450,7 @@ const EditEventScreen = () => {
           <Input
             value={title}
             onChange={onChangeValueName}
-            placeholder="Name"
+            placeholder={t('event_name')}
             maxLength={countNameSymbols.maxSymbols}
             isErrorBorder={isErrorName}
             onFocusInput={() => setIsErrorName(false)}
@@ -442,7 +463,7 @@ const EditEventScreen = () => {
     return (
       <RN.View style={{paddingVertical: 14, paddingTop: 6}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Choose Event Type</RN.Text>
+          <RN.Text style={styles.title}>{t('choose_ev_type')}</RN.Text>
         </RN.View>
         <RN.View
           style={{
@@ -492,8 +513,8 @@ const EditEventScreen = () => {
                 color: categoriesError ? colors.redError : colors.textPrimary,
               },
             ]}>
-            Choose Category
-            <RN.Text style={styles.countMaxSymbols}> can select few</RN.Text>
+            {t('choose_category_title')}
+            <RN.Text style={styles.countMaxSymbols}> {t('few')}</RN.Text>
           </RN.Text>
         </RN.View>
         <RN.Text
@@ -503,7 +524,7 @@ const EditEventScreen = () => {
               marginBottom: addedStyles?.length > 0 ? 0 : 12,
             },
           ]}>
-          Create and share events, discuss them with your group members
+          {t('ds_desc_event')}
         </RN.Text>
         {addedStyles?.length > 0 && (
           <RN.View style={styles.danceStyleContainer}>
@@ -536,7 +557,7 @@ const EditEventScreen = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Change Description</RN.Text>
+          <RN.Text style={styles.title}>{t('description_title')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -554,7 +575,7 @@ const EditEventScreen = () => {
           </RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          Describe your event and add the necessary contact information
+          {t('event_desc_last')}
         </RN.Text>
         <RN.View style={{marginHorizontal: 4}}>
           <Input
@@ -574,10 +595,10 @@ const EditEventScreen = () => {
     return (
       <RN.View style={{marginTop: 30}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Change Event Dates</RN.Text>
+          <RN.Text style={styles.title}>{t('change_event_date')}</RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          Select event date and time
+          {t('select_event_date')}
         </RN.Text>
         <RN.TouchableOpacity
           style={styles.dateEventContainer}
@@ -595,7 +616,9 @@ const EditEventScreen = () => {
                     : moment(startDate).format('MMM Do')
                 }${
                   endDate !== null
-                    ? ' - ' + moment(endDate).format('MMM Do')
+                    ? endDate === startDate
+                      ? ''
+                      : ' - ' + moment(endDate).format('MMM Do')
                     : ''
                 }`}
               </RN.Text>
@@ -617,12 +640,12 @@ const EditEventScreen = () => {
       <RN.View style={{marginTop: 16}}>
         <RN.View style={styles.nameTitle}>
           <RN.Text style={styles.title}>
-            Upload Cover Image
-            <RN.Text style={styles.countMaxSymbols}> (Optional)</RN.Text>
+            {t('upload_img_title')}
+            <RN.Text style={styles.countMaxSymbols}> {t('optional')}</RN.Text>
           </RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          What picture is better to put here?
+          {t('upload_img_desc')}
         </RN.Text>
         {imgs?.length > 0 ? (
           <RN.ScrollView
@@ -689,7 +712,9 @@ const EditEventScreen = () => {
               }}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+              <RN.Text style={styles.uploadImgText}>
+                {t('upload_img_small')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </RN.ScrollView>
         ) : (
@@ -708,7 +733,9 @@ const EditEventScreen = () => {
               style={styles.uploadImgContainer}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+              <RN.Text style={styles.uploadImgText}>
+                {t('upload_img_small')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </>
         )}
@@ -718,7 +745,7 @@ const EditEventScreen = () => {
   const renderChooseLocation = () => {
     return (
       <>
-        <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
+        <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
         <RN.TouchableOpacity
           onPress={() => setOpenLocation(true)}
           style={styles.selectLocationBtn}>
@@ -743,7 +770,7 @@ const EditEventScreen = () => {
           </RN.View>
         </RN.TouchableOpacity>
 
-        <RN.Text style={styles.placeholderTitle}>Place</RN.Text>
+        <RN.Text style={styles.placeholderTitle}>{t('place')}</RN.Text>
         <RN.TouchableOpacity
           onPress={() => {
             setIsErrorPlace(false);
@@ -757,7 +784,7 @@ const EditEventScreen = () => {
             },
           ]}>
           <RN.Text style={styles.locationText}>
-            {selectedPlace?.length > 0 ? `${selectedPlace}` : 'Choose place'}
+            {selectedPlace?.length > 0 ? `${selectedPlace}` : t('choose_place')}
           </RN.Text>
           <RN.View
             style={{
@@ -775,71 +802,105 @@ const EditEventScreen = () => {
   const renderChooseTypeEvent = () => {
     return (
       <RN.View style={{marginTop: 30}}>
-        <RN.View style={[styles.nameTitle, {paddingBottom: 16}]}>
-          <RN.Text style={styles.title}>Choose ticket type</RN.Text>
-        </RN.View>
-        {TICKET_TYPES.map(
-          (type: {
-            idx: number;
-            type: string;
-            title: string;
-            description: string;
-          }) => {
-            return (
-              <RN.TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => onPressTicketType(type)}
-                key={type.idx}
-                style={
-                  ticketType.idx === type.idx
-                    ? [
-                        styles.ticketTypeActive,
-                        {
-                          borderColor: paidTicketsErrors
-                            ? colors.redError
-                            : colors.purple,
-                        },
-                      ]
-                    : styles.ticketTypeInActive
-                }>
-                <RN.View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <RN.View style={{justifyContent: 'center'}}>
-                    <RN.Text style={styles.ticketTypeTitle}>
-                      {type.title}
-                    </RN.Text>
-                  </RN.View>
-                  <RN.Image
-                    source={{
-                      uri:
-                        ticketType.idx === type.idx
-                          ? 'checkactive'
-                          : 'checkinactive',
-                    }}
-                    style={{height: 20, width: 20}}
-                  />
-                </RN.View>
-                <RN.Text style={styles.ticketTypeDescription}>
-                  {type.description}
-                </RN.Text>
-              </RN.TouchableOpacity>
-            );
-          },
-        )}
-        {ticketType.type !== 'free' &&
-          ticketsInfo &&
-          tickets?.length > 0 &&
-          renderTickets()}
-        {ticketType.type === 'paid' && (
-          <Button
-            title={tickets?.length > 0 ? '+ Add ticket' : 'Add ticket'}
-            onPress={onPressAddTicket}
-            disabled
-            buttonStyle={styles.addTicketBtn}
+        <RN.View style={styles.toggle}>
+          <RN.Switch
+            trackColor={{false: colors.gray, true: colors.orange}}
+            thumbColor={inAppTicketsEdit ? colors.white : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={setInAppTickets}
+            value={inAppTicketsEdit}
+            style={{transform: [{scaleX: 0.5}, {scaleY: 0.5}]}}
           />
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text>{'In-App tickets'}</RN.Text>
+          </RN.View>
+        </RN.View>
+        {!inAppTicketsEdit && (
+          <>
+            <RN.View style={[styles.nameTitle, {paddingVertical: 16}]}>
+              <RN.Text style={styles.title}>Put a link</RN.Text>
+            </RN.View>
+            <RN.View style={{marginHorizontal: 4}}>
+              <Input
+                value={externalLink}
+                onChange={setExternalLink}
+                placeholder={'Put the link here'}
+                isErrorBorder={validUrl}
+              />
+            </RN.View>
+          </>
+        )}
+        {inAppTicketsEdit && (
+          <>
+            <RN.View style={[styles.nameTitle, {paddingVertical: 16}]}>
+              <RN.Text style={styles.title}>{t('ticket_type')}</RN.Text>
+            </RN.View>
+            {TICKET_TYPES.map(
+              (type: {
+                idx: number;
+                type: string;
+                title: string;
+                description: string;
+              }) => {
+                return (
+                  <RN.TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => onPressTicketType(type)}
+                    key={type.idx}
+                    style={
+                      ticketType.idx === type.idx
+                        ? [
+                            styles.ticketTypeActive,
+                            {
+                              borderColor: paidTicketsErrors
+                                ? colors.redError
+                                : colors.purple,
+                            },
+                          ]
+                        : styles.ticketTypeInActive
+                    }>
+                    <RN.View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <RN.View style={{justifyContent: 'center'}}>
+                        <RN.Text style={styles.ticketTypeTitle}>
+                          {type.title}
+                        </RN.Text>
+                      </RN.View>
+                      <RN.Image
+                        source={{
+                          uri:
+                            ticketType.idx === type.idx
+                              ? 'checkactive'
+                              : 'checkinactive',
+                        }}
+                        style={{height: 20, width: 20}}
+                      />
+                    </RN.View>
+                    <RN.Text style={styles.ticketTypeDescription}>
+                      {type.description}
+                    </RN.Text>
+                  </RN.TouchableOpacity>
+                );
+              },
+            )}
+            {ticketType.type !== 'free' &&
+              ticketsInfo &&
+              tickets?.length > 0 &&
+              renderTickets()}
+            {ticketType.type === 'paid' && (
+              <Button
+                title={
+                  tickets?.length > 0 ? `+ ${t('add_ticket')}` : t('add_ticket')
+                }
+                onPress={onPressAddTicket}
+                disabled
+                buttonStyle={styles.addTicketBtn}
+              />
+            )}
+          </>
         )}
       </RN.View>
     );
@@ -854,6 +915,7 @@ const EditEventScreen = () => {
     enabled: boolean;
     price: number;
     initialPrice: number;
+    isFinalPrice?: boolean;
   }) => {
     return (
       <RN.View style={styles.ticketContainer}>
@@ -889,12 +951,12 @@ const EditEventScreen = () => {
             paddingTop: 4,
             maxWidth: SCREEN_WIDTH - 100,
           }}>
-          Starts{' '}
-          <RN.Text style={{fontWeight: '600'}}>{`${moment(
+          {t('starts')}
+          <RN.Text style={{fontWeight: '600'}}>{` ${moment(
             ticket.startDate,
           ).format('MMM Do, YYYY')} / `}</RN.Text>
-          Ends{' '}
-          <RN.Text style={{fontWeight: '600'}}>{`${moment(
+          {t('ends')}
+          <RN.Text style={{fontWeight: '600'}}>{` ${moment(
             ticket.endDate,
           ).format('MMM Do, YYYY')}`}</RN.Text>
         </RN.Text>
@@ -906,8 +968,10 @@ const EditEventScreen = () => {
             paddingTop: 4,
             maxWidth: SCREEN_WIDTH - 100,
           }}>
-          Limit <RN.Text style={{fontWeight: '600'}}>{ticket.quantity}</RN.Text>
-          {' / '}Sold{' '}
+          {t('limit')}{' '}
+          <RN.Text style={{fontWeight: '600'}}>{ticket.quantity}</RN.Text>
+          {' / '}
+          {t('sold')}{' '}
           <RN.Text style={{fontWeight: '600'}}>{ticket.items.length}</RN.Text>
         </RN.Text>
         {ticket.initialPrice > 0 && (
@@ -919,13 +983,23 @@ const EditEventScreen = () => {
               paddingTop: 4,
               maxWidth: SCREEN_WIDTH - 100,
             }}>
-            Price{' '}
+            {t('price')}{' '}
             <RN.Text style={{fontWeight: '600'}}>
-              {ticket.initialPrice + ' USD '}
+              {ticket?.isFinalPrice
+                ? ticket.initialPrice -
+                  (
+                    (ticket.initialPrice * pricePercent * 100) / 100 +
+                    priceFix
+                  ).toFixed(2) +
+                  ' USD '
+                : ticket.initialPrice + ' USD '}
             </RN.Text>
             <RN.Text style={{color: colors.darkGray}}>
               +{' '}
-              {`${((ticket.initialPrice * 10) / 100 + 0.3).toFixed(2)} USD Fee`}
+              {`${(
+                (ticket.initialPrice * pricePercent * 100) / 100 +
+                priceFix
+              ).toFixed(2)} USD Fee`}
             </RN.Text>
           </RN.Text>
         )}
@@ -1043,6 +1117,11 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     paddingTop: isAndroid ? 14 : 0,
+  },
+  toggle: {
+    flexDirection: 'row',
+    paddingHorizontal: 8,
+    paddingBottom: 4,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -1259,6 +1338,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 21.6,
     fontWeight: '700',
     color: colors.textPrimary,
+    paddingRight: 18,
   },
   ticketTypeDescription: {
     fontSize: 14,

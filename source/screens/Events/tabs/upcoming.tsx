@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import useEvents from '../../../hooks/useEvents';
-import sotrtBy from 'lodash.sortby';
+import sortBy from 'lodash.sortby';
 import EventCard from '../../../components/eventCard';
 import colors from '../../../utils/colors';
 import {SCREEN_HEIGHT, isAndroid} from '../../../utils/constants';
@@ -12,6 +12,7 @@ import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonEventCard from '../../../components/skeleton/eventCard-Skeleton';
 import socket from '../../../api/sockets';
 import {RefreshControl, ScrollView} from 'react-native-gesture-handler';
+import {useTranslation} from 'react-i18next';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -24,8 +25,10 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     loadingEvents,
     getEvents,
     setSocketEvents,
+    eventList,
     // setDefaultEventLimit,
   } = useEvents();
+  const {t} = useTranslation();
   const lengthEmptyEvents = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
@@ -39,15 +42,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     });
     // console.log('eventData.attendedPeople.length', eventData.attendedPeople.length);
   }, []);
-  const [events, setEvents] = useState(
-    upcomingEvents
-      ?.filter(
-        i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-      )
-      .map(ev => ev),
-  );
+  const [events, setEvents] = useState(upcomingEvents);
   const [openingFilters, setOpeningFilters] = useState(false);
   const [eventType, setEventType] = useState('All');
   const [eventDate, setEventDate] = useState({start: null, end: null});
@@ -73,7 +68,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
             );
           })}
         {!loadingEvents && (
-          <RN.Text style={styles.emptyText}>There are no events yet</RN.Text>
+          <RN.Text style={styles.emptyText}>{t('no_events')}</RN.Text>
         )}
       </RN.View>
     );
@@ -83,19 +78,11 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
       setEvents(eventsSearch);
     }
     if (searchValue.length <= 0) {
-      setEvents(upcomingEvents);
+      setEvents(events);
     }
   }, [eventsSearch, searchValue]);
   useEffect(() => {
-    setEvents(
-      upcomingEvents
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
-        .map(ev => ev),
-    );
+    setEvents(upcomingEvents);
   }, [upcomingEvents.length]);
 
   useEffect(() => {
@@ -108,34 +95,17 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     setEventDate({start: null, end: null});
     setEventType('All');
     setFiltersBorderColor(colors.gray);
-    setEvents(
-      upcomingEvents
-        ?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        )
-        .map(ev => ev),
-    );
+    setEvents(upcomingEvents);
   };
   const onFilter = () => {
     if (addedStyles?.length > 0) {
-      const data = events.filter(
-        (item: any) =>
-          item?.categories?.some((ai: any) => addedStyles.includes(ai)) &&
-          item?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          item?.location?.substr(item?.location?.length - 2) ===
-            lastSymUserCountry,
+      const data = events.filter((item: any) =>
+        item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );
       setEvents(data);
       setFiltersBorderColor(colors.orange);
     } else if (eventType !== 'All') {
-      const evData = upcomingEvents?.filter(
-        i =>
-          i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-          i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry &&
-          i?.typeEvent === eventType,
-      );
+      const evData = upcomingEvents?.filter(i => i?.typeEvent === eventType);
       setEvents(evData);
       setFiltersBorderColor(colors.orange);
     } else if (
@@ -164,13 +134,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
 
       setFiltersBorderColor(colors.orange);
     } else {
-      setEvents(
-        upcomingEvents?.filter(
-          i =>
-            i?.location?.toLowerCase().includes(currentCity.toLowerCase()) &&
-            i?.location?.substr(i?.location?.length - 2) === lastSymUserCountry,
-        ),
-      );
+      setEvents(upcomingEvents);
       setFiltersBorderColor(colors.gray);
     }
   };
@@ -181,10 +145,9 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     return (
       <RN.View style={styles.filterWrapper}>
         <RN.View style={{justifyContent: 'center'}}>
-          <RN.Text
-            style={
-              styles.eventsLength
-            }>{`${events.length} events found`}</RN.Text>
+          <RN.Text style={styles.eventsLength}>
+            {t('events_found', {count: events.length})}
+          </RN.Text>
         </RN.View>
         <RN.TouchableOpacity
           style={[styles.filterBtn, {borderColor: filtersBorderColor}]}
@@ -195,7 +158,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
               style={{height: 16, width: 16, marginRight: 8}}
             />
           </RN.View>
-          <RN.Text style={styles.filterText}>Filters</RN.Text>
+          <RN.Text style={styles.filterText}>{t('filters')}</RN.Text>
           <RN.View style={{justifyContent: 'center'}}>
             <RN.Image
               source={{uri: 'downlight'}}
@@ -224,9 +187,11 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
         showsVerticalScrollIndicator={false}>
         {renderFilters()}
         {events?.length > 0 &&
-          sotrtBy(events, 'eventDate.startDate')?.map((item: any) => {
+          sortBy(events, 'eventDate.startDate')?.map((item: any) => {
             return (
-              <RN.View style={{minHeight: 260}}>{renderItem(item)}</RN.View>
+              <RN.View style={{minHeight: events.length > 1 ? 200 : 260}}>
+                {renderItem(item)}
+              </RN.View>
             );
           })}
         {!events?.length && renderEmpty()}

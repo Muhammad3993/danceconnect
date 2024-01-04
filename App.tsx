@@ -13,6 +13,8 @@ import FullLoading from './source/components/fullLoading';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Notice} from './source/components/errorNotice';
 import {Linking} from 'react-native';
+import {I18nextProvider} from 'react-i18next';
+import i18n from './source/i18n/i118n';
 
 const App = () => {
   useEffect(() => {
@@ -47,12 +49,14 @@ const App = () => {
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaView style={styles.container}>
         <ReduxProvider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <StatusBar barStyle={statusBarContent} />
-            <Notice />
-            <FullLoading />
-            <AppNavigator />
-          </PersistGate>
+          <I18nextProvider i18n={i18n} defaultNS={'translation'}>
+            <PersistGate loading={null} persistor={persistor}>
+              <StatusBar barStyle={statusBarContent} />
+              <Notice />
+              <FullLoading />
+              <AppNavigator />
+            </PersistGate>
+          </I18nextProvider>
         </ReduxProvider>
       </SafeAreaView>
     </GestureHandlerRootView>

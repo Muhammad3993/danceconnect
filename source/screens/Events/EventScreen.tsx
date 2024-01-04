@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import * as RN from 'react-native';
@@ -15,9 +16,11 @@ import socket from '../../api/sockets';
 import useTickets from '../../hooks/useTickets';
 import FastImage from 'react-native-fast-image';
 import {Animated} from 'react-native';
+import {useTranslation} from 'react-i18next';
 
 const EventScreen = () => {
   const routeProps = useRoute();
+  const {t} = useTranslation();
   const {data, createEvent, pressBtnAttend}: any = routeProps.params;
   const linkId = routeProps.params?.id ?? data?.id;
   const navigation: any = useNavigation();
@@ -29,14 +32,18 @@ const EventScreen = () => {
   const {userUid, saveEmail} = useRegistration();
   const {attendEvent, onClearEventDataById} = useEvents();
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
+  const [shareOptions, setShareOptions] = useState(false);
   // const [displayedData, setDisplayedData] = useState(eventData);
   const isPassedEvent =
-    moment(eventData?.eventDate?.startDate).format('YYYY-MM-DD') <
-    moment(new Date()).format('YYYY-MM-DD');
+    eventData?.eventDate?.endDate !== null
+      ? moment(eventData?.eventDate?.endDate).format('YYYY-MM-DD') <
+        moment(new Date()).format('YYYY-MM-DD')
+      : moment(eventData?.eventDate?.startDate).format('YYYY-MM-DD') <
+        moment(new Date()).format('YYYY-MM-DD');
   const [loadSubscribe, setLoadSubscribe] = useState(false);
   const [attendedImgs, setAttendedImgs] = useState([]);
 
-  const isManager = eventData?.managers?.find(i => i === userUid);
+  const isManager = eventData?.managers?.find(i => i === userUid) ?? false;
   const isAdmin = eventData?.creator?.uid === userUid;
 
   const [tickets, setTickers] = useState([]);
@@ -152,9 +159,6 @@ const EventScreen = () => {
     setUnFollowOpen(v => !v);
     remove();
   };
-  const onPressBuyTickets = () => {
-    navigation.navigate('BuyTickets', {tickets: ticketsList});
-  };
   const onPressBack = () => {
     onClearEventDataById();
     if (createEvent) {
@@ -185,8 +189,31 @@ const EventScreen = () => {
     } catch (error) {
       console.log(error.message);
     }
+    setShareOptions(v => !v);
   };
-
+  const onPressShareWeb = async () => {
+    try {
+      const link = `https://danceconnect.online/pay/${eventData?.id}`;
+      const result = await RN.Share.share({
+        title: `${eventData.title}`,
+        message: isAndroid ? link : `${eventData.title}`,
+        url: link,
+      });
+      if (result.action === RN.Share.sharedAction) {
+        if (result.activityType) {
+          console.log('resi', result);
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === RN.Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+    setShareOptions(v => !v);
+  };
   const headerOptionButtons = [
     {
       key: 'edit',
@@ -197,7 +224,7 @@ const EventScreen = () => {
     {
       key: 'more',
       icon: 'more',
-      isEnabled: !isPassedEvent
+      isEnabled: isPassedEvent
         ? false
         : isManager
         ? false
@@ -210,10 +237,33 @@ const EventScreen = () => {
         : false,
       onPress: () => setUnFollowOpen(v => !v),
     },
-    {key: 'share', icon: 'share', isEnabled: true, onPress: onPressShare},
+    {
+      key: 'share',
+      icon: 'share',
+      isEnabled: true,
+      onPress:
+        isAdmin || isManager
+          ? () => setShareOptions(v => !v)
+          : () => onPressShare(),
+      options: [
+        {
+          key: 'app',
+          label: 'Share to App',
+          onPress: () => onPressShare(),
+        },
+        {
+          key: 'web',
+          label: 'Share to Web',
+          onPress: () => onPressShareWeb(),
+        },
+      ],
+    },
   ];
   const opacity = new Animated.Value(0);
-
+  const shareActions = headerOptionButtons
+    .filter(i => i?.options)
+    .map(i => i.options)
+    .flat(1);
   const onScroll = (ev: RN.NativeSyntheticEvent<RN.NativeScrollEvent>) => {
     const {y} = ev.nativeEvent.contentOffset;
     Animated.timing(opacity, {
@@ -222,6 +272,7 @@ const EventScreen = () => {
       useNativeDriver: false,
     }).start();
     setUnFollowOpen(false);
+    setShareOptions(false);
   };
   const header = () => {
     return (
@@ -273,10 +324,37 @@ const EventScreen = () => {
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.unFollowText}>
-                {isAdmin ? 'Remove Event' : 'Un-attend'}
+                {isAdmin ? t('remove_event') : t('unattend')}
               </RN.Text>
             </RN.View>
           </RN.TouchableOpacity>
+        )}
+        {shareOptions && (
+          <RN.View style={{position: 'absolute', right: -40}}>
+            {shareActions.map(item => {
+              const isLast = shareActions[shareActions.length - 1]?.key;
+              return (
+                <RN.TouchableOpacity
+                  key={item?.key}
+                  onPress={item?.onPress}
+                  style={[
+                    styles.unFollowContainer,
+                    {
+                      borderBottomLeftRadius: isLast === item?.key ? 8 : 0,
+                      borderBottomRightRadius: isLast === item?.key ? 8 : 0,
+                      borderTopLeftRadius:
+                        isLast === item?.key ? (isAdmin ? 0 : 8) : 8,
+                      borderTopRightRadius: 0,
+                      borderBottomWidth: isLast === item?.key ? 0 : 0.5,
+                    },
+                  ]}>
+                  <RN.View style={{justifyContent: 'center'}}>
+                    <RN.Text style={styles.unFollowText}>{item?.label}</RN.Text>
+                  </RN.View>
+                </RN.TouchableOpacity>
+              );
+            })}
+          </RN.View>
         )}
         {/* </RN.Animated.View> */}
       </RN.View>
@@ -284,7 +362,9 @@ const EventScreen = () => {
   };
   const renderAttendedImgs = () => {
     const countPeople =
-      attendedImgs?.length > 6 ? `+${attendedImgs?.length - 6} going` : 'going';
+      attendedImgs?.length > 6
+        ? `+${attendedImgs?.length - 6}` + t('going')
+        : t('going');
     const onPressAttended = () => {
       navigation.navigate('AttendedPeople', {
         usersArray: attendedImgs,
@@ -396,7 +476,11 @@ const EventScreen = () => {
               'ddd',
             )}, ${moment(eventData?.eventDate?.startDate).format('MMM D')}${
               eventData?.eventDate?.endDate
-                ? ' - ' + moment(eventData?.eventDate?.endDate).format('MMM D')
+                ? eventData?.eventDate?.endDate ===
+                  eventData?.eventDate?.startDate
+                  ? ''
+                  : ' - ' +
+                    moment(eventData?.eventDate?.endDate).format('MMM D')
                 : ''
             } • ${moment(eventData?.eventDate?.time).format('HH:mm')}`}
           </RN.Text>
@@ -446,7 +530,7 @@ const EventScreen = () => {
               <RN.Text style={styles.organizerName}>
                 {eventData?.creator?.name}
               </RN.Text>
-              <RN.Text style={styles.organizer}>Organizer</RN.Text>
+              <RN.Text style={styles.organizer}>{t('organizer')}</RN.Text>
             </RN.View>
           </RN.View>
         </RN.View>
@@ -480,7 +564,7 @@ const EventScreen = () => {
           </RN.View>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.View style={{justifyContent: 'center'}}>
-              <RN.Text style={styles.seeMapsText}>Maps</RN.Text>
+              <RN.Text style={styles.seeMapsText}>{t('maps')}</RN.Text>
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>
               <RN.View
@@ -503,7 +587,7 @@ const EventScreen = () => {
           ticketsList?.length > 0 && (
             <>
               <Button
-                title="Manage tickets"
+                title={t('manage_tickets')}
                 disabled
                 onPress={() =>
                   navigation.navigate('EditEvent', {
@@ -527,7 +611,7 @@ const EventScreen = () => {
                       color: colors.purple,
                       fontSize: 18,
                     }}>
-                    See tickets sold
+                    {t('sold_tickets')}
                   </RN.Text>
                 </RN.TouchableOpacity>
               )}
@@ -577,12 +661,15 @@ const EventScreen = () => {
                 }`}
               </RN.Text>
               <RN.Text style={{color: colors.darkGray, paddingLeft: 12}}>
-                {'Ticket price depends on package'}
+                {t('price_tickets_desc')}
               </RN.Text>
             </RN.View>
           </RN.View>
         </RN.View>
       );
+    }
+    if (!eventData?.inAppTickets && eventData?.link?.length > 0) {
+      return null;
     }
     return (
       <RN.View style={styles.mapInfoContainer}>
@@ -602,7 +689,7 @@ const EventScreen = () => {
           </RN.View>
           <RN.View style={{justifyContent: 'center'}}>
             <RN.Text numberOfLines={1} style={styles.locateText}>
-              Free event
+              {t('free_event')}
             </RN.Text>
           </RN.View>
         </RN.View>
@@ -616,7 +703,7 @@ const EventScreen = () => {
         : eventData?.description;
     return (
       <RN.View style={styles.descWrapper}>
-        <RN.Text style={styles.aboutText}>About this event</RN.Text>
+        <RN.Text style={styles.aboutText}>{t('about_event')}</RN.Text>
         <RN.Text
           numberOfLines={
             openingDescription ? eventData?.description?.length : 3
@@ -630,7 +717,7 @@ const EventScreen = () => {
             activeOpacity={0.7}
             style={styles.showWrapper}>
             <RN.Text style={styles.showMoreText}>{`${
-              openingDescription ? 'Show Less' : 'Show More'
+              openingDescription ? t('show_less') : t('show_more')
             }`}</RN.Text>
             <RN.View
               style={{
@@ -653,9 +740,8 @@ const EventScreen = () => {
       </RN.View>
     );
   };
-
   const renderAttendBtn = () => {
-    if (isFollowed && !ticketsList.length) {
+    if (isFollowed && !ticketsList.length && eventData?.inAppTickets) {
       return null;
     }
     if (isManager) {
@@ -671,17 +757,29 @@ const EventScreen = () => {
             fontWeight: '600',
             paddingVertical: 14,
           }}>
-          This event has passed
+          {t('passed_event')}
         </RN.Text>
       );
     }
     if (isFollowed && !myTicketsByEvent?.length) {
       return (
         <Button
-          title={ticketsList.length > 0 ? 'Get Tickets' : 'Attend'}
+          title={ticketsList.length > 0 ? t('get_tickets') : t('attend')}
           disabled={!isPassedEvent}
           buttonStyle={styles.attendBtn}
           onPress={onPressAttend}
+        />
+      );
+    }
+    if (!eventData?.inAppTickets && eventData?.link?.length > 0) {
+      return (
+        <Button
+          title={t('get_tickets')}
+          disabled={!isPassedEvent}
+          buttonStyle={styles.attendBtn}
+          onPress={() => {
+            RN.Linking.openURL(eventData?.link).then();
+          }}
         />
       );
     }
@@ -691,9 +789,9 @@ const EventScreen = () => {
           title={
             !isFollowed
               ? ticketsList.length > 0
-                ? 'Get Tickets'
-                : 'Attend'
-              : 'Show Tickets'
+                ? t('get_tickets')
+                : t('attend')
+              : t('show_tickets')
           }
           disabled={!isPassedEvent}
           buttonStyle={isFollowed ? styles.ticketBtn : styles.attendBtn}
@@ -716,7 +814,7 @@ const EventScreen = () => {
                   color: colors.purple,
                   fontSize: 16,
                 }}>
-                Get More Tickets
+                {t('more_tickets')}
               </RN.Text>
             </RN.TouchableOpacity>
           )}
@@ -1015,7 +1113,7 @@ const styles = RN.StyleSheet.create({
   unFollowContainer: {
     backgroundColor: colors.white,
     flexDirection: 'row',
-    position: 'absolute',
+    // position: 'absolute',
     zIndex: 3,
     right: 94,
     // top: statusBarHeight + iAndroid ? 120 : 80, //TODO android

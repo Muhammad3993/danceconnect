@@ -10,31 +10,31 @@ import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
-import FindCity from '../../components/findCity';
 import useAppStateHook from '../../hooks/useAppState';
 import {removeAccount} from '../../api/authSocial';
 import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
 import {apiUrl, deleteUser} from '../../api/serverRequests';
 import useTickets from '../../hooks/useTickets';
-import LocationSelector from '../../components/locationSelector';
+import LocationSelector from '../../components/locationSelector.tsx';
 import FastImage from 'react-native-fast-image';
+import {useTranslation} from 'react-i18next';
+import useEvents from '../../hooks/useEvents';
 
 const ProfileScreen = () => {
   const {logout} = useRegistration();
+  const {t} = useTranslation();
   const {
     userImgUrl,
     isSuccessChangePassword,
     onChangePassword,
     errorsWithChangePassword,
     isSocialAuth,
-    onChangeUserCountry,
     getUser,
   } = useProfile();
-  const {onChoosedCity} = useAppStateHook();
   const dispatch = useDispatch();
-  const {managingCommunity, getManagingCommunities, isLoadManaging} =
-    useCommunities();
+  const {managingCommunity} = useCommunities();
+  const {managingEventsAndPassed} = useEvents();
   const {purchasedTickets, getPurchasedTickets} = useTickets();
 
   const navigation = useNavigation();
@@ -50,26 +50,6 @@ const ProfileScreen = () => {
   const [countTickets, setCountTickets] = useState<number>(
     purchasedTickets?.length,
   );
-  const [sourceDimensions, setSourceDimensions] = useState({
-    height: 0,
-    width: 0,
-  });
-  RN.Image.getSizeWithHeaders(
-    apiUrl + userImgUrl,
-    {},
-    (width, height) => {
-      // console.log(`The image dimensions are ${width}x${height}`);
-      if (sourceDimensions.height === 0) {
-        setSourceDimensions({
-          height: height,
-          width: width,
-        });
-      }
-    },
-    error => {
-      console.error(`Couldn't get the image size: ${error}`);
-    },
-  );
   useEffect(() => {
     getUser();
     getPurchasedTickets();
@@ -77,16 +57,10 @@ const ProfileScreen = () => {
   const onPressChangeProfile = () => {
     navigation.navigate('ChangeProfile');
   };
-  // const renderSmallLoading = () => {
-  //   return (
-  //     <RN.ActivityIndicator
-  //       size={'small'}
-  //       style={{marginLeft: 46}}
-  //       color={colors.darkGray}
-  //       // animating={isLoadManaging}
-  //     />
-  //   );
-  // };
+
+  const onPressChangeLanguage = () => {
+    navigation.navigate('LANGUAGE');
+  };
 
   useEffect(() => {
     if (isSuccessChangePassword) {
@@ -111,6 +85,9 @@ const ProfileScreen = () => {
     onChangePassword(newPassword);
   };
 
+  const onPressEvents = () => {
+    navigation.navigate('ManagingEvents');
+  };
   const onPressCommunities = () => {
     navigation.navigate('ManagingCommunities');
   };
@@ -154,7 +131,9 @@ const ProfileScreen = () => {
               style={styles.editProfileBtn}
               onPress={onPressChangeProfile}
               activeOpacity={0.7}>
-              <RN.Text style={styles.editProfileText}>Edit profile</RN.Text>
+              <RN.Text style={styles.editProfileText}>
+                {t('edit_profile')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </RN.View>
         </RN.View>
@@ -166,11 +145,7 @@ const ProfileScreen = () => {
               <RN.Image source={{uri: 'comoutline'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemText}>
-                  Manage my communities
-                  {/* {isLoadManaging ? (
-                    renderSmallLoading()
-                  ) : (
-                    <> */}
+                  {t('manage_communties')}
                   {managingCommunity?.length > 0 && (
                     <RN.Text
                       style={{
@@ -179,8 +154,29 @@ const ProfileScreen = () => {
                         fontSize: 16,
                       }}>{` (${managingCommunity?.length})`}</RN.Text>
                   )}
-                  {/* </> */}
-                  {/* )} */}
+                </RN.Text>
+              </RN.View>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+            </RN.View>
+          </RN.TouchableOpacity>
+          <RN.TouchableOpacity
+            style={styles.listItemWrapper}
+            onPress={onPressEvents}>
+            <RN.View style={{flexDirection: 'row'}}>
+              <RN.Image source={{uri: 'group'}} style={styles.icon} />
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.listItemText}>
+                  {t('manage_events')}
+                  {managingEventsAndPassed?.length > 0 && (
+                    <RN.Text
+                      style={{
+                        color: colors.darkGray,
+                        fontWeight: '400',
+                        fontSize: 16,
+                      }}>{` (${managingEventsAndPassed?.length})`}</RN.Text>
+                  )}
                 </RN.Text>
               </RN.View>
             </RN.View>
@@ -195,7 +191,7 @@ const ProfileScreen = () => {
               <RN.Image source={{uri: 'dancestyles'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemText}>
-                  Manage my dance styles
+                  {t('manage_dc')}
                   {currentUser?.individualStyles?.length > 0 && (
                     <RN.Text
                       style={{
@@ -218,7 +214,7 @@ const ProfileScreen = () => {
               <RN.Image source={{uri: 'ticketoutline'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemText}>
-                  My tickets
+                  {t('my_tickets')}
                   {countTickets !== 0 && (
                     <RN.Text
                       style={{
@@ -239,6 +235,7 @@ const ProfileScreen = () => {
           <LocationSelector
             isProfileScreen
             setSelectedLocation={setSelectedLocation}
+            selectedLocation={selectedLocation}
           />
           {isSocialAuth && <RN.View style={{marginTop: -12}} />}
           {!isSocialAuth && (
@@ -248,7 +245,9 @@ const ProfileScreen = () => {
               <RN.View style={{flexDirection: 'row'}}>
                 <RN.Image source={{uri: 'shield'}} style={styles.icon} />
                 <RN.View style={{justifyContent: 'center'}}>
-                  <RN.Text style={styles.listItemText}>Change password</RN.Text>
+                  <RN.Text style={styles.listItemText}>
+                    {t('change_pass')}
+                  </RN.Text>
                 </RN.View>
               </RN.View>
               <RN.View style={{justifyContent: 'center'}}>
@@ -259,6 +258,23 @@ const ProfileScreen = () => {
               </RN.View>
             </RN.TouchableOpacity>
           )}
+          {/*
+          <RN.TouchableOpacity
+            style={styles.listItemWrapper}
+            onPress={onPressChangeLanguage}>
+            <RN.View style={{flexDirection: 'row'}}>
+              <RN.Image source={{uri: 'lg'}} style={styles.icon} />
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.listItemText}>
+                  {t('select_language')}
+                </RN.Text>
+              </RN.View>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+            </RN.View>
+          </RN.TouchableOpacity>
+          {isSocialAuth && <RN.View style={{marginTop: -12}} />} */}
 
           <RN.View style={styles.line} />
           <RN.TouchableOpacity
@@ -270,7 +286,7 @@ const ProfileScreen = () => {
               <RN.Image source={{uri: 'info'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemText}>
-                  Terms & Conditions
+                  {t('terms_condition')}
                 </RN.Text>
               </RN.View>
             </RN.View>
@@ -284,9 +300,14 @@ const ProfileScreen = () => {
               RN.Linking.openURL('https://danceconnect.online/privacy.html');
             }}>
             <RN.View style={{flexDirection: 'row'}}>
-              <RN.Image source={{uri: 'info'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.listItemText}>Privacy Policy</RN.Text>
+                <RN.Image source={{uri: 'info'}} style={styles.icon} />
+              </RN.View>
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text
+                  style={[styles.listItemText, {maxWidth: SCREEN_WIDTH - 100}]}>
+                  {t('privacy')}
+                </RN.Text>
               </RN.View>
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>
@@ -302,7 +323,7 @@ const ProfileScreen = () => {
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'info'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.listItemText}>Payouts</RN.Text>
+                <RN.Text style={styles.listItemText}>{t('payouts')}</RN.Text>
               </RN.View>
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>
@@ -317,7 +338,7 @@ const ProfileScreen = () => {
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'message'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.listItemText}>Contact Us</RN.Text>
+                <RN.Text style={styles.listItemText}>{t('contact')}</RN.Text>
               </RN.View>
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>
@@ -330,7 +351,9 @@ const ProfileScreen = () => {
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'logout'}} style={styles.logoutIcon} />
               <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.listItemTextLogout}>Logout</RN.Text>
+                <RN.Text style={styles.listItemTextLogout}>
+                  {t('logout')}
+                </RN.Text>
               </RN.View>
             </RN.View>
           </RN.TouchableOpacity>
@@ -342,7 +365,7 @@ const ProfileScreen = () => {
               <RN.Image source={{uri: 'basket'}} style={styles.logoutIcon} />
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Text style={styles.listItemTextLogout}>
-                  Delete account
+                  {t('del_acc')}
                 </RN.Text>
               </RN.View>
             </RN.View>
@@ -356,16 +379,16 @@ const ProfileScreen = () => {
           ref={logoutRefModalize}
           handlePosition="inside">
           <RN.Text style={styles.logoutModalTitle}>
-            Are you sure you want to log out?
+            {t('logout_question')}
           </RN.Text>
           <RN.View style={styles.logoutModalWrapper}>
             <RN.TouchableOpacity
               style={styles.logoutCancelBtn}
               onPress={() => logoutRefModalize?.current?.close()}>
-              <RN.Text style={styles.logoutCancelText}>Cancel</RN.Text>
+              <RN.Text style={styles.logoutCancelText}>{t('cancel')}</RN.Text>
             </RN.TouchableOpacity>
             <RN.TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-              <RN.Text style={styles.logoutText}>Yes, Logout</RN.Text>
+              <RN.Text style={styles.logoutText}>{t('y_logout')}</RN.Text>
             </RN.TouchableOpacity>
           </RN.View>
         </Modalize>
@@ -437,22 +460,22 @@ const ProfileScreen = () => {
           modalStyle={styles.modalContainer}
           ref={deleteAccountModazile}>
           <RN.Text style={styles.deleteAccountTitle}>
-            Do you really want to delete your account?
+            {t('del_acc_question')}
           </RN.Text>
-          <RN.Text style={styles.deleteAccountDesc}>
+          {/* <RN.Text style={styles.deleteAccountDesc}>
             All your created communities and events will also be deleted
-          </RN.Text>
+          </RN.Text> */}
           <RN.View
             style={{flexDirection: 'row', justifyContent: 'space-around'}}>
             <RN.TouchableOpacity
               style={styles.deleteAccountBtnCancel}
               onPress={() => deleteAccountModazile?.current?.close()}>
-              <RN.Text style={styles.deleteTextCancel}>Cancel</RN.Text>
+              <RN.Text style={styles.deleteTextCancel}>{t('cancel')}</RN.Text>
             </RN.TouchableOpacity>
             <RN.TouchableOpacity
               style={styles.deleteAccountBtn}
               onPress={onPressDeleteAccount}>
-              <RN.Text style={styles.deleteText}>Yes, delete</RN.Text>
+              <RN.Text style={styles.deleteText}>{t('y_delete')}</RN.Text>
             </RN.TouchableOpacity>
           </RN.View>
         </Modalize>
@@ -506,6 +529,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 24.6,
     fontWeight: '600',
     paddingTop: 34,
+    paddingBottom: 24,
     color: colors.textPrimary,
   },
   deleteAccountDesc: {

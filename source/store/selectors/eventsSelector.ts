@@ -19,7 +19,7 @@ export const selectEventList = () =>
     .getState()
     ?.events?.eventsList?.filter(
       (item: any) =>
-        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >
+        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >=
         moment(new Date()).format('YYYY-MM-DD'),
     )
     .map((item: any) => item) ?? [];
@@ -52,10 +52,12 @@ export const selectAttentingEvents = (userdUid: string) =>
 export const selectUpcomingEvents = () =>
   store
     .getState()
-    ?.events?.eventsList?.filter(
-      (ev: any) =>
-        moment(ev?.eventDate?.startDate).format('YYYY-MM-DD') >=
-        moment(new Date()).format('YYYY-MM-DD'),
+    ?.events?.eventsList?.filter((ev: any) =>
+      ev?.eventDate?.endDate !== null
+        ? moment(ev?.eventDate?.endDate).format('YYYY-MM-DD') >=
+          moment(new Date()).format('YYYY-MM-DD')
+        : moment(ev?.eventDate?.startDate).format('YYYY-MM-DD') >=
+          moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
 export const selectUpcomingEventsWithUserUid = (userdUid: string) =>
   store
@@ -70,10 +72,12 @@ export const selectUpcomingEventsWithUserUid = (userdUid: string) =>
 export const selectPassedEvents = () =>
   store
     .getState()
-    ?.events?.eventsList?.filter(
-      (item: any) =>
-        moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
-        moment(new Date()).format('YYYY-MM-DD'),
+    ?.events?.eventsList?.filter((item: any) =>
+      item?.eventDate?.endDate !== null
+        ? moment(item?.eventDate?.endDate).format('YYYY-MM-DD') <
+          moment(new Date()).format('YYYY-MM-DD')
+        : moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
+          moment(new Date()).format('YYYY-MM-DD'),
     ) ?? [];
 export const selectEventById = (state: IRootState) =>
   state?.events?.eventById ?? null;
@@ -81,11 +85,15 @@ export const selectLoadingEventById = (state: IRootState) =>
   state?.events?.loadingById ?? false;
 
 export const selectManagingEvents = (state: IRootState) =>
-  state.events?.managingEvents?.filter(
-    (item: any) =>
-      moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >
-      moment(new Date()).format('YYYY-MM-DD'),
+  state.events?.managingEvents?.filter((item: any) =>
+    item?.eventDate?.endDate !== null
+      ? moment(item?.eventDate?.endDate).format('YYYY-MM-DD') >=
+        moment(new Date()).format('YYYY-MM-DD')
+      : moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >=
+        moment(new Date()).format('YYYY-MM-DD'),
   ) ?? [];
+export const selectManagingEventsAndPassed = (state: IRootState) =>
+  state.events?.managingEvents ?? [];
 export const selectLoadingManagingEvents = (state: IRootState) =>
   state.events?.loadingManaging ?? false;
 

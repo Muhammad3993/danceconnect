@@ -18,38 +18,52 @@ import FindPlace from '../../components/findPlace';
 import useEvents from '../../hooks/useEvents';
 import useTickets from '../../hooks/useTickets';
 import FastImage from 'react-native-fast-image';
+import {useTranslation} from 'react-i18next';
+import { isValidUrl } from '../../utils/helpers';
 
-const SCREENS = [
-  {idx: 0, title: 'Set Basic Info'},
-  {idx: 1, title: 'Add Details'},
-  {idx: 2, title: 'Set Tickets'},
-];
-const TICKET_TYPES = [
-  {
-    idx: 0,
-    type: 'free',
-    title: 'Free Event. No tickets needed',
-    description:
-      'Guests don`t need tickets and the number of visitors is not limited.',
-  },
-  {
-    idx: 1,
-    type: 'paid',
-    title: 'Tickets needed',
-    description:
-      'Entrance is paid and there are one or more types of tickets or Entrance is free, but the number of visitors is limited.',
-  },
-];
 const MakeEvent = () => {
+  const {t} = useTranslation();
+  const SCREENS = [
+    {idx: 0, title: t('basic_info')},
+    {idx: 1, title: t('detail')},
+    {idx: 2, title: t('set_tickets')},
+  ];
+  const TICKET_TYPES = [
+    {
+      idx: 0,
+      type: 'free',
+      title: t('tt_free_title'),
+      description: t('tt_free_desc'),
+    },
+    {
+      idx: 1,
+      type: 'paid',
+      title: t('tt_paid_title'),
+      description: t('tt_paid_desc'),
+    },
+  ];
   const navigation = useNavigation();
   const routeParams = useRoute();
-  const {createEvent, preCreatedEvent, isCreatedEvent, changeCreatedValue} =
-    useEvents();
+  const {
+    createEvent,
+    preCreatedEvent,
+    isCreatedEvent,
+    changeCreatedValue,
+    changeInformation,
+  } = useEvents();
   const communityData = routeParams.params?.communityData;
-  const {individualStyles} = useProfile();
+  const {individualStyles, userCountry} = useProfile();
   const {ticketsList, removeTicket, getTickets} = useTickets();
 
-  const {eventTypes, currentCity, countries} = useAppStateHook();
+  const {
+    eventTypes,
+    currentCity,
+    countries,
+    getTicketPricePercent,
+    priceFix,
+    pricePercent,
+    regions
+  } = useAppStateHook();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [typeEvent, setTypeEvent] = useState(eventTypes[0]);
@@ -78,6 +92,10 @@ const MakeEvent = () => {
   const [paidTicketsErrors, setPaidTicketsErrors] = useState(false);
   const [categoriesError, setCategoriesError] = useState(false);
 
+  const [inAppTickets, setInAppTickets] = useState(true);
+  const [externalLink, setExternalLink] = useState('');
+  const [validUrl, setValidUrl] = useState(false);
+
   const basicInfo = currentScreen === 0;
   const details = currentScreen === 1;
   const ticketsInfo = currentScreen === 2;
@@ -87,13 +105,29 @@ const MakeEvent = () => {
   });
   const [countDescSymbols, setCountDescSymbols] = useState({
     current: description?.length,
-    maxSymbols: 350,
+    maxSymbols: 1000,
   });
   const [loadImg, setLoadImg] = useState(false);
 
   useEffect(() => {
+    const isRegion = regions.findIndex(i => i.name === selectedLocation);
+    if (isRegion !== -1) {
+      setSelectedLocation(userCountry);
+    }
+  }, [regions, selectedLocation, userCountry]);
+  useEffect(() => {
+    getTicketPricePercent();
+  }, []);
+
+  useEffect(() => {
     getTickets(preCreatedEvent?.id);
   }, [preCreatedEvent?.id]);
+
+  useEffect(() => {
+    if (endDate === null) {
+      setEndDate(startDate);
+    }
+  }, [endDate, startDate]);
   useMemo(() => {
     setTickets(ticketsList);
   }, [ticketsList]);
@@ -114,7 +148,7 @@ const MakeEvent = () => {
         const cCode = countries.find(
           (c: {country: string}) =>
             c.country === currentCountry?.split(', ')[2],
-        ).countryCode;
+        )?.countryCode;
         setCurrentCountry({
           city: selectedLocation,
           countryCode: cCode,
@@ -174,10 +208,27 @@ const MakeEvent = () => {
         if (ticketType.type === 'paid' && !tickets.length) {
           setPaidTicketsErrors(true);
         } else {
-          navigation.navigate('EventScreen', {
-            data: preCreatedEvent,
-            createEvent: true,
-          });
+          if (inAppTickets) {
+            navigation.navigate('EventScreen', {
+              data: preCreatedEvent,
+              createEvent: true,
+            });
+          } else {
+            if (!isValidUrl(externalLink)) {
+              setValidUrl(true);
+            } else {
+              const data = {
+                ...preCreatedEvent,
+                eventUid: preCreatedEvent.id,
+                name: preCreatedEvent.title,
+                price: preCreatedEvent.price,
+                type: preCreatedEvent.type,
+                inAppTickets: inAppTickets,
+                externalLink: externalLink,
+              };
+              changeInformation(data);
+            }
+          }
         }
         break;
       default:
@@ -214,6 +265,8 @@ const MakeEvent = () => {
       typeEvent: typeEvent,
       price: priceTicket,
       type: 'paid',
+      inAppTickets: inAppTickets,
+      externalLink: externalLink,
     });
   };
 
@@ -249,7 +302,7 @@ const MakeEvent = () => {
     setDescription(value);
     setCountDescSymbols({
       current: value.length,
-      maxSymbols: 350,
+      maxSymbols: 1000,
     });
     setIsDescriptionError(false);
   };
@@ -281,8 +334,6 @@ const MakeEvent = () => {
   const onChooseImage = async () => {
     let options = {
       mediaType: 'photo',
-      maxWidth: 300,
-      maxHeight: 550,
       quality: 1,
       includeBase64: true,
     };
@@ -360,7 +411,7 @@ const MakeEvent = () => {
               ]}
             />
           </RN.TouchableOpacity>
-          <RN.Text style={styles.headerTitle}>Create Your Event</RN.Text>
+          <RN.Text style={styles.headerTitle}>{t('create_your_event')}</RN.Text>
           <RN.TouchableOpacity onPress={closeBtn}>
             <RN.Image source={{uri: 'close'}} style={styles.closeIcon} />
           </RN.TouchableOpacity>
@@ -373,7 +424,7 @@ const MakeEvent = () => {
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title={currentScreen > 1 ? 'Create Event' : 'Next'}
+          title={currentScreen > 1 ? t('create_event') : t('next')}
           disabled
           onPress={onPressNextBtn}
         />
@@ -384,7 +435,7 @@ const MakeEvent = () => {
     return (
       <RN.View style={{marginTop: 30}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Create Event Name</RN.Text>
+          <RN.Text style={styles.title}>{t('event_name')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -405,7 +456,7 @@ const MakeEvent = () => {
           <Input
             value={name}
             onChange={onChangeValueName}
-            placeholder="Name"
+            placeholder={t('event_name')}
             maxLength={countNameSymbols.maxSymbols}
             isErrorBorder={isErrorName}
             onFocusInput={() => setIsErrorName(false)}
@@ -418,7 +469,7 @@ const MakeEvent = () => {
     return (
       <RN.View style={{paddingVertical: 14, paddingTop: 6}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Choose Event Type</RN.Text>
+          <RN.Text style={styles.title}>{t('choose_ev_type')}</RN.Text>
         </RN.View>
         <RN.View
           style={{
@@ -466,8 +517,8 @@ const MakeEvent = () => {
                 color: categoriesError ? colors.redError : colors.textPrimary,
               },
             ]}>
-            Choose Category
-            <RN.Text style={styles.countMaxSymbols}> can select few</RN.Text>
+            {t('choose_category_title')}
+            <RN.Text style={styles.countMaxSymbols}> {t('few')}</RN.Text>
           </RN.Text>
         </RN.View>
         <RN.Text
@@ -477,7 +528,7 @@ const MakeEvent = () => {
               marginBottom: addedStyles?.length > 0 ? 0 : 12,
             },
           ]}>
-          Create and share events, discuss them with your group members
+          {t('ds_desc_event')}
         </RN.Text>
         {addedStyles?.length > 0 && (
           <RN.View style={styles.danceStyleContainer}>
@@ -510,7 +561,7 @@ const MakeEvent = () => {
     return (
       <RN.View>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Add Description</RN.Text>
+          <RN.Text style={styles.title}>{t('description_title')}</RN.Text>
           <RN.Text style={styles.countMaxSymbols}>
             <RN.Text
               style={[
@@ -528,14 +579,14 @@ const MakeEvent = () => {
           </RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          Describe your event and add the necessary contact information
+          {t('event_desc_last')}
         </RN.Text>
         <RN.View style={{marginHorizontal: 4}}>
           <Input
             multiLine
             value={description}
             onChange={onChangeValueDescription}
-            placeholder="Description"
+            placeholder={t('description')}
             maxLength={countDescSymbols.maxSymbols}
             isErrorBorder={isDescriptionError}
             onFocusInput={() => setIsDescriptionError(false)}
@@ -548,10 +599,10 @@ const MakeEvent = () => {
     return (
       <RN.View style={{marginTop: 30}}>
         <RN.View style={styles.nameTitle}>
-          <RN.Text style={styles.title}>Add Event Dates</RN.Text>
+          <RN.Text style={styles.title}>{t('add_event_date')}</RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          Select event date and time
+          {t('select_event_date')}
         </RN.Text>
         <RN.TouchableOpacity
           style={styles.dateEventContainer}
@@ -569,7 +620,9 @@ const MakeEvent = () => {
                     : moment(startDate).format('MMM Do')
                 }${
                   endDate !== null
-                    ? ' - ' + moment(endDate).format('MMM Do')
+                    ? endDate === startDate
+                      ? ''
+                      : ' - ' + moment(endDate).format('MMM Do')
                     : ''
                 }`}
               </RN.Text>
@@ -591,12 +644,12 @@ const MakeEvent = () => {
       <RN.View style={{marginTop: 16}}>
         <RN.View style={styles.nameTitle}>
           <RN.Text style={styles.title}>
-            Upload Cover Image
-            <RN.Text style={styles.countMaxSymbols}> (Optional)</RN.Text>
+            {t('upload_img_title')}
+            <RN.Text style={styles.countMaxSymbols}> {t('optional')}</RN.Text>
           </RN.Text>
         </RN.View>
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
-          What picture is better to put here?
+          {t('upload_img_desc')}
         </RN.Text>
         {images?.length > 0 ? (
           <RN.ScrollView
@@ -660,7 +713,9 @@ const MakeEvent = () => {
               }}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+              <RN.Text style={styles.uploadImgText}>
+                {t('upload_img_small')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </RN.ScrollView>
         ) : (
@@ -679,7 +734,9 @@ const MakeEvent = () => {
               style={styles.uploadImgContainer}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>Upload picture</RN.Text>
+              <RN.Text style={styles.uploadImgText}>
+                {t('upload_img_small')}
+              </RN.Text>
             </RN.TouchableOpacity>
           </>
         )}
@@ -689,7 +746,7 @@ const MakeEvent = () => {
   const renderChooseLocation = () => {
     return (
       <>
-        <RN.Text style={styles.placeholderTitle}>Location</RN.Text>
+        <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
         <RN.TouchableOpacity
           onPress={() => setOpenLocation(true)}
           style={styles.selectLocationBtn}>
@@ -714,7 +771,7 @@ const MakeEvent = () => {
           </RN.View>
         </RN.TouchableOpacity>
 
-        <RN.Text style={styles.placeholderTitle}>Place</RN.Text>
+        <RN.Text style={styles.placeholderTitle}>{t('place')}</RN.Text>
         <RN.TouchableOpacity
           onPress={() => {
             setIsErrorPlace(false);
@@ -728,7 +785,7 @@ const MakeEvent = () => {
             },
           ]}>
           <RN.Text style={styles.locationText}>
-            {selectedPlace?.length > 0 ? `${selectedPlace}` : 'Choose place'}
+            {selectedPlace?.length > 0 ? `${selectedPlace}` : t('choose_place')}
           </RN.Text>
           <RN.View
             style={{
@@ -746,71 +803,105 @@ const MakeEvent = () => {
   const renderChooseTypeEvent = () => {
     return (
       <RN.View style={{marginTop: 30}}>
-        <RN.View style={[styles.nameTitle, {paddingBottom: 16}]}>
-          <RN.Text style={styles.title}>Choose ticket type</RN.Text>
-        </RN.View>
-        {TICKET_TYPES.map(
-          (type: {
-            idx: number;
-            type: string;
-            title: string;
-            description: string;
-          }) => {
-            return (
-              <RN.TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => onPressTicketType(type)}
-                key={type.idx}
-                style={
-                  ticketType.idx === type.idx
-                    ? [
-                        styles.ticketTypeActive,
-                        {
-                          borderColor: paidTicketsErrors
-                            ? colors.redError
-                            : colors.purple,
-                        },
-                      ]
-                    : styles.ticketTypeInActive
-                }>
-                <RN.View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <RN.View style={{justifyContent: 'center'}}>
-                    <RN.Text style={styles.ticketTypeTitle}>
-                      {type.title}
-                    </RN.Text>
-                  </RN.View>
-                  <RN.Image
-                    source={{
-                      uri:
-                        ticketType.idx === type.idx
-                          ? 'checkactive'
-                          : 'checkinactive',
-                    }}
-                    style={{height: 20, width: 20}}
-                  />
-                </RN.View>
-                <RN.Text style={styles.ticketTypeDescription}>
-                  {type.description}
-                </RN.Text>
-              </RN.TouchableOpacity>
-            );
-          },
-        )}
-        {ticketType.type !== 'free' &&
-          ticketsInfo &&
-          tickets?.length > 0 &&
-          renderTickets()}
-        {ticketType.type === 'paid' && (
-          <Button
-            title={tickets?.length > 0 ? '+ Add ticket' : 'Add ticket'}
-            onPress={onPressAddTicket}
-            disabled
-            buttonStyle={styles.addTicketBtn}
+        <RN.View style={styles.toggle}>
+          <RN.Switch
+            trackColor={{false: colors.gray, true: colors.orange}}
+            thumbColor={inAppTickets ? colors.white : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={setInAppTickets}
+            value={inAppTickets}
+            style={{transform: [{scaleX: 0.5}, {scaleY: 0.5}]}}
           />
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text>{'In-App tickets'}</RN.Text>
+          </RN.View>
+        </RN.View>
+        {!inAppTickets && (
+          <>
+            <RN.View style={[styles.nameTitle, {paddingVertical: 16}]}>
+              <RN.Text style={styles.title}>Put a link</RN.Text>
+            </RN.View>
+            <RN.View style={{marginHorizontal: 4}}>
+              <Input
+                value={externalLink}
+                onChange={setExternalLink}
+                placeholder={'Put the link here'}
+                isErrorBorder={validUrl}
+              />
+            </RN.View>
+          </>
+        )}
+        {inAppTickets && (
+          <>
+            <RN.View style={[styles.nameTitle, {paddingVertical: 16}]}>
+              <RN.Text style={styles.title}>{t('ticket_type')}</RN.Text>
+            </RN.View>
+            {TICKET_TYPES.map(
+              (type: {
+                idx: number;
+                type: string;
+                title: string;
+                description: string;
+              }) => {
+                return (
+                  <RN.TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => onPressTicketType(type)}
+                    key={type.idx}
+                    style={
+                      ticketType.idx === type.idx
+                        ? [
+                            styles.ticketTypeActive,
+                            {
+                              borderColor: paidTicketsErrors
+                                ? colors.redError
+                                : colors.purple,
+                            },
+                          ]
+                        : styles.ticketTypeInActive
+                    }>
+                    <RN.View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <RN.View style={{justifyContent: 'center'}}>
+                        <RN.Text style={styles.ticketTypeTitle}>
+                          {type.title}
+                        </RN.Text>
+                      </RN.View>
+                      <RN.Image
+                        source={{
+                          uri:
+                            ticketType.idx === type.idx
+                              ? 'checkactive'
+                              : 'checkinactive',
+                        }}
+                        style={{height: 20, width: 20}}
+                      />
+                    </RN.View>
+                    <RN.Text style={styles.ticketTypeDescription}>
+                      {type.description}
+                    </RN.Text>
+                  </RN.TouchableOpacity>
+                );
+              },
+            )}
+            {ticketType.type !== 'free' &&
+              ticketsInfo &&
+              tickets?.length > 0 &&
+              renderTickets()}
+            {ticketType.type === 'paid' && (
+              <Button
+                title={
+                  tickets?.length > 0 ? `+ ${t('add_ticket')}` : t('add_ticket')
+                }
+                onPress={onPressAddTicket}
+                disabled
+                buttonStyle={styles.addTicketBtn}
+              />
+            )}
+          </>
         )}
       </RN.View>
     );
@@ -825,6 +916,7 @@ const MakeEvent = () => {
     enabled: boolean;
     price: number;
     initialPrice: number;
+    isFinalPrice: boolean;
   }) => {
     return (
       <RN.View style={styles.ticketContainer}>
@@ -860,12 +952,12 @@ const MakeEvent = () => {
             paddingTop: 4,
             maxWidth: SCREEN_WIDTH - 100,
           }}>
-          Starts{' '}
-          <RN.Text style={{fontWeight: '600'}}>{`${moment(
+          {t('starts')}
+          <RN.Text style={{fontWeight: '600'}}>{` ${moment(
             ticket.startDate,
           ).format('MMM Do, YYYY')} / `}</RN.Text>
-          Ends{' '}
-          <RN.Text style={{fontWeight: '600'}}>{`${moment(
+          {t('ends')}
+          <RN.Text style={{fontWeight: '600'}}>{` ${moment(
             ticket.endDate,
           ).format('MMM Do, YYYY')}`}</RN.Text>
         </RN.Text>
@@ -877,8 +969,9 @@ const MakeEvent = () => {
             paddingTop: 4,
             maxWidth: SCREEN_WIDTH - 100,
           }}>
-          Limit <RN.Text style={{fontWeight: '600'}}>{ticket.quantity}</RN.Text>
-          {' / '}Sold{' '}
+          {t('limit')}{' '}
+          <RN.Text style={{fontWeight: '600'}}>{ticket.quantity}</RN.Text>
+          {' / '} {t('sold')}{' '}
           <RN.Text style={{fontWeight: '600'}}>{ticket.items.length}</RN.Text>
         </RN.Text>
         {ticket.initialPrice > 0 && (
@@ -890,13 +983,23 @@ const MakeEvent = () => {
               paddingTop: 4,
               maxWidth: SCREEN_WIDTH - 100,
             }}>
-            Price{' '}
+            {t('price')}{' '}
             <RN.Text style={{fontWeight: '600'}}>
-              {ticket.initialPrice + ' USD '}
+              {ticket?.isFinalPrice
+                ? ticket.initialPrice -
+                  (
+                    (ticket.initialPrice * pricePercent * 100) / 100 +
+                    priceFix
+                  ).toFixed(2) +
+                  ' USD '
+                : ticket.initialPrice + ' USD '}
             </RN.Text>
             <RN.Text style={{color: colors.darkGray}}>
               +{' '}
-              {`${((ticket.initialPrice * 10) / 100 + 0.3).toFixed(2)} USD Fee`}
+              {`${(
+                (ticket.initialPrice * pricePercent * 100) / 100 +
+                priceFix
+              ).toFixed(2)} USD Fee`}
             </RN.Text>
           </RN.Text>
         )}
@@ -1010,6 +1113,11 @@ const MakeEvent = () => {
 };
 
 const styles = RN.StyleSheet.create({
+  toggle: {
+    flexDirection: 'row',
+    paddingHorizontal: 8,
+    paddingBottom: 4,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.white,
@@ -1232,6 +1340,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 21.6,
     fontWeight: '700',
     color: colors.textPrimary,
+    paddingRight: 18,
   },
   ticketTypeDescription: {
     fontSize: 14,

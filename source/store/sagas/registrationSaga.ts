@@ -55,7 +55,7 @@ function* registrationEmail(action: any) {
     const {email, password} = action?.payload;
     const data = action.payload;
     const response = yield call(createUser, data);
-    // console.log('registrationEmail', response, data);
+    console.log('registrationEmail', response, data);
     if (!response) {
       yield put(
         registrationWithEmailFail(setErrors('auth/network-request-failed')),
@@ -70,6 +70,10 @@ function* registrationEmail(action: any) {
           token: auth?.data?.accessToken,
           authProvider: 'email',
         }),
+      );
+    } else if (response && response?.status === 401) {
+      yield put(
+        registrationWithEmailFail(setErrors('auth/email-already-in-use')),
       );
     }
 

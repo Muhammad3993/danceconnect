@@ -10,6 +10,7 @@ import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
 import {ScrollView} from 'react-native-gesture-handler';
 import EmptyContainer from '../../../components/emptyCommunitiesMain';
+import {useTranslation} from 'react-i18next';
 
 type props = {
   communititesSearch: string[];
@@ -19,6 +20,7 @@ type props = {
 
 const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const {joinedCommunities, isLoading, getCommunitites} = useCommunities();
   const lengthEmptyCommunities = new Array(3).fill('');
   const {currentCity} = useAppStateHook();
@@ -127,9 +129,9 @@ const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
     return (
       <RN.View style={styles.filterWrapper}>
         <RN.View style={{justifyContent: 'center'}}>
-          <RN.Text style={styles.communititesLength}>{`${
-            communitites?.length ?? 0
-          } communities found`}</RN.Text>
+          <RN.Text style={styles.communititesLength}>
+            {t('communities_found', {count: communitites.length ?? 0})}
+          </RN.Text>
         </RN.View>
         <RN.TouchableOpacity
           style={[
@@ -146,7 +148,7 @@ const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
               style={{height: 16, width: 16, marginRight: 8}}
             />
           </RN.View>
-          <RN.Text style={styles.filterText}>Filters</RN.Text>
+          <RN.Text style={styles.filterText}>{t('filters')}</RN.Text>
           <RN.View style={{justifyContent: 'center'}}>
             <RN.Image
               source={{uri: 'downlight'}}

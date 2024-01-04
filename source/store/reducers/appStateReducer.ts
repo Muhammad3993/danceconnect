@@ -9,11 +9,15 @@ export type appStateAction = {
     danceStyles: string[];
     eventTypes: string[];
     countries: string[];
+    regions?: string[];
     currentCountry: any;
     stripe_key: string;
 
     isVisible?: boolean;
     errorMessage?: string;
+    language?: string;
+    ticket_percent?: number;
+    ticket_fix_price?: number;
   };
 };
 
@@ -44,6 +48,11 @@ export default (state = appStateInitialState, action: appStateAction) => {
         ...state,
         countries: action.payload.countries,
       };
+    case APP_STATE.SET_REGIONS:
+      return {
+        ...state,
+        regions: action.payload.regions,
+      };
     case APP_STATE.SET_ERROR_NOTICE_VISIBLE:
       return {
         ...state,
@@ -64,6 +73,20 @@ export default (state = appStateInitialState, action: appStateAction) => {
         ...state,
         stripe_key: action.payload.stripe_key,
       };
+
+    case APP_STATE.SET_CURRENT_LANGUAGE:
+      return {
+        ...state,
+        language: action.payload.language,
+      };
+
+    case APP_STATE.SET_TICKET_PERCENT:
+      return {
+        ...state,
+        ticket_percent: action?.payload?.ticket_percent,
+        ticket_fix_price: action?.payload?.ticket_fix_price,
+      };
+
     default:
       return state;
   }

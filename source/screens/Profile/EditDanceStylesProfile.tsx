@@ -6,6 +6,7 @@ import {useProfile} from '../../hooks/useProfile';
 import colors from '../../utils/colors';
 import {useNavigation} from '@react-navigation/native';
 import {isAndroid, statusBarHeight} from '../../utils/constants';
+import {useTranslation} from 'react-i18next';
 
 const DanceStylesProfile = () => {
   const {individualStyles, onChangeDanceStyles} = useProfile();
@@ -13,6 +14,7 @@ const DanceStylesProfile = () => {
     individualStyles ?? [],
   );
   const navigation = useNavigation();
+  const {t} = useTranslation();
 
   const onChooseDanceStyles = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -49,7 +51,7 @@ const DanceStylesProfile = () => {
       {header()}
       <RN.ScrollView style={styles.container}>
         <RN.Text style={[styles.title, {paddingBottom: 20}]}>
-          What dance style do you prefer?
+          {t('select_dc')}
         </RN.Text>
         {addedStyles?.length > 0 && (
           <RN.View style={styles.danceStyleContainer}>
@@ -81,7 +83,7 @@ const DanceStylesProfile = () => {
         />
         <RN.View style={[styles.finishBtn, {marginTop: -24}]}>
           <Button
-            title="Save"
+            title={t('save_changes')}
             onPress={onPressFinish}
             disabled={addedStyles?.length > 0}
           />

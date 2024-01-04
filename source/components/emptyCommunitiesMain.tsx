@@ -1,25 +1,31 @@
 import React from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
+import {useTranslation} from 'react-i18next';
 
 type props = {
   onPressButton: () => void;
 };
 const EmptyContainer = ({onPressButton}: props) => {
+  const {t} = useTranslation();
   return (
     <RN.View style={styles.container}>
       <RN.View style={styles.imageCircle}>
         <RN.Image source={{uri: 'comfull'}} style={styles.image} />
       </RN.View>
-      <RN.Text style={styles.joinText}>Join a community</RN.Text>
+      <RN.Text style={styles.joinText}>
+        {t('join_community_card_first')}
+      </RN.Text>
       <RN.Text style={styles.joinDesc}>
-        to see and attend upcoming events that you interested in
+        {t('join_community_card_second')}
       </RN.Text>
       <RN.TouchableOpacity
         style={styles.joinBtn}
         activeOpacity={0.8}
         onPress={onPressButton}>
-        <RN.Text style={styles.joinBtnText}>Search for a community</RN.Text>
+        <RN.Text style={styles.joinBtnText}>
+          {t('join_community_card_btn')}
+        </RN.Text>
       </RN.TouchableOpacity>
     </RN.View>
   );

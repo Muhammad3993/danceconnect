@@ -17,10 +17,12 @@ import FastImage from 'react-native-fast-image';
 import {Animated} from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
+import {useTranslation} from 'react-i18next';
 
 const CommunityScreen = ({route}) => {
   const routeProps = useRoute();
   const navigation = useNavigation();
+  const {t} = useTranslation();
   const removeModalizeRef = useRef<Modalize>(null);
   const {userUid} = useRegistration();
   const {startFollowed, isSaveChanges, onClearCommunityDataById} =
@@ -177,7 +179,7 @@ const CommunityScreen = ({route}) => {
       options: [
         {
           key: 'add',
-          label: 'Add Managers',
+          label: t('add_managers'),
           onPress: () => onPressAddMenegers(),
           icon: 'members',
           visible: isAdmin,
@@ -185,7 +187,7 @@ const CommunityScreen = ({route}) => {
         },
         {
           key: 'unfollow',
-          label: isAdmin ? 'Remove Community' : 'Unfollow',
+          label: isAdmin ? t('remove_community') : t('unfollow'),
           onPress: isAdmin ? onPressRemoveCommunity : onPressUnfollow,
           icon: 'closesquare',
           visible: true,
@@ -303,7 +305,7 @@ const CommunityScreen = ({route}) => {
               }}
               style={styles.showWrapper}>
               <RN.Text style={styles.showMoreText}>
-                {!openingDescription ? 'Show more' : 'Show less'}
+                {!openingDescription ? t('show_more') : t('show_less')}
               </RN.Text>
               <RN.View style={{justifyContent: 'center'}}>
                 <RN.Image
@@ -339,8 +341,8 @@ const CommunityScreen = ({route}) => {
   const renderAttendedImgs = () => {
     const countPeople =
       attendedImgs?.length > 6
-        ? `+${attendedImgs?.length - 6} joined`
-        : 'joined';
+        ? `+${t('followers', {count: attendedImgs?.length - 6})}`
+        : t('followed');
     const onPressAttended = () => {
       navigation.navigate('AttendedPeople', {
         usersArray: attendedImgs,
@@ -414,7 +416,7 @@ const CommunityScreen = ({route}) => {
           </RN.View>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.View style={{justifyContent: 'center'}}>
-              <RN.Text style={styles.seeMapsText}>Maps</RN.Text>
+              <RN.Text style={styles.seeMapsText}>{t('maps')}</RN.Text>
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>
               <RN.View
@@ -456,7 +458,7 @@ const CommunityScreen = ({route}) => {
               <RN.Text style={styles.organizerName}>
                 {communityData?.creator?.name}
               </RN.Text>
-              <RN.Text style={styles.organizer}>Organizer</RN.Text>
+              <RN.Text style={styles.organizer}>{t('organizer')}</RN.Text>
             </RN.View>
           </RN.View>
           {/* {!isAdmin && (
@@ -497,7 +499,7 @@ const CommunityScreen = ({route}) => {
                   disabled
                   // isLoading={loadingFollow}
                   buttonStyle={isJoined && styles.btnMessage}
-                  title={'Join Community'}
+                  title={t('join')}
                 />
               </RN.View>
             )}
@@ -511,7 +513,7 @@ const CommunityScreen = ({route}) => {
               }
               disabled
               // isLoading={isLoadingWithFollow}
-              title={'Create Event'}
+              title={t('create_event')}
             />
           </RN.View>
         )}
@@ -531,19 +533,19 @@ const CommunityScreen = ({route}) => {
           modalStyle={styles.modalContainer}
           ref={removeModalizeRef}>
           <RN.Text style={styles.removeCommunityTitle}>
-            Do you really want to delete your community?
+            {t('remove_question')}
           </RN.Text>
           <RN.View
             style={{flexDirection: 'row', justifyContent: 'space-around'}}>
             <RN.TouchableOpacity
               style={styles.removeCommunityBtnCancel}
               onPress={() => removeModalizeRef?.current?.close()}>
-              <RN.Text style={styles.deleteTextCancel}>Cancel</RN.Text>
+              <RN.Text style={styles.deleteTextCancel}>{t('cancel')}</RN.Text>
             </RN.TouchableOpacity>
             <RN.TouchableOpacity
               style={styles.removeCommunityBtn}
               onPress={onPressRemove}>
-              <RN.Text style={styles.deleteText}>Yes, delete</RN.Text>
+              <RN.Text style={styles.deleteText}>{t('yes_delete')}</RN.Text>
             </RN.TouchableOpacity>
           </RN.View>
         </Modalize>

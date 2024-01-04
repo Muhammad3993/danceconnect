@@ -14,7 +14,8 @@ import {removeAccount} from '../../api/authSocial';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
 import {useDispatch} from 'react-redux';
 import {Portal} from 'react-native-portalize';
-import LocationSelector from '../../components/locationSelector';
+import LocationSelector from '../../components/locationSelector.tsx';
+import {useTranslation} from 'react-i18next';
 // import { createUser } from '../../api/serverRequests';
 
 interface city {
@@ -36,6 +37,7 @@ const Board = () => {
   const [addedStyles, setAddedStyles] = useState<string[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<city>(Object);
   const navigation = useNavigation<AuthStackNavigationParamList>();
+  const {t} = useTranslation();
 
   useEffect(() => {
     getDanceStyles();
@@ -133,13 +135,9 @@ const Board = () => {
   const fieldsSlide = () => {
     return (
       <RN.ScrollView style={styles.container}>
-        <RN.Text style={styles.title}>
-          Tell us a bit more about yourself
-        </RN.Text>
-        <RN.Text style={styles.description}>
-          So we can offer you better communities and events near you
-        </RN.Text>
-        <RN.Text style={styles.placeholderTitle}>Name</RN.Text>
+        <RN.Text style={styles.title}>{t('yourself')}</RN.Text>
+        <RN.Text style={styles.description}>{t('yourself_desc')}</RN.Text>
+        <RN.Text style={styles.placeholderTitle}>{t('name')}</RN.Text>
         <RN.View style={styles.inputWrapper}>
           <Input
             value={name}
@@ -149,13 +147,16 @@ const Board = () => {
           />
         </RN.View>
         <RN.Text style={[styles.placeholderTitle, {marginTop: -24}]}>
-          Gender
+          {t('gender')}
         </RN.Text>
         <RN.ScrollView
           style={styles.choiseWrapper}
           showsHorizontalScrollIndicator={false}
           horizontal>
           {genders.map(item => {
+            if (!item.title.length) {
+              return null;
+            }
             return (
               <RN.TouchableOpacity
                 onPress={() => setGender(item)}
@@ -187,7 +188,7 @@ const Board = () => {
           setSelectedLocation={setSelectedLocation}
         />
         <RN.Text style={[styles.placeholderTitle, {marginTop: -4}]}>
-          Define yourself can select few
+          {`${t('role')}, ${t('few')}`}
         </RN.Text>
         <RN.ScrollView
           style={styles.choiseWrapper}
@@ -222,7 +223,7 @@ const Board = () => {
         </RN.ScrollView>
         <RN.View style={styles.finishBtn}>
           <Button
-            title="Next"
+            title={t('next')}
             onPress={() => onChangeSlide(1)}
             disabled={
               name?.length > 0 &&
@@ -241,7 +242,7 @@ const Board = () => {
       <>
         <RN.ScrollView>
           <RN.Text style={[styles.title, {paddingBottom: 20}]}>
-            What dance style do you prefer?
+            {t('select_dc')}
           </RN.Text>
           {addedStyles?.length > 0 && (
             <RN.View style={styles.danceStyleContainer}>
@@ -273,7 +274,7 @@ const Board = () => {
           />
           <RN.View style={[styles.finishBtn, {marginTop: -24}]}>
             <Button
-              title="Let’s Start"
+              title={t('lets_start')}
               onPress={onPressFinish}
               disabled={addedStyles.length > 0}
             />

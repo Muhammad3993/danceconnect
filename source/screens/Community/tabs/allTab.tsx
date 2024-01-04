@@ -8,6 +8,7 @@ import FiltersBottom from '../../../components/bottomFilters';
 import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
 import {ScrollView} from 'react-native-gesture-handler';
+import {useTranslation} from 'react-i18next';
 
 type props = {
   communititesSearch: string[];
@@ -17,6 +18,7 @@ type props = {
 const AllTab = ({communititesSearch, searchValue}: props) => {
   const {communitiesData, isLoading, getCommunitites} = useCommunities();
   const {currentCity} = useAppStateHook();
+  const {t} = useTranslation();
 
   const lengthEmptyCommunities = new Array(3).fill('');
   const [communitites, setCommunitites] = useState(communitiesData);
@@ -84,9 +86,7 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
             );
           })}
         {!isLoading && (
-          <RN.Text style={styles.emptyText}>
-            There are no communities yet
-          </RN.Text>
+          <RN.Text style={styles.emptyText}>{t('non_communities')}</RN.Text>
         )}
       </RN.View>
     );
@@ -99,9 +99,9 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
     return (
       <RN.View style={styles.filterWrapper}>
         <RN.View style={{justifyContent: 'center'}}>
-          <RN.Text style={styles.communititesLength}>{`${
-            communitites?.length ?? 0
-          } communities found`}</RN.Text>
+          <RN.Text style={styles.communititesLength}>
+            {t('communities_found', {count: communitites.length ?? 0})}
+          </RN.Text>
         </RN.View>
         <RN.TouchableOpacity
           style={[
@@ -118,7 +118,7 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
               style={{height: 16, width: 16, marginRight: 8}}
             />
           </RN.View>
-          <RN.Text style={styles.filterText}>Filters</RN.Text>
+          <RN.Text style={styles.filterText}>{t('filters')}</RN.Text>
           <RN.View style={{justifyContent: 'center'}}>
             <RN.Image
               source={{uri: 'downlight'}}

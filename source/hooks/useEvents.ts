@@ -27,6 +27,7 @@ import {
   selectLoadingManagingEvents,
   selectLoadingattendEvent,
   selectManagingEvents,
+  selectManagingEventsAndPassed,
   selectPassedEvents,
   selectPersonalEvents,
   selectPrevLimit,
@@ -53,6 +54,7 @@ const useEvents = () => {
   const isCreatedEvent = useSelector(selectIsCreatedEvent);
 
   const managingEvents = useSelector(selectManagingEvents);
+  const managingEventsAndPassed = useSelector(selectManagingEventsAndPassed);
   const isLoadManaging = useSelector(selectLoadingManagingEvents);
   const getManagingEvents = () => {
     dispatch(getManagingEventsRequestAction());
@@ -109,6 +111,8 @@ const useEvents = () => {
     typeEvent,
     price,
     type,
+    inAppTickets,
+    externalLink,
   }: eventParams) => {
     dispatch(
       createEventRequestAction({
@@ -125,6 +129,8 @@ const useEvents = () => {
         typeEvent: typeEvent,
         price: price,
         type: type,
+        inAppTickets: inAppTickets,
+        externalLink: externalLink,
       }),
     );
   };
@@ -163,6 +169,8 @@ const useEvents = () => {
     eventUid,
     typeEvent,
     price,
+    inAppTickets,
+    externalLink,
   }: eventParams) => {
     dispatch(
       changeInformationEventRequestAction({
@@ -177,6 +185,8 @@ const useEvents = () => {
         eventUid: eventUid,
         typeEvent: typeEvent,
         price: price,
+        inAppTickets: inAppTickets,
+        externalLink: externalLink,
       }),
     );
   };
@@ -220,6 +230,7 @@ const useEvents = () => {
     personalEvents,
     isCreatedEvent,
     changeCreatedValue,
+    managingEventsAndPassed,
   };
 };
 export default useEvents;

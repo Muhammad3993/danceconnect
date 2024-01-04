@@ -75,6 +75,7 @@ export default (state = eventsInitialState, action: eventAction) => {
         loadingEvents: true,
         limit: action.payload?.limit,
         offset: action.payload?.offset,
+        location: action.payload?.location,
       };
     case EVENT.GET_EVENTS_SUCCESS:
       return {
@@ -233,6 +234,7 @@ export default (state = eventsInitialState, action: eventAction) => {
     case EVENT.GET_PERSONAL_EVENTS_REQUEST:
       return {
         ...state,
+        personalEvents: state.personalEvents,
       };
     case EVENT.GET_PERSONAL_EVENTS_SUCCESS:
       return {

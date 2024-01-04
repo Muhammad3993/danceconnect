@@ -14,7 +14,7 @@ const AttendedPeople = () => {
   const [serachValue, setSearchValue] = useState('');
   const [users, setUsers] = useState(usersArray);
 
-  console.log(users);
+  // console.log(users);
   const onPressBack = () => navigation.goBack();
   const onSearch = (v: string) => {
     setSearchValue(v);

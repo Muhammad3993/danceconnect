@@ -3,6 +3,7 @@ import React from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
 import useTickets from '../hooks/useTickets';
+import {useTranslation} from 'react-i18next';
 type props = {
   ticket: any;
   ticketCard?: boolean;
@@ -10,6 +11,7 @@ type props = {
 const QuantityTicketValue = ({ticket, ticketCard}: props) => {
   const {addToBasket, currentQuantity, resetQuantity} = useTickets();
 
+  const {t} = useTranslation();
   if (ticketCard) {
     return (
       <RN.View style={styles.quantityWrapper} key={ticket?.id}>
@@ -31,7 +33,7 @@ const QuantityTicketValue = ({ticket, ticketCard}: props) => {
   return (
     <RN.View style={styles.quantityWrapper} key={ticket?.id}>
       <RN.View style={{justifyContent: 'center'}}>
-        <RN.Text style={styles.quantityText}>Quantity</RN.Text>
+        <RN.Text style={styles.quantityText}>{t('quantity')}</RN.Text>
       </RN.View>
       <RN.View style={{flexDirection: 'row'}}>
         <RN.TouchableOpacity

@@ -3,24 +3,32 @@ import {
   selectCountries,
   selectCurrentCity,
   selectCurrentCountry,
+  selectCurrentLanguageCode,
   selectDanceStyles,
   selectEventTypes,
   selectIsVisibleNoticeError,
   selectLoading,
   selectNoticeErrorMessage,
+  selectRegions,
   selectStripeKey,
+  selectTicketPriceFix,
+  selectTicketPricePercent,
 } from '../store/selectors/appStateSelector';
 import {
   choosedCityAction,
   getDanceStylesAction,
   getStripeKeyAction,
+  getTicketPercentAction,
   setCurrentCountryAction,
+  setLanguage,
   setLoadingAction,
   setNoticeMessage,
   setNoticeVisible,
 } from '../store/actions/appStateActions';
 import {useEffect} from 'react';
 import {getUserCountry} from '../store/selectors/profileSelector';
+import i18n from '../i18n/i118n';
+import {LayoutAnimation} from 'react-native';
 
 const useAppStateHook = () => {
   const dispatch = useDispatch();
@@ -33,21 +41,29 @@ const useAppStateHook = () => {
 
   const danceStyles = useSelector(selectDanceStyles);
   const countries = useSelector(selectCountries);
+  const regions = useSelector(selectRegions);
   const eventTypes = useSelector(selectEventTypes);
 
   const errorMessage = useSelector(selectNoticeErrorMessage);
   const isVisible = useSelector(selectIsVisibleNoticeError);
 
+  const crntLgCode = useSelector(selectCurrentLanguageCode);
+
+  const priceFix = useSelector(selectTicketPriceFix);
+  const pricePercent = useSelector(selectTicketPricePercent);
   useEffect(() => {
     if (!currentCity?.length) {
-      dispatch(choosedCityAction({currentCity: userCountry}));
+      const worldwide = regions.find(i => i.name === 'Worldwide');
+      dispatch(choosedCityAction({currentCity: worldwide?.name}));
     }
   }, []);
 
   const getStripeKey = () => {
     dispatch(getStripeKeyAction());
   };
-
+  const getTicketPricePercent = () => {
+    dispatch(getTicketPercentAction());
+  };
   const onChoosedCity = (city: object) => {
     let cityStr = '';
     if (city?.structured_formatting) {
@@ -76,6 +92,12 @@ const useAppStateHook = () => {
     dispatch(setCurrentCountryAction({currentCountry: country}));
   };
 
+  const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language);
+    dispatch(setLanguage({language: language}));
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+  };
+
   return {
     onLoading,
     setLoading,
@@ -94,6 +116,12 @@ const useAppStateHook = () => {
     userCountry,
     STRIPE_PUBLIC_KEY,
     getStripeKey,
+    changeLanguage,
+    crntLgCode,
+    priceFix,
+    pricePercent,
+    getTicketPricePercent,
+    regions,
   };
 };
 export default useAppStateHook;

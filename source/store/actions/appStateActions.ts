@@ -8,9 +8,15 @@ type appStateParams = {
   countries?: string[];
   currentCountry?: any;
   stripe_key?: string;
+  regions?: string[];
 
   isVisible?: boolean;
   errorMessage?: string;
+
+  language?: string;
+
+  ticket_percent?: number;
+  ticket_fix_price?: number;
 };
 
 export const setLoadingAction = ({onLoading}: appStateParams) => ({
@@ -50,6 +56,12 @@ export const setCountriesAction = ({countries}: appStateParams) => ({
   },
 });
 
+export const setRegionsAction = ({regions}: appStateParams) => ({
+  type: APP_STATE.SET_REGIONS,
+  payload: {
+    regions: regions,
+  },
+});
 export const setNoticeVisible = ({isVisible}: appStateParams) => ({
   type: APP_STATE.SET_ERROR_NOTICE_VISIBLE,
   payload: {
@@ -76,5 +88,24 @@ export const setStripeKeyAction = ({stripe_key}: appStateParams) => ({
   type: APP_STATE.SET_STRIPE_KEY,
   payload: {
     stripe_key: stripe_key,
+  },
+});
+
+export const setLanguage = (language: appStateParams) => ({
+  type: APP_STATE.SET_CURRENT_LANGUAGE,
+  payload: language,
+});
+
+export const getTicketPercentAction = () => ({
+  type: APP_STATE.GET_TICKET_PERCENT,
+});
+export const setTicketPercentAction = ({
+  ticket_percent,
+  ticket_fix_price,
+}: appStateParams) => ({
+  type: APP_STATE.SET_TICKET_PERCENT,
+  payload: {
+    ticket_percent: ticket_percent,
+    ticket_fix_price: ticket_fix_price,
   },
 });

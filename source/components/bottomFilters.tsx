@@ -6,6 +6,7 @@ import {dataDanceCategory} from '../utils/constants';
 import colors from '../utils/colors';
 import {Button} from './Button';
 import {Portal} from 'react-native-portalize';
+import { useTranslation } from 'react-i18next';
 
 type props = {
   onClose: () => void;
@@ -25,6 +26,7 @@ const FiltersBottom = ({
   onOpening,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
+  const {t} = useTranslation();
 
   const onChoosheDanceStyle = (value: string) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -71,7 +73,7 @@ const FiltersBottom = ({
           paddingTop: 35,
         }}>
         <RN.View style={{alignSelf: 'center'}}>
-          <RN.Text style={styles.filtersText}>Filters</RN.Text>
+          <RN.Text style={styles.filtersText}>{t('filters')}</RN.Text>
         </RN.View>
         <RN.TouchableOpacity
           style={{alignSelf: 'flex-end', marginTop: -25}}
@@ -85,13 +87,13 @@ const FiltersBottom = ({
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title="Clear All"
+          title={t('clear')}
           disabled
           buttonStyle={styles.clearBtn}
           onPress={onPressClear}
         />
         <Button
-          title="Show Results"
+          title={t('results')}
           disabled
           buttonStyle={styles.createBtn}
           onPress={onPressFilter}
@@ -126,7 +128,7 @@ const FiltersBottom = ({
             {renderHeader()}
             {line()}
             <RN.View style={styles.nameTitle}>
-              <RN.Text style={styles.title}>Choose Dance Style</RN.Text>
+              <RN.Text style={styles.title}>{t('choose_dc')}</RN.Text>
             </RN.View>
             {selectedStyles?.length > 0 && (
               <RN.View style={styles.danceStyleContainer}>

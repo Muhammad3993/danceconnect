@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
@@ -44,6 +44,11 @@ import ImageView from '../components/imageView';
 import SoldTickets from '../screens/Events/Tickets/SoldTickets';
 import Managers from '../screens/Community/Managers';
 import AttendedPeople from '../screens/AttendedPeople';
+import {useTranslation} from 'react-i18next';
+import ChangeLanguage from '../screens/ChangeLanguage';
+import i18n from '../i18n/i118n';
+import useAppStateHook from '../hooks/useAppState';
+import ManagingEvents from '../screens/Profile/ManagingEvents';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -181,6 +186,7 @@ const ProfileNavigator = () => {
         name="ManagingCommunities"
         component={ManagingCommunities}
       />
+      <ProfileStack.Screen name="ManagingEvents" component={ManagingEvents} />
       <ProfileStack.Screen name="CommunityScreen" component={CommunityScreen} />
       <ProfileStack.Screen name="EventScreen" component={EventScreen} />
       <ProfileStack.Screen name="EditEvent" component={EditEventScreen} />
@@ -207,6 +213,7 @@ const ProfileNavigator = () => {
       <ProfileStack.Screen name="SoldTickets" component={SoldTickets} />
       <ProfileStack.Screen name="Managers" component={Managers} />
       <ProfileStack.Screen name="AttendedPeople" component={AttendedPeople} />
+      <ProfileStack.Screen name={'LANGUAGE'} component={ChangeLanguage} />
     </ProfileStack.Navigator>
   );
 };
@@ -261,10 +268,10 @@ const TabsNavigator = () => {
         })(route),
       })}
       tabBar={props => <BottomTabs {...props} />}>
-      <Tabs.Screen name="Home" component={HomeNavigator} />
-      <Tabs.Screen name="Communities" component={CommunityNavigator} />
-      <Tabs.Screen name="Events" component={EventsNavigator} />
-      <Tabs.Screen name="Profile" component={ProfileNavigator} />
+      <Tabs.Screen name={'Home'} component={HomeNavigator} />
+      <Tabs.Screen name={'Communities'} component={CommunityNavigator} />
+      <Tabs.Screen name={'Events'} component={EventsNavigator} />
+      <Tabs.Screen name={'Profile'} component={ProfileNavigator} />
     </Tabs.Navigator>
   );
 };
@@ -279,6 +286,8 @@ const AuthNavigor = () => {
         <AuthStack.Screen name={'REGISTRATION'} component={RegistraionScreen} />
         <AuthStack.Screen name={'AUTH'} component={AuthorizationScreen} />
         <AuthStack.Screen name={'ONBOARDING'} component={Board} />
+
+        <AuthStack.Screen name={'LANGUAGE'} component={ChangeLanguage} />
       </AuthStack.Navigator>
     </Host>
   );
@@ -297,6 +306,7 @@ const MainNavigator = () => {
 const AppNavigator = () => {
   const {isUserExists} = useRegistration();
   const routeNameRef = React.useRef();
+  const {crntLgCode} = useAppStateHook();
   // console.log('isUserExists', isUserExists);
   const linking = {
     prefixes: ['https://danceconnect.online/', 'danceconnect://'],
@@ -345,6 +355,11 @@ const AppNavigator = () => {
     },
   };
 
+  useEffect(() => {
+    if (i18n.language !== crntLgCode) {
+      i18n.changeLanguage(crntLgCode);
+    }
+  }, [crntLgCode]);
   return (
     <NavigationContainer
       linking={linking}

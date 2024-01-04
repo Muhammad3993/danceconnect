@@ -7,8 +7,10 @@ import {
 import colors from '../utils/colors';
 import {getIcon} from '../utils/helpers';
 import {isAndroid} from '../utils/constants';
+import {useTranslation} from 'react-i18next';
 
 const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
+  const {t} = useTranslation();
   const tabs = state.routes;
   const focusedOptions = descriptors[state.routes[state.index].key]
     .options as BottomTabNavigationOptions;
@@ -32,12 +34,18 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
           }
         };
         const isFocused = state.index === index;
+        const iconName = getIcon(
+          t(`${route.name}_tab`).toLowerCase(),
+          isFocused,
+        );
         return (
           <RN.TouchableOpacity key={index} onPress={onPressTab}>
             <RN.View style={{alignSelf: 'center'}}>
               <RN.Image
                 resizeMode={'contain'}
-                source={{uri: getIcon(route.name, isFocused)}}
+                source={{
+                  uri: iconName,
+                }}
                 style={styles.icon}
               />
             </RN.View>
@@ -50,7 +58,7 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
                 },
                 styles.itemName,
               ]}>
-              {route?.name}
+              {t(route.name.toLowerCase() + '_tab')}
             </RN.Text>
           </RN.TouchableOpacity>
         );
