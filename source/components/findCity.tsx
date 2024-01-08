@@ -84,7 +84,6 @@ const FindCity = ({
       );
     }
   }, []);
-
   // useEffect(() => {
   //   if (country?.cities instanceof Array) {
   //     setCrntLocation(country?.cities[0]?.name);
@@ -119,6 +118,7 @@ const FindCity = ({
       }
     }
     if (country?.availableSearchString && !searchValue?.length) {
+      console.log(selectedLocation, crntLocation, country);
       return;
     } else {
       onClosed && onClosed(false);
@@ -181,14 +181,13 @@ const FindCity = ({
     // if (onClosed) {
     //   onClosed(false);
     // }
-    console.log('oncancel', searchValue.length);
     // if (searchValue.length <= 0) {
     //   modalizeRef?.current?.open();
     //   // onClosed && onClosed(true);
     //   return;
     // } else {
-      onClosed && onClosed(false);
-      modalizeRef?.current?.close();
+    onClosed && onClosed(false);
+    modalizeRef?.current?.close();
     // }
     // onClosed && onClosed(false);
   };
@@ -196,7 +195,7 @@ const FindCity = ({
     return (
       <>
         <RN.View style={styles.headerDanceStyle}>
-          <RN.TouchableOpacity onPress={onClose} disabled={communityScreen}>
+          <RN.TouchableOpacity onPress={onCancel} disabled={communityScreen}>
             <RN.Image
               source={{uri: 'backicon'}}
               style={{
@@ -209,7 +208,7 @@ const FindCity = ({
           <RN.View style={{alignSelf: 'center'}}>
             <RN.Text style={styles.selectorTitle}>{t('location')}</RN.Text>
           </RN.View>
-          <RN.TouchableOpacity onPress={onClose}>
+          <RN.TouchableOpacity onPress={onCancel}>
             <RN.Image source={{uri: 'close'}} style={{height: 24, width: 24}} />
           </RN.TouchableOpacity>
         </RN.View>
@@ -224,7 +223,7 @@ const FindCity = ({
         onPress={() => {
           setCountriesSearch([]);
           setCountry(item);
-          setSelectedLocation(item.country);
+          // setSelectedLocation(item.country);
           setSearchCountryValue(item.country);
           setSearchValue('');
           if (item?.cities instanceof Array) {
@@ -450,7 +449,11 @@ const FindCity = ({
       </RN.View>
       {/* {visibleBtn && ( */}
       <RN.View style={{paddingTop: 44}}>
-        <Button title={t('confirm')} onPress={onClose} disabled />
+        <Button
+          title={t('confirm')}
+          onPress={onClose}
+          disabled={country?.availableSearchString ? searchValue?.length : true}
+        />
       </RN.View>
       <RN.View style={{paddingBottom: 60}} />
       {/* // )} */}
