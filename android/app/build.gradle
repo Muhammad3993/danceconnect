@@ -212,12 +212,12 @@ android {
         }
     }
     signingConfigs {
-        debug {
-            storeFile file('release.keystore')
-            storePassword 'danceconnect'
-            keyAlias 'key0'
-            keyPassword 'danceconnect'
-        }
+        // debug {
+        //     storeFile file('release.keystore')
+        //     storePassword 'danceconnect'
+        //     keyAlias 'key0'
+        //     keyPassword 'danceconnect'
+        // }
         release {
             storeFile file('release.keystore')
             storePassword 'danceconnect'
