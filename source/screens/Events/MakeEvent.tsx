@@ -1092,7 +1092,7 @@ const MakeEvent = () => {
       )}
       {openLocation && (
         <FindCity
-          // selectedLocation={selectedLocation}
+          selectedLocation={selectedLocation}
           setSelectedLocation={setSelectedLocation}
           onClosed={() => setOpenLocation(false)}
           setCurrentCountry={setCurrentCountry}

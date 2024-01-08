@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {LogBox, StatusBar, StyleSheet} from 'react-native';
+import {Linking, LogBox, StatusBar, StyleSheet} from 'react-native';
 import AppNavigator from './source/navigation/rootNavigator';
 import SplashScreen from 'react-native-splash-screen';
 import {initializeFB} from './source/api/authSocial';
@@ -12,7 +12,6 @@ import {isAndroid} from './source/utils/constants';
 import FullLoading from './source/components/fullLoading';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Notice} from './source/components/errorNotice';
-import {Linking} from 'react-native';
 import {I18nextProvider} from 'react-i18next';
 import i18n from './source/i18n/i118n';
 

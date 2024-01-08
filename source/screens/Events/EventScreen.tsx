@@ -214,6 +214,20 @@ const EventScreen = () => {
     }
     setShareOptions(v => !v);
   };
+  const onPressMoreBtn = () => {
+    setUnFollowOpen(v => !v);
+    if (shareOptions) {
+      setShareOptions(v => !v);
+    }
+  };
+
+  const onPressShareBtn = () => {
+    setShareOptions(v => !v);
+    if (unFolloweOpen) {
+      setUnFollowOpen(v => !v);
+    }
+  };
+
   const headerOptionButtons = [
     {
       key: 'edit',
@@ -235,16 +249,14 @@ const EventScreen = () => {
           ? false
           : true
         : false,
-      onPress: () => setUnFollowOpen(v => !v),
+      onPress: () => onPressMoreBtn(),
     },
     {
       key: 'share',
       icon: 'share',
       isEnabled: true,
       onPress:
-        isAdmin || isManager
-          ? () => setShareOptions(v => !v)
-          : () => onPressShare(),
+        isAdmin || isManager ? () => onPressShareBtn() : () => onPressShare(),
       options: [
         {
           key: 'app',
@@ -308,7 +320,7 @@ const EventScreen = () => {
         </RN.View>
         {unFolloweOpen && (
           <RN.TouchableOpacity
-            style={styles.unFollowContainer}
+            style={[styles.unFollowContainer, {position: 'absolute'}]}
             onPress={
               isAdmin
                 ? onPressRemove
