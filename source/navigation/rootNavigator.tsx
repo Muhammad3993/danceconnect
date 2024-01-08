@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {
   NavigationContainer,
   // getFocusedRouteNameFromRoute,
+  // getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
 import analytics from '@react-native-firebase/analytics';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -49,6 +50,7 @@ import ChangeLanguage from '../screens/ChangeLanguage';
 import i18n from '../i18n/i118n';
 import useAppStateHook from '../hooks/useAppState';
 import ManagingEvents from '../screens/Profile/ManagingEvents';
+import {LayoutAnimation} from 'react-native';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -220,53 +222,57 @@ const ProfileNavigator = () => {
 const TabsNavigator = () => {
   return (
     <Tabs.Navigator
-      screenOptions={({route}) => ({
-        headerShown: false,
-        tabBarActiveTintColor: colors.orange,
-        tabBarInactiveTintColor: colors.darkGray,
-        tabBarHideOnKeyboard: true,
-        // tabBarStyle: (route => {
-        // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        // const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-        // if (routeName === 'CreateCommunity') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'EditCommunity') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'CreateEvent') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'CreateTicket') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'EditTicket') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'EditEvent') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'ChangeProfile') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'ProfileDanceStyles') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'BuyTickets') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'Managers') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'AttendedPeople') {
-        //   return {display: 'none'};
-        // }
-        // if (routeName === 'Ticket') {
-        //   return {display: 'none'};
-        // }
-        // return {display: 'flex'};
-        // })(route),
-      })}
+      screenOptions={
+        // ({route}) => (
+        {
+          headerShown: false,
+          tabBarActiveTintColor: colors.orange,
+          tabBarInactiveTintColor: colors.darkGray,
+          tabBarHideOnKeyboard: true,
+          // tabBarStyle: (route => {
+          // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          // const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+          // if (routeName === 'CreateCommunity') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'EditCommunity') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'CreateEvent') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'CreateTicket') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'EditTicket') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'EditEvent') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'ChangeProfile') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'ProfileDanceStyles') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'BuyTickets') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'Managers') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'AttendedPeople') {
+          //   return {display: 'none'};
+          // }
+          // if (routeName === 'Ticket') {
+          //   return {display: 'none'};
+          // }
+          // return {display: 'flex'};
+          // })(route),
+        }
+        // )
+      }
       tabBar={props => <BottomTabs {...props} />}>
       <Tabs.Screen name={'Home'} component={HomeNavigator} />
       <Tabs.Screen name={'Communities'} component={CommunityNavigator} />
