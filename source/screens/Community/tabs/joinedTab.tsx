@@ -42,9 +42,6 @@ const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
     setAddedStyles([]);
   };
 
-  const renderItemCommunity = useCallback((item: any) => {
-    return <CommunityCard item={item} key={item?.id} />;
-  }, []);
   const renderFilters = () => {
     return (
       <RN.View style={styles.filterWrapper}>
@@ -98,7 +95,11 @@ const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
         {joined?.length > 0 && renderFilters()}
         {joined?.length > 0 &&
           joined?.map((item: any) => {
-            return <RN.View>{renderItemCommunity(item)}</RN.View>;
+            return (
+              <RN.View key={item?.id}>
+                <CommunityCard item={item} />
+              </RN.View>
+            );
           })}
         {!joined?.length && <EmptyContainer onPressButton={onPressTabAll} />}
       </ScrollView>
