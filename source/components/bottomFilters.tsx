@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useRef} from 'react';
 import * as RN from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import CategorySelector from './catregorySelector';
@@ -6,14 +6,14 @@ import {dataDanceCategory} from '../utils/constants';
 import colors from '../utils/colors';
 import {Button} from './Button';
 import {Portal} from 'react-native-portalize';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 type props = {
   onClose: () => void;
   selectedStyles: string[];
-  setSelectedStyles: () => void;
+  setSelectedStyles: Dispatch<SetStateAction<string[]>>;
   onClear: () => void;
-  onFilter: () => void;
+  onFilter?: () => void;
   setCommunityLocation: () => void;
   onOpening?: boolean;
 };
@@ -45,7 +45,7 @@ const FiltersBottom = ({
 
   const onPressClear = () => {
     onClear();
-  }
+  };
   const onOpen = () => {
     modalizeRef.current?.open();
   };
@@ -62,7 +62,9 @@ const FiltersBottom = ({
   }, [onOpening]);
 
   const onPressFilter = () => {
-    onFilter();
+    if (onFilter) {
+      onFilter();
+    }
     onClose();
   };
   const renderHeader = () => {

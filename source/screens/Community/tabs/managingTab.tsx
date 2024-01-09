@@ -28,11 +28,13 @@ const ManagingTab = ({
   const {managingCommunity, getManagingCommunities, isLoadManaging} =
     useCommunities();
   const lengthEmptyCommunities = new Array(3).fill('');
+
   const {currentCity} = useAppStateHook();
+
   const [communitites, setCommunitites] = useState(
-    managingCommunity
-      ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
-      .map(ev => ev),
+    managingCommunity?.filter(
+      i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
+    ),
   );
   const [openingFilters, setOpeningFilters] = useState(false);
 
@@ -51,22 +53,23 @@ const ManagingTab = ({
     if (searchValue.length <= 0) {
       setCommunitites(managingCommunity);
     }
-  }, [communititesSearch, searchValue]);
-  useEffect(() => {
-    setCommunitites(
-      managingCommunity
-        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
-        .map(ev => ev),
-    );
-  }, [currentCity]);
+  }, [communititesSearch, searchValue, managingCommunity]);
 
   useEffect(() => {
     setCommunitites(
-      managingCommunity
-        ?.filter(i => i?.location?.toLowerCase() === currentCity.toLowerCase())
-        .map(ev => ev),
+      managingCommunity?.filter(
+        i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
+      ),
     );
-  }, [removedCommunity, managingCommunity.length]);
+  }, [currentCity, managingCommunity]);
+
+  useEffect(() => {
+    setCommunitites(
+      managingCommunity?.filter(
+        i => i?.location?.toLowerCase() === currentCity.toLowerCase(),
+      ),
+    );
+  }, [removedCommunity, managingCommunity, currentCity]);
   // console.log('removedCommunity', removedCommunity);
   const onClear = () => {
     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);

@@ -287,7 +287,7 @@ const CreateCommunity = () => {
               },
             ]}>
             {t('choose_category_title')}
-            <RN.Text style={styles.countMaxSymbols}>{t('few')}</RN.Text>
+            <RN.Text style={styles.countMaxSymbols}> {t('few')}</RN.Text>
           </RN.Text>
         </RN.View>
         {/* <RN.Text

@@ -51,6 +51,7 @@ const CommunitiesScreen = () => {
       onPressTab(t('all_tab'));
     });
   }, [t]);
+
   useEffect(() => {
     getCommunitites();
   }, [currentCity]);

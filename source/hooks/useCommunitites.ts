@@ -4,7 +4,6 @@ import {
   selectFollowingCommunities,
   selectIsLoadingWithFollow,
   selectIsSaveChanges,
-  selectJoinedCommunitites,
   selectLoadingInCreateCommunity,
   selectLoadingManagingCommunities,
   selectManagingCommunities,
@@ -21,6 +20,7 @@ import {
 } from '../store/actions/communityActions';
 import {createCommunitySuccessAction} from '../store/actions/communityActions';
 import {selectUserUid} from '../store/selectors/registrationSelector';
+import {useMemo} from 'react';
 
 export const useCommunities = () => {
   const dispatch = useDispatch();
@@ -42,7 +42,14 @@ export const useCommunities = () => {
   //     ) ?? [];
   //   return filter;
   // });
-  const joinedCommunities = selectJoinedCommunitites(userUid);
+  const joinedCommunities = useMemo(() => {
+    return communitiesData?.filter(
+      (item: any) =>
+        item?.followers?.length > 0 &&
+        item?.followers?.find((user: any) => user.userUid === userUid),
+    );
+  }, [userUid, communitiesData]);
+
   const getManagingCommunities = () => {
     dispatch(getManagingCommunitiesRequestAction());
   };

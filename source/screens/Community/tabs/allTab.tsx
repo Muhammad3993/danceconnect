@@ -23,7 +23,6 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
   const lengthEmptyCommunities = new Array(3).fill('');
   const [communitites, setCommunitites] = useState(communitiesData);
 
-  // const [communitites, setCommunitites] = useState();
   const [openingFilters, setOpeningFilters] = useState(false);
 
   const [addedStyles, setAddedStyles] = useState<string[]>(
@@ -32,6 +31,7 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
   useMemo(() => {
     setCommunitites(communitiesData);
   }, [isLoading]);
+
   useEffect(() => {
     if (searchValue?.length > 0 && communititesSearch) {
       setCommunitites(communititesSearch);
@@ -59,6 +59,7 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
     setAddedStyles([]);
     setCommunitites(communitiesData);
   };
+
   const onFilter = () => {
     if (addedStyles?.length > 0) {
       const data = communitiesData.filter(

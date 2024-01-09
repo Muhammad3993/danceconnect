@@ -50,6 +50,7 @@ function* getCommunitiesRequest() {
   try {
     const location = yield select(selectCurrentCity);
     const regions = yield select(selectRegions);
+
     const isRegionCountries = regions.find(
       (i: {name: string}) => i.name === location,
     );

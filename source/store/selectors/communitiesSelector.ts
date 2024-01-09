@@ -1,4 +1,4 @@
-import store, {IRootState} from '..';
+import {IRootState} from '..';
 export const selectCommunities = (state: IRootState) =>
   state.communities?.dataCommunities ?? [];
 export const selectLoadingInCreateCommunity = (state: IRootState) =>
@@ -23,11 +23,3 @@ export const selectManagingCommunities = (state: IRootState) =>
   state.communities?.managingCommunities ?? [];
 export const selectLoadingManagingCommunities = (state: IRootState) =>
   state.communities?.isManagingLoading ?? false;
-export const selectJoinedCommunitites = (userUid: string) =>
-  store
-    .getState()
-    ?.communities?.dataCommunities?.filter(
-      (item: any) =>
-        item?.followers?.length > 0 &&
-        item?.followers?.find((user: any) => user.userUid === userUid),
-    );
