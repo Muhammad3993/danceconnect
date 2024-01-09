@@ -28,9 +28,7 @@ export const selectLoadingManagingCommunities = (state: IRootState) =>
 
 export const selectJoinedCommunities = createSelector(
   [selectCommunities, selectUserUid],
-  (data, userUid) => {
-    const communities = data?.dataCommunities ?? [];
-
+  (communities, userUid) => {
     return communities?.filter(
       (item: any) =>
         item?.followers?.length > 0 &&
