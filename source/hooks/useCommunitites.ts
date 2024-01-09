@@ -20,8 +20,7 @@ import {
   startFollowedCommunityRequestAction,
 } from '../store/actions/communityActions';
 import {createCommunitySuccessAction} from '../store/actions/communityActions';
-import {selectUserUid} from '../store/selectors/registrationSelector';
-import {useMemo} from 'react';
+// import {selectUserUid} from '../store/selectors/registrationSelector';
 
 export const useCommunities = () => {
   const dispatch = useDispatch();
@@ -29,7 +28,7 @@ export const useCommunities = () => {
   const isLoading = useSelector(selectLoadingInCreateCommunity);
   const isLoadingWithFollow = useSelector(selectIsLoadingWithFollow);
   const followingCommunities = useSelector(selectFollowingCommunities);
-  const userUid = useSelector(selectUserUid);
+  // const userUid = useSelector(selectUserUid);
   const isSaveChanges = useSelector(selectIsSaveChanges);
 
   const managingCommunity = useSelector(selectManagingCommunities);
