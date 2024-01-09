@@ -1,4 +1,6 @@
+import {createSelector} from 'reselect';
 import {IRootState} from '..';
+import {selectUserUid} from './registrationSelector';
 export const selectCommunities = (state: IRootState) =>
   state.communities?.dataCommunities ?? [];
 export const selectLoadingInCreateCommunity = (state: IRootState) =>
@@ -23,3 +25,16 @@ export const selectManagingCommunities = (state: IRootState) =>
   state.communities?.managingCommunities ?? [];
 export const selectLoadingManagingCommunities = (state: IRootState) =>
   state.communities?.isManagingLoading ?? false;
+
+export const selectJoinedCommunities = createSelector(
+  [selectCommunities, selectUserUid],
+  (data, userUid) => {
+    const communities = data?.dataCommunities ?? [];
+
+    return communities?.filter(
+      (item: any) =>
+        item?.followers?.length > 0 &&
+        item?.followers?.find((user: any) => user.userUid === userUid),
+    );
+  },
+);

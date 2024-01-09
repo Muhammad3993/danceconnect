@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -28,8 +28,6 @@ const JoinTab = ({communititesSearch, searchValue, onPressTabAll}: props) => {
       return communititesSearch;
     }
     if (addedStyles?.length > 0) {
-      console.log(addedStyles?.length);
-
       return joinedCommunities.filter((item: any) =>
         item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );

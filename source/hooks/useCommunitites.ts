@@ -4,6 +4,7 @@ import {
   selectFollowingCommunities,
   selectIsLoadingWithFollow,
   selectIsSaveChanges,
+  selectJoinedCommunities,
   selectLoadingInCreateCommunity,
   selectLoadingManagingCommunities,
   selectManagingCommunities,
@@ -42,13 +43,7 @@ export const useCommunities = () => {
   //     ) ?? [];
   //   return filter;
   // });
-  const joinedCommunities = useMemo(() => {
-    return communitiesData?.filter(
-      (item: any) =>
-        item?.followers?.length > 0 &&
-        item?.followers?.find((user: any) => user.userUid === userUid),
-    );
-  }, [userUid, communitiesData]);
+  const joinedCommunities = useSelector(selectJoinedCommunities);
 
   const getManagingCommunities = () => {
     dispatch(getManagingCommunitiesRequestAction());
