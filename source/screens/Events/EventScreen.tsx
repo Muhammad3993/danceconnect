@@ -286,6 +286,11 @@ const EventScreen = () => {
     setUnFollowOpen(false);
     setShareOptions(false);
   };
+
+  const canDelete = useMemo(() => {
+    return tickets.every(ticket => ticket.length === 0);
+  }, [tickets]);
+
   const header = () => {
     return (
       <RN.View style={styles.headerContainer}>

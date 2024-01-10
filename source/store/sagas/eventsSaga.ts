@@ -62,6 +62,7 @@ import socket from '../../api/sockets';
 import {selectCurrentCity, selectRegions} from '../selectors/appStateSelector';
 import {selectEventById, selectEventList} from '../selectors/eventsSelector';
 import moment, {min} from 'moment';
+import {Platform} from 'react-native';
 
 function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
   const {limit, offset} = action.payload;
@@ -390,14 +391,20 @@ function* changeInformation(action: any) {
       );
       yield put(setLoadingAction({onLoading: false}));
 
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'EventScreen',
-          params: {
-            data: response,
-          },
-        }),
-      );
+      if (Platform.OS === 'ios') {
+        navigationRef.current?.navigate('EventScreen', {
+          data: response,
+        });
+      } else {
+        navigationRef.current?.dispatch(
+          CommonActions.navigate({
+            name: 'EventScreen',
+            params: {
+              data: response,
+            },
+          }),
+        );
+      }
     }
   } catch (er) {
     yield put(changeInformationEventFailAction());
