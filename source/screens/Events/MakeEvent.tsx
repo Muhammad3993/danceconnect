@@ -19,7 +19,7 @@ import useEvents from '../../hooks/useEvents';
 import useTickets from '../../hooks/useTickets';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
-import { isValidUrl } from '../../utils/helpers';
+import {isValidUrl} from '../../utils/helpers';
 
 const MakeEvent = () => {
   const {t} = useTranslation();
@@ -62,7 +62,7 @@ const MakeEvent = () => {
     getTicketPricePercent,
     priceFix,
     pricePercent,
-    regions
+    regions,
   } = useAppStateHook();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');

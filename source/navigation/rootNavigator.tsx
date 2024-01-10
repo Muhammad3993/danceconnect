@@ -66,7 +66,6 @@ const CommunityNavigator = () => {
         name="CommunityScreen"
         component={CommunityScreen}
       />
-      <CommunityStack.Screen name="EventScreen" component={EventScreen} />
       <CommunityStack.Screen
         name="Ticket"
         component={TicketScreen}
@@ -87,7 +86,6 @@ const EventsNavigator = () => {
       initialRouteName="Events"
       screenOptions={{headerShown: false, gestureEnabled: false}}>
       <EventsStack.Screen name="Events" component={EventsScreen} />
-      <EventsStack.Screen name="EventScreen" component={EventScreen} />
       <EventsStack.Screen
         name="Tickets"
         component={TicketsScreen}
@@ -113,7 +111,6 @@ const HomeNavigator = () => {
       initialRouteName="Home"
       screenOptions={{headerShown: false, gestureEnabled: false}}>
       <HomeStack.Screen name="Home" component={HomeScreen} />
-      <HomeStack.Screen name="EventScreen" component={EventScreen} />
       <HomeStack.Screen
         name="Ticket"
         component={TicketScreen}
@@ -146,7 +143,6 @@ const ProfileNavigator = () => {
       />
       <ProfileStack.Screen name="ManagingEvents" component={ManagingEvents} />
       <ProfileStack.Screen name="CommunityScreen" component={CommunityScreen} />
-      <ProfileStack.Screen name="EventScreen" component={EventScreen} />
       <ProfileStack.Screen
         name="Tickets"
         component={TicketsScreen}
@@ -220,14 +216,14 @@ const AppNavigator = () => {
                 ['Events']: {
                   path: 'events',
                 },
-                ['EventScreen']: {
-                  initialRouteName: 'Events',
-                  path: 'event/:id',
-                  parse: {
-                    id: (id: string) => {
-                      return id;
-                    },
-                  },
+              },
+            },
+            ['EventScreen']: {
+              initialRouteName: 'Events',
+              path: 'event/:id',
+              parse: {
+                id: (id: string) => {
+                  return id;
                 },
               },
             },
@@ -296,6 +292,7 @@ const AppNavigator = () => {
               />
               <MainStack.Screen name="Chats" component={ChatsScreen} />
               <MainStack.Screen name="EditEvent" component={EditEventScreen} />
+              <MainStack.Screen name="EventScreen" component={EventScreen} />
             </>
           ) : (
             <>

@@ -391,20 +391,9 @@ function* changeInformation(action: any) {
       );
       yield put(setLoadingAction({onLoading: false}));
 
-      if (Platform.OS === 'ios') {
-        navigationRef.current?.navigate('EventScreen', {
-          data: response,
-        });
-      } else {
-        navigationRef.current?.dispatch(
-          CommonActions.navigate({
-            name: 'EventScreen',
-            params: {
-              data: response,
-            },
-          }),
-        );
-      }
+      navigationRef.current?.navigate('EventScreen', {
+        data: response,
+      });
     }
   } catch (er) {
     yield put(changeInformationEventFailAction());
