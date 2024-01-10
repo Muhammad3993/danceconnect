@@ -7,18 +7,14 @@ import moment from 'moment';
 import {useTranslation} from 'react-i18next';
 // import {getTicketById} from '../../api/serverRequests';
 
-const TicketScreen = () => {
-  const routeProps = useRoute();
+const TicketScreen = ({route}) => {
   const {t} = useTranslation();
-  const {event, user, name, eventOrganizer} = routeProps.params;
-  console.log('ticket', routeProps.params);
+  const {event, user, name, eventOrganizer} = route.params;
   const navigation = useNavigation();
   // const [tickets, setTickets] = useState(
   //   new Array(routeProps.params?.quantity).fill(routeProps.params),
   // );
-  const tickets = new Array(routeProps.params?.quantity).fill(
-    routeProps.params,
-  );
+  const tickets = new Array(route.params?.quantity).fill(route.params);
   const renderHeader = () => {
     return (
       <RN.TouchableOpacity

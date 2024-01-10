@@ -20,7 +20,7 @@ import {TICKET} from '../actionTypes/ticketActionTypes';
 import {navigationRef} from '../../navigation/types';
 import {CommonActions} from '@react-navigation/native';
 import {getPreCreateEvent} from '../selectors/eventsSelector';
-import { setLoadingAction } from '../actions/appStateActions';
+import {setLoadingAction} from '../actions/appStateActions';
 
 function* createTicketRequest(action: any) {
   const {ticket} = action.payload;
