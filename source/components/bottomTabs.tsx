@@ -43,9 +43,7 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
             <RN.View style={{alignSelf: 'center'}}>
               <RN.Image
                 resizeMode={'contain'}
-                source={{
-                  uri: iconName,
-                }}
+                source={{uri: iconName}}
                 style={styles.icon}
               />
             </RN.View>

@@ -130,11 +130,17 @@ function* changeInformation(action: any) {
 
       yield put(changeUserInformationSuccessAction());
       // yield put(getUserDataRequestAction());
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'Profile',
-        }),
+      navigationRef.current?.navigate(
+        'Profile',
+        // CommonActions.navigate({
+        //   name: 'Profile',
+        // }),
       );
+      // navigationRef.current?.dispatch(
+      //   CommonActions.navigate({
+      //     name: 'Profile',
+      //   }),
+      // );
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
@@ -181,11 +187,12 @@ function* changeDanceStyles(action: {danceStyles: string[]}) {
       );
       yield put(changeUserDanceStylesSuccessAction());
       // yield put(getUserDataRequestAction());
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'Profile',
-        }),
-      );
+      navigationRef.current?.navigate('Profile');
+      // navigationRef.current?.dispatch(
+      //   CommonActions.navigate({
+      //     name: 'Profile',
+      //   }),
+      // );
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {

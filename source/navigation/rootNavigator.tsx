@@ -43,6 +43,7 @@ import ChangeLanguage from '../screens/ChangeLanguage';
 import i18n from '../i18n/i118n';
 import useAppStateHook from '../hooks/useAppState';
 import ManagingEvents from '../screens/Profile/ManagingEvents';
+import {ChatsScreen} from '../screens/Chats';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -66,7 +67,6 @@ const CommunityNavigator = () => {
         component={CommunityScreen}
       />
       <CommunityStack.Screen name="EventScreen" component={EventScreen} />
-      <CommunityStack.Screen name="EditEvent" component={EditEventScreen} />
       <CommunityStack.Screen
         name="Ticket"
         component={TicketScreen}
@@ -88,7 +88,6 @@ const EventsNavigator = () => {
       screenOptions={{headerShown: false, gestureEnabled: false}}>
       <EventsStack.Screen name="Events" component={EventsScreen} />
       <EventsStack.Screen name="EventScreen" component={EventScreen} />
-      <EventsStack.Screen name="EditEvent" component={EditEventScreen} />
       <EventsStack.Screen
         name="Tickets"
         component={TicketsScreen}
@@ -115,7 +114,6 @@ const HomeNavigator = () => {
       screenOptions={{headerShown: false, gestureEnabled: false}}>
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="EventScreen" component={EventScreen} />
-      <HomeStack.Screen name="EditEvent" component={EditEventScreen} />
       <HomeStack.Screen
         name="Ticket"
         component={TicketScreen}
@@ -149,7 +147,6 @@ const ProfileNavigator = () => {
       <ProfileStack.Screen name="ManagingEvents" component={ManagingEvents} />
       <ProfileStack.Screen name="CommunityScreen" component={CommunityScreen} />
       <ProfileStack.Screen name="EventScreen" component={EventScreen} />
-      <ProfileStack.Screen name="EditEvent" component={EditEventScreen} />
       <ProfileStack.Screen
         name="Tickets"
         component={TicketsScreen}
@@ -297,6 +294,8 @@ const AppNavigator = () => {
                 name="AttendedPeople"
                 component={AttendedPeople}
               />
+              <MainStack.Screen name="Chats" component={ChatsScreen} />
+              <MainStack.Screen name="EditEvent" component={EditEventScreen} />
             </>
           ) : (
             <>

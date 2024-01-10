@@ -230,11 +230,13 @@ function* getCommunityByIdRequest(action: any) {
           errorMessage: 'Server error',
         }),
       );
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'CommunitiesMain',
-        }),
-      );
+      navigationRef.current?.navigate('CommunitiesMain');
+
+      // dispatch(
+      //   CommonActions.navigate({
+      //     name: 'CommunitiesMain',
+      //   }),
+      // );
     }
     // else {
     //   yield put(setNoticeVisible({isVisible: true}));
@@ -257,10 +259,11 @@ function* getCommunityByIdRequest(action: any) {
         errorMessage: 'Server error',
       }),
     );
-    navigationRef.current?.dispatch(
-      CommonActions.navigate({
-        name: 'CommunitiesMain',
-      }),
+    navigationRef.current?.navigate(
+      'CommunitiesMain',
+      // CommonActions.navigate({
+      //   name: 'CommunitiesMain',
+      // }),
     );
     yield put(getCommunityByIdFailAction(error));
   }
@@ -299,14 +302,16 @@ function* changeInformation(action: any) {
         }),
       );
     } else {
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'CommunityScreen',
-          params: {
-            data: response,
-          },
-        }),
-      );
+      navigationRef.current?.navigate('CommunityScreen', {data: response});
+
+      // .dispatch(
+      //   CommonActions.navigate({
+      //     name: 'CommunityScreen',
+      //     params: {
+      //       data: response,
+      //     },
+      //   }),
+      // );
       yield put(changeInformationCommunitySuccessAction());
       yield put(getCommunitiesRequestAction());
       // yield put(getCommunityByIdRequestAction({communityUid: communityUid}));
@@ -327,16 +332,28 @@ function* removeCommunityRequest(action: any) {
     yield put(getCommunitiesRequestAction());
     yield put(getManagingCommunitiesRequestAction());
     if (action?.payload?.screen === 'Profile') {
-      navigationRef.current?.dispatch(CommonActions.goBack());
+      navigationRef.current?.goBack();
+      // navigationRef.current?.dispatch(CommonActions.goBack());
     } else {
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'CommunitiesMain',
-          params: {
-            removedCommunity: true,
-          },
-        }),
+      navigationRef.current?.navigate(
+        'CommunitiesMain',
+        {removedCommunity: true},
+        //     ,
+        // CommonActions.navigate({
+        //   name: 'CommunitiesMain',
+        //   params: {
+        //     removedCommunity: true,
+        //   },
+        // }),
       );
+      // navigationRef.current?.dispatch(
+      //   CommonActions.navigate({
+      //     name: 'CommunitiesMain',
+      //     params: {
+      //       removedCommunity: true,
+      //     },
+      //   }),
+      // );
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {

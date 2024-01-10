@@ -389,6 +389,7 @@ function* changeInformation(action: any) {
         }),
       );
       yield put(setLoadingAction({onLoading: false}));
+
       navigationRef.current?.dispatch(
         CommonActions.navigate({
           name: 'EventScreen',
@@ -424,10 +425,11 @@ function* getEventByIdRequest(action: any) {
           errorMessage: 'Server error',
         }),
       );
-      navigationRef.current?.dispatch(
-        CommonActions.navigate({
-          name: 'Events',
-        }),
+      navigationRef.current?.navigate(
+        'Events',
+        // CommonActions.navigate({
+        //   name: 'Events',
+        // }),
       );
     } else {
       yield put(
@@ -486,14 +488,11 @@ function* removeEventRquest(action: any) {
     yield put(getEventsRequestAction({limit: 1, offset: 0}));
     yield put(getManagingEventsRequestAction());
     yield put(removeEventSuccessAction());
-    navigationRef.current?.dispatch(
-      CommonActions.navigate({
-        name: 'Events',
-        params: {
-          createdEvent: true,
-        },
-      }),
-    );
+
+    navigationRef.current?.navigate('Events', {
+      createdEvent: true,
+    });
+
     yield put(setLoadingAction({onLoading: false}));
     yield put(getPersonalEventsRequestAction());
   } catch (error) {

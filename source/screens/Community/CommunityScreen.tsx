@@ -1,4 +1,3 @@
-import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
@@ -19,18 +18,16 @@ import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {useTranslation} from 'react-i18next';
 
-const CommunityScreen = ({route}) => {
-  const routeProps = useRoute();
-  const navigation = useNavigation();
+const CommunityScreen = ({route, navigation}) => {
   const {t} = useTranslation();
   const removeModalizeRef = useRef<Modalize>(null);
   const {userUid} = useRegistration();
   const {startFollowed, isSaveChanges, onClearCommunityDataById} =
     useCommunities();
 
-  const {data}: any = routeProps.params;
+  const {data}: any = route.params;
   const communityId = (route.params && route.params?.id) ?? data?.id;
-  const {isProfileScreen}: any = routeProps.params;
+  const {isProfileScreen}: any = route.params;
   const {remove, getCommunity, communityData, loadingById} =
     useCommunityById(communityId);
   const [openingDescription, setOpeningDescription] = useState(false);

@@ -39,9 +39,7 @@ const ManagingTab = ({
   const [openingFilters, setOpeningFilters] = useState(false);
 
   // console.log('managingCommunity', managingCommunity, communitites);
-  const [addedStyles, setAddedStyles] = useState<string[]>(
-    new Array(0).fill(''),
-  );
+  const [addedStyles, setAddedStyles] = useState<string[]>([]);
   // useEffect(() => {
   //   getManagingCommunities();
   // }, []);

@@ -19,8 +19,7 @@ import FastImage from 'react-native-fast-image';
 import {navigationRef} from '../../navigation/types';
 import {useTranslation} from 'react-i18next';
 
-const CreateCommunity = () => {
-  const navigation = useNavigation();
+const CreateCommunity = ({navigation}) => {
   const {t} = useTranslation();
   const {create, isLoading} = useCommunities();
   const goBackBtn = () => {
@@ -79,15 +78,15 @@ const CreateCommunity = () => {
       if (percent >= 99) {
         // console.log('percent', percent);
         RN.DeviceEventEmitter.addListener('upload_finished', (data: any) => {
-          // navigation.navigate('CommunityScreen', data);
-          navigationRef.current?.dispatch(
-            CommonActions.navigate({
-              name: 'CommunityScreen',
-              params: {
-                data: data,
-              },
-            }),
-          );
+          navigation.navigate('CommunityScreen', {data});
+          // navigationRef.current?.dispatch(
+          //   CommonActions.navigate({
+          //     name: 'CommunityScreen',
+          //     params: {
+          //       data: data,
+          //     },
+          //   }),
+          // );
         });
       }
     });

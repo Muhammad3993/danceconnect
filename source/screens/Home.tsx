@@ -28,7 +28,7 @@ const HomeScreen = () => {
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
   const {getManagingEvents, personalEvents, getPersonalEvents} = useEvents();
-  const [events, setEvents] = useState<string[]>();
+  const [events, setEvents] = useState<string[]>([]);
   const {getPurchasedTickets} = useTickets();
 
   const {t} = useTranslation();
@@ -89,32 +89,36 @@ const HomeScreen = () => {
       onPressTab(currentTab);
     }
   }, [isFocused, currentTab, onPressTab]);
+
   const renderHeader = () => {
     return (
-      <>
-        <RN.View style={styles.headerContainer}>
-          <RN.Image
-            source={require('../assets/images/logoauth.png')}
-            style={styles.logoImg}
+      <RN.View style={styles.headerContainer}>
+        <RN.Image
+          source={require('../assets/images/logoauth.png')}
+          style={styles.logoImg}
+        />
+
+        {/* <RN.TouchableOpacity
+          style={{justifyContent: 'center'}}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('Chats')}>
+          <FastImage
+            source={
+              userImgUrl
+                ? {
+                    uri: apiUrl + userImgUrl,
+                    cache: FastImage.cacheControl.immutable,
+                    priority: FastImage.priority.high,
+                  }
+                : require('../assets/images/defaultuser.png')
+            }
+            style={{height: 40, width: 40, borderRadius: 50}}
           />
-          <RN.TouchableOpacity
-            style={{justifyContent: 'center'}}
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('Profile')}>
-            <FastImage
-              source={{
-                uri: apiUrl + userImgUrl,
-                cache: FastImage.cacheControl.immutable,
-                priority: FastImage.priority.high,
-              }}
-              defaultSource={require('../assets/images/defaultuser.png')}
-              style={{height: 40, width: 40, borderRadius: 50}}
-            />
-          </RN.TouchableOpacity>
-        </RN.View>
-      </>
+        </RN.TouchableOpacity> */}
+      </RN.View>
     );
   };
+
   const renderTab = ({item}: any) => {
     return (
       <RN.TouchableOpacity
@@ -140,12 +144,7 @@ const HomeScreen = () => {
       </RN.TouchableOpacity>
     );
   };
-  const renderItem = (item: any) => {
-    return <EventCard item={item} key={item?.id} />;
-  };
-  const renderEmpty = () => {
-    return <EmptyContainer onPressButton={goToCommunities} />;
-  };
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -184,19 +183,21 @@ const HomeScreen = () => {
           />
         </RN.View>
         {/* <ScrollView style={{ paddingTop: 8, paddingBottom: SCREEN_HEIGHT / 2}}> */}
-        {events?.length > 0 &&
-          events?.map((item: any) => {
-            return (
-              <RN.View
-                style={{
-                  paddingTop: 8,
-                  minHeight: events.length > 1 ? 200 : 260,
-                }}>
-                {renderItem(item)}
-              </RN.View>
-            );
-          })}
-        {events?.length <= 0 && renderEmpty()}
+        {events.map((item: any) => {
+          return (
+            <RN.View
+              style={{
+                paddingTop: 8,
+                minHeight: events.length > 1 ? 200 : 260,
+              }}
+              key={item?.id}>
+              <EventCard item={item} />
+            </RN.View>
+          );
+        })}
+        {events?.length <= 0 && (
+          <EmptyContainer onPressButton={goToCommunities} />
+        )}
         {/* </ScrollView> */}
       </RN.View>
       <RN.View style={{paddingBottom: 24, backgroundColor: '#FAFAFA'}} />
