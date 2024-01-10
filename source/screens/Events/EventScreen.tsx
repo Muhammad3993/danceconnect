@@ -228,6 +228,10 @@ const EventScreen = () => {
     }
   };
 
+  const canDelete = useMemo(() => {
+    return ticketsList.every(el => el.items.length === 0);
+  }, [ticketsList]);
+
   const headerOptionButtons = [
     {
       key: 'edit',
@@ -243,7 +247,7 @@ const EventScreen = () => {
         : isManager
         ? false
         : isAdmin
-        ? ticketsList?.length <= 0
+        ? canDelete
         : isFollowed
         ? ticketsList?.length > 0
           ? false
@@ -271,6 +275,7 @@ const EventScreen = () => {
       ],
     },
   ];
+
   const opacity = new Animated.Value(0);
   const shareActions = headerOptionButtons
     .filter(i => i?.options)
@@ -286,10 +291,6 @@ const EventScreen = () => {
     setUnFollowOpen(false);
     setShareOptions(false);
   };
-
-  const canDelete = useMemo(() => {
-    return tickets.every(ticket => ticket.length === 0);
-  }, [tickets]);
 
   const header = () => {
     return (

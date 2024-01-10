@@ -97,9 +97,7 @@ const EventsNavigator = () => {
       <EventsStack.Screen
         name="Ticket"
         component={TicketScreen}
-        options={{
-          headerShown: false,
-        }}
+        options={{headerShown: false}}
       />
       <EventsStack.Screen name="SoldTickets" component={SoldTickets} />
     </EventsStack.Navigator>
