@@ -56,7 +56,7 @@ const EventCard = ({item}: any) => {
   const renderTags = (tags: string[]) => {
     return (
       <RN.View style={styles.tagsContainer}>
-        {tags.length <= 1 &&
+        {tags?.length <= 1 &&
           tags?.map(tag => {
             return (
               <RN.View style={{justifyContent: 'center'}}>
@@ -64,7 +64,7 @@ const EventCard = ({item}: any) => {
               </RN.View>
             );
           })}
-        {tags.length >= 2 &&
+        {tags?.length >= 2 &&
           tags?.slice(0, 2)?.map(tag => {
             return (
               <RN.View style={{justifyContent: 'center'}}>

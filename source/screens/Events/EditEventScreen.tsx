@@ -20,7 +20,7 @@ import useTickets from '../../hooks/useTickets';
 import {apiUrl} from '../../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
-import { isValidUrl } from '../../utils/helpers';
+import {isValidUrl} from '../../utils/helpers';
 
 const EditEventScreen = () => {
   const navigation = useNavigation();
@@ -114,6 +114,9 @@ const EditEventScreen = () => {
     current: description?.length,
     maxSymbols: 1000,
   });
+  const isAlreadyTicketsSold = ticketsList?.some(
+    ticket => ticket?.items?.length > 0,
+  );
 
   useEffect(() => {
     getTicketPricePercent();
@@ -176,7 +179,7 @@ const EditEventScreen = () => {
   //   });
   // }, [id]);
   const onPressDeleteTicket = (item: any) => {
-    console.log('item', item);
+    // console.log('item', item);
     // const filter = tickets.filter(itemTicket => itemTicket !== item);
     removeTicket(item);
     // getTickets(id).then(ticketsList => {
@@ -208,11 +211,15 @@ const EditEventScreen = () => {
       if (ticketType.type === 'paid' && !tickets.length) {
         setPaidTicketsErrors(true);
       } else if (ticketType.type === 'free') {
+        if (ticketsList?.length) {
+          tickets.map(ticket => {
+            removeTicket(ticket);
+          });
+        }
         onPressSaveChange();
       } else {
         onPressSaveChange();
       }
-      console.log('onPressChange');
     } else {
       if (!selectedPlace.length) {
         setIsErrorPlace(true);
@@ -222,7 +229,6 @@ const EditEventScreen = () => {
     }
   };
   const onPressSaveChange = () => {
-    console.log(isValidUrl(externalLink), inAppTicketsEdit);
     const eventDateEd = {
       time: time,
       startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
@@ -346,7 +352,9 @@ const EditEventScreen = () => {
     description: string;
   }) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    setTicketType(type);
+    if (!isAlreadyTicketsSold) {
+      setTicketType(type);
+    }
     setPaidTicketsErrors(false);
   };
   const onPressAddTicket = () => {
@@ -809,6 +817,7 @@ const EditEventScreen = () => {
             ios_backgroundColor="#3e3e3e"
             onValueChange={setInAppTickets}
             value={inAppTicketsEdit}
+            disabled={isAlreadyTicketsSold}
             style={{transform: [{scaleX: 0.5}, {scaleY: 0.5}]}}
           />
           <RN.View style={{justifyContent: 'center'}}>
@@ -847,6 +856,9 @@ const EditEventScreen = () => {
                     activeOpacity={0.7}
                     onPress={() => onPressTicketType(type)}
                     key={type.idx}
+                    disabled={
+                      isAlreadyTicketsSold && type.type === TICKET_TYPES[0].type
+                    }
                     style={
                       ticketType.idx === type.idx
                         ? [
@@ -857,7 +869,16 @@ const EditEventScreen = () => {
                                 : colors.purple,
                             },
                           ]
-                        : styles.ticketTypeInActive
+                        : [
+                            styles.ticketTypeInActive,
+                            {
+                              opacity:
+                                isAlreadyTicketsSold &&
+                                type.type === TICKET_TYPES[0].type
+                                  ? 0.5
+                                  : 1,
+                            },
+                          ]
                     }>
                     <RN.View
                       style={{
