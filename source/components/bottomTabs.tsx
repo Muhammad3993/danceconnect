@@ -1,22 +1,16 @@
 import React from 'react';
 import * as RN from 'react-native';
-import {
-  BottomTabBarProps,
-  BottomTabNavigationOptions,
-} from '@react-navigation/bottom-tabs';
+import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import colors from '../utils/colors';
 import {getIcon} from '../utils/helpers';
-import {isAndroid} from '../utils/constants';
 import {useTranslation} from 'react-i18next';
 
 const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
   const {t} = useTranslation();
   const tabs = state.routes;
-  const focusedOptions = descriptors[state.routes[state.index].key]
-    .options as BottomTabNavigationOptions;
-  const display = focusedOptions.tabBarStyle?.display;
+
   return (
-    <RN.View style={[styles.container, {display}]}>
+    <RN.View style={styles.container}>
       {tabs.map((route, index) => {
         const {tabBarActiveTintColor, tabBarInactiveTintColor} =
           descriptors[route.key].options;
@@ -75,7 +69,6 @@ const styles = RN.StyleSheet.create({
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     paddingVertical: 8,
-    paddingBottom: isAndroid ? 0 : 30,
   },
   icon: {
     height: 20,

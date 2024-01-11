@@ -43,7 +43,7 @@ import ChangeLanguage from '../screens/ChangeLanguage';
 import i18n from '../i18n/i118n';
 import useAppStateHook from '../hooks/useAppState';
 import ManagingEvents from '../screens/Profile/ManagingEvents';
-import {ChatsScreen} from '../screens/Chats';
+import {ChatsScreen} from '../screens/Chat/Chats';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();

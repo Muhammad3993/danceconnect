@@ -54,28 +54,18 @@ function* getCommunitiesRequest() {
     const isRegionCountries = regions.find(
       (i: {name: string}) => i.name === location,
     );
-    if (isRegionCountries) {
-      const communities = yield call(
-        getCommunitiesWithMongoByArray,
-        isRegionCountries?.countries,
-      );
-      yield put(
-        getCommunitiesSuccessAction({
-          dataCommunities: Object.values(communities),
-        }),
-      );
-      yield put(getManagingCommunitiesRequestAction());
-    } else {
-      const communities = yield call(getCommunitiesWithMongoByArray, [
-        location,
-      ]);
-      yield put(
-        getCommunitiesSuccessAction({
-          dataCommunities: Object.values(communities),
-        }),
-      );
-      yield put(getManagingCommunitiesRequestAction());
-    }
+
+    const communities = yield call(
+      getCommunitiesWithMongoByArray,
+      isRegionCountries ? isRegionCountries?.countries : [location],
+    );
+    yield put(
+      getCommunitiesSuccessAction({
+        dataCommunities: Object.values(communities),
+      }),
+    );
+
+    yield put(getManagingCommunitiesRequestAction());
   } catch (error: any) {
     console.log('getCommunitites', error);
     yield put(getCommunitiesFailAction(error));
@@ -225,11 +215,7 @@ function* getCommunityByIdRequest(action: any) {
     );
     if (!community) {
       yield put(setNoticeVisible({isVisible: true}));
-      yield put(
-        setNoticeMessage({
-          errorMessage: 'Server error',
-        }),
-      );
+      yield put(setNoticeMessage({errorMessage: 'Server error'}));
       navigationRef.current?.navigate('CommunitiesMain');
 
       // dispatch(
@@ -302,7 +288,15 @@ function* changeInformation(action: any) {
         }),
       );
     } else {
-      navigationRef.current?.navigate('CommunityScreen', {data: response});
+      navigationRef.current?.navigate('TABS', {
+        screen: 'Communities',
+        params: {
+          screen: 'CommunityScreen',
+          params: {
+            data: response,
+          },
+        },
+      });
 
       // .dispatch(
       //   CommonActions.navigate({
@@ -363,8 +357,17 @@ function* removeCommunityRequest(action: any) {
 }
 function* getManagingCommunities() {
   try {
-    const response = yield call(getManagingCommunity);
-    const communities = response;
+    const location = yield select(selectCurrentCity);
+    const regions = yield select(selectRegions);
+
+    const isRegionCountries = regions.find(
+      (i: {name: string}) => i.name === location,
+    );
+
+    const communities = yield call(
+      getManagingCommunity,
+      isRegionCountries ? isRegionCountries?.countries : [location],
+    );
 
     yield put(
       getManagingCommunitiesSuccessAction({

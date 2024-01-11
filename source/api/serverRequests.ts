@@ -208,10 +208,11 @@ export const getCommunitiesWithMongoByArray = async (locations: string[]) => {
     return console.log('getCommunitiesWithMongoByArray er', er);
   }
 };
-export const getManagingCommunity = async () => {
+export const getManagingCommunity = async (locations: string[]) => {
   try {
-    const response = await axios.get(`${apiUrl}managing_communities`);
-    console.log('getManagingCommunity', response);
+    const response = await axios.get(`${apiUrl}managing_communities`, {
+      params: {location: locations},
+    });
     return response?.data.data;
   } catch (er) {
     return console.log('getManagingCommunity er', er);
@@ -229,9 +230,7 @@ export const createCommunityWithMongo = async (data: object) => {
   try {
     const response = await axios.post(
       `${apiUrl}communities`,
-      {
-        data: data,
-      },
+      {data: data},
       config,
     );
     return response.data;

@@ -98,23 +98,12 @@ const HomeScreen = () => {
           style={styles.logoImg}
         />
 
-        {/* <RN.TouchableOpacity
+        <RN.TouchableOpacity
           style={{justifyContent: 'center'}}
           activeOpacity={0.7}
           onPress={() => navigation.navigate('Chats')}>
-          <FastImage
-            source={
-              userImgUrl
-                ? {
-                    uri: apiUrl + userImgUrl,
-                    cache: FastImage.cacheControl.immutable,
-                    priority: FastImage.priority.high,
-                  }
-                : require('../assets/images/defaultuser.png')
-            }
-            style={{height: 40, width: 40, borderRadius: 50}}
-          />
-        </RN.TouchableOpacity> */}
+          <RN.Image source={{uri: 'chat'}} style={{height: 28, width: 28}} />
+        </RN.TouchableOpacity>
       </RN.View>
     );
   };

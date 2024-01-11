@@ -16,7 +16,6 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useProfile} from '../../hooks/useProfile';
 import FindCity from '../../components/findCity';
 import FastImage from 'react-native-fast-image';
-import {navigationRef} from '../../navigation/types';
 import {useTranslation} from 'react-i18next';
 
 const CreateCommunity = ({navigation}) => {
