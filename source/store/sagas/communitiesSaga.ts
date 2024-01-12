@@ -284,28 +284,8 @@ function* changeInformation(action: any) {
         }),
       );
     } else {
-      navigationRef.current?.navigate('CommunityScreen', {
-        data: response,
-      });
+      navigationRef.current?.navigate('CommunityScreen', {data: response});
 
-      // navigationRef.current?.navigate('TABS', {
-      //   screen: 'Communities',
-      //   params: {
-      //     screen: 'CommunityScreen',
-      //     params: {
-      //       data: response,
-      //     },
-      //   },
-      // });
-
-      // .dispatch(
-      //   CommonActions.navigate({
-      //     name: 'CommunityScreen',
-      //     params: {
-      //       data: response,
-      //     },
-      //   }),
-      // );
       yield put(changeInformationCommunitySuccessAction());
       yield put(getCommunitiesRequestAction());
       // yield put(getCommunityByIdRequestAction({communityUid: communityUid}));

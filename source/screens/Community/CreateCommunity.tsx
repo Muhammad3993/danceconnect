@@ -73,19 +73,8 @@ const CreateCommunity = ({navigation}) => {
 
   useEffect(() => {
     RN.DeviceEventEmitter.addListener('upload_finished', (data: any) => {
-      navigation.navigate('TABS', {
-        screen: 'Communities',
-        params: {
-          screen: 'CommunityScreen',
-          params: {data},
-        },
-      });
+      navigation.navigate('CommunityScreen', {data});
     });
-    // RN.DeviceEventEmitter.addListener('upload_progress', (percent: number) => {
-    //   if (percent >= 99) {
-
-    //   }
-    // });
   }, []);
   useEffect(() => {
     onClear();

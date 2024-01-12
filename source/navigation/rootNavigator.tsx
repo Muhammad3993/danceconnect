@@ -63,10 +63,6 @@ const CommunityNavigator = () => {
         component={CommunitiesScreen}
       />
       <CommunityStack.Screen
-        name="CommunityScreen"
-        component={CommunityScreen}
-      />
-      <CommunityStack.Screen
         name="Ticket"
         component={TicketScreen}
         options={{
@@ -140,7 +136,6 @@ const ProfileNavigator = () => {
         component={ManagingCommunities}
       />
       <ProfileStack.Screen name="ManagingEvents" component={ManagingEvents} />
-      <ProfileStack.Screen name="CommunityScreen" component={CommunityScreen} />
       <ProfileStack.Screen
         name="Tickets"
         component={TicketsScreen}
@@ -197,15 +192,6 @@ const AppNavigator = () => {
                 ['CommunitiesMain']: {
                   path: 'communities',
                 },
-                ['CommunityScreen']: {
-                  initialRouteName: 'CommunitiesMain',
-                  path: 'community/:id',
-                  parse: {
-                    id: (id: string) => {
-                      return id;
-                    },
-                  },
-                },
               },
             },
             ['Events']: {
@@ -217,8 +203,15 @@ const AppNavigator = () => {
               },
             },
             ['EventScreen']: {
-              initialRouteName: 'Events',
               path: 'event/:id',
+              parse: {
+                id: (id: string) => {
+                  return id;
+                },
+              },
+            },
+            ['CommunityScreen']: {
+              path: 'community/:id',
               parse: {
                 id: (id: string) => {
                   return id;
@@ -295,6 +288,10 @@ const AppNavigator = () => {
               />
               <MainStack.Screen name="EditEvent" component={EditEventScreen} />
               <MainStack.Screen name="EventScreen" component={EventScreen} />
+              <MainStack.Screen
+                name="CommunityScreen"
+                component={CommunityScreen}
+              />
             </>
           ) : (
             <>

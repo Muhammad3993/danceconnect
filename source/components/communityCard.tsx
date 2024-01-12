@@ -9,7 +9,7 @@ import SkeletonCommunityCard from './skeleton/communityCard-Skeleton';
 import socket from '../api/sockets';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 type props = {
   item: any;
