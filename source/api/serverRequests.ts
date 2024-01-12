@@ -554,3 +554,10 @@ export const getManagersForCommunityUid = async (communityUid: string) => {
   );
   return response.data;
 };
+
+export const getUsersList = async (locations: string[]) => {
+  const response = await axios.get(`${apiUrl}users/list`, {
+    params: {location: locations},
+  });
+  return response.data;
+};

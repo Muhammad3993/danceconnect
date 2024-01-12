@@ -14,7 +14,6 @@ type props = {
   setSelectedStyles: Dispatch<SetStateAction<string[]>>;
   onClear: () => void;
   onFilter?: () => void;
-  setCommunityLocation: () => void;
   onOpening?: boolean;
 };
 const FiltersBottom = ({

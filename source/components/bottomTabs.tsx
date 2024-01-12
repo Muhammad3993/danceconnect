@@ -40,7 +40,14 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
               <RN.Image
                 resizeMode={'contain'}
                 source={{uri: iconName}}
-                style={styles.icon}
+                style={[
+                  styles.icon,
+                  {
+                    tintColor: isFocused
+                      ? tabBarActiveTintColor
+                      : tabBarInactiveTintColor,
+                  },
+                ]}
               />
             </RN.View>
             <RN.Text
