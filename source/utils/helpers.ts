@@ -88,6 +88,26 @@ export const getIcon = (name: string, isFocused: boolean) => {
       return isFocused ? 'ticketfull' : 'ticketoutline';
     case 'profile_tab':
       return isFocused ? 'profilefull' : 'profileoutline';
+    case 'people_tab':
+      return isFocused ? 'peoplefull' : 'peopleoutline';
+    default:
+      break;
+  }
+};
+export const userRole = (title: string) => {
+  switch (title) {
+    case 'I’m Organizer':
+      return 'Organizer';
+    case 'I’m Dancer':
+      return 'Dancer';
+    case 'I’m Teacher':
+      return 'Teacher';
+    case "I'm Organizer":
+      return 'Organizer';
+    case "I'm Dancer":
+      return 'Dancer';
+    case "I'm Teacher":
+      return 'Teacher';
     default:
       break;
   }

@@ -44,6 +44,8 @@ import i18n from '../i18n/i118n';
 import useAppStateHook from '../hooks/useAppState';
 import ManagingEvents from '../screens/Profile/ManagingEvents';
 import {ChatsScreen} from '../screens/Chat/Chats';
+import People from '../screens/People/People';
+import User from '../screens/People/DifferentUser';
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -53,6 +55,7 @@ const CommunityStack = createStackNavigator();
 const EventsStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
+const PeopleStack = createStackNavigator();
 const CommunityNavigator = () => {
   return (
     <CommunityStack.Navigator
@@ -157,6 +160,15 @@ const ProfileNavigator = () => {
     </ProfileStack.Navigator>
   );
 };
+const PeopleNavigator = () => {
+  return (
+    <PeopleStack.Navigator
+      initialRouteName="People"
+      screenOptions={{headerShown: false, gestureEnabled: false}}>
+      <ProfileStack.Screen name="People" component={People} />
+    </PeopleStack.Navigator>
+  );
+};
 const TabsNavigator = () => {
   return (
     <Tabs.Navigator
@@ -170,6 +182,7 @@ const TabsNavigator = () => {
       <Tabs.Screen name={'Home'} component={HomeNavigator} />
       <Tabs.Screen name={'Communities'} component={CommunityNavigator} />
       <Tabs.Screen name={'Events'} component={EventsNavigator} />
+      <Tabs.Screen name={'People'} component={PeopleNavigator} />
       <Tabs.Screen name={'Profile'} component={ProfileNavigator} />
     </Tabs.Navigator>
   );
@@ -285,6 +298,11 @@ const AppNavigator = () => {
                 name="Chats"
                 options={{gestureEnabled: true}}
                 component={ChatsScreen}
+              />
+              <MainStack.Screen
+                name="User"
+                options={{gestureEnabled: true}}
+                component={User}
               />
               <MainStack.Screen name="EditEvent" component={EditEventScreen} />
               <MainStack.Screen name="EventScreen" component={EventScreen} />

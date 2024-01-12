@@ -18,6 +18,8 @@ import appStateReducer from './reducers/appStateReducer';
 import {saveAuthToken} from '../api/serverRequests';
 import ticketsReducer from './reducers/ticketsReducer';
 import ticketsINitialState from './initialState/ticketsINitialState';
+import peopleReducer from './reducers/peopleReducer';
+import peopleInitialState from './initialState/peopleInitialState';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
@@ -29,6 +31,7 @@ const appReducer = combineReducers({
   events: eventsReducer,
   appState: appStateReducer,
   tickets: ticketsReducer,
+  people: peopleReducer,
 });
 const rootState = {
   registration: registrationInitialState,
@@ -37,6 +40,7 @@ const rootState = {
   events: eventsInitialState,
   appState: appStateInitialState,
   tickets: ticketsINitialState,
+  people: peopleInitialState,
 };
 
 const rootPersistConfig = {
