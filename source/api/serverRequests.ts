@@ -4,10 +4,10 @@ import {
   LOGOUT,
   REGISTRATION_WITH_EMAIL,
 } from '../store/actionTypes/authorizationActionTypes';
-import {navigationRef} from '../navigation/types';
-import {CommonActions} from '@react-navigation/native';
+// import {navigationRef} from '../navigation/types';
+// import {CommonActions} from '@react-navigation/native';
 import {isAndroid} from '../utils/constants';
-import {DeviceEventEmitter} from 'react-native';
+// import {DeviceEventEmitter} from 'react-native';
 // import socketIoClient from 'socket.io-client';
 // const socket = socketIoClient('http://localhost:3000', {autoConnect: false});
 export const apiUrl = isAndroid
@@ -218,20 +218,20 @@ export const getManagingCommunity = async (locations: string[]) => {
     return console.log('getManagingCommunity er', er);
   }
 };
-const config = {
-  onUploadProgress: (progressEvent: any) => {
-    DeviceEventEmitter.emit(
-      'upload_progress',
-      Math.floor(100 * (progressEvent.loaded / progressEvent.total)),
-    );
-  },
-};
+// const config = {
+//   onUploadProgress: (progressEvent: any) => {
+//     DeviceEventEmitter.emit(
+//       'upload_progress',
+//       Math.floor(100 * (progressEvent.loaded / progressEvent.total)),
+//     );
+//   },
+// };
 export const createCommunityWithMongo = async (data: object) => {
   try {
     const response = await axios.post(
       `${apiUrl}communities`,
       {data: data},
-      config,
+      // config,
     );
     return response.data;
   } catch (error) {

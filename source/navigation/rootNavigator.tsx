@@ -288,7 +288,11 @@ const AppNavigator = () => {
                 name="AttendedPeople"
                 component={AttendedPeople}
               />
-              <MainStack.Screen name="Chats" component={ChatsScreen} />
+              <MainStack.Screen
+                name="Chats"
+                options={{gestureEnabled: true}}
+                component={ChatsScreen}
+              />
               <MainStack.Screen name="EditEvent" component={EditEventScreen} />
               <MainStack.Screen name="EventScreen" component={EventScreen} />
             </>

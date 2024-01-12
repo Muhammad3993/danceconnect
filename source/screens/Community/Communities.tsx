@@ -134,9 +134,7 @@ const CommunitiesScreen = () => {
           <RN.Text
             style={[
               styles.itemTabText,
-              {
-                color: currentTab === item ? colors.purple : colors.darkGray,
-              },
+              {color: currentTab === item ? colors.purple : colors.darkGray},
             ]}>
             {item}
           </RN.Text>
@@ -213,7 +211,6 @@ const CommunitiesScreen = () => {
           <ManagingTab
             searchValue={searchValue}
             communititesSearch={communititesSearch}
-            removedCommunity={removedCommunity}
           />
         );
 
@@ -225,7 +222,7 @@ const CommunitiesScreen = () => {
           />
         );
     }
-  }, [currentTab, communititesSearch, searchValue, removedCommunity]);
+  }, [currentTab, communititesSearch, searchValue]);
 
   const onPressChange = () => {
     setOpenModal(false);

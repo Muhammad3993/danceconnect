@@ -89,11 +89,7 @@ function* createCommunityRequest(action: any) {
 
     if (!response) {
       yield put(setNoticeVisible({isVisible: true}));
-      yield put(
-        setNoticeMessage({
-          errorMessage: 'Server error',
-        }),
-      );
+      yield put(setNoticeMessage({errorMessage: 'Server error'}));
     }
     if (response) {
       DeviceEventEmitter.emit('upload_finished', response);
@@ -288,15 +284,19 @@ function* changeInformation(action: any) {
         }),
       );
     } else {
-      navigationRef.current?.navigate('TABS', {
-        screen: 'Communities',
-        params: {
-          screen: 'CommunityScreen',
-          params: {
-            data: response,
-          },
-        },
+      navigationRef.current?.navigate('CommunityScreen', {
+        data: response,
       });
+
+      // navigationRef.current?.navigate('TABS', {
+      //   screen: 'Communities',
+      //   params: {
+      //     screen: 'CommunityScreen',
+      //     params: {
+      //       data: response,
+      //     },
+      //   },
+      // });
 
       // .dispatch(
       //   CommonActions.navigate({

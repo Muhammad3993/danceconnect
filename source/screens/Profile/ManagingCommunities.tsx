@@ -7,12 +7,12 @@ import {useCommunities} from '../../hooks/useCommunitites';
 import SkeletonCommunityCard from '../../components/skeleton/communityCard-Skeleton';
 import {isAndroid} from '../../utils/constants';
 import {ScrollView} from 'react-native-gesture-handler';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 const ManagingCommunities = () => {
   const {managingCommunity, getManagingCommunities, isLoadManaging} =
     useCommunities();
-    const {t} = useTranslation();
+  const {t} = useTranslation();
   const lengthEmptyEvents = new Array(3).fill('');
   const navigation = useNavigation();
   useEffect(() => {
@@ -27,7 +27,9 @@ const ManagingCommunities = () => {
         <RN.View style={{justifyContent: 'center'}}>
           <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         </RN.View>
-        <RN.Text style={styles.headerText}>{t('manage_communities_title')}</RN.Text>
+        <RN.Text style={styles.headerText}>
+          {t('manage_communities_title')}
+        </RN.Text>
       </RN.TouchableOpacity>
     );
   };

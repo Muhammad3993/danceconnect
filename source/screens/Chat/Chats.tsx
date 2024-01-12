@@ -1,15 +1,18 @@
-import {Image, StyleSheet, Text, View, SafeAreaView} from 'react-native';
+import {StyleSheet, View, SafeAreaView, FlatList} from 'react-native';
 import React from 'react';
-import colors from '../../utils/colors';
+import {Header} from './ui/Header';
+import {ChatItem} from './ui/ChatItem';
 
 export function ChatsScreen() {
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text>Messages</Text>
-        <Image
-          source={{uri: 'more'}}
-          style={{width: 28, height: 28, tintColor: colors.black}}
+      <View style={styles.container}>
+        <Header />
+
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={Array(10).fill(null)}
+          renderItem={({}) => <ChatItem />}
         />
       </View>
     </SafeAreaView>
@@ -20,9 +23,18 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+  container: {
+    flex: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  headerTitle: {
+    fontFamily: 'Mulish-Bold',
+    fontSize: 20,
   },
 });

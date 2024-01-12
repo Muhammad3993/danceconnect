@@ -72,23 +72,20 @@ const CreateCommunity = ({navigation}) => {
   };
 
   useEffect(() => {
-    RN.DeviceEventEmitter.addListener('upload_progress', (percent: number) => {
-      // console.log(percent);
-      if (percent >= 99) {
-        // console.log('percent', percent);
-        RN.DeviceEventEmitter.addListener('upload_finished', (data: any) => {
-          navigation.navigate('CommunityScreen', {data});
-          // navigationRef.current?.dispatch(
-          //   CommonActions.navigate({
-          //     name: 'CommunityScreen',
-          //     params: {
-          //       data: data,
-          //     },
-          //   }),
-          // );
-        });
-      }
+    RN.DeviceEventEmitter.addListener('upload_finished', (data: any) => {
+      navigation.navigate('TABS', {
+        screen: 'Communities',
+        params: {
+          screen: 'CommunityScreen',
+          params: {data},
+        },
+      });
     });
+    // RN.DeviceEventEmitter.addListener('upload_progress', (percent: number) => {
+    //   if (percent >= 99) {
+
+    //   }
+    // });
   }, []);
   useEffect(() => {
     onClear();
