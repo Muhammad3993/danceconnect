@@ -4,13 +4,15 @@ import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import colors from '../utils/colors';
 import {getIcon} from '../utils/helpers';
 import {useTranslation} from 'react-i18next';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
   const {t} = useTranslation();
+  const {bottom} = useSafeAreaInsets();
   const tabs = state.routes;
 
   return (
-    <RN.View style={styles.container}>
+    <RN.View style={[styles.container, {paddingBottom: bottom}]}>
       {tabs.map((route, index) => {
         const {tabBarActiveTintColor, tabBarInactiveTintColor} =
           descriptors[route.key].options;
@@ -65,7 +67,6 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     paddingHorizontal: 14,
-    // justifyContent: 'center',
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     paddingVertical: 8,
