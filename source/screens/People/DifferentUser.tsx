@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import * as RN from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import usePeople from '../../hooks/usePeople';
@@ -7,7 +7,7 @@ import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../../api/serverRequests';
 import {Button} from '../../components/Button';
 import {userRole} from '../../utils/helpers';
-import {useMinChat} from '@minchat/reactnative';
+import {Chat, useMinChat} from '@minchat/reactnative';
 
 const User = ({route, navigation}) => {
   const {getDifferentUser, differentUser} = usePeople();
@@ -19,12 +19,27 @@ const User = ({route, navigation}) => {
 
   const writeMessage = async () => {
     try {
-      const otherUser = await minchat?.createUser({
-        name: differentUser.userName,
-        username: differentUser.id,
-      });
+      if (differentUser) {
+        let chat: Chat | null | undefined;
+        try {
+          const otherUser = await minchat?.fetchUser(differentUser.id);
+          if (otherUser?.username) {
+            chat = await minchat?.chat(otherUser?.username);
+          }
+        } catch (err) {
+          const otherUser = await minchat?.createUser({
+            name: differentUser.userName,
+            username: differentUser.id,
+          });
+          if (otherUser?.username) {
+            chat = await minchat?.chat(otherUser?.username);
+          }
+        }
 
-      navigation.push('Chat', {username: otherUser?.username});
+        if (chat) {
+          navigation.push('Chat', {chat});
+        }
+      }
     } catch (err) {
       console.log(err);
     }

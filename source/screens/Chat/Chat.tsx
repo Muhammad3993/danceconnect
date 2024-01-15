@@ -26,23 +26,10 @@ interface Props {
 export function ChatScreen({route}: Props) {
   const {currentUser} = useRegistration();
 
-  const [chat, setChat] = useState<Chat | undefined>(undefined);
-  const minchat = useMinChat();
-  const {username} = route.params;
+  const {chat} = route.params;
 
   const {messages, loading, error, sendMessage, paginate, paginateLoading} =
     useMessages(chat, true);
-
-  const getChat = useCallback(async () => {
-    const response = await minchat?.chat(username);
-    if (response) {
-      setChat(response);
-    }
-  }, [minchat, username]);
-
-  useEffect(() => {
-    getChat();
-  }, [getChat]);
 
   const localMessages: IMessage[] = useMemo(() => {
     if (messages) {
