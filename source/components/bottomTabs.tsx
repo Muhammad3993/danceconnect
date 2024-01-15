@@ -35,7 +35,7 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
           isFocused,
         );
         return (
-          <RN.View style={styles.btn}>
+          <RN.View style={styles.btn} key={index}>
             <RN.TouchableOpacity key={index} onPress={onPressTab}>
               <RN.View style={{alignItems: 'center'}}>
                 <RN.Image

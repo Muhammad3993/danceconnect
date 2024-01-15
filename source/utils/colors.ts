@@ -6,6 +6,7 @@ export default {
   lightGray: '#FAFAFA',
   darkGray: '#757575',
   gray700: '#616161',
+  gray200: '#EAECF0',
   grayScale: '#9E9E9E',
   orange: '#F5A80C',
   tranparentOrange: 'rgba(245, 168, 12, 0.06)',

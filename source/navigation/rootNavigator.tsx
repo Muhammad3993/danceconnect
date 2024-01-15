@@ -237,7 +237,8 @@ const AppNavigator = () => {
     <MinChatProvider
       // test={__DEV__}
       apiKey={MINCHAT_ID}
-      user={{username: currentUser.id, name: currentUser.userName}}>
+      // user={{username: 'micheal', name: 'Micheal Saunders'}}
+      user={{username: currentUser?.id, name: currentUser?.userName}}>
       <NavigationContainer
         linking={linking}
         ref={navigationRef}
