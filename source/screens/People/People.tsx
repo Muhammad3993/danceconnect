@@ -187,6 +187,18 @@ const People = () => {
     }
     return null;
   };
+  const refreshControl = () => {
+    return (
+      <RN.RefreshControl
+        onRefresh={() => {
+          setAddedStyles([]);
+          setSearchValue('');
+          getUsers();
+        }}
+        refreshing={isLoadingUsers}
+      />
+    );
+  };
   return (
     <RN.SafeAreaView style={styles.container}>
       {renderHeader()}
@@ -194,6 +206,7 @@ const People = () => {
         data={usersList}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
+        refreshControl={refreshControl()}
       />
       {renderEmpty()}
       {openModal && (
