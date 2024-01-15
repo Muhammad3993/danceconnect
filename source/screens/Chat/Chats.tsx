@@ -1,19 +1,57 @@
-import {StyleSheet, View, SafeAreaView, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 import {Header} from './ui/Header';
 import {ChatItem} from './ui/ChatItem';
+import {useChats, useMinChat} from '@minchat/reactnative';
 
-export function ChatsScreen() {
+export function ChatsScreen({navigation}: any) {
+  const {chats, loading, error, paginate, paginateLoading} = useChats();
+  const minchat = useMinChat();
+
+  const goToChat = async () => {
+    try {
+      const otherUser = await minchat?.createUser({
+        username: 'micheal',
+        name: 'Micheal Saunders',
+      });
+      if (otherUser) {
+        navigation.push('Chat', {username: otherUser.username});
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.container}>
-        <Header />
+        <Header onMenuPress={() => {}} />
 
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={Array(10).fill(null)}
-          renderItem={({}) => <ChatItem />}
-        />
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={chats}
+            onEndReached={paginate}
+            renderItem={({item}) => {
+              const lastMessage = item.getLastMessage();
+              const title = item.getTitle();
+              return (
+                <TouchableOpacity onPress={goToChat}>
+                  <ChatItem name={title} text={lastMessage?.text ?? ''} />
+                </TouchableOpacity>
+              );
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
