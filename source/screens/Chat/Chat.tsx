@@ -71,7 +71,9 @@ export function ChatScreen({route}: Props) {
           </View>
           <GiftedChat
             alwaysShowSend
-            loadEarlier={localMessages.length % 25 === 0}
+            loadEarlier={
+              localMessages.length > 0 && localMessages.length % 25 === 0
+            }
             infiniteScroll
             onLoadEarlier={paginate}
             messages={localMessages}
@@ -127,15 +129,6 @@ export function ChatScreen({route}: Props) {
                       right: styles.myMsgText,
                     }}
                   />
-                  {/* <View style={isCurrUser ? styles.myMsg : styles.friendMsg}>
-                    <MessageText
-                      {...message}
-                      textStyle={{
-                        left: styles.friendMsgText,
-                        right: styles.myMsgText,
-                      }}
-                    />
-                 </View> */}
                 </View>
               );
             }}

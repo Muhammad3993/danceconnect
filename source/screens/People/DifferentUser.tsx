@@ -7,12 +7,28 @@ import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../../api/serverRequests';
 import {Button} from '../../components/Button';
 import {userRole} from '../../utils/helpers';
+import {useMinChat} from '@minchat/reactnative';
 
 const User = ({route, navigation}) => {
   const {getDifferentUser, differentUser} = usePeople();
+  const minchat = useMinChat();
+
   useEffect(() => {
     getDifferentUser(route.params.id);
   }, []);
+
+  const writeMessage = async () => {
+    try {
+      const otherUser = await minchat?.createUser({
+        name: differentUser.userName,
+        username: differentUser.id,
+      });
+
+      navigation.push('Chat', {username: otherUser?.username});
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const renderHeader = () => {
     return (
@@ -85,8 +101,9 @@ const User = ({route, navigation}) => {
             {differentUser.userCountry}
           </RN.Text>
           <Button
+            disabled={true}
             title="Message"
-            onPress={() => console.log('on press message')}
+            onPress={writeMessage}
             buttonStyle={styles.btnMessage}
           />
         </RN.View>
