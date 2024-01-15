@@ -1,19 +1,29 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import colors from '../../../utils/colors';
 
-export function ChatItem() {
+interface Props {
+  name: string;
+  text: string;
+  avatar?: string;
+  date: Date;
+}
+
+export function ChatItem({name, text, avatar, date}: Props) {
+  let localTime = date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
   return (
-    <TouchableOpacity>
-      <View style={styles.item}>
-        <View style={styles.avatar} />
-        <View style={styles.content}>
-          <Text style={styles.name}>Karen Castillo</Text>
-          <Text style={styles.message}>You: What’s man!</Text>
-        </View>
-        <Text style={styles.date}>20:49 PM</Text>
+    <View style={styles.item}>
+      <Image source={{uri: avatar ?? 'profilefull'}} style={styles.avatar} />
+      <View style={styles.content}>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.message}>{text}</Text>
       </View>
-    </TouchableOpacity>
+      <Text style={styles.date}>{localTime}</Text>
+    </View>
   );
 }
 
@@ -27,7 +37,6 @@ const styles = StyleSheet.create({
   avatar: {
     width: 56,
     height: 56,
-    backgroundColor: 'blue',
     borderRadius: 50,
   },
   content: {

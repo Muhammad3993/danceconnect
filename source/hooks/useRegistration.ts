@@ -7,7 +7,6 @@ import {
   logoutRequest,
   registrationWithEmailRequest,
   setRegistrationDataRequestAction,
-  setRegistrationDataSuccessAction,
 } from '../store/actions/authorizationActions';
 import {
   selectEmailUser,

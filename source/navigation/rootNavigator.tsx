@@ -44,8 +44,14 @@ import i18n from '../i18n/i118n';
 import useAppStateHook from '../hooks/useAppState';
 import ManagingEvents from '../screens/Profile/ManagingEvents';
 import {ChatsScreen} from '../screens/Chat/Chats';
+
 import People from '../screens/People/People';
 import User from '../screens/People/DifferentUser';
+
+import {ChatScreen} from '../screens/Chat/Chat';
+import {MinChatProvider} from '@minchat/reactnative';
+import {MINCHAT_ID} from '../utils/constants';
+
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -160,15 +166,7 @@ const ProfileNavigator = () => {
     </ProfileStack.Navigator>
   );
 };
-const PeopleNavigator = () => {
-  return (
-    <PeopleStack.Navigator
-      initialRouteName="People"
-      screenOptions={{headerShown: false, gestureEnabled: false}}>
-      <ProfileStack.Screen name="People" component={People} />
-    </PeopleStack.Navigator>
-  );
-};
+
 const TabsNavigator = () => {
   return (
     <Tabs.Navigator
@@ -182,14 +180,15 @@ const TabsNavigator = () => {
       <Tabs.Screen name={'Home'} component={HomeNavigator} />
       <Tabs.Screen name={'Communities'} component={CommunityNavigator} />
       <Tabs.Screen name={'Events'} component={EventsNavigator} />
-      <Tabs.Screen name={'People'} component={PeopleNavigator} />
+
+       <Tabs.Screen name="People" component={People} />
       <Tabs.Screen name={'Profile'} component={ProfileNavigator} />
     </Tabs.Navigator>
   );
 };
 
 const AppNavigator = () => {
-  const {isUserExists} = useRegistration();
+  const {isUserExists, currentUser} = useRegistration();
   const routeNameRef = React.useRef();
   const {crntLgCode} = useAppStateHook();
   const linking = {
@@ -242,91 +241,114 @@ const AppNavigator = () => {
       i18n.changeLanguage(crntLgCode);
     }
   }, [crntLgCode]);
+
   return (
-    <NavigationContainer
-      linking={linking}
-      ref={navigationRef}
-      onReady={() => {
-        routeNameRef.current = navigationRef?.current?.getCurrentRoute()?.name;
-      }}
-      onStateChange={async () => {
-        const previousRouteName = routeNameRef?.current;
-        const currentRouteName =
-          navigationRef?.current?.getCurrentRoute()?.name;
+    <MinChatProvider
+      // test={__DEV__}
+      apiKey={MINCHAT_ID}
+      // user={{username: 'micheal', name: 'Micheal Saunders'}}
+      user={{username: currentUser?.id, name: currentUser?.userName}}>
+      <NavigationContainer
+        linking={linking}
+        ref={navigationRef}
+        onReady={() => {
+          routeNameRef.current =
+            navigationRef?.current?.getCurrentRoute()?.name;
+        }}
+        onStateChange={async () => {
+          const previousRouteName = routeNameRef?.current;
+          const currentRouteName =
+            navigationRef?.current?.getCurrentRoute()?.name;
 
-        if (previousRouteName !== currentRouteName) {
-          await analytics().logScreenView({
-            screen_name: currentRouteName,
-            screen_class: currentRouteName,
-          });
-        }
-        routeNameRef.current = currentRouteName;
-      }}>
-      <Host>
-        <MainStack.Navigator
-          screenOptions={{headerShown: false, gestureEnabled: false}}>
-          {isUserExists ? (
-            <>
-              <MainStack.Screen name={'TABS'} component={TabsNavigator} />
-              <MainStack.Screen
-                name="CreateCommunity"
-                component={CreateCommunity}
-              />
-              <MainStack.Screen
-                name="EditCommunity"
-                component={EditCommunity}
-              />
-
-              <MainStack.Screen name="CreateEvent" component={MakeEvent} />
-              <MainStack.Screen name="CreateTicket" component={CreateTicket} />
-              <MainStack.Screen name="EditTicket" component={EditTicket} />
-              <MainStack.Screen
-                name="ChangeProfile"
-                component={ChangeProfile}
-              />
-              <MainStack.Screen
-                name="ProfileDanceStyles"
-                component={DanceStylesProfile}
-              />
-              <MainStack.Screen name="BuyTickets" component={BuyTickets} />
-              <MainStack.Screen name="Managers" component={Managers} />
-              <MainStack.Screen
-                name="AttendedPeople"
-                component={AttendedPeople}
-              />
-              <MainStack.Screen
-                name="Chats"
-                options={{gestureEnabled: true}}
-                component={ChatsScreen}
-              />
-              <MainStack.Screen
-                name="User"
-                options={{gestureEnabled: true}}
-                component={User}
-              />
-              <MainStack.Screen name="EditEvent" component={EditEventScreen} />
-              <MainStack.Screen name="EventScreen" component={EventScreen} />
-              <MainStack.Screen
-                name="CommunityScreen"
-                component={CommunityScreen}
-              />
-            </>
-          ) : (
-            <>
-              <MainStack.Screen name={'WELCOME'} component={WeclomeScreen} />
-              <MainStack.Screen
-                name={'REGISTRATION'}
-                component={RegistraionScreen}
-              />
-              <MainStack.Screen name={'AUTH'} component={AuthorizationScreen} />
-              <AuthStack.Screen name={'ONBOARDING'} component={Board} />
-
-              <MainStack.Screen name={'LANGUAGE'} component={ChangeLanguage} />
-            </>
-          )}
-        </MainStack.Navigator>
-      </Host>
-    </NavigationContainer>
+          if (previousRouteName !== currentRouteName) {
+            await analytics().logScreenView({
+              screen_name: currentRouteName,
+              screen_class: currentRouteName,
+            });
+          }
+          routeNameRef.current = currentRouteName;
+        }}>
+        <Host>
+          <MainStack.Navigator
+            screenOptions={{headerShown: false, gestureEnabled: false}}>
+            {isUserExists ? (
+              <>
+                <MainStack.Screen name={'TABS'} component={TabsNavigator} />
+                <MainStack.Screen
+                  name="CreateCommunity"
+                  component={CreateCommunity}
+                />
+                <MainStack.Screen
+                  name="EditCommunity"
+                  component={EditCommunity}
+                />
+                <MainStack.Screen
+                  name="User"
+                  options={{gestureEnabled: true}}
+                  component={User}
+                />
+                <MainStack.Screen name="CreateEvent" component={MakeEvent} />
+                <MainStack.Screen
+                  name="CreateTicket"
+                  component={CreateTicket}
+                />
+                <MainStack.Screen name="EditTicket" component={EditTicket} />
+                <MainStack.Screen
+                  name="ChangeProfile"
+                  component={ChangeProfile}
+                />
+                <MainStack.Screen
+                  name="ProfileDanceStyles"
+                  component={DanceStylesProfile}
+                />
+                <MainStack.Screen name="BuyTickets" component={BuyTickets} />
+                <MainStack.Screen name="Managers" component={Managers} />
+                <MainStack.Screen
+                  name="AttendedPeople"
+                  component={AttendedPeople}
+                />
+                <MainStack.Screen
+                  name="Chats"
+                  options={{gestureEnabled: true}}
+                  component={ChatsScreen}
+                />
+                <MainStack.Screen
+                  name="Chat"
+                  options={{gestureEnabled: true}}
+                  component={ChatScreen}
+                />
+                <MainStack.Screen
+                  name="EditEvent"
+                  component={EditEventScreen}
+                />
+                <MainStack.Screen name="EventScreen" component={EventScreen} />
+                <MainStack.Screen
+                  name="CommunityScreen"
+                  component={CommunityScreen}
+                />
+              </>
+            ) : (
+              <>
+                <MainStack.Screen name={'WELCOME'} component={WeclomeScreen} />
+                <MainStack.Screen
+                  name={'REGISTRATION'}
+                  component={RegistraionScreen}
+                />
+                <MainStack.Screen
+                  name={'AUTH'}
+                  component={AuthorizationScreen}
+                />
+                <MainStack.Screen name={'ONBOARDING'} component={Board} />
+                <MainStack.Screen
+                  name={'LANGUAGE'}
+                  component={ChangeLanguage}
+                />
+              </>
+            )}
+          </MainStack.Navigator>
+        </Host>
+      </NavigationContainer>
+    </MinChatProvider>
   );
 };
 

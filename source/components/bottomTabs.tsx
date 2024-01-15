@@ -38,16 +38,9 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
           <RN.TouchableOpacity key={index} onPress={onPressTab}>
             <RN.View style={{alignSelf: 'center'}}>
               <RN.Image
-                resizeMode={'contain'}
-                source={{uri: iconName}}
-                style={[
-                  styles.icon,
-                  {
-                    tintColor: isFocused
-                      ? tabBarActiveTintColor
-                      : tabBarInactiveTintColor,
-                  },
-                ]}
+                  resizeMode={'contain'}
+                  source={{uri: iconName}}
+                  style={styles.icon}
               />
             </RN.View>
             <RN.Text
@@ -72,11 +65,16 @@ const styles = RN.StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    alignItems: 'center',
     paddingHorizontal: 14,
     borderTopColor: colors.gray,
     borderTopWidth: 1,
-    paddingVertical: 8,
+  },
+  btn: {
+    flex: 1,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   icon: {
     height: 20,

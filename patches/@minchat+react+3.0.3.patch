@@ -1,0 +1,68 @@
+diff --git a/node_modules/@minchat/react/dist/index.js b/node_modules/@minchat/react/dist/index.js
+index eb241d9..6046afa 100644
+--- a/node_modules/@minchat/react/dist/index.js
++++ b/node_modules/@minchat/react/dist/index.js
+@@ -1,8 +1,8 @@
+ 
+ 'use strict'
+ 
+-if (process.env.NODE_ENV === 'production') {
+-  module.exports = require('./react.cjs.production.min.js')
+-} else {
++// if (process.env.NODE_ENV === 'production') {
++//   module.exports = require('./react.cjs.production.min.js')
++// } else {
+   module.exports = require('./react.cjs.development.js')
+-}
++// }
+diff --git a/node_modules/@minchat/react/dist/react.cjs.development.js b/node_modules/@minchat/react/dist/react.cjs.development.js
+index 23e78ef..5bac057 100644
+--- a/node_modules/@minchat/react/dist/react.cjs.development.js
++++ b/node_modules/@minchat/react/dist/react.cjs.development.js
+@@ -396,6 +396,7 @@ const useChats = () => {
+         const chatExists = chats.find(chat => chat.getId() === onChatNewChat.getId());
+         let updatedChats;
+ 
++
+         if (chatExists) {
+           // chat exists so just replace the chat object
+           updatedChats = currentChats ? currentChats.map(chat => chat.getId() === onChatNewChat.getId() ? onChatNewChat : chat) : currentChats;
+@@ -442,7 +443,7 @@ const useChats = () => {
+   React.useEffect(() => {
+     if (minChat && user) {
+       // only query the chats when the minchat object thats in the MinChatContext has been assigned with config properties
+-      paginate(); //add onChat listener
++      getFirstPage(); //add onChat listener
+ 
+       minChat.instance.onChat(jsChat => {
+         const reactChat = new Chat(jsChat);
+@@ -462,6 +463,29 @@ const useChats = () => {
+     }
+   };
+ 
++  const getFirstPage = async () => {
++    if (minChat) {
++      setPaginateLoading(true);
++      setError(undefined);
++      const jsChatsList = await minChat.instance.getChats(1);
++      setPaginationCount(1);
++
++      if (!pagesInserted.includes(jsChatsList.page)) {
++        //add the current page to the list of included pages already
++        setPagesInserted(currentPagesInserted => {
++          currentPagesInserted.push(jsChatsList.page);
++          return currentPagesInserted;
++        });
++        const reactChats = jsChatsList.chats.map(jsChat => new Chat(jsChat)); //todo handle when its an error response
++        //add chats to the end of the chats list
++
++        setChats(reactChats);
++        setPaginateLoading(false);
++        setLoading(false);
++      }
++    }
++  };
++
+   const paginate = async () => {
+     if (minChat) {
+       setPaginateLoading(true);
