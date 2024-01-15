@@ -5,7 +5,6 @@ import colors from '../utils/colors';
 import {getIcon} from '../utils/helpers';
 import {useTranslation} from 'react-i18next';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {SCREEN_WIDTH} from '../utils/constants';
 
 const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
   const {t} = useTranslation();
@@ -75,13 +74,13 @@ const styles = RN.StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     paddingHorizontal: 14,
     borderTopColor: colors.gray,
     borderTopWidth: 1,
   },
   btn: {
-    flex: 1,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -91,7 +90,7 @@ const styles = RN.StyleSheet.create({
     width: 20,
   },
   itemName: {
-    fontSize: SCREEN_WIDTH <= 380 ? 10 : 12,
+    fontSize: 12,
   },
 });
 export default BottomTabs;
