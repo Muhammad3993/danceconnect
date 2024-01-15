@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import * as RN from 'react-native';
-import {useProfile} from '../hooks/useProfile';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import CreateCommunityButton from '../components/createCommunityBtn';
@@ -10,15 +9,12 @@ import EventCard from '../components/eventCard';
 import EmptyContainer from '../components/emptyCommunitiesMain';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
-import VerticalCard from '../components/verticalEventCard';
 import useAppStateHook from '../hooks/useAppState';
-import {apiUrl} from '../api/serverRequests';
 import useTickets from '../hooks/useTickets';
-import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 
 const HomeScreen = () => {
-  const {userImgUrl} = useProfile();
+  // const {userImgUrl} = useProfile();
   const routeProps = useRoute();
   const isFocused = useIsFocused();
   const {logout} = useRegistration();
@@ -27,12 +23,12 @@ const HomeScreen = () => {
     useAppStateHook();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const {getManagingEvents, personalEvents, getPersonalEvents} = useEvents();
+  const {personalEvents, getPersonalEvents} = useEvents();
   const [events, setEvents] = useState<string[]>([]);
   const {getPurchasedTickets} = useTickets();
 
   const {t} = useTranslation();
-  const [maybeEvents, setMaybeEvents] = useState([]); //TODO verticalCard
+
   useEffect(() => {
     setTabs(['All', ...eventTypes]);
   }, [eventTypes, eventTypes.length]);

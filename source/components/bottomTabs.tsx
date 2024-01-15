@@ -5,6 +5,7 @@ import colors from '../utils/colors';
 import {getIcon} from '../utils/helpers';
 import {useTranslation} from 'react-i18next';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SCREEN_WIDTH} from '../utils/constants';
 
 const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
   const {t} = useTranslation();
@@ -35,26 +36,35 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
           isFocused,
         );
         return (
-          <RN.TouchableOpacity key={index} onPress={onPressTab}>
-            <RN.View style={{alignSelf: 'center'}}>
-              <RN.Image
+          <RN.View style={styles.btn} key={index}>
+            <RN.TouchableOpacity onPress={onPressTab}>
+              <RN.View style={{alignSelf: 'center'}}>
+                <RN.Image
                   resizeMode={'contain'}
                   source={{uri: iconName}}
-                  style={styles.icon}
-              />
-            </RN.View>
-            <RN.Text
-              style={[
-                {
-                  color: isFocused
-                    ? tabBarActiveTintColor
-                    : tabBarInactiveTintColor,
-                },
-                styles.itemName,
-              ]}>
-              {t(route.name.toLowerCase() + '_tab')}
-            </RN.Text>
-          </RN.TouchableOpacity>
+                  style={[
+                    styles.icon,
+                    {
+                      tintColor: isFocused
+                        ? tabBarActiveTintColor
+                        : tabBarInactiveTintColor,
+                    },
+                  ]}
+                />
+              </RN.View>
+              <RN.Text
+                style={[
+                  {
+                    color: isFocused
+                      ? tabBarActiveTintColor
+                      : tabBarInactiveTintColor,
+                  },
+                  styles.itemName,
+                ]}>
+                {t(route.name.toLowerCase() + '_tab')}
+              </RN.Text>
+            </RN.TouchableOpacity>
+          </RN.View>
         );
       })}
     </RN.View>
@@ -81,7 +91,7 @@ const styles = RN.StyleSheet.create({
     width: 20,
   },
   itemName: {
-    fontSize: 12,
+    fontSize: SCREEN_WIDTH <= 380 ? 10 : 12,
   },
 });
 export default BottomTabs;
