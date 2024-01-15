@@ -35,28 +35,26 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
           isFocused,
         );
         return (
-          <RN.View style={styles.btn} key={index}>
-            <RN.TouchableOpacity key={index} onPress={onPressTab}>
-              <RN.View style={{alignItems: 'center'}}>
-                <RN.Image
+          <RN.TouchableOpacity key={index} onPress={onPressTab}>
+            <RN.View style={{alignSelf: 'center'}}>
+              <RN.Image
                   resizeMode={'contain'}
                   source={{uri: iconName}}
                   style={styles.icon}
-                />
-                <RN.Text
-                  style={[
-                    {
-                      color: isFocused
-                        ? tabBarActiveTintColor
-                        : tabBarInactiveTintColor,
-                    },
-                    styles.itemName,
-                  ]}>
-                  {t(route.name.toLowerCase() + '_tab')}
-                </RN.Text>
-              </RN.View>
-            </RN.TouchableOpacity>
-          </RN.View>
+              />
+            </RN.View>
+            <RN.Text
+              style={[
+                {
+                  color: isFocused
+                    ? tabBarActiveTintColor
+                    : tabBarInactiveTintColor,
+                },
+                styles.itemName,
+              ]}>
+              {t(route.name.toLowerCase() + '_tab')}
+            </RN.Text>
+          </RN.TouchableOpacity>
         );
       })}
     </RN.View>

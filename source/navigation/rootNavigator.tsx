@@ -44,9 +44,14 @@ import i18n from '../i18n/i118n';
 import useAppStateHook from '../hooks/useAppState';
 import ManagingEvents from '../screens/Profile/ManagingEvents';
 import {ChatsScreen} from '../screens/Chat/Chats';
+
+import People from '../screens/People/People';
+import User from '../screens/People/DifferentUser';
+
 import {ChatScreen} from '../screens/Chat/Chat';
 import {MinChatProvider} from '@minchat/reactnative';
 import {MINCHAT_ID} from '../utils/constants';
+
 
 const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
@@ -56,6 +61,7 @@ const CommunityStack = createStackNavigator();
 const EventsStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
+const PeopleStack = createStackNavigator();
 const CommunityNavigator = () => {
   return (
     <CommunityStack.Navigator
@@ -160,6 +166,7 @@ const ProfileNavigator = () => {
     </ProfileStack.Navigator>
   );
 };
+
 const TabsNavigator = () => {
   return (
     <Tabs.Navigator
@@ -173,6 +180,8 @@ const TabsNavigator = () => {
       <Tabs.Screen name={'Home'} component={HomeNavigator} />
       <Tabs.Screen name={'Communities'} component={CommunityNavigator} />
       <Tabs.Screen name={'Events'} component={EventsNavigator} />
+
+       <Tabs.Screen name="People" component={People} />
       <Tabs.Screen name={'Profile'} component={ProfileNavigator} />
     </Tabs.Navigator>
   );
@@ -273,7 +282,11 @@ const AppNavigator = () => {
                   name="EditCommunity"
                   component={EditCommunity}
                 />
-
+                <MainStack.Screen
+                  name="User"
+                  options={{gestureEnabled: true}}
+                  component={User}
+                />
                 <MainStack.Screen name="CreateEvent" component={MakeEvent} />
                 <MainStack.Screen
                   name="CreateTicket"
@@ -325,8 +338,7 @@ const AppNavigator = () => {
                   name={'AUTH'}
                   component={AuthorizationScreen}
                 />
-                <AuthStack.Screen name={'ONBOARDING'} component={Board} />
-
+                <MainStack.Screen name={'ONBOARDING'} component={Board} />
                 <MainStack.Screen
                   name={'LANGUAGE'}
                   component={ChangeLanguage}
