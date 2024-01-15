@@ -1,7 +1,9 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import colors from '../../../utils/colors';
 import {apiUrl} from '../../../api/serverRequests';
+import {defaultProfile} from '../../../utils/images';
+import FastImage from 'react-native-fast-image';
 
 interface Props {
   name: string;
@@ -19,8 +21,9 @@ export function ChatItem({name, text, avatar, date, seen}: Props) {
 
   return (
     <View style={styles.item}>
-      <Image
-        source={{uri: avatar ? apiUrl + avatar : 'profilefull'}}
+      <FastImage
+        source={avatar ? {uri: apiUrl + avatar} : undefined}
+        defaultSource={defaultProfile}
         style={styles.avatar}
       />
       <View style={styles.content}>

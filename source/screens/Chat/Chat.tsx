@@ -22,6 +22,8 @@ import colors from '../../utils/colors';
 import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {apiUrl} from '../../api/serverRequests';
+import {defaultProfile} from '../../utils/images';
+import FastImage from 'react-native-fast-image';
 
 interface Props {
   route: {params: {chat: Chat}};
@@ -77,8 +79,9 @@ export function ChatScreen({route, navigation}: Props) {
               </View>
             </TouchableOpacity>
 
-            <Image
-              source={{uri: avatar ? apiUrl + avatar : 'profilefull'}}
+            <FastImage
+              source={avatar ? {uri: apiUrl + avatar} : undefined}
+              defaultSource={defaultProfile}
               style={styles.avatar}
             />
           </View>

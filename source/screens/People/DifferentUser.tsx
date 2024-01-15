@@ -8,6 +8,7 @@ import {apiUrl} from '../../api/serverRequests';
 import {Button} from '../../components/Button';
 import {userRole} from '../../utils/helpers';
 import {Chat, useMinChat} from '@minchat/reactnative';
+import {defaultProfile} from '../../utils/images';
 
 const User = ({route, navigation}) => {
   const {getDifferentUser, differentUser} = usePeople();
@@ -26,7 +27,7 @@ const User = ({route, navigation}) => {
           const otherUser = await minchat?.fetchUser(differentUser.id);
 
           if (otherUser) {
-            if (avatar) {
+            if (avatar && avatar !== otherUser.avatar) {
               await minchat?.updateUserById(otherUser.id, {avatar});
             }
             chat = await minchat?.chat(otherUser?.username);
@@ -75,7 +76,7 @@ const User = ({route, navigation}) => {
               priority: FastImage.priority.high,
             }}
             resizeMode={FastImage.resizeMode.cover}
-            defaultSource={require('../../assets/images/defaultuser.png')}
+            defaultSource={defaultProfile}
             style={styles.userImage}
           />
           <RN.View style={{paddingHorizontal: 20, justifyContent: 'center'}}>
