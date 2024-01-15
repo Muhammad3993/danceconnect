@@ -1,5 +1,5 @@
-import {Chat, useMessages, useMinChat} from '@minchat/reactnative';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useMessages} from '@minchat/reactnative';
+import React, {useMemo} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -25,7 +25,6 @@ interface Props {
 
 export function ChatScreen({route}: Props) {
   const {currentUser} = useRegistration();
-
   const {chat} = route.params;
 
   const {messages, loading, error, sendMessage, paginate, paginateLoading} =
@@ -103,11 +102,7 @@ export function ChatScreen({route}: Props) {
                   ]}>
                   <Bubble
                     {...message}
-                    containerToNextStyle={{
-                      left: styles.friendMsg,
-                      right: styles.myMsg,
-                    }}
-                    containerToPreviousStyle={{
+                    wrapperStyle={{
                       left: styles.friendMsg,
                       right: styles.myMsg,
                     }}
@@ -129,6 +124,7 @@ export function ChatScreen({route}: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
