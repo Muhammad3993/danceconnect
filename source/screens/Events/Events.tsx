@@ -73,13 +73,11 @@ const EventsScreen = () => {
     onPressTab(TABS[0]);
   }, []);
 
-  const upcomingEvents = eventList
-    ?.filter(
-      (ev: any) =>
-        moment(ev.eventDate?.time).format('YYYY-MM-DD') >
-        moment(new Date()).format('YYYY-MM-DD'),
-    )
-    .map((item: any) => item);
+  const upcomingEvents = eventList?.filter(
+    (ev: any) =>
+      moment(ev.eventDate?.time).format('YYYY-MM-DD') >
+      moment(new Date()).format('YYYY-MM-DD'),
+  );
 
   const onChangeTextSearch = useCallback(
     (value: string) => {
@@ -179,9 +177,7 @@ const EventsScreen = () => {
           <RN.Text
             style={[
               styles.itemTabText,
-              {
-                color: currentTab === item ? colors.purple : colors.darkGray,
-              },
+              {color: currentTab === item ? colors.purple : colors.darkGray},
             ]}>
             {item}
           </RN.Text>

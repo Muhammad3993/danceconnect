@@ -3,7 +3,6 @@ import * as RN from 'react-native';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import CreateCommunityButton from '../components/createCommunityBtn';
-import {isAndroid} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import EventCard from '../components/eventCard';
 import EmptyContainer from '../components/emptyCommunitiesMain';
@@ -12,6 +11,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import useAppStateHook from '../hooks/useAppState';
 import useTickets from '../hooks/useTickets';
 import {useTranslation} from 'react-i18next';
+import {isAndroid} from '../utils/constants';
 
 const HomeScreen = () => {
   // const {userImgUrl} = useProfile();

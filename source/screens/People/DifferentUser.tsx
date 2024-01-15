@@ -19,17 +19,23 @@ const User = ({route, navigation}) => {
 
   const writeMessage = async () => {
     try {
+      const avatar = differentUser?.userImage;
       if (differentUser) {
         let chat: Chat | null | undefined;
         try {
           const otherUser = await minchat?.fetchUser(differentUser.id);
-          if (otherUser?.username) {
+
+          if (otherUser) {
+            if (avatar) {
+              await minchat?.updateUserById(otherUser.id, {avatar});
+            }
             chat = await minchat?.chat(otherUser?.username);
           }
         } catch (err) {
           const otherUser = await minchat?.createUser({
             name: differentUser.userName,
             username: differentUser.id,
+            avatar: avatar,
           });
           if (otherUser?.username) {
             chat = await minchat?.chat(otherUser?.username);

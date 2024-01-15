@@ -3,24 +3,42 @@ import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   SafeAreaView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {ChatItem} from './ui/ChatItem';
-import {Header} from './ui/Header';
+import colors from '../../utils/colors';
 
 export function ChatsScreen({navigation}: any) {
-  const {chats, loading, paginate} = useChats();
+  const {chats, loading, paginate, error, paginateLoading} = useChats();
+
+  if (error) {
+    return (
+      <View style={styles.loader}>
+        <Text>{error?.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.container}>
-        <Header onMenuPress={() => {}} />
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Messages</Text>
+          <TouchableOpacity onPress={() => {}}>
+            <Image
+              source={{uri: 'more'}}
+              style={{width: 28, height: 28, tintColor: colors.black}}
+            />
+          </TouchableOpacity>
+        </View>
 
         {loading ? (
-          <View>
+          <View style={styles.loader}>
             <ActivityIndicator size={'large'} />
           </View>
         ) : (
@@ -29,7 +47,7 @@ export function ChatsScreen({navigation}: any) {
             data={chats}
             onEndReachedThreshold={0.3}
             onEndReached={() => {
-              if ((chats?.length ?? 0) >= 25) {
+              if ((chats?.length ?? 0) >= 25 && !paginateLoading) {
                 paginate();
               }
             }}
@@ -40,10 +58,9 @@ export function ChatsScreen({navigation}: any) {
 
               return (
                 <TouchableOpacity
-                  onPress={() => {
-                    navigation.push('Chat', {chat: item});
-                  }}>
+                  onPress={() => navigation.push('Chat', {chat: item})}>
                   <ChatItem
+                    seen={lastMessage?.seen ?? false}
                     avatar={avatar}
                     name={title}
                     text={lastMessage?.text ?? ''}
@@ -72,10 +89,16 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 24,
   },
+  loader: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 24,
   },
   headerTitle: {
     fontFamily: 'Mulish-Bold',

@@ -1,14 +1,16 @@
-import {useMessages} from '@minchat/reactnative';
+import {Chat, useMessages} from '@minchat/reactnative';
 import React, {useMemo} from 'react';
 import {
   ActivityIndicator,
   Image,
-  SafeAreaView,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {
   Bubble,
+  Composer,
   GiftedChat,
   IMessage,
   InputToolbar,
@@ -17,17 +19,19 @@ import {
 } from 'react-native-gifted-chat';
 import useRegistration from '../../hooks/useRegistration';
 import colors from '../../utils/colors';
-import {Header} from './ui/Header';
+import {NavigationProp} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {apiUrl} from '../../api/serverRequests';
 
 interface Props {
-  route: {params: {username: string}};
+  route: {params: {chat: Chat}};
+  navigation: NavigationProp<any>;
 }
 
-export function ChatScreen({route}: Props) {
+export function ChatScreen({route, navigation}: Props) {
   const {currentUser} = useRegistration();
   const {chat} = route.params;
-
-  const {messages, loading, error, sendMessage, paginate, paginateLoading} =
+  const {messages, loading, sendMessage, error, paginate, paginateLoading} =
     useMessages(chat, true);
 
   const localMessages: IMessage[] = useMemo(() => {
@@ -46,22 +50,48 @@ export function ChatScreen({route}: Props) {
     return [];
   }, [messages]);
 
+  const title = chat.getTitle();
+  const avatar = chat.getChatAvatar();
+
+  if (error) {
+    return (
+      <View style={styles.loader}>
+        <Text>{error?.message}</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.root}>
       {loading ? (
-        <ActivityIndicator />
+        <View style={styles.loader}>
+          <ActivityIndicator size={'large'} />
+        </View>
       ) : (
         <View style={styles.container}>
-          <View style={{paddingHorizontal: 24}}>
-            <Header onMenuPress={() => {}} />
+          <View style={styles.header}>
+            <TouchableOpacity onPress={navigation.goBack}>
+              <View style={styles.headerLeft}>
+                <Image source={{uri: 'backicon'}} style={styles.backIcon} />
+                <Text style={styles.headerTitle}>{title}</Text>
+              </View>
+            </TouchableOpacity>
+
+            <Image
+              source={{uri: avatar ? apiUrl + avatar : 'profilefull'}}
+              style={styles.avatar}
+            />
           </View>
           <GiftedChat
             alwaysShowSend
             loadEarlier={
               localMessages.length > 0 && localMessages.length % 25 === 0
             }
-            infiniteScroll
-            onLoadEarlier={paginate}
+            messagesContainerStyle={{paddingBottom: 20}}
+            listViewProps={{style: {paddingBottom: 30}}}
+            isLoadingEarlier={paginateLoading}
+            placeholder="Messsage"
+            onLoadEarlier={paginateLoading ? undefined : paginate}
             messages={localMessages}
             onSend={msgs => sendMessage({text: msgs[0].text ?? ''})}
             user={{_id: currentUser.id}}
@@ -71,6 +101,11 @@ export function ChatScreen({route}: Props) {
                 <InputToolbar
                   {...props}
                   containerStyle={styles.inputContainer}
+                  renderComposer={p => (
+                    <View style={styles.input}>
+                      <Composer {...p} textInputStyle={styles.inputInner} />
+                    </View>
+                  )}
                   renderSend={p => (
                     <Send {...p} containerStyle={styles.sendButton}>
                       <Image
@@ -126,27 +161,45 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  container: {
+  loader: {
     flex: 1,
-    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingBottom: 5,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    borderBottomColor: colors.gray200,
+    borderBottomWidth: 1,
   },
   headerTitle: {
     fontFamily: 'Mulish-Bold',
     fontSize: 20,
+    marginLeft: 16,
   },
+  headerLeft: {flexDirection: 'row', alignItems: 'center'},
+  backIcon: {
+    height: 20,
+    width: 24,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+    marginLeft: 'auto',
+  },
+  container: {
+    flex: 1,
+    paddingVertical: 16,
+  },
+
   inputContainer: {
-    borderRadius: 10,
-    borderColor: colors.gray200,
-    borderWidth: 1,
-    borderTopWidth: 1,
     borderTopColor: colors.gray200,
-    height: 44,
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.white,
+    paddingHorizontal: 24,
+    paddingVertical: 8,
   },
   left: {
     flexDirection: 'row',
@@ -189,6 +242,20 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontFamily: 'Mulish-Regular',
     fontSize: 16,
+  },
+  input: {
+    marginRight: 12,
+    backgroundColor: colors.lightGray,
+    flex: 1,
+    borderRadius: 8,
+    minHeight: 44,
+  },
+  inputInner: {
+    flex: 1,
+    lineHeight: 0,
+    fontFamily: 'Mulish',
+    fontSize: 16,
+    maxHeight: 120,
   },
   sendButton: {
     width: 44,

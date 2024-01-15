@@ -1,15 +1,17 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import colors from '../../../utils/colors';
+import {apiUrl} from '../../../api/serverRequests';
 
 interface Props {
   name: string;
   text: string;
   avatar?: string;
   date: Date;
+  seen: boolean;
 }
 
-export function ChatItem({name, text, avatar, date}: Props) {
+export function ChatItem({name, text, avatar, date, seen}: Props) {
   let localTime = date.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
@@ -17,12 +19,18 @@ export function ChatItem({name, text, avatar, date}: Props) {
 
   return (
     <View style={styles.item}>
-      <Image source={{uri: avatar ?? 'profilefull'}} style={styles.avatar} />
+      <Image
+        source={{uri: avatar ? apiUrl + avatar : 'profilefull'}}
+        style={styles.avatar}
+      />
       <View style={styles.content}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.message}>{text}</Text>
       </View>
-      <Text style={styles.date}>{localTime}</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Text style={styles.date}>{localTime}</Text>
+        {seen && <View style={styles.dot} />}
+      </View>
     </View>
   );
 }
@@ -57,5 +65,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Mulish-Regular',
     fontSize: 12,
     color: colors.gray700,
+  },
+  dot: {
+    height: 8,
+    width: 8,
+    backgroundColor: colors.purple,
+    borderRadius: 4,
+    marginLeft: 5,
   },
 });

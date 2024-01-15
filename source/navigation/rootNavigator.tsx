@@ -235,9 +235,11 @@ const AppNavigator = () => {
     }
   }, [crntLgCode]);
 
+  console.log(currentUser?.id);
+  console.log(currentUser?.userName);
+
   return (
     <MinChatProvider
-      // test={__DEV__}
       apiKey={MINCHAT_ID}
       // user={{username: 'micheal', name: 'Micheal Saunders'}}
       user={{username: currentUser?.id, name: currentUser?.userName}}>

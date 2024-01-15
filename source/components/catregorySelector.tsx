@@ -26,6 +26,7 @@ const CategorySelector = ({
     getDanceStyles();
     setDStyles(danceStyles);
   }, [danceStyles?.length]);
+
   const onSelectItem = (key: React.SetStateAction<null>) => {
     setCurrentIndex(key === currentIndex ? null : key);
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
