@@ -2,11 +2,7 @@ import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import analytics from '@react-native-firebase/analytics';
 import {createStackNavigator} from '@react-navigation/stack';
-import {
-  AuthStackNavigationParamList,
-  MainStackNavigationParamList,
-  navigationRef,
-} from './types';
+import {MainStackNavigationParamList, navigationRef} from './types';
 import WeclomeScreen from '../screens/Auth/WelcomeScreen';
 import RegistraionScreen from '../screens/Auth/Registration';
 import AuthorizationScreen from '../screens/Auth/Autorization';
@@ -52,8 +48,6 @@ import {ChatScreen} from '../screens/Chat/Chat';
 import {MinChatProvider} from '@minchat/reactnative';
 import {MINCHAT_ID} from '../utils/constants';
 
-
-const AuthStack = createStackNavigator<AuthStackNavigationParamList>();
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
 const Tabs = createBottomTabNavigator();
 
@@ -61,7 +55,6 @@ const CommunityStack = createStackNavigator();
 const EventsStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
-const PeopleStack = createStackNavigator();
 const CommunityNavigator = () => {
   return (
     <CommunityStack.Navigator
@@ -181,7 +174,7 @@ const TabsNavigator = () => {
       <Tabs.Screen name={'Communities'} component={CommunityNavigator} />
       <Tabs.Screen name={'Events'} component={EventsNavigator} />
 
-       <Tabs.Screen name="People" component={People} />
+      <Tabs.Screen name="People" component={People} />
       <Tabs.Screen name={'Profile'} component={ProfileNavigator} />
     </Tabs.Navigator>
   );
