@@ -13,6 +13,7 @@ import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {MenuItems} from './ui/MenuItems';
 import useTickets from '../../hooks/useTickets';
+import {ProdileMedia} from '../../components/prodileMedia';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -35,45 +36,52 @@ const ProfileScreen = ({navigation}) => {
     getPurchasedTickets();
   }, []);
 
+  const data = Array(20).fill(1);
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <RN.ScrollView showsVerticalScrollIndicator={false}>
-        <RN.View style={styles.header}>
-          <RN.TouchableOpacity onPress={onPressMenu}>
-            <RN.Image
-              source={{uri: 'setting'}}
-              style={{width: 24, height: 24}}
-            />
-          </RN.TouchableOpacity>
-        </RN.View>
-        <RN.View style={styles.profile}>
-          <FastImage
-            source={{
-              uri: apiUrl + userImgUrl,
-              cache: FastImage.cacheControl.immutable,
-              priority: FastImage.priority.high,
-            }}
-            defaultSource={defaultProfile}
-            style={styles.image}
-          />
-          <RN.View style={{maxWidth: SCREEN_WIDTH - 100}}>
-            <RN.Text numberOfLines={1} style={styles.userName}>
-              {currentUser?.userName}
-            </RN.Text>
-            <RN.Text numberOfLines={1} style={styles.userEmail}>
-              {currentUser?.email}
-            </RN.Text>
-            <RN.TouchableOpacity
-              style={styles.editProfileBtn}
-              onPress={onPressChangeProfile}
-              activeOpacity={0.7}>
-              <RN.Text style={styles.editProfileText}>
-                {t('edit_profile')}
-              </RN.Text>
-            </RN.TouchableOpacity>
-          </RN.View>
-        </RN.View>
-      </RN.ScrollView>
+      <ProdileMedia
+        data={data}
+        header={
+          <>
+            <RN.View style={styles.header}>
+              <RN.TouchableOpacity onPress={onPressMenu}>
+                <RN.Image
+                  source={{uri: 'setting'}}
+                  style={{width: 24, height: 24}}
+                />
+              </RN.TouchableOpacity>
+            </RN.View>
+            <RN.View style={styles.profile}>
+              <FastImage
+                source={{
+                  uri: apiUrl + userImgUrl,
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.high,
+                }}
+                defaultSource={defaultProfile}
+                style={styles.image}
+              />
+              <RN.View style={{maxWidth: SCREEN_WIDTH - 100}}>
+                <RN.Text numberOfLines={1} style={styles.userName}>
+                  {currentUser?.userName}
+                </RN.Text>
+                <RN.Text numberOfLines={1} style={styles.userEmail}>
+                  {currentUser?.email}
+                </RN.Text>
+                <RN.TouchableOpacity
+                  style={styles.editProfileBtn}
+                  onPress={onPressChangeProfile}
+                  activeOpacity={0.7}>
+                  <RN.Text style={styles.editProfileText}>
+                    {t('edit_profile')}
+                  </RN.Text>
+                </RN.TouchableOpacity>
+              </RN.View>
+            </RN.View>
+          </>
+        }
+      />
+
       <Portal>
         <Modalize
           modalHeight={SCREEN_HEIGHT * 0.75}
@@ -98,15 +106,14 @@ const styles = RN.StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    paddingHorizontal: 24,
+    // marginHorizontal: 12,
   },
 
   profile: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
     paddingBottom: 24,
-    borderBottomColor: colors.gray,
-    paddingHorizontal: 24,
+    alignItems: 'center',
+    // marginHorizontal: 12,
   },
   image: {
     height: 60,
@@ -128,7 +135,7 @@ const styles = RN.StyleSheet.create({
     color: 'rgba(97, 97, 97, 1)',
   },
   editProfileBtn: {
-    marginTop: 16,
+    marginTop: 8,
     borderWidth: 1,
     borderColor: 'rgba(156, 134, 220, 1)',
     borderRadius: 40,
