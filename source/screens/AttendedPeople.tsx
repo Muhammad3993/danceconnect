@@ -6,6 +6,7 @@ import {statusBarHeight} from '../utils/constants';
 import {Input} from '../components/input';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
+import {defaultProfile} from '../utils/images';
 
 const AttendedPeople = () => {
   const navigation = useNavigation();
@@ -60,12 +61,12 @@ const AttendedPeople = () => {
                           cache: FastImage.cacheControl.immutable,
                           priority: FastImage.priority.high,
                         }}
-                        defaultSource={require('../assets/images/defaultuser.png')}
+                        defaultSource={defaultProfile}
                         style={styles.memberImg}
                       />
                     ) : (
                       <RN.Image
-                        source={require('../assets/images/defaultuser.png')}
+                        source={defaultProfile}
                         style={styles.memberImg}
                       />
                     )}

@@ -1,7 +1,6 @@
 import {useChats} from '@minchat/reactnative';
 import React from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   SafeAreaView,
@@ -12,6 +11,8 @@ import {
 } from 'react-native';
 import {ChatItem} from './ui/ChatItem';
 import colors from '../../utils/colors';
+import {Header} from './ui/Header';
+import {LoadingView} from '../../components/loadingView';
 
 export function ChatsScreen({navigation}: any) {
   const {chats, loading, paginate, error, paginateLoading} = useChats();
@@ -27,22 +28,24 @@ export function ChatsScreen({navigation}: any) {
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Messages</Text>
-          <TouchableOpacity onPress={() => {}}>
-            <Image
-              source={{uri: 'more'}}
-              style={{width: 28, height: 28, tintColor: colors.black}}
-            />
-          </TouchableOpacity>
-        </View>
+        <Header
+          title="Messages"
+          navigation={navigation}
+          rightIcon={
+            <TouchableOpacity style={{marginLeft: 'auto'}} onPress={() => {}}>
+              <Image
+                source={{uri: 'more'}}
+                style={{width: 28, height: 28, tintColor: colors.black}}
+              />
+            </TouchableOpacity>
+          }
+        />
 
         {loading ? (
-          <View style={styles.loader}>
-            <ActivityIndicator size={'large'} />
-          </View>
+          <LoadingView />
         ) : (
           <FlatList
+            style={{padding: 24}}
             showsVerticalScrollIndicator={false}
             data={chats}
             onEndReachedThreshold={0.3}
@@ -86,14 +89,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingTop: 16,
   },
-  loader: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -103,5 +101,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontFamily: 'Mulish-Bold',
     fontSize: 20,
+    marginLeft: 16,
+  },
+  headerLeft: {flexDirection: 'row', alignItems: 'center'},
+  backIcon: {
+    height: 20,
+    width: 24,
   },
 });

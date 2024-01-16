@@ -1,13 +1,6 @@
 import {Chat, useMessages} from '@minchat/reactnative';
 import React, {useMemo} from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
 import {
   Bubble,
   Composer,
@@ -24,6 +17,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {apiUrl} from '../../api/serverRequests';
 import {defaultProfile} from '../../utils/images';
 import FastImage from 'react-native-fast-image';
+import {Header} from './ui/Header';
+import {LoadingView} from '../../components/loadingView';
 
 interface Props {
   route: {params: {chat: Chat}};
@@ -66,25 +61,22 @@ export function ChatScreen({route, navigation}: Props) {
   return (
     <SafeAreaView style={styles.root}>
       {loading ? (
-        <View style={styles.loader}>
-          <ActivityIndicator size={'large'} />
-        </View>
+        <LoadingView />
       ) : (
         <View style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={navigation.goBack}>
-              <View style={styles.headerLeft}>
-                <Image source={{uri: 'backicon'}} style={styles.backIcon} />
-                <Text style={styles.headerTitle}>{title}</Text>
-              </View>
-            </TouchableOpacity>
+          <Header
+            withLine
+            title={title}
+            navigation={navigation}
+            rightIcon={
+              <FastImage
+                source={avatar ? {uri: apiUrl + avatar} : undefined}
+                defaultSource={defaultProfile}
+                style={styles.avatar}
+              />
+            }
+          />
 
-            <FastImage
-              source={avatar ? {uri: apiUrl + avatar} : undefined}
-              defaultSource={defaultProfile}
-              style={styles.avatar}
-            />
-          </View>
           <GiftedChat
             alwaysShowSend
             loadEarlier={
@@ -164,29 +156,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  loader: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    paddingHorizontal: 24,
-    paddingBottom: 5,
-    alignItems: 'center',
-    borderBottomColor: colors.gray200,
-    borderBottomWidth: 1,
-  },
-  headerTitle: {
-    fontFamily: 'Mulish-Bold',
-    fontSize: 20,
-    marginLeft: 16,
-  },
-  headerLeft: {flexDirection: 'row', alignItems: 'center'},
-  backIcon: {
-    height: 20,
-    width: 24,
-  },
+
   avatar: {
     width: 40,
     height: 40,
@@ -195,7 +165,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingVertical: 16,
+    paddingTop: 16,
   },
 
   inputContainer: {

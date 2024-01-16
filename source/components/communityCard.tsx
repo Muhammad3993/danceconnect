@@ -10,6 +10,7 @@ import socket from '../api/sockets';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
+import {defaultProfile} from '../utils/images';
 
 type props = {
   item: any;
@@ -116,7 +117,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
           const imgUri =
             img?.userImage?.length > 0
               ? {uri: apiUrl + img?.userImage}
-              : require('../assets/images/defaultuser.png');
+              : defaultProfile;
           return (
             <RN.View
               style={{
@@ -126,7 +127,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
               <RN.Image
                 source={imgUri}
                 style={styles.attendPeopleImg}
-                defaultSource={require('../assets/images/defaultuser.png')}
+                defaultSource={defaultProfile}
               />
             </RN.View>
           );

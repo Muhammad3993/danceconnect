@@ -14,6 +14,7 @@ import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../../api/serverRequests';
 import {useNavigation} from '@react-navigation/native';
 import SkeletonUserCard from '../../components/skeleton/userCard-Skeleton';
+import {defaultProfile} from '../../utils/images';
 type user = {
   item: {
     userName: string;
@@ -148,7 +149,7 @@ const People = () => {
             priority: FastImage.priority.high,
           }}
           resizeMode={FastImage.resizeMode.cover}
-          defaultSource={require('../../assets/images/defaultuser.png')}
+          defaultSource={defaultProfile}
           style={styles.userImage}
         />
         <RN.View style={styles.userWrapper}>

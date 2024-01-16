@@ -11,6 +11,7 @@ import SkeletonEventCard from './skeleton/eventCard-Skeleton';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
+import {defaultProfile} from '../utils/images';
 
 const EventCard = ({item}: any) => {
   const data = item;
@@ -104,7 +105,7 @@ const EventCard = ({item}: any) => {
 
             if (img?.userImage === null || img === null) {
               // console.log(imgUri);
-              imgUri = require('../assets/images/defaultuser.png');
+              imgUri = defaultProfile;
             }
             return (
               <RN.View
@@ -115,7 +116,7 @@ const EventCard = ({item}: any) => {
                 <RN.Image
                   source={imgUri}
                   style={styles.attendPeopleImg}
-                  defaultSource={require('../assets/images/defaultuser.png')}
+                  defaultSource={defaultProfile}
                 />
               </RN.View>
             );

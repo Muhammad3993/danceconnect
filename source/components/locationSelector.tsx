@@ -13,11 +13,15 @@ import {Button} from './Button';
 import {useProfile} from '../hooks/useProfile';
 import {useTranslation} from 'react-i18next';
 
+interface Props {
+  setSelectedLocation?: (value: string | undefined) => void;
+  isProfileScreen?: boolean;
+}
+
 const LocationSelector = ({
-  setSelectedLocation = (value: string | undefined) => ({value}),
+  setSelectedLocation,
   isProfileScreen = false,
-  selectedLocation = '',
-}) => {
+}: Props) => {
   const modalizeRef = useRef();
   const {countries, onChoosedCity} = useAppStateHook();
   const {onChangeUserCountry, userCountry} = useProfile();
@@ -45,11 +49,15 @@ const LocationSelector = ({
       setCurrentCity('');
       if (c.cities instanceof Array) {
         setCurrentCity(c.country + ', ' + c.cities[0].name);
-        setSelectedLocation(c.country + ', ' + c.cities[0].name);
+        if (setSelectedLocation) {
+          setSelectedLocation(c.country + ', ' + c.cities[0].name);
+        }
       }
       if (typeof c.cities === 'string') {
         setCurrentCity(c.country + ', ' + c.cities);
-        setSelectedLocation(c.country + ', ' + c.cities);
+        if (setSelectedLocation) {
+          setSelectedLocation(c.country + ', ' + c.cities);
+        }
       }
     }
     setCurrentCountry(c);
@@ -63,12 +71,19 @@ const LocationSelector = ({
       c.country?.includes(userCountry?.split(', ')[0]),
     );
     if (isCountry && !isCountry?.availableSearchString) {
-      setSelectedLocation(isCountry.country + ', ' + isCountry.cities[0].name);
+      if (setSelectedLocation) {
+        setSelectedLocation(
+          isCountry.country + ', ' + isCountry.cities[0].name,
+        );
+      }
+
       setCurrentCountry(isCountry);
       setSearchCountryValue(isCountry.country);
     }
     if (isCountry && isCountry?.availableSearchString) {
-      setSelectedLocation(isCountry.country);
+      if (setSelectedLocation) {
+        setSelectedLocation(isCountry.country);
+      }
       setCurrentCountry(isCountry);
       setSearchCountryValue(isCountry.country);
     }
@@ -108,7 +123,9 @@ const LocationSelector = ({
     const city =
       item?.structured_formatting?.main_text + ', ' + item?.terms[1].value;
     setCurrentCity(city);
-    setSelectedLocation(city);
+    if (setSelectedLocation) {
+      setSelectedLocation(city);
+    }
     setSearchCities([]);
     setSearchValue(item?.structured_formatting?.main_text);
   };
@@ -308,9 +325,11 @@ const LocationSelector = ({
                           setCurrentCity(
                             currentCountry.country + ', ' + i.name,
                           );
-                          setSelectedLocation(
-                            currentCountry.country + ', ' + i.name,
-                          );
+                          if (setSelectedLocation) {
+                            setSelectedLocation(
+                              currentCountry.country + ', ' + i.name,
+                            );
+                          }
                         }}
                         style={[
                           styles.chooseCountryWrapperOpened,

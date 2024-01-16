@@ -1,6 +1,7 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
   selectDifferentUser,
+  selectLoadingDifferentUser,
   selectLoadingUsersList,
   selectUsersList,
 } from '../store/selectors/peopleSelector';
@@ -14,6 +15,7 @@ const usePeople = () => {
   const users = useSelector(selectUsersList);
   const differentUser = useSelector(selectDifferentUser);
   const isLoadingUsers = useSelector(selectLoadingUsersList);
+  const isLoadingUser = useSelector(selectLoadingDifferentUser);
 
   const getDifferentUser = (id: string) => {
     dispatch(getDifferentUserRequestAction(id));
@@ -28,6 +30,7 @@ const usePeople = () => {
     getUsers,
     getDifferentUser,
     isLoadingUsers,
+    isLoadingUser,
   };
 };
 export default usePeople;

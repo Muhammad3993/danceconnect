@@ -19,9 +19,7 @@ export const getUsersListFailAction = () => ({
 
 export const getDifferentUserRequestAction = (id: string) => ({
   type: DIFFERENT_USER.REQUEST,
-  payload: {
-    id,
-  },
+  payload: {id},
 });
 
 export const getDifferentUserSuccessAction = (different_user: {} | null) => ({

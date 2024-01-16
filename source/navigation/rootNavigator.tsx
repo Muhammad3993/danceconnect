@@ -42,11 +42,12 @@ import ManagingEvents from '../screens/Profile/ManagingEvents';
 import {ChatsScreen} from '../screens/Chat/Chats';
 
 import People from '../screens/People/People';
-import User from '../screens/People/DifferentUser';
+import User from '../screens/People/User';
 
 import {ChatScreen} from '../screens/Chat/Chat';
 import {MinChatProvider} from '@minchat/reactnative';
 import {MINCHAT_ID} from '../utils/constants';
+import {Image, TouchableOpacity, View} from 'react-native';
 
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
 const Tabs = createBottomTabNavigator();
@@ -279,7 +280,22 @@ const AppNavigator = () => {
                 />
                 <MainStack.Screen
                   name="User"
-                  options={{gestureEnabled: true}}
+                  options={{
+                    gestureEnabled: true,
+                    headerShown: true,
+                    title: '',
+                    headerLeftContainerStyle: {paddingLeft: 24},
+                    headerLeft: ({onPress}) => (
+                      <TouchableOpacity onPress={onPress}>
+                        <View style={{justifyContent: 'center'}}>
+                          <Image
+                            source={{uri: 'backicon'}}
+                            style={{height: 16, width: 19}}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    ),
+                  }}
                   component={User}
                 />
                 <MainStack.Screen name="CreateEvent" component={MakeEvent} />
