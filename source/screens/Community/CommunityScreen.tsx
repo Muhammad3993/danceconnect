@@ -126,7 +126,7 @@ const CommunityScreen = ({route, navigation}) => {
       });
       if (result.action === RN.Share.sharedAction) {
         if (result.activityType) {
-          console.log('resi', result);
+          // console.log('resi', result);
           // shared with activity type of result.activityType
         } else {
           // shared

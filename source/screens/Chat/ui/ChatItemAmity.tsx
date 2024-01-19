@@ -1,38 +1,50 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import colors from '../../../utils/colors';
-import {apiUrl} from '../../../api/serverRequests';
+// import {apiUrl} from '../../../api/serverRequests';
 import {defaultProfile} from '../../../utils/images';
 import FastImage from 'react-native-fast-image';
+import {apiUrl} from '../../../api/serverRequests';
 
 interface Props {
-  name: string;
-  text: string;
-  avatar?: string;
-  date: Date;
-  seen: boolean;
+  channel: Amity.Channel;
+  currentUser: any;
 }
 
-export function ChatItem({name, text, avatar, date, seen}: Props) {
-  let localTime = date.toLocaleTimeString([], {
+export function ChatItem({channel, currentUser}: Props) {
+  const channelCreateAt = new Date(channel?.createdAt);
+
+  let localTime = channelCreateAt.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
   });
 
+  const unreadCount = channel?.unreadCount ?? 0;
+
+  const usersList = channel.metadata;
+  const users = usersList?.users ?? [];
+  const anotherUser = users.find(user => user.id !== currentUser.id);
+
   return (
     <View style={styles.item}>
       <FastImage
-        source={avatar ? {uri: apiUrl + avatar} : undefined}
+        source={
+          anotherUser?.userImage
+            ? {uri: apiUrl + anotherUser?.userImage}
+            : undefined
+        }
         defaultSource={defaultProfile}
         style={styles.avatar}
       />
       <View style={styles.content}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.message}>{text}</Text>
+        <Text style={styles.name}>
+          {anotherUser?.userName ?? channel?.displayName ?? channel?.channelId}
+        </Text>
+        <Text style={styles.message}>{channel?.messagePreview}</Text>
       </View>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Text style={styles.date}>{localTime}</Text>
-        {seen && <View style={styles.dot} />}
+        {unreadCount > 0 && <View style={styles.dot} />}
       </View>
     </View>
   );

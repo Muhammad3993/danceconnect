@@ -1,6 +1,12 @@
-import {Chat, useMessages} from '@minchat/reactnative';
-import React, {useMemo} from 'react';
-import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  MessageContentType,
+  MessageRepository,
+  SubChannelRepository,
+} from '@amityco/ts-sdk';
+import {NavigationProp} from '@react-navigation/native';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {ActivityIndicator, Image, StyleSheet, View} from 'react-native';
+import FastImage from 'react-native-fast-image';
 import {
   Bubble,
   Composer,
@@ -10,53 +16,86 @@ import {
   Send,
   isSameUser,
 } from 'react-native-gifted-chat';
-import useRegistration from '../../hooks/useRegistration';
-import colors from '../../utils/colors';
-import {NavigationProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {apiUrl} from '../../api/serverRequests';
-import {defaultProfile} from '../../utils/images';
-import FastImage from 'react-native-fast-image';
-import {Header} from './ui/Header';
 import {LoadingView} from '../../components/loadingView';
+import colors from '../../utils/colors';
+import {defaultProfile} from '../../utils/images';
+import {Header} from './ui/Header';
+import useRegistration from '../../hooks/useRegistration';
+import {apiUrl} from '../../api/serverRequests';
 
 interface Props {
-  route: {params: {chat: Chat}};
+  route: {params: {channel: Amity.Channel}};
   navigation: NavigationProp<any>;
 }
 
 export function ChatScreen({route, navigation}: Props) {
+  const {channel} = route.params;
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(true);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const onNextPage = useRef<() => void>();
   const {currentUser} = useRegistration();
-  const {chat} = route.params;
-  const {messages, loading, sendMessage, error, paginate, paginateLoading} =
-    useMessages(chat, true);
+
+  const [messages, setMessages] = useState<Amity.Message<'text'>[]>([]);
+
+  useEffect(() => {
+    SubChannelRepository.startReading(channel.channelId);
+    const msgSub = MessageRepository.getMessages(
+      {subChannelId: channel.channelId, limit: 18},
+      ({data, ...metadata}) => {
+        if (!metadata.loading) {
+          setLoading(false);
+          setMessages(data as Amity.Message<'text'>[]);
+        }
+        setLoadingMore(metadata.loading);
+        setHasNextPage(metadata.hasNextPage ?? false);
+
+        if (metadata.onNextPage) {
+          onNextPage.current = metadata.onNextPage;
+        }
+      },
+    );
+
+    return () => {
+      msgSub();
+      SubChannelRepository.stopReading(channel.channelId);
+    };
+  }, [channel.channelId]);
 
   const localMessages: IMessage[] = useMemo(() => {
-    if (messages) {
+    if (messages.length) {
       return messages.map(el => {
-        const user = el.user;
-
         return {
-          _id: el.id,
-          text: el.text,
-          createdAt: el.createdAt,
-          user: {_id: user.username, name: user.name},
+          _id: el.uniqueId,
+          text: el.data?.text ?? '',
+          createdAt: new Date(el.createdAt),
+          user: {_id: el.creatorId, name: el.creatorId},
         } as IMessage;
       });
     }
     return [];
   }, [messages]);
 
-  const title = chat.getTitle();
-  const avatar = chat.getChatAvatar();
+  const sendMessage = async (msg: IMessage[]) => {
+    const textMessage = {
+      subChannelId: channel.channelId,
+      dataType: MessageContentType.TEXT,
+      data: {
+        text: msg[0].text ?? '',
+      },
+      tags: [currentUser.id],
+      metadata: {},
+    };
 
-  if (error) {
-    return (
-      <View style={styles.loader}>
-        <Text>{error?.message}</Text>
-      </View>
-    );
-  }
+    const {data: message} = await MessageRepository.createMessage(textMessage);
+
+    return message;
+  };
+
+  const usersList = channel.metadata;
+  const users = usersList?.users ?? [];
+  const anotherUser = users.find(user => user.id !== currentUser.id);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -66,11 +105,19 @@ export function ChatScreen({route, navigation}: Props) {
         <View style={styles.container}>
           <Header
             withLine
-            title={title}
+            title={
+              anotherUser?.userName ??
+              channel?.displayName ??
+              channel?.channelId
+            }
             navigation={navigation}
             rightIcon={
               <FastImage
-                source={avatar ? {uri: apiUrl + avatar} : undefined}
+                source={
+                  anotherUser?.userImage
+                    ? {uri: apiUrl + anotherUser?.userImage}
+                    : undefined
+                }
                 defaultSource={defaultProfile}
                 style={styles.avatar}
               />
@@ -79,16 +126,17 @@ export function ChatScreen({route, navigation}: Props) {
 
           <GiftedChat
             alwaysShowSend
-            loadEarlier={
-              localMessages.length > 0 && localMessages.length % 25 === 0
-            }
+            loadEarlier={hasNextPage}
             messagesContainerStyle={{paddingBottom: 20}}
-            listViewProps={{style: {paddingBottom: 30}}}
-            isLoadingEarlier={paginateLoading}
+            listViewProps={{
+              style: {paddingBottom: 30},
+              showsVerticalScrollIndicator: false,
+            }}
+            isLoadingEarlier={loadingMore}
             placeholder="Messsage"
-            onLoadEarlier={paginateLoading ? undefined : paginate}
+            onLoadEarlier={onNextPage.current}
             messages={localMessages}
-            onSend={msgs => sendMessage({text: msgs[0].text ?? ''})}
+            onSend={sendMessage}
             user={{_id: currentUser.id}}
             renderLoading={() => <ActivityIndicator />}
             renderInputToolbar={props => {

@@ -1,53 +1,97 @@
-import React, {useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
 import analytics from '@react-native-firebase/analytics';
-import {createStackNavigator} from '@react-navigation/stack';
-import {MainStackNavigationParamList, navigationRef} from './types';
-import WeclomeScreen from '../screens/Auth/WelcomeScreen';
-import RegistraionScreen from '../screens/Auth/Registration';
-import AuthorizationScreen from '../screens/Auth/Autorization';
-import useRegistration from '../hooks/useRegistration';
-import HomeScreen from '../screens/Home';
-import Board from '../screens/Auth/Board';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import colors from '../utils/colors';
-import BottomTabs from '../components/bottomTabs';
-import ProfileScreen from '../screens/Profile/Profile';
-import CommunitiesScreen from '../screens/Community/Communities';
-import EventsScreen from '../screens/Events/Events';
-import CreateCommunity from '../screens/Community/CreateCommunity';
-import CommunityScreen from '../screens/Community/CommunityScreen';
-import EditCommunity from '../screens/Community/EditCommunity';
-import EventScreen from '../screens/Events/EventScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import React, {useEffect} from 'react';
 import {Host} from 'react-native-portalize';
-import DanceStylesProfile from '../screens/Profile/EditDanceStylesProfile';
-import ChangeProfile from '../screens/Profile/ChangeProfile';
-import ManagingCommunities from '../screens/Profile/ManagingCommunities';
-import TicketScreen from '../screens/Events/Tickets/Ticket';
-import TicketsScreen from '../screens/Profile/Tickets';
+import BottomTabs from '../components/bottomTabs';
+import useRegistration from '../hooks/useRegistration';
+import AuthorizationScreen from '../screens/Auth/Autorization';
+import Board from '../screens/Auth/Board';
+import RegistraionScreen from '../screens/Auth/Registration';
+import WeclomeScreen from '../screens/Auth/WelcomeScreen';
+import CommunitiesScreen from '../screens/Community/Communities';
+import CommunityScreen from '../screens/Community/CommunityScreen';
+import CreateCommunity from '../screens/Community/CreateCommunity';
+import EditCommunity from '../screens/Community/EditCommunity';
+import EditEventScreen from '../screens/Events/EditEventScreen';
+import EventScreen from '../screens/Events/EventScreen';
+import EventsScreen from '../screens/Events/Events';
 import MakeEvent from '../screens/Events/MakeEvent';
+import BuyTickets from '../screens/Events/Tickets/BuyTickets';
 import CreateTicket from '../screens/Events/Tickets/CreateTicket';
 import EditTicket from '../screens/Events/Tickets/EditTicket';
-import EditEventScreen from '../screens/Events/EditEventScreen';
-import BuyTickets from '../screens/Events/Tickets/BuyTickets';
+import TicketScreen from '../screens/Events/Tickets/Ticket';
+import HomeScreen from '../screens/Home';
+import ChangeProfile from '../screens/Profile/ChangeProfile';
+import DanceStylesProfile from '../screens/Profile/EditDanceStylesProfile';
+import ManagingCommunities from '../screens/Profile/ManagingCommunities';
+import ProfileScreen from '../screens/Profile/Profile';
+import TicketsScreen from '../screens/Profile/Tickets';
+import colors from '../utils/colors';
+import {MainStackNavigationParamList, navigationRef} from './types';
 // import ImageView from '../components/imageView';
-import SoldTickets from '../screens/Events/Tickets/SoldTickets';
-import Managers from '../screens/Community/Managers';
 import AttendedPeople from '../screens/AttendedPeople';
+import Managers from '../screens/Community/Managers';
+import SoldTickets from '../screens/Events/Tickets/SoldTickets';
 // import {useTranslation} from 'react-i18next';
-import ChangeLanguage from '../screens/ChangeLanguage';
-import i18n from '../i18n/i118n';
 import useAppStateHook from '../hooks/useAppState';
+import i18n from '../i18n/i118n';
+import ChangeLanguage from '../screens/ChangeLanguage';
+import {ChatsScreen} from '../screens/Chat/ChatsAmity';
 import ManagingEvents from '../screens/Profile/ManagingEvents';
-import {ChatsScreen} from '../screens/Chat/Chats';
 
 import People from '../screens/People/People';
 import User from '../screens/People/User';
 
-import {ChatScreen} from '../screens/Chat/Chat';
-import {MinChatProvider} from '@minchat/reactnative';
-import {MINCHAT_ID} from '../utils/constants';
 import {Image, TouchableOpacity, View} from 'react-native';
+import {ChatScreen} from '../screens/Chat/ChatAmity';
+import useBootsrap from '../hooks/useBootsrap';
+
+const linking = {
+  prefixes: ['https://danceconnect.online/', 'danceconnect://'],
+  config: {
+    screens: {
+      ['TABS']: {
+        path: '/',
+        screens: {
+          ['Communities']: {
+            initialRouteName: 'CommunitiesMain',
+            screens: {
+              ['CommunitiesMain']: {
+                path: 'communities',
+              },
+            },
+          },
+          ['Events']: {
+            initialRouteName: 'Events',
+            screens: {
+              ['Events']: {
+                path: 'events',
+              },
+            },
+          },
+          ['EventScreen']: {
+            path: 'event/:id',
+            parse: {
+              id: (id: string) => {
+                return id;
+              },
+            },
+          },
+          ['CommunityScreen']: {
+            path: 'community/:id',
+            parse: {
+              id: (id: string) => {
+                return id;
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
 
 const MainStack = createStackNavigator<MainStackNavigationParamList>();
 const Tabs = createBottomTabNavigator();
@@ -175,60 +219,22 @@ const TabsNavigator = () => {
       <Tabs.Screen name={'Communities'} component={CommunityNavigator} />
       <Tabs.Screen name={'Events'} component={EventsNavigator} />
 
-      <Tabs.Screen name="People" component={People} />
+      <Tabs.Screen
+        name="People"
+        component={People}
+        options={{unmountOnBlur: true}}
+      />
       <Tabs.Screen name={'Profile'} component={ProfileNavigator} />
     </Tabs.Navigator>
   );
 };
 
 const AppNavigator = () => {
-  const {isUserExists, currentUser} = useRegistration();
+  const {isUserExists} = useRegistration();
+  const {init, isBootstraped} = useBootsrap();
+
   const routeNameRef = React.useRef();
   const {crntLgCode} = useAppStateHook();
-  const linking = {
-    prefixes: ['https://danceconnect.online/', 'danceconnect://'],
-    config: {
-      screens: {
-        ['TABS']: {
-          path: '/',
-          screens: {
-            ['Communities']: {
-              initialRouteName: 'CommunitiesMain',
-              screens: {
-                ['CommunitiesMain']: {
-                  path: 'communities',
-                },
-              },
-            },
-            ['Events']: {
-              initialRouteName: 'Events',
-              screens: {
-                ['Events']: {
-                  path: 'events',
-                },
-              },
-            },
-            ['EventScreen']: {
-              path: 'event/:id',
-              parse: {
-                id: (id: string) => {
-                  return id;
-                },
-              },
-            },
-            ['CommunityScreen']: {
-              path: 'community/:id',
-              parse: {
-                id: (id: string) => {
-                  return id;
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
 
   useEffect(() => {
     if (i18n.language !== crntLgCode) {
@@ -236,130 +242,117 @@ const AppNavigator = () => {
     }
   }, [crntLgCode]);
 
-  console.log(currentUser?.id);
-  console.log(currentUser?.userName);
+  useEffect(() => {
+    init();
+  }, []);
+
+  if (!isBootstraped) {
+    return null;
+  }
 
   return (
-    <MinChatProvider
-      apiKey={MINCHAT_ID}
-      // user={{username: 'micheal', name: 'Micheal Saunders'}}
-      user={{username: currentUser?.id, name: currentUser?.userName}}>
-      <NavigationContainer
-        linking={linking}
-        ref={navigationRef}
-        onReady={() => {
-          routeNameRef.current =
-            navigationRef?.current?.getCurrentRoute()?.name;
-        }}
-        onStateChange={async () => {
-          const previousRouteName = routeNameRef?.current;
-          const currentRouteName =
-            navigationRef?.current?.getCurrentRoute()?.name;
+    <NavigationContainer
+      linking={linking}
+      ref={navigationRef}
+      onReady={() => {
+        routeNameRef.current = navigationRef?.current?.getCurrentRoute()?.name;
+      }}
+      onStateChange={async () => {
+        const previousRouteName = routeNameRef?.current;
+        const currentRouteName =
+          navigationRef?.current?.getCurrentRoute()?.name;
 
-          if (previousRouteName !== currentRouteName) {
-            await analytics().logScreenView({
-              screen_name: currentRouteName,
-              screen_class: currentRouteName,
-            });
-          }
-          routeNameRef.current = currentRouteName;
-        }}>
-        <Host>
-          <MainStack.Navigator
-            screenOptions={{headerShown: false, gestureEnabled: false}}>
-            {isUserExists ? (
-              <>
-                <MainStack.Screen name={'TABS'} component={TabsNavigator} />
-                <MainStack.Screen
-                  name="CreateCommunity"
-                  component={CreateCommunity}
-                />
-                <MainStack.Screen
-                  name="EditCommunity"
-                  component={EditCommunity}
-                />
-                <MainStack.Screen
-                  name="User"
-                  options={{
-                    gestureEnabled: true,
-                    headerShown: true,
-                    title: '',
-                    headerLeftContainerStyle: {paddingLeft: 24},
-                    headerLeft: ({onPress}) => (
-                      <TouchableOpacity onPress={onPress}>
-                        <View style={{justifyContent: 'center'}}>
-                          <Image
-                            source={{uri: 'backicon'}}
-                            style={{height: 16, width: 19}}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    ),
-                  }}
-                  component={User}
-                />
-                <MainStack.Screen name="CreateEvent" component={MakeEvent} />
-                <MainStack.Screen
-                  name="CreateTicket"
-                  component={CreateTicket}
-                />
-                <MainStack.Screen name="EditTicket" component={EditTicket} />
-                <MainStack.Screen
-                  name="ChangeProfile"
-                  component={ChangeProfile}
-                />
-                <MainStack.Screen
-                  name="ProfileDanceStyles"
-                  component={DanceStylesProfile}
-                />
-                <MainStack.Screen name="BuyTickets" component={BuyTickets} />
-                <MainStack.Screen name="Managers" component={Managers} />
-                <MainStack.Screen
-                  name="AttendedPeople"
-                  component={AttendedPeople}
-                />
-                <MainStack.Screen
-                  name="Chats"
-                  options={{gestureEnabled: true}}
-                  component={ChatsScreen}
-                />
-                <MainStack.Screen
-                  name="Chat"
-                  options={{gestureEnabled: true}}
-                  component={ChatScreen}
-                />
-                <MainStack.Screen
-                  name="EditEvent"
-                  component={EditEventScreen}
-                />
-                <MainStack.Screen name="EventScreen" component={EventScreen} />
-                <MainStack.Screen
-                  name="CommunityScreen"
-                  component={CommunityScreen}
-                />
-              </>
-            ) : (
-              <>
-                <MainStack.Screen name={'WELCOME'} component={WeclomeScreen} />
-                <MainStack.Screen
-                  name={'REGISTRATION'}
-                  component={RegistraionScreen}
-                />
-                <MainStack.Screen
-                  name={'AUTH'}
-                  component={AuthorizationScreen}
-                />
-                <MainStack.Screen name={'ONBOARDING'} component={Board} />
-                <MainStack.Screen
-                  name={'LANGUAGE'}
-                  component={ChangeLanguage}
-                />
-              </>
-            )}
-          </MainStack.Navigator>
-        </Host>
-      </NavigationContainer>
-    </MinChatProvider>
+        if (previousRouteName !== currentRouteName) {
+          await analytics().logScreenView({
+            screen_name: currentRouteName,
+            screen_class: currentRouteName,
+          });
+        }
+        routeNameRef.current = currentRouteName;
+      }}>
+      <Host>
+        <MainStack.Navigator
+          screenOptions={{headerShown: false, gestureEnabled: false}}>
+          {isUserExists ? (
+            <>
+              <MainStack.Screen name={'TABS'} component={TabsNavigator} />
+              <MainStack.Screen
+                name="CreateCommunity"
+                component={CreateCommunity}
+              />
+              <MainStack.Screen
+                name="EditCommunity"
+                component={EditCommunity}
+              />
+              <MainStack.Screen
+                name="User"
+                options={{
+                  gestureEnabled: true,
+                  headerShown: true,
+                  title: '',
+                  headerLeftContainerStyle: {paddingLeft: 24},
+                  headerLeft: ({onPress}) => (
+                    <TouchableOpacity onPress={onPress}>
+                      <View style={{justifyContent: 'center'}}>
+                        <Image
+                          source={{uri: 'backicon'}}
+                          style={{height: 16, width: 19}}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  ),
+                }}
+                component={User}
+              />
+              <MainStack.Screen name="CreateEvent" component={MakeEvent} />
+              <MainStack.Screen name="CreateTicket" component={CreateTicket} />
+              <MainStack.Screen name="EditTicket" component={EditTicket} />
+              <MainStack.Screen
+                name="ChangeProfile"
+                component={ChangeProfile}
+              />
+              <MainStack.Screen
+                name="ProfileDanceStyles"
+                component={DanceStylesProfile}
+              />
+              <MainStack.Screen name="BuyTickets" component={BuyTickets} />
+              <MainStack.Screen name="Managers" component={Managers} />
+              <MainStack.Screen
+                name="AttendedPeople"
+                component={AttendedPeople}
+              />
+              <MainStack.Screen
+                name="Chats"
+                options={{gestureEnabled: true}}
+                component={ChatsScreen}
+              />
+              <MainStack.Screen
+                name="Chat"
+                options={{gestureEnabled: true}}
+                component={ChatScreen}
+              />
+              <MainStack.Screen name="EditEvent" component={EditEventScreen} />
+              <MainStack.Screen name="EventScreen" component={EventScreen} />
+              <MainStack.Screen
+                name="CommunityScreen"
+                component={CommunityScreen}
+              />
+            </>
+          ) : (
+            <>
+              <MainStack.Screen name={'WELCOME'} component={WeclomeScreen} />
+              <MainStack.Screen
+                name={'REGISTRATION'}
+                component={RegistraionScreen}
+              />
+              <MainStack.Screen name={'AUTH'} component={AuthorizationScreen} />
+              <MainStack.Screen name={'ONBOARDING'} component={Board} />
+              <MainStack.Screen name={'LANGUAGE'} component={ChangeLanguage} />
+            </>
+          )}
+        </MainStack.Navigator>
+      </Host>
+    </NavigationContainer>
   );
 };
 

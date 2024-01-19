@@ -6,6 +6,7 @@ import eventSaga from './eventsSaga';
 import appStateSaga from './appStateSaga';
 import ticketsSaga from './ticketsSaga';
 import peopleSaga from './peopleSaga';
+import bootsrapSaga from './bootstrapSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -16,5 +17,6 @@ export default function* rootSaga() {
     appStateSaga(),
     ticketsSaga(),
     peopleSaga(),
+    bootsrapSaga(),
   ]);
 }

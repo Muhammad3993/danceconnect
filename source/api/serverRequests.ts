@@ -91,7 +91,7 @@ export const loginByEmail = async (email: string, password: string) => {
     const response = await axios.post(`${apiUrl}auth_email/`, {
       data_auth: data_auth,
     });
-    console.log('loginByEmail', response);
+    // console.log('loginByEmail', response);
     return response;
   } catch (error) {
     console.log('loginByEmailerror ', error);
@@ -117,7 +117,7 @@ export const loginBySocial = async (email: string, password: string) => {
 export const createUser = async (data: user) => {
   try {
     const response = await axios.post(`${apiUrl}users/`, data);
-    console.log(`${apiUrl}users/`, response, data);
+    // console.log(`${apiUrl}users/`, response, data);
     // const {email, password} = data;
     // login(email, password).then();
     return response;
@@ -160,7 +160,7 @@ export const getUserById = async (id: string) => {
 export const updateUserById = async (data: object) => {
   try {
     const response = await axios.post(`${apiUrl}user/update`, data);
-    console.log('updateUserById response', response);
+    // console.log('updateUserById response', response);
     return response?.data;
   } catch (er) {
     return console.log('updateUserById er', er);
@@ -180,7 +180,7 @@ export const updateUserCountry = async (data: object) => {
 export const refreshPassword = async (data: object) => {
   try {
     const response = await axios.post(`${apiUrl}refresh`, data);
-    console.log('refreshPassword response', response);
+    // console.log('refreshPassword response', response);
     return response;
   } catch (er) {
     return console.log('refreshPassword er', er);
@@ -191,7 +191,7 @@ export const getCommunitiesWithMongo = async (location: string) => {
     const response = await axios.get(
       `${apiUrl}communities?location=${location}`,
     );
-    console.log('getCommunitiesWithMongo', response);
+    // console.log('getCommunitiesWithMongo', response);
     return response?.data;
   } catch (er) {
     return console.log('er', er);
@@ -241,7 +241,7 @@ export const createCommunityWithMongo = async (data: object) => {
 export const getCommunityById = async (id: string) => {
   try {
     const response = await axios.get(`${apiUrl}community/${id}`);
-    console.log('getCommunityById', response.data);
+    // console.log('getCommunityById', response.data);
     return {
       community: response?.data,
     };
@@ -280,7 +280,7 @@ export const unSubscribeCommunity = async (id: string) => {
       `${apiUrl}communities/${id}/unsubscribe`,
       null,
     );
-    console.log('unSubscribeCommunity response', response);
+    // console.log('unSubscribeCommunity response', response);
     return response.data;
   } catch (error) {
     return console.log('subscribeEvent er', error);
@@ -326,7 +326,7 @@ export const getEventsWithMongo = async (
     // const response = await axios.get(
     //   `${apiUrl}events/${location}?limit=${limit}&offset=${offset}`,
     // );
-    console.log('getEventsWithMongo', response);
+    // console.log('getEventsWithMongo', response);
     return {
       eventsList: response.data,
       prevOffset: Number(response.data?.prevOffset),
@@ -342,7 +342,7 @@ export const getEventsWithMongoByArray = async (locations: string[]) => {
     const response = await axios.post(`${apiUrl}eventsByLocation`, {
       locations: locations,
     });
-    console.log('getEventsWithMongoByArray', response);
+    // console.log('getEventsWithMongoByArray', response);
     return {
       eventsList: response.data,
       prevOffset: Number(response.data?.prevOffset),
@@ -384,7 +384,7 @@ export const getEventById = async (id: string) => {
 export const updateEventById = async (id: string, data: object) => {
   try {
     const response = await axios.post(`${apiUrl}events/${id}/update`, data);
-    console.log('updateEventById', response);
+    // console.log('updateEventById', response);
     return response.data;
   } catch (error) {
     return console.log('updateEventById er', error);
@@ -477,7 +477,7 @@ export const diablePayEvent = async (id: string | undefined) => {
   const response = await axios.post(
     `${apiUrl}event/${id}/disable-payment-intent`,
   );
-  console.log('diablePayEvent', response);
+  // console.log('diablePayEvent', response);
   return response.data;
 };
 export const refundPayEvent = async (id: string) => {

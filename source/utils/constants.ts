@@ -162,4 +162,11 @@ export const countries = [
   },
 ];
 
-export const MINCHAT_ID = 'CLRADPF8800DF3LFPHEWS7K1F';
+export const AMITY_API_KEY = 'b0e9b90b3a88a4361d36df1b540d1f8bd8088bb3e934682e';
+
+// export const MINCHAT_ID = 'CLRADPF8800DF3LFPHEWS7K1F';
+// export const QB_APP_ID = '102490';
+// export const QB_AUTH_KEY = 'ak_BF7ujFZ5xpU7BUz';
+// export const QB_AUTH_SECRET = 'as_6kn9HKEpW2yJG-9';
+// export const QB_ACCOUNT_KEY = 'ack_7Wnzbn3NKuyBDdpXG1gA';
+// export const QB_API_KEY = 'ne_FR1wa46l6PhU7hf_nvzELtsddnmy7AYAudruE20E';

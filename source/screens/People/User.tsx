@@ -7,14 +7,15 @@ import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../../api/serverRequests';
 import {Button} from '../../components/Button';
 import {userRole} from '../../utils/helpers';
-import {Chat, useMinChat} from '@minchat/reactnative';
 import {defaultProfile} from '../../utils/images';
 import {LoadingView} from '../../components/loadingView';
 import {ProdileMedia} from '../../components/prodileMedia';
+import {ChannelRepository} from '@amityco/ts-sdk';
+import useRegistration from '../../hooks/useRegistration';
 
 const User = ({route, navigation}) => {
   const {getDifferentUser, differentUser, isLoadingUser} = usePeople();
-  const minchat = useMinChat();
+  const {currentUser} = useRegistration();
 
   useEffect(() => {
     getDifferentUser(route.params.id);
@@ -22,33 +23,19 @@ const User = ({route, navigation}) => {
 
   const writeMessage = async () => {
     try {
-      const avatar = differentUser?.userImage;
-      if (differentUser) {
-        let chat: Chat | null | undefined;
-        try {
-          const otherUser = await minchat?.fetchUser(differentUser.id);
+      const newChannel = {
+        displayName: differentUser.userName,
+        tags: [],
+        type: 'conversation' as Amity.ChannelType,
+        userIds: [differentUser.id],
+        metadata: {
+          users: [currentUser, differentUser],
+        },
+      };
 
-          if (otherUser) {
-            if (avatar && avatar !== otherUser.avatar) {
-              await minchat?.updateUserById(otherUser.id, {avatar});
-            }
-            chat = await minchat?.chat(otherUser?.username);
-          }
-        } catch (err) {
-          const otherUser = await minchat?.createUser({
-            name: differentUser.userName,
-            username: differentUser.id,
-            avatar: avatar,
-          });
-          if (otherUser?.username) {
-            chat = await minchat?.chat(otherUser?.username);
-          }
-        }
+      const {data: channel} = await ChannelRepository.createChannel(newChannel);
 
-        if (chat) {
-          navigation.push('Chat', {chat});
-        }
-      }
+      navigation.push('Chat', {channel});
     } catch (err) {
       console.log(err);
     }

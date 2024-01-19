@@ -88,7 +88,7 @@ const AuthorizationScreen = (): JSX.Element => {
     }
   };
   const resetPassword = () => {
-    console.log('resetPassword');
+    // console.log('resetPassword');
     // forgotPassword(email);
   };
   const onPressLogin = async () => {

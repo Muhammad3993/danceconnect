@@ -15,7 +15,7 @@ const ChangeLanguage = () => {
   //   console.log(i18n)
   const onPressChange = (lg: string) => {
     changeLanguage(lg);
-    console.log(lg);
+    // console.log(lg);
     // navigation.goBack();
   };
   useEffect(() => {

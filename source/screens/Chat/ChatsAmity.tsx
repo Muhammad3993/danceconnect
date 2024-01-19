@@ -1,29 +1,58 @@
-import {useChats} from '@minchat/reactnative';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ChatItem} from './ui/ChatItem';
 import colors from '../../utils/colors';
 import {Header} from './ui/Header';
 import {LoadingView} from '../../components/loadingView';
+import {ChannelRepository} from '@amityco/ts-sdk';
+import {ChatItem} from './ui/ChatItemAmity';
+import useRegistration from '../../hooks/useRegistration';
 
 export function ChatsScreen({navigation}: any) {
-  const {chats, loading, paginate, error, paginateLoading} = useChats();
+  const {currentUser} = useRegistration();
+  const [channels, setChannels] = useState<Amity.Channel[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (error) {
-    return (
-      <View style={styles.loader}>
-        <Text>{error?.message}</Text>
-      </View>
+  // const [options, setOptions] =
+  //   useState<Amity.RunQueryOptions<typeof queryOptions>>();
+
+  // const {nextPage, error} = options ?? {};
+
+  useEffect(() => {
+    const queryData: Amity.ChannelLiveCollection = {
+      sortBy: 'lastActivity',
+      membership: 'member',
+      limit: 15,
+    };
+
+    const sub = ChannelRepository.getChannels(
+      queryData,
+      ({data, ...metadata}) => {
+        if (!metadata.loading) {
+          setLoading(false);
+          setChannels(data);
+        }
+      },
     );
-  }
+
+    return () => {
+      sub();
+    };
+  }, []);
+
+  // if (error) {
+  //   return (
+  //     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+  //       <Text>{error}</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <SafeAreaView style={styles.root}>
@@ -47,32 +76,18 @@ export function ChatsScreen({navigation}: any) {
           <FlatList
             style={{padding: 24}}
             showsVerticalScrollIndicator={false}
-            data={chats}
+            data={channels}
             onEndReachedThreshold={0.3}
             onEndReached={() => {
-              if ((chats?.length ?? 0) >= 25 && !paginateLoading) {
-                paginate();
-              }
+              // if ((chats?.length ?? 0) >= 25 && !paginateLoading) {
+              //   paginate();
+              // }
             }}
             renderItem={({item}) => {
-              const lastMessage = item.getLastMessage();
-              const title = item.getTitle();
-              const avatar = item.getChatAvatar();
-
               return (
                 <TouchableOpacity
-                  onPress={() => navigation.push('Chat', {chat: item})}>
-                  <ChatItem
-                    seen={lastMessage?.seen ?? false}
-                    avatar={avatar}
-                    name={title}
-                    text={lastMessage?.text ?? ''}
-                    date={
-                      lastMessage?.createdAt
-                        ? new Date(lastMessage?.createdAt)
-                        : new Date()
-                    }
-                  />
+                  onPress={() => navigation.push('Chat', {channel: item})}>
+                  <ChatItem channel={item} currentUser={currentUser} />
                 </TouchableOpacity>
               );
             }}

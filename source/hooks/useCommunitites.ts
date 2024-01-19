@@ -78,7 +78,7 @@ export const useCommunities = () => {
     dispatch(getCommunitiesRequestAction());
   };
   const startFollowed = (communityUid: string) => {
-    console.log('startFollowed', communityUid);
+    // console.log('startFollowed', communityUid);
     dispatch(
       startFollowedCommunityRequestAction({
         communityUid: communityUid,
@@ -87,7 +87,7 @@ export const useCommunities = () => {
     // dispatch(getCommunityByIdRequestAction({communityUid: communityUid}));
   };
   const cancelFollowed = (communityUid: string) => {
-    console.log('cancelFollowed', communityUid);
+    // console.log('cancelFollowed', communityUid);
     dispatch(
       cancelFollowedCommunityRequestAction({communityUid: communityUid}),
     );
