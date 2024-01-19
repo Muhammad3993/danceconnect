@@ -13,7 +13,7 @@ import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {MenuItems} from './ui/MenuItems';
 import useTickets from '../../hooks/useTickets';
-import {ProdileMedia} from '../../components/prodileMedia';
+import {ProfileMedia} from '../../components/prodileMedia';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -39,7 +39,7 @@ const ProfileScreen = ({navigation}) => {
   const data = Array(20).fill(1);
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <ProdileMedia
+      <ProfileMedia
         data={data}
         header={
           <>

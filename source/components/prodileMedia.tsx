@@ -9,7 +9,7 @@ interface Props {
   data: any[];
 }
 
-export function ProdileMedia({header, data}: Props) {
+export function ProfileMedia({header, data}: Props) {
   return (
     <FlatList
       showsVerticalScrollIndicator={false}

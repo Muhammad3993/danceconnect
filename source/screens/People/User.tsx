@@ -9,7 +9,7 @@ import {Button} from '../../components/Button';
 import {userRole} from '../../utils/helpers';
 import {defaultProfile} from '../../utils/images';
 import {LoadingView} from '../../components/loadingView';
-import {ProdileMedia} from '../../components/prodileMedia';
+import {ProfileMedia} from '../../components/prodileMedia';
 import {ChannelRepository} from '@amityco/ts-sdk';
 import useRegistration from '../../hooks/useRegistration';
 
@@ -48,7 +48,7 @@ const User = ({route, navigation}) => {
       {isLoadingUser ? (
         <LoadingView />
       ) : (
-        <ProdileMedia
+        <ProfileMedia
           data={data}
           header={
             <>
