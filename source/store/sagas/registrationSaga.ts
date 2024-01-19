@@ -1,4 +1,4 @@
-import {call, put, takeLatest} from 'redux-saga/effects';
+import {call, put, select, takeLatest} from 'redux-saga/effects';
 
 import {
   AUTHORIZATION_WITH_APPLE,
@@ -28,12 +28,8 @@ import {setErrors} from '../../utils/helpers';
 import {
   clearChangePassData,
   clearUserDataInStorage,
-  getUserDataRequestAction,
 } from '../actions/profileActions';
-import {
-  clearCommunititesData,
-  getCommunitiesRequestAction,
-} from '../actions/communityActions';
+import {clearCommunititesData} from '../actions/communityActions';
 import {
   getEventsRequestAction,
   getPersonalEventsRequestAction,
@@ -48,6 +44,8 @@ import {
 // import {io} from 'socket.io-client';
 import {clearPurchasedTicketsValue} from '../actions/ticketActions';
 import {Client} from '@amityco/ts-sdk';
+import {amitySessionHandler} from './bootstrapSaga';
+import {selectUser} from '../selectors/registrationSelector';
 // const socket = io('http://localhost:3000', {autoConnect: true});
 // socket.connect();
 
@@ -95,6 +93,14 @@ function* authorizationEmail(action: any) {
     const {email, password} = action?.payload;
     const auth = yield call(loginByEmail, email, password);
     if (auth?.status === 200) {
+      yield call(
+        Client.login,
+        {
+          userId: auth?.data?.user?._id,
+          displayName: auth?.data?.user?.userName,
+        },
+        amitySessionHandler,
+      );
       yield put(
         registrationWithEmailSuccess({
           currentUser: auth?.data?.user,
@@ -125,6 +131,7 @@ function* registrationSetData(action: any) {
 
     const {uid, name, gender, country, location, role, individualStyles} =
       action?.payload;
+
     yield call(setInitialDataUser, {
       uid: uid,
       name: name,
@@ -134,7 +141,14 @@ function* registrationSetData(action: any) {
       role: role,
       individualStyles: individualStyles,
     });
+
+    const user = yield select(selectUser);
     // console.log('registrationSetData', response, action.payload);
+    yield call(
+      Client.login,
+      {userId: user.id, displayName: name},
+      amitySessionHandler,
+    );
     yield put(
       setRegistrationDataSuccessAction(
         uid,
@@ -200,6 +214,15 @@ function* authWthGoogle() {
     if (auth?.status === 200) {
       const user = auth?.data?.user;
 
+      yield call(
+        Client.login,
+        {
+          userId: auth?.data?.user?._id,
+          displayName: auth?.data?.user?.userName,
+        },
+        amitySessionHandler,
+      );
+
       yield put(
         authWithGoogleSuccess({
           currentUser: {...user, _id: user?._id},
@@ -241,6 +264,14 @@ function* authWthApple() {
     }
     if (auth?.status === 200) {
       // console.log(QBSession);
+      yield call(
+        Client.login,
+        {
+          userId: auth?.data?.user?._id,
+          displayName: auth?.data?.user?.userName,
+        },
+        amitySessionHandler,
+      );
       yield put(
         authWithGoogleSuccess({
           currentUser: {

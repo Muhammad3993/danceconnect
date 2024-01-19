@@ -42,8 +42,10 @@ export function ChatScreen({route, navigation}: Props) {
   useEffect(() => {
     SubChannelRepository.startReading(channel.channelId);
     const msgSub = MessageRepository.getMessages(
-      {subChannelId: channel.channelId, limit: 18},
+      {subChannelId: channel.channelId, limit: 18, type: 'text'},
       ({data, ...metadata}) => {
+        console.log(metadata.error?.message);
+
         if (!metadata.loading) {
           setLoading(false);
           setMessages(data as Amity.Message<'text'>[]);

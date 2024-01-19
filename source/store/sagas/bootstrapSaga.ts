@@ -11,7 +11,7 @@ import {
   appInitSuccessAction,
 } from '../actions/bootstrapAction';
 
-const amitySessionHandler: Amity.SessionHandler = {
+export const amitySessionHandler: Amity.SessionHandler = {
   sessionWillRenewAccessToken(renewal) {
     renewal.renew();
   },
@@ -38,16 +38,12 @@ function* init() {
         {userId: user?.id, displayName: user?.userName},
         amitySessionHandler,
       );
+      // Client
     }
 
     yield put(appInitSuccessAction());
 
     SplashScreen.hide();
-
-    // yield setTimeout(() => {
-    //   SplashScreen.hide();
-    // Client.startUnreadSync();
-    // }, 100);
   } catch (error) {
     yield put(appInitFailureAction());
     console.log('error init', error);

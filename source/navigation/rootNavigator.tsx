@@ -47,6 +47,7 @@ import User from '../screens/People/User';
 import {Image, TouchableOpacity, View} from 'react-native';
 import {ChatScreen} from '../screens/Chat/ChatAmity';
 import useBootsrap from '../hooks/useBootsrap';
+import {Client} from '@amityco/ts-sdk';
 
 const linking = {
   prefixes: ['https://danceconnect.online/', 'danceconnect://'],
@@ -245,6 +246,13 @@ const AppNavigator = () => {
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    if (isBootstraped)
+      Client.onSessionStateChange((state: Amity.SessionStates) =>
+        console.log(state),
+      );
+  }, [isBootstraped]);
 
   if (!isBootstraped) {
     return null;
