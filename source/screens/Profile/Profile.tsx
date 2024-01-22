@@ -2,23 +2,27 @@ import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
 import FastImage from 'react-native-fast-image';
+import {Modalize} from 'react-native-modalize';
+import {Portal} from 'react-native-portalize';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {apiUrl} from '../../api/serverRequests';
+import {Button} from '../../components/Button';
+import {ProfileMedia} from '../../components/prodileMedia';
 import {useProfile} from '../../hooks/useProfile';
 import useRegistration from '../../hooks/useRegistration';
+import useTickets from '../../hooks/useTickets';
 import colors from '../../utils/colors';
 import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../../utils/constants';
 import {defaultProfile} from '../../utils/images';
-import {Modalize} from 'react-native-modalize';
-import {Portal} from 'react-native-portalize';
+import {CreatePostModal} from './ui/CreatePostModal';
 import {MenuItems} from './ui/MenuItems';
-import useTickets from '../../hooks/useTickets';
-import {ProfileMedia} from '../../components/prodileMedia';
+import {PostRepository} from '@amityco/ts-sdk';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {userImgUrl, getUser} = useProfile();
   const menuRef = useRef<Modalize>(null);
+  const postRef = useRef<Modalize>(null);
 
   const {getPurchasedTickets} = useTickets();
   const {currentUser} = useRegistration();
@@ -35,6 +39,20 @@ const ProfileScreen = ({navigation}) => {
     getUser();
     getPurchasedTickets();
   }, []);
+
+  function createImagePost() {
+    postRef.current?.open();
+  }
+
+  function endCreatingPost() {
+    postRef.current?.close();
+    PostRepository.getPosts(
+      {targetId: currentUser.id, targetType: 'user'},
+      data => {
+        console.log(data.data);
+      },
+    );
+  }
 
   const data = Array(20).fill(1);
   return (
@@ -78,6 +96,12 @@ const ProfileScreen = ({navigation}) => {
                 </RN.TouchableOpacity>
               </RN.View>
             </RN.View>
+            <Button
+              disabled={true}
+              title="Upload Post"
+              onPress={createImagePost}
+              buttonStyle={{marginHorizontal: 0}}
+            />
           </>
         }
       />
@@ -92,6 +116,14 @@ const ProfileScreen = ({navigation}) => {
             close={() => menuRef.current?.close()}
             navigation={navigation}
           />
+        </Modalize>
+        <Modalize
+          scrollViewProps={{contentContainerStyle: {flex: 1}}}
+          modalHeight={SCREEN_HEIGHT * 0.75}
+          handlePosition="inside"
+          handleStyle={{height: 3, width: 38}}
+          ref={postRef}>
+          <CreatePostModal endCreatingPost={endCreatingPost} />
         </Modalize>
       </Portal>
     </SafeAreaView>

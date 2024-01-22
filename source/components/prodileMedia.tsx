@@ -1,11 +1,11 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {ReactNode} from 'react';
+import {StyleSheet, View} from 'react-native';
+import React from 'react';
 import {FlatList} from 'react-native-gesture-handler';
 import {SCREEN_WIDTH} from '../utils/constants';
 import colors from '../utils/colors';
 
 interface Props {
-  header: ReactNode;
+  header: React.ReactElement;
   data: any[];
 }
 
@@ -18,19 +18,7 @@ export function ProfileMedia({header, data}: Props) {
       columnWrapperStyle={{flex: 1}}
       data={data}
       contentContainerStyle={{justifyContent: 'space-between'}}
-      ListHeaderComponent={() => (
-        <>
-          {header}
-          <View style={styles.tabs}>
-            <View style={styles.tab}>
-              <Text>Инста</Text>
-            </View>
-            <View style={styles.tab}>
-              <Text>Тикток</Text>
-            </View>
-          </View>
-        </>
-      )}
+      ListHeaderComponent={header}
       renderItem={({index}) => {
         return (
           <View

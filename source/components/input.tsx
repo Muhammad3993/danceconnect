@@ -18,6 +18,7 @@ type InputProp = {
   autoComplete?: string;
   autoFocus?: boolean;
   onFocusInput?: (val: boolean) => void;
+  containerStyle?: RN.ViewStyle;
 };
 
 export const Input = ({
@@ -34,6 +35,7 @@ export const Input = ({
   autoComplete,
   autoFocus = false,
   onFocusInput,
+  containerStyle,
 }: InputProp) => {
   const [backgroundColor, setBackgroundColor] = useState(colors.lightGray);
   const [borderColor, setBorderColor] = useState(colors.gray);
@@ -129,7 +131,7 @@ export const Input = ({
     }
   };
   return (
-    <RN.View style={{marginHorizontal: 14}}>
+    <RN.View style={[{marginHorizontal: 14}, containerStyle]}>
       {/* <RN.Animated.View
       style={{
         transform: [{translateX}],

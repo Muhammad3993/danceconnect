@@ -40,12 +40,10 @@ export function ChatScreen({route, navigation}: Props) {
   const [messages, setMessages] = useState<Amity.Message<'text'>[]>([]);
 
   useEffect(() => {
-    SubChannelRepository.startReading(channel.channelId);
+    SubChannelRepository.startReading(channel.defaultSubChannelId);
     const msgSub = MessageRepository.getMessages(
-      {subChannelId: channel.channelId, limit: 18, type: 'text'},
+      {subChannelId: channel.defaultSubChannelId, limit: 18, type: 'text'},
       ({data, ...metadata}) => {
-        console.log(metadata.error?.message);
-
         if (!metadata.loading) {
           setLoading(false);
           setMessages(data as Amity.Message<'text'>[]);
@@ -61,9 +59,9 @@ export function ChatScreen({route, navigation}: Props) {
 
     return () => {
       msgSub();
-      SubChannelRepository.stopReading(channel.channelId);
+      SubChannelRepository.stopReading(channel.defaultSubChannelId);
     };
-  }, [channel.channelId]);
+  }, [channel.defaultSubChannelId]);
 
   const localMessages: IMessage[] = useMemo(() => {
     if (messages.length) {
