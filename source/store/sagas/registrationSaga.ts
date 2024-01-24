@@ -101,6 +101,8 @@ function* authorizationEmail(action: any) {
         },
         amitySessionHandler,
       );
+
+      yield call(Client.startUnreadSync);
       yield put(
         registrationWithEmailSuccess({
           currentUser: auth?.data?.user,
@@ -149,6 +151,7 @@ function* registrationSetData(action: any) {
       {userId: user.id, displayName: name},
       amitySessionHandler,
     );
+    yield call(Client.startUnreadSync);
     yield put(
       setRegistrationDataSuccessAction(
         uid,
@@ -181,6 +184,7 @@ function* logoutUser() {
     yield put(clearCommunititesData());
     yield put(choosedCityAction({currentCity: ''}));
     yield put(clearPurchasedTicketsValue());
+    yield call(Client.stopUnreadSync);
     yield call(Client.logout);
   } catch (error) {
     yield put(logoutFail(error));
@@ -222,6 +226,7 @@ function* authWthGoogle() {
         },
         amitySessionHandler,
       );
+      yield call(Client.startUnreadSync);
 
       yield put(
         authWithGoogleSuccess({
@@ -272,6 +277,8 @@ function* authWthApple() {
         },
         amitySessionHandler,
       );
+
+      yield call(Client.startUnreadSync);
       yield put(
         authWithGoogleSuccess({
           currentUser: {

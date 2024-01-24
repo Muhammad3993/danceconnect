@@ -287,7 +287,7 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.purple,
     width: 13,
     height: 13,
-    borderRadius: 5,
+    borderRadius: 50,
     zIndex: 1,
     borderColor: colors.white,
     borderWidth: 3,

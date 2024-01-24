@@ -30,6 +30,7 @@ function* init() {
 
     yield call(Client.createClient, AMITY_API_KEY, API_REGIONS.SG);
     yield call(enableCache);
+
     const user: string = yield select(selectUser);
     // Client.startUnreadSync();
 
@@ -39,6 +40,7 @@ function* init() {
         {userId: user?.id, displayName: user?.userName},
         amitySessionHandler,
       );
+      yield call(Client.startUnreadSync);
 
       // Client
     }
