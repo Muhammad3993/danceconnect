@@ -31,15 +31,12 @@ export function ChatsScreen({navigation}: any) {
       limit: 15,
     };
 
-    const sub = ChannelRepository.getChannels(
-      queryData,
-      ({data, ...metadata}) => {
-        if (!metadata.loading) {
-          setLoading(false);
-          setChannels(data);
-        }
-      },
-    );
+    const sub = ChannelRepository.getChannels(queryData, data => {
+      if (!data.loading) {
+        setLoading(false);
+        setChannels(data.data);
+      }
+    });
 
     return () => {
       sub();

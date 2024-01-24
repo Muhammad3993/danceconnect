@@ -23,7 +23,10 @@ export function ChatItem({channel, currentUser}: Props) {
 
   const usersList = channel.metadata;
   const users = usersList?.users ?? [];
+
   const anotherUser = users.find(user => user.id !== currentUser.id);
+
+  const messagePreview = channel?.messagePreview?.data?.text;
 
   return (
     <View style={styles.item}>
@@ -40,7 +43,7 @@ export function ChatItem({channel, currentUser}: Props) {
         <Text style={styles.name}>
           {anotherUser?.userName ?? channel?.displayName ?? channel?.channelId}
         </Text>
-        <Text style={styles.message}>{channel?.messagePreview}</Text>
+        <Text style={styles.message}>{messagePreview}</Text>
       </View>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Text style={styles.date}>{localTime}</Text>

@@ -17,15 +17,22 @@ import {Button} from '../../../components/Button';
 import {Input} from '../../../components/input';
 import {FileRepository, PostContentType, PostRepository} from '@amityco/ts-sdk';
 import useRegistration from '../../../hooks/useRegistration';
+import {useDispatch} from 'react-redux';
+import {
+  setNoticeMessage,
+  setNoticeVisible,
+} from '../../../store/actions/appStateActions';
 
 interface Props {
   endCreatingPost: () => void;
 }
 
 export function CreatePostModal({endCreatingPost}: Props) {
+  const dispatch = useDispatch();
   const {currentUser} = useRegistration();
   const [image, setImage] = useState<Asset | null>(null);
   const [text, setText] = useState('');
+  const [creatingPost, setCreatingPost] = useState(false);
 
   const uploadImage = async () => {
     let options: ImageLibraryOptions = {
@@ -42,6 +49,7 @@ export function CreatePostModal({endCreatingPost}: Props) {
 
   const createPost = async () => {
     try {
+      setCreatingPost(true);
       const formData = new FormData();
 
       const imageUri = image!.uri ?? '';
@@ -56,6 +64,7 @@ export function CreatePostModal({endCreatingPost}: Props) {
       });
 
       const {data} = await FileRepository.uploadImage(formData);
+      console.log(data);
 
       const newPost = {
         tags: ['post'],
@@ -69,6 +78,8 @@ export function CreatePostModal({endCreatingPost}: Props) {
       console.log(post);
       endCreatingPost();
     } catch (err) {
+      dispatch(setNoticeMessage({errorMessage: err?.message}));
+      dispatch(setNoticeVisible({isVisible: true}));
       console.log(err);
     }
   };
@@ -95,9 +106,10 @@ export function CreatePostModal({endCreatingPost}: Props) {
       />
 
       <Button
+        isLoading={creatingPost}
         disabled={image !== null}
         title="Upload"
-        onPress={endCreatingPost}
+        onPress={createPost}
         buttonStyle={{marginHorizontal: 0}}
       />
     </View>

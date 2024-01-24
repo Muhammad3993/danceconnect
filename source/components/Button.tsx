@@ -50,23 +50,25 @@ export const Button = ({
           />
         </RN.View>
       )}
-      <RN.Text
-        style={[
-          styles.title,
-          {
-            color: buttonStyle?.color ?? colors.white,
-            fontSize: buttonStyle?.fontSize ?? 16,
-          },
-        ]}>
-        {title}
-      </RN.Text>
-      {/* {isLoading && (
+
+      {isLoading ? (
         <RN.ActivityIndicator
           size={'small'}
           color={buttonStyle?.color ?? colors.white}
           style={styles.indicator}
         />
-      )} */}
+      ) : (
+        <RN.Text
+          style={[
+            styles.title,
+            {
+              color: buttonStyle?.color ?? colors.white,
+              fontSize: buttonStyle?.fontSize ?? 16,
+            },
+          ]}>
+          {title}
+        </RN.Text>
+      )}
     </RN.TouchableOpacity>
   );
 };
@@ -79,7 +81,7 @@ const styles = RN.StyleSheet.create({
     borderRadius: 100,
   },
   indicator: {
-    marginLeft: 14,
+    // marginLeft: 14,
   },
   title: {
     color: colors.white,
