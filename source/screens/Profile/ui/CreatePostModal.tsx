@@ -68,7 +68,7 @@ export function CreatePostModal({endCreatingPost}: Props) {
 
       const newPost = {
         tags: ['post'],
-        data: {text: 'hello!'},
+        data: {text},
         attachments: [{type: PostContentType.IMAGE, fileId: data[0].fileId}],
         targetType: 'user',
         targetId: currentUser.id,
