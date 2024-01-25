@@ -371,12 +371,8 @@ PODS:
     - glog
   - react-native-image-picker (5.6.1):
     - React-Core
-  - react-native-safe-area-context (4.6.3):
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
+  - react-native-safe-area-context (4.8.2):
     - React-Core
-    - ReactCommon/turbomodule/core
   - react-native-splash-screen (3.3.0):
     - React-Core
   - React-perflogger (0.70.6)
@@ -511,7 +507,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.22.0):
+  - RNScreens (3.29.0):
     - React-Core
     - React-RCTImage
   - SDWebImage (5.11.1):
@@ -796,7 +792,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 60769e5a0a6d4b32294a2456077f59d0266f9a8b
   React-logger: 1623c216abaa88974afce404dc8f479406bbc3a0
   react-native-image-picker: 5fcac5a5ffcb3737837f0617d43fd767249290de
-  react-native-safe-area-context: 36cc67648134e89465663b8172336a19eeda493d
+  react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   React-perflogger: 8c79399b0500a30ee8152d0f9f11beae7fc36595
   React-RCTActionSheet: 7316773acabb374642b926c19aef1c115df5c466
@@ -824,7 +820,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 6e4dc6b7ab3a385386d4e36228bd065e5a611394
   RNGoogleSignin: c15bdaa7e8a9e190b6169d9c96a4e8380a740f22
   RNReanimated: 2a91e85fcd343f8af3c58d3425b99fdd285590a5
-  RNScreens: 68fd1060f57dd1023880bf4c05d74784b5392789
+  RNScreens: fa9b582d85ae5d62c91c66003b5278458fed7aaa
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   Stripe: 15fad81ffb8d553d77ff504a6d50d47b9028bed0

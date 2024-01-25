@@ -66,7 +66,7 @@ const styles = RN.StyleSheet.create({
     width: 20,
     position: 'absolute',
     left: 20,
-    top: 16,
+    top: 12,
     tintColor: '#BDBDBD',
   },
   inputContainer: {
@@ -74,7 +74,7 @@ const styles = RN.StyleSheet.create({
     borderColor: colors.gray,
     backgroundColor: colors.lightGray,
     paddingLeft: isAndroid ? 10 : 52,
-    paddingVertical: isAndroid ? 10 : 18,
+    paddingVertical: isAndroid ? 10 : 14,
     color: colors.textPrimary,
     borderRadius: 8,
     tintColor: colors.gray,

@@ -1,10 +1,10 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import usePeople from '../../hooks/usePeople';
 import FindCity from '../../components/findCity copy';
 import {Portal} from 'react-native-portalize';
 import useAppStateHook from '../../hooks/useAppState';
-import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
+import {isAndroid} from '../../utils/constants';
 import Search from '../../components/search';
 import {useTranslation} from 'react-i18next';
 import colors from '../../utils/colors';
@@ -157,12 +157,12 @@ const People = () => {
           <RN.ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{paddingTop: 2, zIndex: 2}}
+            style={{paddingTop: 6, zIndex: 2}}
             scrollEnabled={item.individualStyles.length > 3}>
             {item.individualStyles?.map((tag: string, idx: number) => {
               return (
                 <RN.View style={styles.tagItem} key={idx}>
-                  <RN.Text style={{color: colors.white, fontSize: 12}}>
+                  <RN.Text style={{color: colors.purple, fontSize: 12}}>
                     {tag}
                   </RN.Text>
                 </RN.View>
@@ -170,21 +170,20 @@ const People = () => {
             })}
             <RN.View style={{paddingRight: 44}} />
           </RN.ScrollView>
-          <RN.View style={styles.bottomLine} />
         </RN.View>
       </TouchableOpacity>
     );
   };
   const renderEmpty = () => {
-    if (isLoadingUsers) {
-      return (
-        <>
-          {lengthEmptyUsers.map(() => {
-            return <SkeletonUserCard />;
-          })}
-        </>
-      );
-    }
+    // if (isLoadingUsers) {
+    //   return (
+    //     <>
+    //       {lengthEmptyUsers.map(() => {
+    //         return <SkeletonUserCard />;
+    //       })}
+    //     </>
+    //   );
+    // }
     return null;
   };
   const refreshControl = () => {
@@ -252,12 +251,6 @@ const styles = RN.StyleSheet.create({
     marginHorizontal: 16,
     paddingBottom: 6,
   },
-  bottomLine: {
-    borderBottomColor: colors.darkGray,
-    borderBottomWidth: 0.5,
-    width: SCREEN_WIDTH - 120,
-    paddingTop: 6,
-  },
   userName: {
     fontSize: 16,
     fontWeight: '600',
@@ -271,16 +264,18 @@ const styles = RN.StyleSheet.create({
   },
   userCountry: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '400',
     lineHeight: 18.4,
     color: colors.darkGray,
   },
   tagItem: {
-    backgroundColor: colors.purple,
+    // backgroundColor: colors.purple,
     paddingVertical: 2.5,
     paddingHorizontal: 5,
     borderRadius: 4,
     marginRight: 4,
+    borderWidth: 0.5,
+    borderColor: colors.darkGray,
   },
   userLocationWrapper: {
     flexDirection: 'row',

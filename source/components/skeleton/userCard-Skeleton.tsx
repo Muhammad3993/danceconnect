@@ -34,7 +34,7 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'space-between',
   },
   bottomLine: {
-    borderBottomWidth: 0.5,
+    // borderBottomWidth: 0.5,
     width: SCREEN_WIDTH - 120,
     paddingTop: 6,
   },

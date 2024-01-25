@@ -35,7 +35,10 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
           isFocused,
         );
         return (
-          <RN.TouchableOpacity key={index} onPress={onPressTab}>
+          <RN.TouchableOpacity
+            key={index}
+            onPress={onPressTab}
+            style={{flex: 2}}>
             <RN.View style={{alignSelf: 'center'}}>
               <RN.Image
                 resizeMode={'contain'}
@@ -50,17 +53,19 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
                 ]}
               />
             </RN.View>
-            <RN.Text
-              style={[
-                {
-                  color: isFocused
-                    ? tabBarActiveTintColor
-                    : tabBarInactiveTintColor,
-                },
-                styles.itemName,
-              ]}>
-              {t(route.name.toLowerCase() + '_tab')}
-            </RN.Text>
+            <RN.View style={{alignSelf: 'center'}}>
+              <RN.Text
+                style={[
+                  {
+                    color: isFocused
+                      ? tabBarActiveTintColor
+                      : tabBarInactiveTintColor,
+                  },
+                  styles.itemName,
+                ]}>
+                {t(route.name.toLowerCase() + '_tab')}
+              </RN.Text>
+            </RN.View>
           </RN.TouchableOpacity>
         );
       })}
@@ -73,14 +78,14 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    paddingHorizontal: 14,
+    // paddingHorizontal: 16,
     borderTopColor: colors.gray,
     borderTopWidth: 1,
     paddingVertical: 8,
   },
   icon: {
-    height: 20,
-    width: 20,
+    height: 24,
+    width: 24,
   },
   itemName: {
     fontSize: 12,
