@@ -4,8 +4,12 @@ import React from 'react';
 
 export const navigationRef = createNavigationContainerRef();
 
-export type AuthStackNavigationParamList = {
+export type MainStackNavigationParamList = {
   [x: string]: any;
+  MAIN: {
+    name: 'HomeScreen';
+    params: null;
+  };
   AUTH: {
     name: 'Authorization';
     params: null;
@@ -23,35 +27,12 @@ export type AuthStackNavigationParamList = {
     params: null;
   };
 };
-export type MainStackNavigationParamList = {
-  [x: string]: any;
-  MAIN: {
-    name: 'HomeScreen';
-    params: null;
-  };
-};
 
 export type MainNavigationPop = StackScreenProps<
   MainStackNavigationParamList,
   'MAIN'
 >;
 
-export type AuthNavigationProp = StackScreenProps<
-  AuthStackNavigationParamList,
-  'AUTH'
->;
-export type RegNavigationProp = StackScreenProps<
-  AuthStackNavigationParamList,
-  'REGISTRATION'
->;
-export type WelcomeNavigationProp = StackScreenProps<
-  AuthStackNavigationParamList,
-  'WELCOME'
->;
-export type OnboardingNavigationProp = StackScreenProps<
-  AuthStackNavigationParamList,
-  'ONBOARDING'
->;
 export type RootStackNavigationParamList = {
   AUTH_STACK: React.ReactElement;
   MAIN_STACK: React.ReactElement;

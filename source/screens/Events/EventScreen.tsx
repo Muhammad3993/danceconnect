@@ -17,6 +17,7 @@ import useTickets from '../../hooks/useTickets';
 import FastImage from 'react-native-fast-image';
 import {Animated} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {defaultProfile} from '../../utils/images';
 
 const EventScreen = () => {
   const routeProps = useRoute();
@@ -412,12 +413,12 @@ const EventScreen = () => {
                     cache: FastImage.cacheControl.immutable,
                     priority: FastImage.priority.high,
                   }}
-                  defaultSource={require('../../assets/images/defaultuser.png')}
+                  defaultSource={defaultProfile}
                   style={styles.attendPeopleImg}
                 />
               ) : (
                 <RN.Image
-                  source={require('../../assets/images/defaultuser.png')}
+                  source={defaultProfile}
                   style={styles.attendPeopleImg}
                 />
               )}
@@ -534,14 +535,11 @@ const EventScreen = () => {
                     cache: FastImage.cacheControl.immutable,
                     priority: FastImage.priority.high,
                   }}
-                  defaultSource={require('../../assets/images/defaultuser.png')}
+                  defaultSource={defaultProfile}
                   style={styles.organizerImg}
                 />
               ) : (
-                <RN.Image
-                  source={require('../../assets/images/defaultuser.png')}
-                  style={styles.organizerImg}
-                />
+                <RN.Image source={defaultProfile} style={styles.organizerImg} />
               )}
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>

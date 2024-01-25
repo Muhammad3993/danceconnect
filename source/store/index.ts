@@ -20,6 +20,7 @@ import ticketsReducer from './reducers/ticketsReducer';
 import ticketsINitialState from './initialState/ticketsINitialState';
 import peopleReducer from './reducers/peopleReducer';
 import peopleInitialState from './initialState/peopleInitialState';
+import bootstrap from './reducers/bootstrapReducer';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
@@ -32,6 +33,7 @@ const appReducer = combineReducers({
   appState: appStateReducer,
   tickets: ticketsReducer,
   people: peopleReducer,
+  bootstrap: bootstrap,
 });
 const rootState = {
   registration: registrationInitialState,
@@ -41,18 +43,20 @@ const rootState = {
   appState: appStateInitialState,
   tickets: ticketsINitialState,
   people: peopleInitialState,
+  bootstrap: bootstrap,
 };
 
 const rootPersistConfig = {
   key: 'keyOfStore',
   storage: AsyncStorage,
   timeout: 3600000,
-  // blacklist: ['communities'],
+  blacklist: ['bootstrap'],
 };
+
 let middleware = applyMiddleware(sagaMiddleware, saveAuthToken);
-if (__DEV__) {
-  middleware = applyMiddleware(sagaMiddleware, loggerMiddleware, saveAuthToken);
-}
+// if (__DEV__) {
+//   middleware = applyMiddleware(sagaMiddleware, loggerMiddleware, saveAuthToken);
+// }
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);
 const store = createStore(persistedReducer, rootState, middleware);
 sagaMiddleware.run(rootSaga);

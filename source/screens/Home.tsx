@@ -1,24 +1,20 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import * as RN from 'react-native';
-import {useProfile} from '../hooks/useProfile';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import CreateCommunityButton from '../components/createCommunityBtn';
-import {isAndroid} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import EventCard from '../components/eventCard';
 import EmptyContainer from '../components/emptyCommunitiesMain';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
-import VerticalCard from '../components/verticalEventCard';
 import useAppStateHook from '../hooks/useAppState';
-import {apiUrl} from '../api/serverRequests';
 import useTickets from '../hooks/useTickets';
-import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
+import {isAndroid} from '../utils/constants';
+import {Client} from '@amityco/ts-sdk';
 
 const HomeScreen = () => {
-  const {userImgUrl} = useProfile();
   const routeProps = useRoute();
   const isFocused = useIsFocused();
   const {logout} = useRegistration();
@@ -27,12 +23,13 @@ const HomeScreen = () => {
     useAppStateHook();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const {getManagingEvents, personalEvents, getPersonalEvents} = useEvents();
+  const {personalEvents, getPersonalEvents} = useEvents();
   const [events, setEvents] = useState<string[]>([]);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const {getPurchasedTickets} = useTickets();
 
   const {t} = useTranslation();
-  const [maybeEvents, setMaybeEvents] = useState([]); //TODO verticalCard
+
   useEffect(() => {
     setTabs(['All', ...eventTypes]);
   }, [eventTypes, eventTypes.length]);
@@ -57,11 +54,6 @@ const HomeScreen = () => {
       setEvents(personalEvents);
     }
   }, [personalEvents, personalEvents?.length]);
-  const goToCommunities = () => navigation.navigate('Communities');
-  useEffect(() => {
-    onPressTab('All');
-    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-  }, []);
 
   const onPressTab = useCallback(
     (value: string) => {
@@ -81,6 +73,16 @@ const HomeScreen = () => {
     },
     [personalEvents],
   );
+
+  useEffect(() => {
+    const unreadSub = Client.getUserUnread(({data}) => {
+      setUnreadMessages(data.unreadCount);
+    });
+    return () => {
+      unreadSub();
+    };
+  }, []);
+
   useEffect(() => {
     if (isFocused) {
       onPressTab('All');
@@ -90,23 +92,7 @@ const HomeScreen = () => {
     }
   }, [isFocused, currentTab, onPressTab]);
 
-  const renderHeader = () => {
-    return (
-      <RN.View style={styles.headerContainer}>
-        <RN.Image
-          source={require('../assets/images/logoauth.png')}
-          style={styles.logoImg}
-        />
-
-        <RN.TouchableOpacity
-          style={{justifyContent: 'center'}}
-          activeOpacity={0.7}
-          onPress={() => navigation.navigate('Chats')}>
-          <RN.Image source={{uri: 'chat'}} style={{height: 28, width: 28}} />
-        </RN.TouchableOpacity>
-      </RN.View>
-    );
-  };
+  const goToCommunities = () => navigation.navigate('Communities');
 
   const renderTab = ({item}: any) => {
     return (
@@ -124,9 +110,7 @@ const HomeScreen = () => {
         <RN.Text
           style={[
             styles.itemTabText,
-            {
-              color: currentTab === item ? colors.purple : colors.darkGray,
-            },
+            {color: currentTab === item ? colors.purple : colors.darkGray},
           ]}>
           {item}
         </RN.Text>
@@ -139,7 +123,20 @@ const HomeScreen = () => {
       showsVerticalScrollIndicator={false}
       style={{flex: 1, backgroundColor: '#FAFAFA'}}>
       <RN.View style={styles.container}>
-        {renderHeader()}
+        <RN.View style={styles.headerContainer}>
+          <RN.Image
+            source={require('../assets/images/logoauth.png')}
+            style={styles.logoImg}
+          />
+
+          <RN.TouchableOpacity
+            style={{justifyContent: 'center'}}
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate('Chats')}>
+            {unreadMessages > 0 && <RN.View style={styles.unreadDot} />}
+            <RN.Image source={{uri: 'chat'}} style={{height: 28, width: 28}} />
+          </RN.TouchableOpacity>
+        </RN.View>
         {/* {maybeEvents?.length > 0 && (
           <RN.View style={styles.interestedWrapper}>
             <RN.Text style={styles.interestedText}>
@@ -152,11 +149,7 @@ const HomeScreen = () => {
             </ScrollView>
           </RN.View>
         )} */}
-        <RN.View
-          style={{
-            padding: 16,
-            backgroundColor: colors.white,
-          }}>
+        <RN.View style={{padding: 16, backgroundColor: colors.white}}>
           <CreateCommunityButton />
         </RN.View>
         <RN.Text style={styles.upcomingEventsTitle}>
@@ -286,6 +279,18 @@ const styles = RN.StyleSheet.create({
     paddingHorizontal: 4,
     fontWeight: '500',
     textAlign: 'center',
+  },
+  unreadDot: {
+    position: 'absolute',
+    top: -2,
+    right: -6,
+    backgroundColor: colors.purple,
+    width: 13,
+    height: 13,
+    borderRadius: 50,
+    zIndex: 1,
+    borderColor: colors.white,
+    borderWidth: 3,
   },
 });
 

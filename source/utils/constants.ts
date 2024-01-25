@@ -6,11 +6,11 @@ export const SCREEN_WIDTH = Dimensions.get('screen').width;
 export const isAndroid = Platform.OS === 'android';
 export const GOOGLE_API_KEY = 'AIzaSyApGEMY5iKsDU1wayWSI2nCJGFafjPM39k';
 // export const STRIPE_PUBLIC_KEY =
-  // 'pk_live_51NVTpaEh2JOoqoGgPhEEiMPZMcc06oDvCsCXq3JRnFJXJ9ZB7URRyGng3RJUVOS4onccJk2kCJPo7Z00NRxjmIva00jp6cdm0j';
+// 'pk_live_51NVTpaEh2JOoqoGgPhEEiMPZMcc06oDvCsCXq3JRnFJXJ9ZB7URRyGng3RJUVOS4onccJk2kCJPo7Z00NRxjmIva00jp6cdm0j';
 // export const STRIPE_PUBLIC_KEY =
-  // 'pk_test_51NBLSZDkcDPkhRfmfonNQvBiC4XLO3cOzJx4SIeK7xdmNMvLWKo67bfPf0sNrxLVS2kyR4BkHevXb5ruzbhVMR1h00WXPfuCKx';
-  // export const STRIPE_PUBLIC_KEY =
-  // 'pk_test_51NVTpaEh2JOoqoGgjRjnqLG1LFWbO3Aii7TLog8OdH07T7RFU754ak4oMgWGzeA8VCEaSavJKZGALFOqvETyZVPP00gsdcEZiA';
+// 'pk_test_51NBLSZDkcDPkhRfmfonNQvBiC4XLO3cOzJx4SIeK7xdmNMvLWKo67bfPf0sNrxLVS2kyR4BkHevXb5ruzbhVMR1h00WXPfuCKx';
+// export const STRIPE_PUBLIC_KEY =
+// 'pk_test_51NVTpaEh2JOoqoGgjRjnqLG1LFWbO3Aii7TLog8OdH07T7RFU754ak4oMgWGzeA8VCEaSavJKZGALFOqvETyZVPP00gsdcEZiA';
 export const MERCHANT_ID = 'merchant.incode.danceconnect';
 const {StatusBarManager} = NativeModules;
 export const genders = [
@@ -161,3 +161,12 @@ export const countries = [
     availableSearchString: false,
   },
 ];
+
+export const AMITY_API_KEY = 'b0e9b90b3a88a4361d36df1b540d1f8bd8088bb3e934682e';
+
+// export const MINCHAT_ID = 'CLRADPF8800DF3LFPHEWS7K1F';
+// export const QB_APP_ID = '102490';
+// export const QB_AUTH_KEY = 'ak_BF7ujFZ5xpU7BUz';
+// export const QB_AUTH_SECRET = 'as_6kn9HKEpW2yJG-9';
+// export const QB_ACCOUNT_KEY = 'ack_7Wnzbn3NKuyBDdpXG1gA';
+// export const QB_API_KEY = 'ne_FR1wa46l6PhU7hf_nvzELtsddnmy7AYAudruE20E';

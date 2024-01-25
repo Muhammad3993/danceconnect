@@ -64,6 +64,7 @@ const useAppStateHook = () => {
   const getTicketPricePercent = () => {
     dispatch(getTicketPercentAction());
   };
+
   const onChoosedCity = (city: object) => {
     let cityStr = '';
     if (city?.structured_formatting) {

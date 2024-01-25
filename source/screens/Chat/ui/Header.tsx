@@ -1,15 +1,35 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {ReactNode} from 'react';
 import colors from '../../../utils/colors';
+import {NavigationProp} from '@react-navigation/native';
 
-export function Header() {
+interface Props {
+  title: string;
+  navigation: NavigationProp<any>;
+  rightIcon: ReactNode;
+  withLine?: boolean;
+}
+
+export function Header({
+  title,
+  navigation,
+  rightIcon,
+  withLine = false,
+}: Props) {
   return (
-    <View style={styles.header}>
-      <Text style={styles.headerTitle}>Messages</Text>
-      <Image
-        source={{uri: 'more'}}
-        style={{width: 28, height: 28, tintColor: colors.black}}
-      />
+    <View
+      style={[
+        styles.header,
+        withLine && {borderBottomColor: colors.gray200, borderBottomWidth: 1},
+      ]}>
+      <TouchableOpacity onPress={navigation.goBack}>
+        <View style={styles.headerLeft}>
+          <Image source={{uri: 'backicon'}} style={styles.backIcon} />
+          <Text style={styles.headerTitle}>{title}</Text>
+        </View>
+      </TouchableOpacity>
+
+      {rightIcon}
     </View>
   );
 }
@@ -17,13 +37,18 @@ export function Header() {
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingBottom: 5,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    marginBottom: 24,
   },
   headerTitle: {
     fontFamily: 'Mulish-Bold',
     fontSize: 20,
+    marginLeft: 16,
+  },
+  headerLeft: {flexDirection: 'row', alignItems: 'center'},
+  backIcon: {
+    height: 20,
+    width: 24,
   },
 });

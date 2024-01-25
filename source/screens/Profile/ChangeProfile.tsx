@@ -10,6 +10,7 @@ import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {apiUrl} from '../../api/serverRequests';
 import {useTranslation} from 'react-i18next';
+import {defaultProfile} from '../../utils/images';
 
 const ChangeProfile = () => {
   const navigation = useNavigation();
@@ -76,7 +77,7 @@ const ChangeProfile = () => {
                     ? 'data:image/png;base64,' + userImg?.base64
                     : apiUrl + userImg,
                 }
-              : require('../../assets/images/defaultuser.png')
+              : defaultProfile
           }
           style={styles.userImage}
         />

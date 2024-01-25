@@ -1,4 +1,6 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
+import {getConstants, getPercentage} from '../../api/serverRequests';
+import {APP_STATE} from '../actionTypes/appStateActionTypes';
 import {
   setCountriesAction,
   setDanceStylesAction,
@@ -7,8 +9,6 @@ import {
   setStripeKeyAction,
   setTicketPercentAction,
 } from '../actions/appStateActions';
-import {APP_STATE} from '../actionTypes/appStateActionTypes';
-import {getConstants, getPercentage} from '../../api/serverRequests';
 
 function* getDanceStylesRequest() {
   try {
@@ -69,6 +69,7 @@ function* getPricePercentRequest() {
     console.log('error getPricePercentRequest', error);
   }
 }
+
 // getPercentage
 function* appStateSaga() {
   yield takeLatest(APP_STATE.GET_DANCE_STYLES, getDanceStylesRequest);

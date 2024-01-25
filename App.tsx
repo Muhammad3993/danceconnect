@@ -1,49 +1,36 @@
-import React, {useEffect} from 'react';
-import {Linking, LogBox, StatusBar, StyleSheet} from 'react-native';
-import AppNavigator from './source/navigation/rootNavigator';
-import SplashScreen from 'react-native-splash-screen';
-import {initializeFB} from './source/api/authSocial';
+import React from 'react';
+import {I18nextProvider} from 'react-i18next';
+import {StatusBar, StyleSheet} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {Provider as ReduxProvider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
-import store, {persistor} from './source/store';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {isAndroid} from './source/utils/constants';
-import FullLoading from './source/components/fullLoading';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Notice} from './source/components/errorNotice';
-import {I18nextProvider} from 'react-i18next';
+import FullLoading from './source/components/fullLoading';
 import i18n from './source/i18n/i118n';
+import AppNavigator from './source/navigation/rootNavigator';
+import store, {persistor} from './source/store';
+import {isAndroid} from './source/utils/constants';
 
 const App = () => {
-  useEffect(() => {
-    SplashScreen.hide();
-    initializeFB();
-    GoogleSignin.configure({
-      scopes: ['email'],
-      webClientId:
-        '510785169210-lf70g9qu4i2htf64g20emmqs2elosoal.apps.googleusercontent.com',
-      offlineAccess: true,
-    });
-  }, []);
-  LogBox.ignoreAllLogs();
   const statusBarContent = isAndroid ? 'light-content' : 'dark-content';
-  useEffect(() => {
-    // handles deep link when app is already open
-    Linking.addEventListener('url', evt => {
-      console.log(evt.url);
-    });
 
-    // handles deep link when app is not already open
-    Linking.getInitialURL()
-      .then(url => console.log('Initial URL:', url))
-      .catch(console.warn);
+  // useEffect(() => {
+  //   // handles deep link when app is already open
+  //   Linking.addEventListener('url', evt => {
+  //     console.log(evt.url);
+  //   });
 
-    return () => {
-      // clears listener when component unmounts
-      Linking.removeAllListeners('url');
-    };
-  }, []);
+  //   // handles deep link when app is not already open
+  //   Linking.getInitialURL()
+  //     .then(url => console.log('Initial URL:', url))
+  //     .catch(console.warn);
+
+  //   return () => {
+  //     // clears listener when component unmounts
+  //     Linking.removeAllListeners('url');
+  //   };
+  // }, []);
   return (
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaView style={styles.container}>
@@ -51,9 +38,9 @@ const App = () => {
           <I18nextProvider i18n={i18n} defaultNS={'translation'}>
             <PersistGate loading={null} persistor={persistor}>
               <StatusBar barStyle={statusBarContent} />
+              <AppNavigator />
               <Notice />
               <FullLoading />
-              <AppNavigator />
             </PersistGate>
           </I18nextProvider>
         </ReduxProvider>

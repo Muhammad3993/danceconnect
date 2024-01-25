@@ -83,6 +83,11 @@ const styles = RN.StyleSheet.create({
     borderTopWidth: 1,
     paddingVertical: 8,
   },
+  btn: {
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   icon: {
     height: 24,
     width: 24,
