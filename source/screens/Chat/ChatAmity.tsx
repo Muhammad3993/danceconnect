@@ -133,7 +133,7 @@ export function ChatScreen({route, navigation}: Props) {
               showsVerticalScrollIndicator: false,
             }}
             isLoadingEarlier={loadingMore}
-            placeholder="Messsage"
+            placeholder="Message"
             onLoadEarlier={onNextPage.current}
             messages={localMessages}
             onSend={sendMessage}
@@ -152,7 +152,7 @@ export function ChatScreen({route, navigation}: Props) {
                   renderSend={p => (
                     <Send {...p} containerStyle={styles.sendButton}>
                       <Image
-                        source={{uri: 'edit'}}
+                        source={{uri: 'airplane'}}
                         style={{width: 20, height: 20}}
                       />
                     </Send>
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     borderTopColor: colors.gray200,
     backgroundColor: colors.white,
     paddingHorizontal: 24,
-    paddingVertical: 8,
+    paddingVertical: 6,
   },
   left: {
     flexDirection: 'row',
@@ -270,6 +270,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 8,
     minHeight: 44,
+    borderWidth: 1,
+    borderColor: colors.gray,
   },
   inputInner: {
     flex: 1,
@@ -279,8 +281,9 @@ const styles = StyleSheet.create({
     maxHeight: 120,
   },
   sendButton: {
-    width: 44,
-    height: 44,
+    // width: 44,
+    // height: 44,
+    padding: 12,
     backgroundColor: colors.orange,
     borderRadius: 8,
     alignItems: 'center',

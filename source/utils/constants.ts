@@ -162,7 +162,7 @@ export const countries = [
   },
 ];
 
-export const AMITY_API_KEY = 'b0e9b90b3a88a4361d36df1b540d1f8bd8088bb3e934682e';
+export const AMITY_API_KEY = 'b0e9ba5b3a89a1304f368a4d070f45d9d05a84e6bc336c2f';
 
 // export const MINCHAT_ID = 'CLRADPF8800DF3LFPHEWS7K1F';
 // export const QB_APP_ID = '102490';

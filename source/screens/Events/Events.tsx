@@ -16,6 +16,7 @@ import {Portal} from 'react-native-portalize';
 import FindCity from '../../components/findCity copy';
 import {useTranslation} from 'react-i18next';
 import i18n from '../../i18n/i118n';
+import { FlatList } from 'react-native-gesture-handler';
 
 // const TABS = ['Upcoming', 'Attending', 'Managing', 'Passed'];
 
@@ -162,10 +163,11 @@ const EventsScreen = () => {
   }, [createdEvent]);
 
   const renderHeader = () => {
-    const renderTab = ({item}: any) => {
+    const renderTab = ({item, index}: any) => {
       return (
         <RN.TouchableOpacity
           onPress={() => onPressTab(item)}
+          key={index}
           style={[
             styles.itemTabContainer,
             {
@@ -217,7 +219,7 @@ const EventsScreen = () => {
           />
         </RN.View>
         <RN.View style={styles.tabsWrapper}>
-          <RN.FlatList
+          <FlatList
             data={tabs}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}
@@ -287,10 +289,7 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     paddingTop: isAndroid ? 0 : 40,
-    // paddingHorizontal: 16,
-  },
-  nameContainer: {
-    flexDirection: 'row',
+    paddingHorizontal: 12,
   },
   userLocationWrapper: {
     flexDirection: 'row',
@@ -309,16 +308,6 @@ const styles = RN.StyleSheet.create({
     fontWeight: '600',
     color: colors.textPrimary,
   },
-  name: {
-    fontSize: 24,
-    lineHeight: 28.8,
-    fontWeight: '700',
-    fontFamily: 'Mulish-Regular',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 16,
-  },
   tabsWrapper: {
     flexDirection: 'row',
     borderBottomWidth: 1,
@@ -335,9 +324,9 @@ const styles = RN.StyleSheet.create({
   itemTabText: {
     fontSize: 16,
     lineHeight: 25.2,
-    // letterSpacing: 0.2,
+    letterSpacing: 0.2,
     paddingHorizontal: 4,
-    fontWeight: '500',
+    fontWeight: '600',
     textAlign: 'center',
   },
   emptyContainer: {
@@ -360,32 +349,6 @@ const styles = RN.StyleSheet.create({
     fontFamily: 'Mulish-Regular',
     textAlign: 'center',
     paddingVertical: 16,
-  },
-  filterWrapper: {
-    paddingTop: 14,
-    paddingHorizontal: isAndroid ? 0 : 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  eventsLength: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    lineHeight: 22.4,
-    fontWeight: '600',
-  },
-  filterBtn: {
-    backgroundColor: '#F5F5F5',
-    padding: 8,
-    borderRadius: 100,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  filterText: {
-    fontSize: 16,
-    lineHeight: 22.4,
-    color: colors.darkGray,
-    fontWeight: '500',
   },
 });
 

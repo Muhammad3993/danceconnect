@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   headerLeft: {flexDirection: 'row', alignItems: 'center'},
   backIcon: {
-    height: 20,
-    width: 24,
+    height: 16,
+    width: 20,
   },
 });

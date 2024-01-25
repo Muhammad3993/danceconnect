@@ -519,8 +519,10 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = danceConnect/danceConnect.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = NNKFJP8QCK;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NNKFJP8QCK;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NNKFJP8QCK;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = danceConnect/Info.plist;
@@ -540,6 +542,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.incode.danceconnect;
 				PRODUCT_NAME = danceConnect;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "InCode Provisioning Profile";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "javoxir dance connect distribution";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -561,7 +564,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NNKFJP8QCK;
 				INFOPLIST_FILE = danceConnect/Info.plist;

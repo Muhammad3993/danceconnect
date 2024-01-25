@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -7,7 +7,6 @@ import {Portal} from 'react-native-portalize';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {apiUrl} from '../../api/serverRequests';
 import {Button} from '../../components/Button';
-import {ProfileMedia} from '../../components/prodileMedia';
 import {useProfile} from '../../hooks/useProfile';
 import useRegistration from '../../hooks/useRegistration';
 import useTickets from '../../hooks/useTickets';
@@ -17,15 +16,30 @@ import {defaultProfile} from '../../utils/images';
 import {CreatePostModal} from './ui/CreatePostModal';
 import {MenuItems} from './ui/MenuItems';
 import {PostRepository} from '@amityco/ts-sdk';
+import {PostCard} from './ui/PostCard';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {userImgUrl, getUser} = useProfile();
+  const [posts, setPosts] = useState([]);
   const menuRef = useRef<Modalize>(null);
   const postRef = useRef<Modalize>(null);
 
   const {getPurchasedTickets} = useTickets();
   const {currentUser} = useRegistration();
+
+  useEffect(() => {
+    const sub = PostRepository.getPosts(
+      {targetId: currentUser?.id, targetType: 'user'},
+      data => {
+        setPosts(data.data as Amity.Post[]);
+      },
+    );
+
+    return () => {
+      sub();
+    };
+  }, [currentUser?.id]);
 
   const onPressChangeProfile = () => {
     navigation.navigate('ChangeProfile');
@@ -46,20 +60,19 @@ const ProfileScreen = ({navigation}) => {
 
   function endCreatingPost() {
     postRef.current?.close();
-    PostRepository.getPosts(
-      {targetId: currentUser.id, targetType: 'user'},
-      data => {
-        console.log(data.data);
-      },
-    );
   }
 
-  const data = Array(20).fill(1);
+  // const data = Array(20).fill(1);
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <ProfileMedia
-        data={data}
-        header={
+      <RN.FlatList
+        showsVerticalScrollIndicator={false}
+        style={{flex: 1, paddingHorizontal: 24}}
+        numColumns={3}
+        columnWrapperStyle={{flex: 1}}
+        data={posts}
+        contentContainerStyle={{justifyContent: 'space-between'}}
+        ListHeaderComponent={
           <>
             <RN.View style={styles.header}>
               <RN.TouchableOpacity onPress={onPressMenu}>
@@ -104,6 +117,11 @@ const ProfileScreen = ({navigation}) => {
             />
           </>
         }
+        renderItem={({item}) => {
+          return <PostCard post={item} />;
+        }}
+        horizontal={false}
+        keyExtractor={(_, index) => index.toString()}
       />
 
       <Portal>

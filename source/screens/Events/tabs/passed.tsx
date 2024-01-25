@@ -4,7 +4,6 @@ import useEvents from '../../../hooks/useEvents';
 import sortBy from 'lodash.sortby';
 import EventCard from '../../../components/eventCard';
 import colors from '../../../utils/colors';
-import {SCREEN_HEIGHT, isAndroid} from '../../../utils/constants';
 import FiltersBottomForEvents from '../../../components/bottomFiltersEvents';
 import Moment from 'moment';
 import {extendMoment} from 'moment-range';
@@ -12,6 +11,7 @@ import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonEventCard from '../../../components/skeleton/eventCard-Skeleton';
 import {RefreshControl, ScrollView} from 'react-native-gesture-handler';
 import {useTranslation} from 'react-i18next';
+import Filters from '../../../components/filters';
 const moment = extendMoment(Moment);
 
 type props = {
@@ -114,30 +114,10 @@ const PassingTab = ({searchValue, eventsSearch}: props) => {
   };
   const renderFilters = () => {
     return (
-      <RN.View style={styles.filterWrapper}>
-        <RN.View style={{justifyContent: 'center'}}>
-          <RN.Text style={styles.eventsLength}>
-            {t('events_found', {count: events.length})}
-          </RN.Text>
-        </RN.View>
-        <RN.TouchableOpacity
-          style={styles.filterBtn}
-          onPress={() => setOpeningFilters(true)}>
-          <RN.View style={{justifyContent: 'center'}}>
-            <RN.Image
-              source={{uri: 'filter'}}
-              style={{height: 16, width: 16, marginRight: 8}}
-            />
-          </RN.View>
-          <RN.Text style={styles.filterText}>{t('filters')}</RN.Text>
-          <RN.View style={{justifyContent: 'center'}}>
-            <RN.Image
-              source={{uri: 'downlight'}}
-              style={{height: 16, width: 16, marginLeft: 4, marginTop: 4}}
-            />
-          </RN.View>
-        </RN.TouchableOpacity>
-      </RN.View>
+      <Filters
+        onPressFilters={() => setOpeningFilters(true)}
+        title={t('events_found', {count: events.length})}
+      />
     );
   };
   const refreshControl = () => {
@@ -195,32 +175,6 @@ const styles = RN.StyleSheet.create({
     fontFamily: 'Mulish-Regular',
     textAlign: 'center',
     paddingVertical: 16,
-  },
-  filterWrapper: {
-    paddingTop: 14,
-    paddingHorizontal: isAndroid ? 16 : 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  eventsLength: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    lineHeight: 22.4,
-    fontWeight: '600',
-  },
-  filterBtn: {
-    backgroundColor: '#F5F5F5',
-    padding: 8,
-    borderRadius: 100,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  filterText: {
-    fontSize: 16,
-    lineHeight: 22.4,
-    color: colors.darkGray,
-    fontWeight: '500',
   },
 });
 export default PassingTab;

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
 import moment from 'moment';
-import {SCREEN_WIDTH} from '../utils/constants';
+import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import useRegistration from '../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
@@ -166,9 +166,9 @@ const EventCard = ({item}: any) => {
     );
   }
   return (
-    <>
+    <RN.View style={styles.container}>
       <RN.TouchableOpacity
-        style={styles.container}
+        // style={styles.container}
         onPress={goToEvent}
         activeOpacity={0.7}>
         <RN.View
@@ -234,7 +234,7 @@ const EventCard = ({item}: any) => {
           {renderAttendBtn()}
         </RN.View>
       </RN.TouchableOpacity>
-    </>
+    </RN.View>
   );
 };
 const styles = RN.StyleSheet.create({
@@ -242,20 +242,22 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
   },
   container: {
+    zIndex: 2,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    marginVertical: 8,
-    marginHorizontal: 10,
-    padding: 11,
-    paddingBottom: 8,
     borderRadius: 8,
+    paddingTop: 12,
+    paddingBottom: 8,
+    paddingHorizontal: 12,
+    marginBottom: 16,
+    marginHorizontal: isAndroid ? 0 : 10,
     backgroundColor: colors.white,
     shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.08,
     shadowRadius: 2,
     elevation: 3,
   },

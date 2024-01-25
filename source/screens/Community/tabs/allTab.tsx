@@ -9,6 +9,8 @@ import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonCommunityCard from '../../../components/skeleton/communityCard-Skeleton';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useTranslation} from 'react-i18next';
+import Filters from '../../../components/filters';
+import sortBy from 'lodash.sortby';
 
 type props = {
   communititesSearch: string[];
@@ -98,36 +100,13 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
   };
   const renderFilters = () => {
     return (
-      <RN.View style={styles.filterWrapper}>
-        <RN.View style={{justifyContent: 'center'}}>
-          <RN.Text style={styles.communititesLength}>
-            {t('communities_found', {count: communitites.length ?? 0})}
-          </RN.Text>
-        </RN.View>
-        <RN.TouchableOpacity
-          style={[
-            styles.filterBtn,
-            {
-              borderColor:
-                addedStyles?.length > 0 ? colors.orange : colors.gray,
-            },
-          ]}
-          onPress={() => setOpeningFilters(true)}>
-          <RN.View style={{justifyContent: 'center'}}>
-            <RN.Image
-              source={{uri: 'filter'}}
-              style={{height: 16, width: 16, marginRight: 8}}
-            />
-          </RN.View>
-          <RN.Text style={styles.filterText}>{t('filters')}</RN.Text>
-          <RN.View style={{justifyContent: 'center'}}>
-            <RN.Image
-              source={{uri: 'downlight'}}
-              style={{height: 16, width: 16, marginLeft: 4, marginTop: 4}}
-            />
-          </RN.View>
-        </RN.TouchableOpacity>
-      </RN.View>
+      <Filters
+        onPressFilters={() => setOpeningFilters(true)}
+        title={t('communities_found', {count: communitites.length ?? 0})}
+        filtersBorderColor={
+          addedStyles?.length > 0 ? colors.orange : colors.gray
+        }
+      />
     );
   };
   const refreshControl = () => {
@@ -148,8 +127,16 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
         refreshControl={refreshControl()}>
         {renderFilters()}
         {communitites?.length > 0 &&
-          communitites?.map((item: any) => {
-            return <RN.View>{renderItemCommunity(item)}</RN.View>;
+          sortBy(communitites)?.map((item: any) => {
+            return (
+              <RN.View
+                style={{
+                  minHeight: communitites.length > 1 ? 200 : 260,
+                }}>
+                {renderItemCommunity(item)}
+              </RN.View>
+            );
+            // return <RN.View>{renderItemCommunity(item)}</RN.View>;
           })}
         {!communitites?.length && renderEmpty()}
       </ScrollView>
@@ -166,39 +153,11 @@ const AllTab = ({communititesSearch, searchValue}: props) => {
 };
 
 const styles = RN.StyleSheet.create({
-  filterWrapper: {
-    paddingVertical: 14,
-    paddingHorizontal: isAndroid ? 4 : 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  communititesLength: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    lineHeight: 22.4,
-    fontWeight: '600',
-  },
-  filterBtn: {
-    backgroundColor: '#F5F5F5',
-    padding: 8,
-    borderRadius: 100,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderWidth: 1,
-  },
-  filterText: {
-    fontSize: 16,
-    lineHeight: 22.4,
-    color: colors.darkGray,
-    fontWeight: '500',
-  },
   emptyContainer: {
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'center',
   },
-
   emptyText: {
     color: colors.textPrimary,
     fontSize: 22,

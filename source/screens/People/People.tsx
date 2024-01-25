@@ -13,8 +13,8 @@ import FiltersBottom from '../../components/bottomFilters';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../../api/serverRequests';
 import {useNavigation} from '@react-navigation/native';
-import SkeletonUserCard from '../../components/skeleton/userCard-Skeleton';
 import {defaultProfile} from '../../utils/images';
+import Filters from '../../components/filters';
 type user = {
   item: {
     userName: string;
@@ -68,36 +68,13 @@ const People = () => {
   };
   const renderFilters = () => {
     return (
-      <RN.View style={styles.filterWrapper}>
-        <RN.View style={{justifyContent: 'center'}}>
-          <RN.Text style={styles.usersLength}>
-            {t('people_found', {count: usersList.length ?? 0})}
-          </RN.Text>
-        </RN.View>
-        <RN.TouchableOpacity
-          style={[
-            styles.filterBtn,
-            {
-              borderColor:
-                addedStyles?.length > 0 ? colors.orange : colors.gray,
-            },
-          ]}
-          onPress={() => setOpeningFilters(true)}>
-          <RN.View style={{justifyContent: 'center'}}>
-            <RN.Image
-              source={{uri: 'filter'}}
-              style={{height: 14, width: 14, marginRight: 8}}
-            />
-          </RN.View>
-          <RN.Text style={styles.filterText}>{t('filters')}</RN.Text>
-          <RN.View style={{justifyContent: 'center'}}>
-            <RN.Image
-              source={{uri: 'downlight'}}
-              style={{height: 14, width: 14, marginLeft: 4, marginTop: 2}}
-            />
-          </RN.View>
-        </RN.TouchableOpacity>
-      </RN.View>
+      <Filters
+        onPressFilters={() => setOpeningFilters(true)}
+        title={t('people_found', {count: usersList.length ?? 0})}
+        filtersBorderColor={
+          addedStyles?.length > 0 ? colors.orange : colors.gray
+        }
+      />
     );
   };
   const renderHeader = () => {
@@ -131,7 +108,6 @@ const People = () => {
             placeholder={t('input_search_users')}
             visibleAddBtn={false}
           />
-          {renderFilters()}
         </RN.View>
       </>
     );
@@ -202,6 +178,7 @@ const People = () => {
   return (
     <RN.SafeAreaView style={styles.container}>
       {renderHeader()}
+      <RN.View style={{paddingHorizontal: 12}}>{renderFilters()}</RN.View>
       <FlatList
         data={usersList}
         renderItem={renderItem}
@@ -294,35 +271,6 @@ const styles = RN.StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: colors.textPrimary,
-  },
-  filterWrapper: {
-    paddingVertical: 14,
-    paddingTop: 0,
-    paddingHorizontal: isAndroid ? 4 : 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: -14,
-  },
-  usersLength: {
-    color: colors.textPrimary,
-    fontSize: 14,
-    lineHeight: 22.4,
-    fontWeight: '600',
-  },
-  filterBtn: {
-    backgroundColor: '#F5F5F5',
-    padding: 8,
-    borderRadius: 100,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderWidth: 1,
-  },
-  filterText: {
-    fontSize: 14,
-    lineHeight: 22.4,
-    color: colors.darkGray,
-    fontWeight: '500',
   },
 });
 export default People;

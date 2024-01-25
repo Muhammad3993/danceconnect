@@ -13,6 +13,7 @@ import FindCity from '../../components/findCity copy';
 import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
 import {useTranslation} from 'react-i18next';
 import i18n from '../../i18n/i118n';
+import { FlatList } from 'react-native-gesture-handler';
 
 const CommunitiesScreen = () => {
   const {
@@ -128,6 +129,7 @@ const CommunitiesScreen = () => {
             styles.itemTabContainer,
             {
               borderBottomWidth: currentTab === item ? 3 : 0,
+              paddingHorizontal: 16,
               paddingBottom: 8,
             },
           ]}>
@@ -173,7 +175,7 @@ const CommunitiesScreen = () => {
             onPressAdd={() => navigation.navigate('CreateCommunity')}
           />
           <RN.View style={styles.tabsWrapper}>
-            <RN.FlatList
+            <FlatList
               // scrollEnabled={false}
               data={tabs}
               showsHorizontalScrollIndicator={false}
@@ -280,33 +282,23 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
-  name: {
-    fontSize: 24,
-    lineHeight: 28.8,
-    fontWeight: '700',
-    fontFamily: 'Mulish-Regular',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 16,
-  },
   tabsWrapper: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
     borderBottomWidth: 1,
     borderBottomColor: colors.gray,
-    paddingTop: 0,
+    // paddingTop: 0,
   },
   itemTabContainer: {
     borderBottomWidth: 1,
     borderBottomColor: colors.purple,
     alignSelf: 'center',
-    paddingHorizontal: SCREEN_WIDTH / 24,
+    // paddingHorizontal: SCREEN_WIDTH / 24,
   },
   itemTabText: {
     fontSize: 16,
     lineHeight: 25.2,
-    // letterSpacing: 0.2,
+    letterSpacing: 0.2,
     paddingHorizontal: 20,
     fontWeight: '600',
     textAlign: 'center',
