@@ -14,8 +14,10 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
   return (
     <RN.View style={[styles.container, {paddingBottom: bottom}]}>
       {tabs.map((route, index) => {
-        const {tabBarActiveTintColor, tabBarInactiveTintColor} =
-          descriptors[route.key].options;
+        // const {tabBarActiveTintColor, tabBarInactiveTintColor} =
+        //   descriptors[route.key].options;
+        const tabBarActiveTintColor = colors.orange;
+        const tabBarInactiveTintColor = colors.grayScale;
         const onPressTab = () => {
           const event = navigation.emit({
             type: 'tabPress',

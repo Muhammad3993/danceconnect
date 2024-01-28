@@ -7,7 +7,16 @@ import {Input} from '../components/input';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {defaultProfile} from '../utils/images';
-
+import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
+type user = {
+  item: {
+    userName: string;
+    userImage: string | undefined | null;
+    userCountry: string;
+    id: string;
+    individualStyles: string[];
+  };
+};
 const AttendedPeople = () => {
   const navigation = useNavigation();
   const routeProps = useRoute();
@@ -15,7 +24,6 @@ const AttendedPeople = () => {
   const [serachValue, setSearchValue] = useState('');
   const [users, setUsers] = useState(usersArray);
 
-  // console.log(users);
   const onPressBack = () => navigation.goBack();
   const onSearch = (v: string) => {
     setSearchValue(v);
@@ -29,12 +37,52 @@ const AttendedPeople = () => {
       setUsers(usersArray);
     }
   };
+  const onPressUser = (id: string) => navigation.navigate('User', {id: id});
+
   const renderHeader = () => {
     return (
       <RN.TouchableOpacity onPress={onPressBack} style={styles.headerContainer}>
         <RN.Image source={{uri: 'backicon'}} style={styles.backIcon} />
         <RN.Text style={styles.backTitle}>{header}</RN.Text>
       </RN.TouchableOpacity>
+    );
+  };
+  const renderItem = ({item}: user) => {
+    return (
+      <TouchableOpacity
+        key={item.id}
+        style={styles.userContainer}
+        onPress={() => onPressUser(item.id)}
+        activeOpacity={0.7}>
+        <FastImage
+          source={{
+            uri: `${apiUrl}${item.userImage}`,
+            cache: FastImage.cacheControl.immutable,
+            priority: FastImage.priority.high,
+          }}
+          resizeMode={FastImage.resizeMode.cover}
+          defaultSource={defaultProfile}
+          style={styles.userImage}
+        />
+        <RN.View style={styles.userWrapper}>
+          <RN.Text style={styles.userName}>{item.userName}</RN.Text>
+          <RN.Text style={styles.userCountry}>{item.userCountry}</RN.Text>
+          <RN.ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{paddingTop: 8, zIndex: 2}}
+            scrollEnabled={item.individualStyles?.length > 3}>
+            {item.individualStyles?.map((tag: string, idx: number) => {
+              return (
+                <RN.View style={styles.tagItem} key={idx}>
+                  <RN.Text style={styles.tagItemText}>{tag}</RN.Text>
+                </RN.View>
+              );
+            })}
+            <RN.View style={{paddingRight: 44}} />
+          </RN.ScrollView>
+        </RN.View>
+      </TouchableOpacity>
     );
   };
   return (
@@ -47,50 +95,13 @@ const AttendedPeople = () => {
           placeholder="User Name"
         />
       </RN.View>
-      <RN.ScrollView style={[styles.container, {paddingTop: 14}]}>
-        {Object.values(users)?.length > 0 &&
-          users.map(i => {
-            return (
-              <RN.View style={styles.memberContainer} key={i?._id}>
-                <RN.View style={{flexDirection: 'row'}}>
-                  <RN.View style={styles.memberImgContainer}>
-                    {i?.userImage !== null ? (
-                      <FastImage
-                        source={{
-                          uri: apiUrl + i?.userImage,
-                          cache: FastImage.cacheControl.immutable,
-                          priority: FastImage.priority.high,
-                        }}
-                        defaultSource={defaultProfile}
-                        style={styles.memberImg}
-                      />
-                    ) : (
-                      <RN.Image
-                        source={defaultProfile}
-                        style={styles.memberImg}
-                      />
-                    )}
-                    {/* <FastImage
-                      source={{
-                        uri: apiUrl + i?.userImage,
-                        cache: FastImage.cacheControl.immutable,
-                        priority: FastImage.priority.high,
-                      }}
-                      defaultSource={require('../assets/images/defaultuser.png')}
-                      style={styles.memberImg}
-                    /> */}
-                  </RN.View>
-                  <RN.View style={{justifyContent: 'center', paddingLeft: 8}}>
-                    <RN.Text style={{color: colors.textPrimary}}>
-                      {i?.userName ? i?.userName : 'User Name'}
-                    </RN.Text>
-                  </RN.View>
-                </RN.View>
-              </RN.View>
-            );
-          })}
-        <RN.View style={{paddingBottom: 40}} />
-      </RN.ScrollView>
+      <FlatList
+        data={Object.values(users)}
+        renderItem={renderItem}
+        style={styles.container}
+        // ListEmptyComponent={renderEmpty}
+        // refreshControl={refreshControl()}
+      />
     </>
   );
 };
@@ -119,37 +130,72 @@ const styles = RN.StyleSheet.create({
   },
   inputContainer: {
     backgroundColor: colors.white,
-    paddingHorizontal: 12,
     paddingTop: 16,
   },
   container: {
     flex: 1,
     backgroundColor: colors.white,
   },
-  memberContainer: {
+  userContainer: {
+    marginHorizontal: 16,
+    paddingVertical: 6,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 22,
-    paddingVertical: 14,
-    borderBottomColor: colors.gray,
-    borderBottomWidth: 0.5,
+    zIndex: 1,
   },
-  memberImgContainer: {
-    justifyContent: 'center',
+  userWrapper: {
+    marginHorizontal: 12,
+    paddingBottom: 6,
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22.4,
+    letterSpacing: 0.2,
+    color: colors.textPrimary,
+  },
+  userImage: {
+    height: 60,
+    width: 60,
     borderRadius: 100,
+  },
+  userCountry: {
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 19.6,
+    letterSpacing: 0.2,
+    color: colors.darkGray,
+  },
+  tagItemText: {
+    fontSize: 12,
+    lineHeight: 14.4,
+    color: colors.purple,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+  },
+  tagItem: {
+    borderRadius: 4,
+    marginRight: 4,
+    borderWidth: 0.5,
+    borderColor: 'rgba(224, 224, 224, 1)',
+  },
+  userLocationWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignSelf: 'center',
+    backgroundColor: '#FBFBFB',
+    padding: 8,
+    borderRadius: 8,
+    paddingVertical: 6,
     borderWidth: 1,
-    borderColor: colors.darkGray,
+    borderColor: '#CDCDCD',
   },
-  memberImg: {
-    height: 34,
-    width: 34,
-    borderRadius: 100,
-  },
-  memberImgNone: {
-    height: 10,
-    width: 10,
-    tintColor: colors.textPrimary,
-    padding: 16,
+  userLocationText: {
+    paddingLeft: 8,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
 });
 

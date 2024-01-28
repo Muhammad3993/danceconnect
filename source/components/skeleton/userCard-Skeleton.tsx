@@ -15,7 +15,10 @@ const SkeletonUserCard = () => {
           <Skeleton style={styles.userImg} />
           <RN.View>
             <Skeleton style={styles.desc} />
+            <Skeleton style={styles.location} />
             <RN.View style={{flexDirection: 'row'}}>
+              <Skeleton style={styles.tag} />
+              <Skeleton style={styles.tag} />
               <Skeleton style={styles.tag} />
               <Skeleton style={styles.tag} />
               <Skeleton style={styles.tag} />
@@ -36,12 +39,12 @@ const styles = RN.StyleSheet.create({
   bottomLine: {
     // borderBottomWidth: 0.5,
     width: SCREEN_WIDTH - 120,
-    paddingTop: 6,
+    // paddingTop: 6,
   },
   container: {
-    marginHorizontal: 22,
+    marginHorizontal: 16,
     borderRadius: 8,
-    padding: 12,
+    padding: 10,
     paddingHorizontal: 2,
   },
   userImg: {
@@ -52,13 +55,19 @@ const styles = RN.StyleSheet.create({
   tag: {
     width: 40,
     height: 20,
-    marginTop: 14,
     borderRadius: 4,
     marginRight: 4,
   },
   desc: {
-    height: 50,
-    borderRadius: 8,
+    height: 18,
+    width: 150,
+    borderRadius: 4,
+  },
+  location: {
+    height: 18,
+    width: 100,
+    borderRadius: 4,
+    marginVertical: 8,
   },
 });
 export default SkeletonUserCard;

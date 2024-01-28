@@ -42,8 +42,8 @@ const styles = RN.StyleSheet.create({
     marginTop: 4,
   },
   iconFilter: {
-    height: 16,
-    width: 16,
+    height: 12,
+    width: 14,
     marginRight: 8,
   },
   justCenter: {
@@ -65,7 +65,7 @@ const styles = RN.StyleSheet.create({
   filterBtn: {
     backgroundColor: '#F5F5F5',
     borderWidth: 1,
-    padding: 8,
+    padding: 6,
     borderRadius: 100,
     paddingHorizontal: 16,
     flexDirection: 'row',

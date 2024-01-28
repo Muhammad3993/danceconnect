@@ -15,6 +15,7 @@ import {apiUrl} from '../../api/serverRequests';
 import {useNavigation} from '@react-navigation/native';
 import {defaultProfile} from '../../utils/images';
 import Filters from '../../components/filters';
+import SkeletonUserCard from '../../components/skeleton/userCard-Skeleton';
 type user = {
   item: {
     userName: string;
@@ -24,7 +25,6 @@ type user = {
     individualStyles: string[];
   };
 };
-
 const People = () => {
   const {t} = useTranslation();
   const {users, getUsers, isLoadingUsers} = usePeople();
@@ -82,7 +82,7 @@ const People = () => {
       <>
         <RN.View
           style={{
-            paddingHorizontal: isAndroid ? 0 : 20,
+            paddingHorizontal: isAndroid ? 0 : 16,
             marginTop: isAndroid ? 14 : 0,
           }}>
           <RN.TouchableOpacity
@@ -134,14 +134,12 @@ const People = () => {
           <RN.ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{paddingTop: 6, zIndex: 2}}
+            style={{paddingTop: 8, zIndex: 2}}
             scrollEnabled={item.individualStyles.length > 3}>
             {item.individualStyles?.map((tag: string, idx: number) => {
               return (
                 <RN.View style={styles.tagItem} key={idx}>
-                  <RN.Text style={{color: colors.purple, fontSize: 12}}>
-                    {tag}
-                  </RN.Text>
+                  <RN.Text style={styles.tagItemText}>{tag}</RN.Text>
                 </RN.View>
               );
             })}
@@ -152,16 +150,15 @@ const People = () => {
     );
   };
   const renderEmpty = () => {
-    // if (isLoadingUsers) {
-    //   return (
-    //     <>
-    //       {lengthEmptyUsers.map(() => {
-    //         return <SkeletonUserCard />;
-    //       })}
-    //     </>
-    //   );
-    // }
-    return null;
+    if (isLoadingUsers) {
+      return (
+        <>
+          {lengthEmptyUsers.map(() => {
+            return <SkeletonUserCard />;
+          })}
+        </>
+      );
+    }
   };
   const refreshControl = () => {
     return (
@@ -178,7 +175,9 @@ const People = () => {
   return (
     <RN.SafeAreaView style={styles.container}>
       {renderHeader()}
-      <RN.View style={{paddingHorizontal: 12}}>{renderFilters()}</RN.View>
+      <RN.View style={{marginTop: -16, paddingHorizontal: 6}}>
+        {renderFilters()}
+      </RN.View>
       <FlatList
         data={usersList}
         renderItem={renderItem}
@@ -216,44 +215,53 @@ const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingHorizontal: 12,
     zIndex: 1,
   },
   userContainer: {
-    marginHorizontal: 22,
+    marginHorizontal: 16,
     paddingVertical: 6,
     flexDirection: 'row',
     zIndex: 1,
   },
   userWrapper: {
-    marginHorizontal: 16,
+    marginHorizontal: 12,
     paddingBottom: 6,
   },
   userName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     lineHeight: 22.4,
+    letterSpacing: 0.2,
     color: colors.textPrimary,
   },
   userImage: {
-    height: 56,
-    width: 56,
+    height: 60,
+    width: 60,
     borderRadius: 100,
   },
   userCountry: {
     fontSize: 14,
     fontWeight: '400',
-    lineHeight: 18.4,
+    lineHeight: 19.6,
+    letterSpacing: 0.2,
     color: colors.darkGray,
   },
+  tagItemText: {
+    fontSize: 12,
+    lineHeight: 14.4,
+    color: colors.purple,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+  },
   tagItem: {
-    // backgroundColor: colors.purple,
-    paddingVertical: 2.5,
-    paddingHorizontal: 5,
+    // paddingVertical: 2.5,
+    // paddingHorizontal: 5,
     borderRadius: 4,
     marginRight: 4,
     borderWidth: 0.5,
-    borderColor: colors.darkGray,
+    borderColor: 'rgba(224, 224, 224, 1)',
   },
   userLocationWrapper: {
     flexDirection: 'row',
