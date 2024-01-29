@@ -50,32 +50,39 @@ export function CreatePostModal({endCreatingPost}: Props) {
   const createPost = async () => {
     try {
       setCreatingPost(true);
-      const formData = new FormData();
+      const attachments = [];
 
-      const imageUri = image!.uri ?? '';
+      if (image !== null) {
+        const formData = new FormData();
 
-      formData.append('files', {
-        type: image!.type,
-        name: image!.fileName,
-        uri:
-          Platform.OS === 'android'
-            ? imageUri
-            : imageUri.replace('file://', ''),
-      });
+        const imageUri = image!.uri ?? '';
 
-      const {data} = await FileRepository.uploadImage(formData);
-      console.log(data);
+        formData.append('files', {
+          type: image!.type,
+          name: image!.fileName,
+          uri:
+            Platform.OS === 'android'
+              ? imageUri
+              : imageUri.replace('file://', ''),
+        });
+
+        const {data} = await FileRepository.uploadImage(formData);
+        // console.log(data);
+
+        attachments.push({type: PostContentType.IMAGE, fileId: data[0].fileId});
+      }
 
       const newPost = {
         tags: ['post'],
         data: {text},
-        attachments: [{type: PostContentType.IMAGE, fileId: data[0].fileId}],
+        attachments,
         targetType: 'user',
         targetId: currentUser.id,
       };
 
-      const {data: post} = await PostRepository.createPost(newPost);
-      console.log(post);
+      // const {data: post} =
+      await PostRepository.createPost(newPost);
+      // console.log(post);
       endCreatingPost();
     } catch (err) {
       dispatch(setNoticeMessage({errorMessage: err?.message}));
@@ -102,12 +109,12 @@ export function CreatePostModal({endCreatingPost}: Props) {
         value={text}
         placeholder="Post text"
         multiLine
-        containerStyle={{marginHorizontal: 0}}
+        containerStyle={{marginHorizontal: 0, maxHeight: 200}}
       />
 
       <Button
         isLoading={creatingPost}
-        disabled={image !== null}
+        disabled={image !== null || text.trim() !== ''}
         title="Upload"
         onPress={createPost}
         buttonStyle={{marginHorizontal: 0}}
@@ -130,5 +137,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    marginBottom: 20,
   },
 });

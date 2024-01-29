@@ -282,6 +282,7 @@ const EventScreen = () => {
     .filter(i => i?.options)
     .map(i => i.options)
     .flat(1);
+
   const onScroll = (ev: RN.NativeSyntheticEvent<RN.NativeScrollEvent>) => {
     const {y} = ev.nativeEvent.contentOffset;
     Animated.timing(opacity, {

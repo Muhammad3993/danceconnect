@@ -14,6 +14,7 @@ type InputProp = {
   editable?: boolean;
   isErrorBorder?: boolean;
   maxLength?: number;
+  numberOfLines?: number;
   multiLine?: boolean;
   autoComplete?: string;
   autoFocus?: boolean;
@@ -36,6 +37,7 @@ export const Input = ({
   autoFocus = false,
   onFocusInput,
   containerStyle,
+  numberOfLines,
 }: InputProp) => {
   const [backgroundColor, setBackgroundColor] = useState(colors.lightGray);
   const [borderColor, setBorderColor] = useState(colors.gray);
@@ -131,7 +133,7 @@ export const Input = ({
     }
   };
   return (
-    <RN.View style={[{marginHorizontal: 14}, containerStyle]}>
+    <RN.View style={[{marginHorizontal: 14}, containerStyle, {minHeight: 56}]}>
       {/* <RN.Animated.View
       style={{
         transform: [{translateX}],
@@ -153,7 +155,7 @@ export const Input = ({
         editable={editable}
         value={value}
         secureTextEntry={visiblePassword}
-        onChangeText={(val: string) => onChangeText(val)}
+        onChangeText={onChangeText}
         placeholder={placeholder}
         keyboardType={keyboardType}
         onFocus={onFocus}
@@ -162,6 +164,7 @@ export const Input = ({
         multiline={multiLine}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
+        numberOfLines={numberOfLines}
       />
 
       {secureText && renderRightIcon()}
@@ -179,7 +182,6 @@ const styles = RN.StyleSheet.create({
     // paddingLeft: 46,
     color: colors.textPrimary,
     fontSize: 16,
-    lineHeight: 20.4,
     fontWeight: '400',
     letterSpacing: 0.2,
     marginBottom: 24,

@@ -1,8 +1,8 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import {useCommunities} from '../../../hooks/useCommunitites';
 import CommunityCard from '../../../components/communityCard';
-import {isAndroid} from '../../../utils/constants';
+
 import colors from '../../../utils/colors';
 import FiltersBottom from '../../../components/bottomFilters';
 import useAppStateHook from '../../../hooks/useAppState';

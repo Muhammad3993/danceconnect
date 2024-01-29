@@ -1,22 +1,21 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import * as RN from 'react-native';
-import colors from '../../utils/colors';
-import useEvents from '../../hooks/useEvents';
-import Search from '../../components/search';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import moment from 'moment';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import * as RN from 'react-native';
+import {Portal} from 'react-native-portalize';
+import FindCity from '../../components/findCity copy';
+import Search from '../../components/search';
+import {Tab} from '../../components/tab';
+import useAppStateHook from '../../hooks/useAppState';
+import useEvents from '../../hooks/useEvents';
+import i18n from '../../i18n/i118n';
+import colors from '../../utils/colors';
 import {isAndroid} from '../../utils/constants';
-import UpcommingTab from './tabs/upcoming';
 import AttentingTab from './tabs/attenting';
 import ManagingTab from './tabs/managing';
 import PassingTab from './tabs/passed';
-import useAppStateHook from '../../hooks/useAppState';
-import CitySelector from '../../components/citySelector';
-import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
-import {Portal} from 'react-native-portalize';
-import FindCity from '../../components/findCity copy';
-import {useTranslation} from 'react-i18next';
-import i18n from '../../i18n/i118n';
-import { FlatList } from 'react-native-gesture-handler';
+import UpcommingTab from './tabs/upcoming';
 
 // const TABS = ['Upcoming', 'Attending', 'Managing', 'Passed'];
 
@@ -34,11 +33,16 @@ const EventsScreen = () => {
     // setDefaultEventLimit,
   } = useEvents();
   const {t} = useTranslation();
-  const TABS = [t('upcoming'), t('attending'), t('managing'), t('passed')];
+  const TABS = [
+    {text: t('upcoming')},
+    {text: t('attending')},
+    {text: t('managing')},
+    {text: t('passed')},
+  ];
   const [tabs, setTabs] = useState(TABS);
   const routeProps = useRoute();
   const navigation = useNavigation();
-  const [currentTab, setCurrentTab] = useState(tabs[0]);
+  const [currentTab, setCurrentTab] = useState(tabs[0].text);
   const isFocused = useIsFocused();
 
   const [searchValue, onSearch] = useState('');
@@ -58,10 +62,10 @@ const EventsScreen = () => {
       // i18n.reloadResources(lg);
       // console.log(lg);
       setTabs([
-        i18n.t('upcoming'),
-        i18n.t('attending'),
-        i18n.t('managing'),
-        i18n.t('passed'),
+        {text: i18n.t('upcoming')},
+        {text: i18n.t('attending')},
+        {text: i18n.t('managing')},
+        {text: i18n.t('passed')},
       ]);
       onPressTab(t('upcoming'));
     });
@@ -69,10 +73,6 @@ const EventsScreen = () => {
   useEffect(() => {
     getEvents();
   }, [currentCity]);
-
-  useEffect(() => {
-    onPressTab(TABS[0]);
-  }, []);
 
   const upcomingEvents = eventList?.filter(
     (ev: any) =>
@@ -163,71 +163,44 @@ const EventsScreen = () => {
   }, [createdEvent]);
 
   const renderHeader = () => {
-    const renderTab = ({item, index}: any) => {
-      return (
-        <RN.TouchableOpacity
-          onPress={() => onPressTab(item)}
-          key={index}
-          style={[
-            styles.itemTabContainer,
-            {
-              borderBottomWidth: currentTab === item ? 3 : 0,
-              paddingHorizontal: 16,
-              paddingBottom: 8,
-            },
-          ]}>
-          <RN.Text
-            style={[
-              styles.itemTabText,
-              {color: currentTab === item ? colors.purple : colors.darkGray},
-            ]}>
-            {item}
-          </RN.Text>
-        </RN.TouchableOpacity>
-      );
-    };
     return (
-      <>
-        <RN.View
-          style={{
-            paddingHorizontal: isAndroid ? 12 : 20,
-            marginTop: isAndroid ? 14 : 0,
-          }}>
-          <RN.TouchableOpacity
-            style={styles.userLocationWrapper}
-            onPress={() => setOpenModal(true)}>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image
-                source={{uri: 'locate'}}
-                style={{height: 16, width: 16}}
-              />
-            </RN.View>
-            <RN.Text style={styles.userLocationText}>{currentCity}</RN.Text>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image
-                source={{uri: 'downlight'}}
-                style={{height: 16, width: 16, marginLeft: 6}}
-              />
-            </RN.View>
-          </RN.TouchableOpacity>
-          <Search
-            onPressAdd={() => navigation.navigate('CreateEvent')}
-            onSearch={onChangeTextSearch}
-            searchValue={searchValue}
-            placeholder={t('input_search_events')}
-            visibleAddBtn
-          />
-        </RN.View>
-        <RN.View style={styles.tabsWrapper}>
-          <FlatList
-            data={tabs}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderTab}
-            horizontal
-          />
-        </RN.View>
-      </>
+      <RN.View
+        style={{
+          paddingHorizontal: isAndroid ? 12 : 20,
+          marginTop: isAndroid ? 14 : 0,
+        }}>
+        <RN.TouchableOpacity
+          style={styles.userLocationWrapper}
+          onPress={() => setOpenModal(true)}>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Image
+              source={{uri: 'locate'}}
+              style={{height: 16, width: 16}}
+            />
+          </RN.View>
+          <RN.Text style={styles.userLocationText}>{currentCity}</RN.Text>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Image
+              source={{uri: 'downlight'}}
+              style={{height: 16, width: 16, marginLeft: 6}}
+            />
+          </RN.View>
+        </RN.TouchableOpacity>
+        <Search
+          onPressAdd={() => navigation.navigate('CreateEvent')}
+          onSearch={onChangeTextSearch}
+          searchValue={searchValue}
+          placeholder={t('input_search_events')}
+          visibleAddBtn
+        />
+        <Tab
+          data={tabs}
+          currentTab={currentTab}
+          onPressTab={onPressTab}
+          textStyle={styles.itemTabText}
+          wrapperStyle={{paddingHorizontal: 1}}
+        />
+      </RN.View>
     );
   };
 
@@ -308,19 +281,7 @@ const styles = RN.StyleSheet.create({
     fontWeight: '600',
     color: colors.textPrimary,
   },
-  tabsWrapper: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray,
-    // marginBottom: 14,
-    paddingHorizontal: 14,
-  },
-  itemTabContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.purple,
-    alignSelf: 'center',
-    // paddingHorizontal: 16,
-  },
+
   itemTabText: {
     fontSize: 16,
     lineHeight: 25.2,

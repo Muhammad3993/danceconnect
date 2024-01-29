@@ -94,7 +94,7 @@ export const getIcon = (name: string, isFocused: boolean) => {
       break;
   }
 };
-export const userRole = (title: string) => {
+export const getUserRole = (title: string) => {
   switch (title) {
     case 'I’m Organizer':
       return 'Organizer';

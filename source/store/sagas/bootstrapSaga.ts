@@ -33,6 +33,7 @@ function* init() {
 
     const user: string = yield select(selectUser);
     // Client.startUnreadSync();
+    console.log(user);
 
     if (user) {
       yield call(

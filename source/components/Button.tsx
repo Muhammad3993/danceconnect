@@ -1,15 +1,23 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useMemo} from 'react';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
+
+export enum ButtonVariant {
+  primary,
+  outlined,
+}
 
 type ButtonProps = {
   title: string;
   onPress: () => void;
   disabled?: boolean;
   isLoading?: boolean;
-  buttonStyle?: {};
+  buttonStyle?: RN.ViewStyle & RN.TextStyle;
   iconName?: string;
+  variant?: ButtonVariant;
+  iconColor?: string;
+  iconSize?: number;
 };
 export const Button = ({
   title,
@@ -18,56 +26,73 @@ export const Button = ({
   isLoading,
   buttonStyle,
   iconName,
+  variant = ButtonVariant.primary,
+  iconColor = colors.purple,
+  iconSize = 20,
 }: ButtonProps) => {
+  const backgroundColor = useMemo(() => {
+    if (!disabled) {
+      return 'rgba(245, 168, 12, 0.6)';
+    }
+
+    if (buttonStyle?.backgroundColor) {
+      return buttonStyle?.backgroundColor;
+    }
+
+    if (variant === ButtonVariant.outlined) {
+      return 'transparent';
+    }
+    return colors.orange;
+  }, [disabled, buttonStyle, variant]);
+
+  const textColor = useMemo(() => {
+    if (buttonStyle?.color) {
+      return buttonStyle?.color;
+    }
+
+    if (variant === ButtonVariant.outlined) {
+      return colors.purple;
+    }
+    return colors.white;
+  }, [buttonStyle, variant]);
+
   return (
     <RN.TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
       disabled={!disabled}
       style={[
-        buttonStyle,
         styles.container,
-        {
-          backgroundColor: !disabled
-            ? 'rgba(245, 168, 12, 0.6)'
-            : buttonStyle?.backgroundColor ?? colors.orange,
-          flexDirection: isLoading || iconName ? 'row' : 'column',
-          paddingVertical: buttonStyle?.paddingVertical ?? 16,
-          paddingHorizontal: buttonStyle?.paddingHorizontal ?? 16,
-          marginHorizontal: buttonStyle?.marginHorizontal ?? 14,
-        },
+        buttonStyle,
+        {backgroundColor: backgroundColor},
+        variant === ButtonVariant.outlined && styles.containerOutlined,
       ]}>
-      {iconName && (
-        <RN.View style={{justifyContent: 'center'}}>
-          <RN.Image
-            source={{uri: iconName}}
-            style={{
-              height: 20,
-              width: 21,
-              tintColor: colors.purple,
-              marginRight: 12,
-            }}
-          />
-        </RN.View>
-      )}
-
       {isLoading ? (
         <RN.ActivityIndicator
           size={'small'}
           color={buttonStyle?.color ?? colors.white}
-          style={styles.indicator}
         />
       ) : (
-        <RN.Text
-          style={[
-            styles.title,
-            {
-              color: buttonStyle?.color ?? colors.white,
-              fontSize: buttonStyle?.fontSize ?? 16,
-            },
-          ]}>
-          {title}
-        </RN.Text>
+        <>
+          {iconName && (
+            <RN.Image
+              source={{uri: iconName}}
+              style={{
+                height: iconSize,
+                width: iconSize,
+                tintColor: iconColor,
+                marginRight: 8,
+              }}
+            />
+          )}
+          <RN.Text
+            style={[
+              styles.title,
+              {color: textColor, fontSize: buttonStyle?.fontSize ?? 16},
+            ]}>
+            {title}
+          </RN.Text>
+        </>
       )}
     </RN.TouchableOpacity>
   );
@@ -75,14 +100,20 @@ export const Button = ({
 
 const styles = RN.StyleSheet.create({
   container: {
-    paddingVertical: 16,
     justifyContent: 'center',
-    // marginHorizontal: 14,
+    alignItems: 'center',
     borderRadius: 100,
+    flexDirection: 'row',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    marginHorizontal: 14,
   },
-  indicator: {
-    // marginLeft: 14,
+
+  containerOutlined: {
+    borderWidth: 1,
+    borderColor: colors.gray300,
   },
+
   title: {
     color: colors.white,
     fontSize: 16,
