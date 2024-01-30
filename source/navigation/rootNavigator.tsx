@@ -1,7 +1,6 @@
 import analytics from '@react-native-firebase/analytics';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 import React, {useEffect} from 'react';
 import {Host} from 'react-native-portalize';
 import BottomTabs from '../components/bottomTabs';
@@ -44,9 +43,11 @@ import ManagingEvents from '../screens/Profile/ManagingEvents';
 import People from '../screens/People/People';
 import User from '../screens/People/User';
 
-import {Image, TouchableOpacity, View} from 'react-native';
 import {ChatScreen} from '../screens/Chat/ChatAmity';
 import useBootsrap from '../hooks/useBootsrap';
+import {CreatePostScreen} from '../screens/Profile/CreatePost';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {BackIcon} from './backIcon';
 
 const linking = {
   prefixes: ['https://danceconnect.online/', 'danceconnect://'],
@@ -93,13 +94,14 @@ const linking = {
   },
 };
 
-const MainStack = createStackNavigator<MainStackNavigationParamList>();
+const MainStack = createNativeStackNavigator<MainStackNavigationParamList>();
 const Tabs = createBottomTabNavigator();
 
-const CommunityStack = createStackNavigator();
-const EventsStack = createStackNavigator();
-const HomeStack = createStackNavigator();
-const ProfileStack = createStackNavigator();
+const CommunityStack = createNativeStackNavigator();
+const EventsStack = createNativeStackNavigator();
+const HomeStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
+
 const CommunityNavigator = () => {
   return (
     <CommunityStack.Navigator
@@ -113,7 +115,6 @@ const CommunityNavigator = () => {
         name="Ticket"
         component={TicketScreen}
         options={{
-          animationEnabled: true,
           presentation: 'transparentModal',
           headerShown: false,
           gestureEnabled: false,
@@ -132,10 +133,7 @@ const EventsNavigator = () => {
       <EventsStack.Screen
         name="Tickets"
         component={TicketsScreen}
-        options={{
-          headerShown: false,
-          gestureEnabled: false,
-        }}
+        options={{headerShown: false, gestureEnabled: false}}
       />
       <EventsStack.Screen
         name="Ticket"
@@ -155,18 +153,12 @@ const HomeNavigator = () => {
       <HomeStack.Screen
         name="Ticket"
         component={TicketScreen}
-        options={{
-          headerShown: false,
-          gestureEnabled: false,
-        }}
+        options={{headerShown: false, gestureEnabled: false}}
       />
       <HomeStack.Screen
         name="Tickets"
         component={TicketsScreen}
-        options={{
-          headerShown: false,
-          gestureEnabled: false,
-        }}
+        options={{headerShown: false, gestureEnabled: false}}
       />
       <HomeStack.Screen name="SoldTickets" component={SoldTickets} />
     </HomeStack.Navigator>
@@ -186,18 +178,12 @@ const ProfileNavigator = () => {
       <ProfileStack.Screen
         name="Tickets"
         component={TicketsScreen}
-        options={{
-          headerShown: false,
-          gestureEnabled: false,
-        }}
+        options={{headerShown: false, gestureEnabled: false}}
       />
       <ProfileStack.Screen
         name="Ticket"
         component={TicketScreen}
-        options={{
-          headerShown: false,
-          gestureEnabled: false,
-        }}
+        options={{headerShown: false, gestureEnabled: false}}
       />
       <ProfileStack.Screen name="SoldTickets" component={SoldTickets} />
       <ProfileStack.Screen name={'LANGUAGE'} component={ChangeLanguage} />
@@ -246,13 +232,6 @@ const AppNavigator = () => {
     init();
   }, []);
 
-  // useEffect(() => {
-  //   if (isBootstraped)
-  //     Client.onSessionStateChange((state: Amity.SessionStates) =>
-  //       console.log(state),
-  //     );
-  // }, [isBootstraped]);
-
   if (!isBootstraped) {
     return null;
   }
@@ -297,16 +276,8 @@ const AppNavigator = () => {
                   gestureEnabled: true,
                   headerShown: true,
                   title: '',
-                  headerLeftContainerStyle: {paddingLeft: 24},
-                  headerLeft: ({onPress}) => (
-                    <TouchableOpacity onPress={onPress}>
-                      <View style={{justifyContent: 'center'}}>
-                        <Image
-                          source={{uri: 'backicon'}}
-                          style={{height: 16, width: 19}}
-                        />
-                      </View>
-                    </TouchableOpacity>
+                  headerLeft: ({canGoBack}) => (
+                    <BackIcon canGoBack={canGoBack} />
                   ),
                 }}
                 component={User}
@@ -343,6 +314,11 @@ const AppNavigator = () => {
               <MainStack.Screen
                 name="CommunityScreen"
                 component={CommunityScreen}
+              />
+              <MainStack.Screen
+                name="CreatePost"
+                component={CreatePostScreen}
+                options={{animation: 'slide_from_bottom', gestureEnabled: true}}
               />
             </>
           ) : (

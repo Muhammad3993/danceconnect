@@ -32,8 +32,6 @@ function* init() {
     yield call(enableCache);
 
     const user: string = yield select(selectUser);
-    // Client.startUnreadSync();
-    console.log(user);
 
     if (user) {
       yield call(
@@ -41,9 +39,6 @@ function* init() {
         {userId: user?.id, displayName: user?.userName},
         amitySessionHandler,
       );
-      yield call(Client.startUnreadSync);
-
-      // Client
     }
 
     yield put(appInitSuccessAction());

@@ -75,7 +75,8 @@ const ProfileScreen = ({navigation}) => {
   }, []);
 
   function createImagePost() {
-    postRef.current?.open();
+    navigation.push('CreatePost');
+    // postRef.current?.open();
   }
 
   function endCreatingPost() {
@@ -91,8 +92,14 @@ const ProfileScreen = ({navigation}) => {
         isLoading={isLoading}
         posts={posts}
         user={currentUser}
-        onPressMenu={onPressMenu}
-        currentUser
+        headerActions={
+          <RN.TouchableOpacity onPress={onPressMenu}>
+            <RN.Image
+              source={{uri: 'setting'}}
+              style={{width: 28, height: 28, marginLeft: 20}}
+            />
+          </RN.TouchableOpacity>
+        }
         actions={
           <>
             <Button

@@ -19,13 +19,12 @@ import {Tab} from './tab';
 import {PostCard} from '../screens/Profile/ui/PostCard';
 
 interface Props {
-  currentUser: boolean;
   user: any;
   onEndReached?: () => void;
   posts: Amity.Post[];
   isLoading: boolean;
-  onPressMenu?: () => void;
   actions: React.ReactNode;
+  headerActions?: React.ReactNode;
 }
 
 export function ProfileList({
@@ -33,9 +32,8 @@ export function ProfileList({
   onEndReached,
   posts,
   isLoading,
-  onPressMenu,
-  currentUser,
   actions,
+  headerActions,
 }: Props) {
   const roles = user?.userRole ?? [];
 
@@ -65,14 +63,7 @@ export function ProfileList({
                 style={{width: 28, height: 28, tintColor: colors.black}}
               />
             </TouchableOpacity>
-            {currentUser && (
-              <TouchableOpacity onPress={onPressMenu}>
-                <Image
-                  source={{uri: 'setting'}}
-                  style={{width: 28, height: 28, marginLeft: 20}}
-                />
-              </TouchableOpacity>
-            )}
+            {headerActions}
           </View>
           <View style={styles.profile}>
             <FastImage

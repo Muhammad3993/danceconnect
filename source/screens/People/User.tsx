@@ -84,7 +84,6 @@ const User = ({route, navigation}) => {
           isLoading={isLoading}
           posts={posts}
           user={differentUser}
-          currentUser={false}
           actions={
             <Button
               iconName="chatoutline"
