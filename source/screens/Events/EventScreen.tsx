@@ -614,7 +614,7 @@ const EventScreen = () => {
                 }
                 buttonStyle={styles.manageTicketsBtn}
               />
-              {ticketsList.filter(i => i.items.length > 0).length > 0 && (
+              {ticketsList.some(i => i.items.length > 0) && (
                 <RN.TouchableOpacity
                   onPress={() => {
                     navigation.navigate('SoldTickets', {

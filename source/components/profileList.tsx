@@ -7,8 +7,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewToken,
 } from 'react-native';
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import {defaultProfile} from '../utils/images';
@@ -16,15 +17,22 @@ import {defaultProfile} from '../utils/images';
 import colors from '../utils/colors';
 import {getUserRole} from '../utils/helpers';
 import {Tab} from './tab';
-import {PostCard} from '../screens/Profile/ui/PostCard';
+import {PostCard} from './PostCard';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+
+const viewabilityConfig = {
+  waitForInteraction: true,
+  viewAreaCoveragePercentThreshold: 19,
+};
 
 interface Props {
   user: any;
   onEndReached?: () => void;
-  posts: Amity.Post[];
+  posts: Amity.InternalPost[];
   isLoading: boolean;
   actions: React.ReactNode;
   headerActions?: React.ReactNode;
+  isCurrentUser: boolean;
 }
 
 export function ProfileList({
@@ -34,8 +42,12 @@ export function ProfileList({
   isLoading,
   actions,
   headerActions,
+  isCurrentUser,
 }: Props) {
+  const isFocused = useIsFocused();
+  const navigation = useNavigation();
   const roles = user?.userRole ?? [];
+  const [viewablesMap, setViewablesMap] = useState<Record<string, boolean>>({});
 
   const rolesString = roles.reduce((acc, next) => {
     const role = getUserRole(next.title);
@@ -43,6 +55,20 @@ export function ProfileList({
   }, '');
 
   const individualStyles = user?.individualStyles ?? [];
+
+  const onViewableItemsChanged = useCallback(
+    ({viewableItems}: {viewableItems: ViewToken[]; changed: ViewToken[]}) => {
+      const map = {};
+
+      for (let index = 0; index < viewableItems.length; index++) {
+        const viewableItem = viewableItems[index];
+        map[viewableItem.item.postId] = viewableItem.isViewable;
+      }
+
+      setViewablesMap(map);
+    },
+    [],
+  );
 
   return (
     <FlatList
@@ -118,7 +144,16 @@ export function ProfileList({
           />
         </View>
       }
-      renderItem={({item}) => <PostCard post={item} user={user} />}
+      renderItem={({item}) => (
+        <PostCard
+          isFocused={isFocused}
+          canEdit={isCurrentUser}
+          post={item}
+          user={user}
+          inView={viewablesMap[item.postId] ?? false}
+          navigation={navigation}
+        />
+      )}
       ListEmptyComponent={
         <View style={{marginTop: 80}}>
           {isLoading ? (
@@ -128,6 +163,10 @@ export function ProfileList({
           )}
         </View>
       }
+      keyExtractor={({postId}) => postId}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={onViewableItemsChanged}
+      scrollEventThrottle={200}
     />
   );
 }

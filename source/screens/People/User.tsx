@@ -78,6 +78,7 @@ const User = ({route, navigation}) => {
         <LoadingView />
       ) : (
         <ProfileList
+          isCurrentUser={false}
           onEndReached={
             hasNextPage && !loadingMore ? onNextPage.current : undefined
           }

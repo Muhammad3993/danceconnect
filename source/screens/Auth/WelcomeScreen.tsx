@@ -133,7 +133,7 @@ const WeclomeScreen = (): JSX.Element => {
             <RN.Text style={styles.logInText}>{t('login')}</RN.Text>
           </RN.TouchableOpacity>
         </RN.View>
-{/* 
+        {/* 
         <RN.View style={styles.bottomWrapperLg}>
           <RN.Text style={styles.alreadyAccountText}>{t('language')}</RN.Text>
           <RN.TouchableOpacity onPress={onPressChangeLG}>

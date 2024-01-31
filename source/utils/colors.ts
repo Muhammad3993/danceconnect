@@ -1,9 +1,11 @@
 export default {
   white: '#FFF',
   black: '#000',
+  baseBlack: '#292B32',
   textPrimary: '#212121',
   textSecondary: '#636878',
   textHighlighted: '#1054DE',
+  baseShade: '#EBECEF',
   gray: '#EEE',
   lightGray: '#FAFAFA',
   darkGray: '#757575',
