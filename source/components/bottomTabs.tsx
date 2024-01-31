@@ -11,8 +11,11 @@ const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
   const {bottom} = useSafeAreaInsets();
   const tabs = state.routes;
 
+  // I PUT IT  TERNARY BECAUSE IN OLDER IPHONES YOU DON'T HAVE BOTTOM SAFEAREA AND ANDROID TOO
+  // AND IT LOOOKS LIKE ICONS ARE STICKY ON BOTTOM
   return (
-    <RN.View style={[styles.container, {paddingBottom: bottom}]}>
+    <RN.View
+      style={[styles.container, {paddingBottom: bottom == 0 ? 8 : bottom}]}>
       {tabs.map((route, index) => {
         // const {tabBarActiveTintColor, tabBarInactiveTintColor} =
         //   descriptors[route.key].options;
@@ -83,7 +86,7 @@ const styles = RN.StyleSheet.create({
     // paddingHorizontal: 16,
     borderTopColor: colors.gray,
     borderTopWidth: 1,
-    paddingVertical: 8,
+    paddingTop: 8,
   },
   btn: {
     height: 50,

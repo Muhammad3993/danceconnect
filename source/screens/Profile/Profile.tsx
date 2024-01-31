@@ -1,27 +1,30 @@
+import {PostRepository} from '@amityco/ts-sdk';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
-import FastImage from 'react-native-fast-image';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {apiUrl} from '../../api/serverRequests';
-import {Button} from '../../components/Button';
+import {Button, ButtonVariant} from '../../components/Button';
+import {ProfileList} from '../../components/profileList';
 import {useProfile} from '../../hooks/useProfile';
 import useRegistration from '../../hooks/useRegistration';
 import useTickets from '../../hooks/useTickets';
 import colors from '../../utils/colors';
-import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../../utils/constants';
-import {defaultProfile} from '../../utils/images';
+import {SCREEN_HEIGHT} from '../../utils/constants';
 import {CreatePostModal} from './ui/CreatePostModal';
 import {MenuItems} from './ui/MenuItems';
-import {PostRepository} from '@amityco/ts-sdk';
-import {PostCard} from './ui/PostCard';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
-  const {userImgUrl, getUser} = useProfile();
+  const {getUser} = useProfile();
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsloading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(true);
+
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const onNextPage = useRef<() => void>();
+
   const menuRef = useRef<Modalize>(null);
   const postRef = useRef<Modalize>(null);
 
@@ -30,9 +33,26 @@ const ProfileScreen = ({navigation}) => {
 
   useEffect(() => {
     const sub = PostRepository.getPosts(
-      {targetId: currentUser?.id, targetType: 'user'},
-      data => {
-        setPosts(data.data as Amity.Post[]);
+      {
+        targetId: currentUser?.id,
+        targetType: 'user',
+        includeDeleted: false,
+        limit: 20,
+      },
+      ({data, ...metadata}) => {
+        if (!metadata.loading) {
+          setIsloading(false);
+          setPosts(data);
+        }
+
+        setLoadingMore(metadata.loading);
+        setHasNextPage(metadata.hasNextPage ?? false);
+
+        if (metadata.onNextPage) {
+          onNextPage.current = metadata.onNextPage;
+        } else {
+          onNextPage.current = undefined;
+        }
       },
     );
 
@@ -41,7 +61,7 @@ const ProfileScreen = ({navigation}) => {
     };
   }, [currentUser?.id]);
 
-  const onPressChangeProfile = () => {
+  const editProfile = () => {
     navigation.navigate('ChangeProfile');
   };
 
@@ -55,73 +75,54 @@ const ProfileScreen = ({navigation}) => {
   }, []);
 
   function createImagePost() {
-    postRef.current?.open();
+    navigation.push('CreatePost');
+    // postRef.current?.open();
   }
 
   function endCreatingPost() {
     postRef.current?.close();
   }
 
-  // const data = Array(20).fill(1);
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <RN.FlatList
-        showsVerticalScrollIndicator={false}
-        style={{flex: 1, paddingHorizontal: 24}}
-        numColumns={3}
-        columnWrapperStyle={{flex: 1}}
-        data={posts}
-        contentContainerStyle={{justifyContent: 'space-between'}}
-        ListHeaderComponent={
+      <ProfileList
+        onEndReached={
+          hasNextPage && !loadingMore ? onNextPage.current : undefined
+        }
+        isLoading={isLoading}
+        posts={posts}
+        user={currentUser}
+        headerActions={
+          <RN.TouchableOpacity onPress={onPressMenu}>
+            <RN.Image
+              source={{uri: 'setting'}}
+              style={{width: 28, height: 28, marginLeft: 20}}
+            />
+          </RN.TouchableOpacity>
+        }
+        actions={
           <>
-            <RN.View style={styles.header}>
-              <RN.TouchableOpacity onPress={onPressMenu}>
-                <RN.Image
-                  source={{uri: 'setting'}}
-                  style={{width: 24, height: 24}}
-                />
-              </RN.TouchableOpacity>
-            </RN.View>
-            <RN.View style={styles.profile}>
-              <FastImage
-                source={{
-                  uri: apiUrl + userImgUrl,
-                  cache: FastImage.cacheControl.immutable,
-                  priority: FastImage.priority.high,
-                }}
-                defaultSource={defaultProfile}
-                style={styles.image}
-              />
-              <RN.View style={{maxWidth: SCREEN_WIDTH - 100}}>
-                <RN.Text numberOfLines={1} style={styles.userName}>
-                  {currentUser?.userName}
-                </RN.Text>
-                <RN.Text numberOfLines={1} style={styles.userEmail}>
-                  {currentUser?.email}
-                </RN.Text>
-                <RN.TouchableOpacity
-                  style={styles.editProfileBtn}
-                  onPress={onPressChangeProfile}
-                  activeOpacity={0.7}>
-                  <RN.Text style={styles.editProfileText}>
-                    {t('edit_profile')}
-                  </RN.Text>
-                </RN.TouchableOpacity>
-              </RN.View>
-            </RN.View>
             <Button
-              disabled={true}
-              title="Upload Post"
+              iconName="plusoutline"
+              disabled
+              title="Add Post"
               onPress={createImagePost}
-              buttonStyle={{marginHorizontal: 0}}
+              buttonStyle={styles.actionBtn}
+              iconColor={colors.white}
+              iconSize={16}
+            />
+            <RN.View style={{width: 8}} />
+            <Button
+              iconName="edit"
+              disabled
+              title={t('Edit Profile')}
+              onPress={editProfile}
+              buttonStyle={styles.actionBtn}
+              variant={ButtonVariant.outlined}
+              iconSize={20}
             />
           </>
         }
-        renderItem={({item}) => {
-          return <PostCard post={item} />;
-        }}
-        horizontal={false}
-        keyExtractor={(_, index) => index.toString()}
       />
 
       <Portal>
@@ -153,52 +154,10 @@ const styles = RN.StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    // marginHorizontal: 12,
-  },
-
-  profile: {
-    flexDirection: 'row',
-    paddingBottom: 24,
-    alignItems: 'center',
-    // marginHorizontal: 12,
-  },
-  image: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 24,
-    fontFamily: 'Mulish-Regular',
-    paddingLeft: 20,
-    color: colors.textPrimary,
-  },
-  userEmail: {
-    fontSize: 16,
-    lineHeight: 22.4,
-    paddingLeft: 20,
-    color: 'rgba(97, 97, 97, 1)',
-  },
-  editProfileBtn: {
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(156, 134, 220, 1)',
-    borderRadius: 40,
-    paddingVertical: 4,
-    paddingHorizontal: 16,
-    alignSelf: 'flex-start',
-    marginLeft: 20,
-  },
-  editProfileText: {
-    color: 'rgba(92, 51, 215, 1)',
-    fontSize: 16,
-    lineHeight: 22.4,
-    letterSpacing: 0.2,
+  actionBtn: {
+    flex: 1,
+    marginHorizontal: 0,
+    paddingVertical: 8,
   },
 });
 

@@ -1,19 +1,19 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import * as RN from 'react-native';
-import colors from '../../utils/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {useCommunities} from '../../hooks/useCommunitites';
-import Search from '../../components/search';
-import ManagingTab from './tabs/managingTab';
-import JoinTab from './tabs/joinedTab';
-import AllTab from './tabs/allTab';
-import useAppStateHook from '../../hooks/useAppState';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import * as RN from 'react-native';
 import {Portal} from 'react-native-portalize';
 import FindCity from '../../components/findCity copy';
-import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
-import {useTranslation} from 'react-i18next';
+import Search from '../../components/search';
+import {Tab} from '../../components/tab';
+import useAppStateHook from '../../hooks/useAppState';
+import {useCommunities} from '../../hooks/useCommunitites';
 import i18n from '../../i18n/i118n';
-import { FlatList } from 'react-native-gesture-handler';
+import colors from '../../utils/colors';
+import {isAndroid} from '../../utils/constants';
+import AllTab from './tabs/allTab';
+import JoinTab from './tabs/joinedTab';
+import ManagingTab from './tabs/managingTab';
 
 const CommunitiesScreen = () => {
   const {
@@ -25,12 +25,16 @@ const CommunitiesScreen = () => {
     isLoadingWithFollow,
   } = useCommunities();
   const {t} = useTranslation();
-  const TABS = [t('all_tab'), t('joined'), t('managing')];
+  const TABS = [
+    {text: t('all_tab')},
+    {text: t('joined')},
+    {text: t('managing')},
+  ];
   const routeProps = useRoute();
   const navigation = useNavigation();
   const [searchValue, onSearch] = useState('');
   const [tabs, setTabs] = useState(TABS);
-  const [currentTab, setCurrentTab] = useState(tabs[0]);
+  const [currentTab, setCurrentTab] = useState(tabs[0].text);
   const [communititesSearch, setCommunitiesSearch] = useState<string[]>([]);
 
   const [openModal, setOpenModal] = useState(false);
@@ -48,7 +52,11 @@ const CommunitiesScreen = () => {
   };
   useEffect(() => {
     i18n.on('languageChanged', lg => {
-      setTabs([i18n.t('all_tab'), i18n.t('joined'), i18n.t('managing')]);
+      setTabs([
+        {text: i18n.t('all_tab')},
+        {text: i18n.t('joined')},
+        {text: i18n.t('managing')},
+      ]);
       onPressTab(t('all_tab'));
     });
   }, [t]);
@@ -120,72 +128,43 @@ const CommunitiesScreen = () => {
   );
 
   const renderHeader = () => {
-    const renderTab = ({item, index}: any) => {
-      return (
-        <RN.TouchableOpacity
-          onPress={() => onPressTab(item)}
-          key={index}
-          style={[
-            styles.itemTabContainer,
-            {
-              borderBottomWidth: currentTab === item ? 3 : 0,
-              paddingHorizontal: 16,
-              paddingBottom: 8,
-            },
-          ]}>
-          <RN.Text
-            style={[
-              styles.itemTabText,
-              {color: currentTab === item ? colors.purple : colors.darkGray},
-            ]}>
-            {item}
-          </RN.Text>
-        </RN.TouchableOpacity>
-      );
-    };
     return (
-      <>
-        <RN.View
-          style={{
-            paddingHorizontal: isAndroid ? 0 : 20,
-            marginTop: isAndroid ? 14 : 0,
-          }}>
-          <RN.TouchableOpacity
-            style={styles.userLocationWrapper}
-            onPress={() => setOpenModal(true)}>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image
-                source={{uri: 'locate'}}
-                style={{height: 16, width: 16}}
-              />
-            </RN.View>
-            <RN.Text style={styles.userLocationText}>{currentCity}</RN.Text>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image
-                source={{uri: 'downlight'}}
-                style={{height: 16, width: 16, marginLeft: 6}}
-              />
-            </RN.View>
-          </RN.TouchableOpacity>
-          <Search
-            onFocus={onRefSearch}
-            onSearch={onChangeTextSearch}
-            searchValue={searchValue}
-            placeholder={t('input_search_communities')}
-            onPressAdd={() => navigation.navigate('CreateCommunity')}
-          />
-          <RN.View style={styles.tabsWrapper}>
-            <FlatList
-              // scrollEnabled={false}
-              data={tabs}
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderTab}
-              horizontal
+      <RN.View
+        style={{
+          paddingHorizontal: isAndroid ? 0 : 20,
+          marginTop: isAndroid ? 14 : 0,
+        }}>
+        <RN.TouchableOpacity
+          style={styles.userLocationWrapper}
+          onPress={() => setOpenModal(true)}>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Image
+              source={{uri: 'locate'}}
+              style={{height: 16, width: 16}}
             />
           </RN.View>
-        </RN.View>
-      </>
+          <RN.Text style={styles.userLocationText}>{currentCity}</RN.Text>
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Image
+              source={{uri: 'downlight'}}
+              style={{height: 16, width: 16, marginLeft: 6}}
+            />
+          </RN.View>
+        </RN.TouchableOpacity>
+        <Search
+          onFocus={onRefSearch}
+          onSearch={onChangeTextSearch}
+          searchValue={searchValue}
+          placeholder={t('input_search_communities')}
+          onPressAdd={() => navigation.navigate('CreateCommunity')}
+        />
+        <Tab
+          data={tabs}
+          currentTab={currentTab}
+          onPressTab={onPressTab}
+          textStyle={styles.itemTabText}
+        />
+      </RN.View>
     );
   };
 
@@ -282,19 +261,7 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
-  tabsWrapper: {
-    flexDirection: 'row',
-    // justifyContent: 'space-around',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray,
-    // paddingTop: 0,
-  },
-  itemTabContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.purple,
-    alignSelf: 'center',
-    // paddingHorizontal: SCREEN_WIDTH / 24,
-  },
+
   itemTabText: {
     fontSize: 16,
     lineHeight: 25.2,
