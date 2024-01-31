@@ -41,6 +41,7 @@ import {setErrors} from '../../utils/helpers';
 import {
   getUserById,
   refreshPassword,
+  setFcmTocken,
   updateUserById,
   updateUserCountry,
 } from '../../api/serverRequests';
@@ -320,6 +321,15 @@ function* setNewPassword(action: {
     yield put(setLoadingAction({onLoading: false}));
   }
 }
+
+function* setFcmTockenRequest(action: {payload: {fcmToken: string}}) {
+  const {fcmToken} = action.payload;
+  try {
+    yield call(setFcmTocken, fcmToken);
+  } catch (error) {
+    console.log('setFcmTockenRequest error', error);
+  }
+}
 function* profileSaga() {
   // yield takeLatest(PROFILE.GET_DATA_REQUEST, getUserDataRequest);
   yield takeLatest(PROFILE.GET_USER_BY_ID_REQUEST, getUserByIdRequest);
@@ -327,6 +337,7 @@ function* profileSaga() {
   yield takeLatest(PROFILE.CHANGE_DANCE_STYLES_REQUEST, changeDanceStyles);
   yield takeLatest(PROFILE.CHANGE_USER_COUNTRY_REQUEST, changeUserCountry);
   yield takeLatest(PROFILE.CHANGE_PASSWORD_REQUEST, setNewPassword);
+  yield takeLatest(PROFILE.SET_FCM_TOKEN, setFcmTockenRequest);
 }
 
 export default profileSaga;

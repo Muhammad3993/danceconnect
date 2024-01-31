@@ -17,6 +17,7 @@ import {
   changeUserInformationRequestAction,
   getUserByIdRequestAction,
   getUserDataRequestAction,
+  setFcmTockenRequestAction,
 } from '../store/actions/profileActions';
 import {selectorSocialProvider} from '../store/selectors/registrationSelector';
 
@@ -70,6 +71,9 @@ export const useProfile = () => {
       }),
     );
   };
+  const setToken = (token: string) => {
+    dispatch(setFcmTockenRequestAction(token));
+  };
   return {
     userName,
     userImgUrl,
@@ -88,5 +92,6 @@ export const useProfile = () => {
     userCommunities,
     isSocialAuth,
     onChangeUserCountry,
+    setToken,
   };
 };

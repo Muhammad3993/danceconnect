@@ -14,10 +14,6 @@ import {isAndroid} from './source/utils/constants';
 
 const App = () => {
   const statusBarContent = isAndroid ? 'light-content' : 'dark-content';
-
-  // const requestPermission =async () => {
-  //   const permission = await Notifi
-  // }
   // useEffect(() => {
   //   // handles deep link when app is already open
   //   Linking.addEventListener('url', evt => {

@@ -20,6 +20,7 @@ export type profileAction = {
     newPassword?: string;
     changePasswordSuccess?: boolean;
     changePasswordErrors?: null;
+    fcmToken: string;
   };
 };
 
@@ -102,6 +103,11 @@ export default (state = profileInitialState, action: profileAction) => {
         newPassword: '',
         changePasswordSuccess: action.payload?.changePasswordSuccess,
         changePasswordErrors: action.payload?.changePasswordErrors,
+      };
+    case PROFILE.SET_FCM_TOKEN:
+      return {
+        ...state,
+        fcmToken: action.payload?.fcmToken,
       };
     default:
       return state;

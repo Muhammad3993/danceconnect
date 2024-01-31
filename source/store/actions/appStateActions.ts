@@ -109,3 +109,10 @@ export const setTicketPercentAction = ({
     ticket_fix_price: ticket_fix_price,
   },
 });
+
+export const sendNotificationRequestAction = (data: any) => ({
+  type: APP_STATE.SEND_NOTIFICATION,
+  payload: {
+    data: data,
+  },
+});
