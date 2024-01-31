@@ -12,7 +12,6 @@ import useRegistration from '../../hooks/useRegistration';
 import useTickets from '../../hooks/useTickets';
 import colors from '../../utils/colors';
 import {SCREEN_HEIGHT} from '../../utils/constants';
-import {CreatePostModal} from './ui/CreatePostModal';
 import {MenuItems} from './ui/MenuItems';
 
 const ProfileScreen = ({navigation}) => {
@@ -26,7 +25,6 @@ const ProfileScreen = ({navigation}) => {
   const onNextPage = useRef<() => void>();
 
   const menuRef = useRef<Modalize>(null);
-  const postRef = useRef<Modalize>(null);
 
   const {getPurchasedTickets} = useTickets();
   const {currentUser} = useRegistration();
@@ -76,16 +74,12 @@ const ProfileScreen = ({navigation}) => {
 
   function createImagePost() {
     navigation.push('CreatePost');
-    // postRef.current?.open();
-  }
-
-  function endCreatingPost() {
-    postRef.current?.close();
   }
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
       <ProfileList
+        isCurrentUser
         onEndReached={
           hasNextPage && !loadingMore ? onNextPage.current : undefined
         }
@@ -135,14 +129,6 @@ const ProfileScreen = ({navigation}) => {
             close={() => menuRef.current?.close()}
             navigation={navigation}
           />
-        </Modalize>
-        <Modalize
-          scrollViewProps={{contentContainerStyle: {flex: 1}}}
-          modalHeight={SCREEN_HEIGHT * 0.75}
-          handlePosition="inside"
-          handleStyle={{height: 3, width: 38}}
-          ref={postRef}>
-          <CreatePostModal endCreatingPost={endCreatingPost} />
         </Modalize>
       </Portal>
     </SafeAreaView>

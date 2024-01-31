@@ -104,6 +104,7 @@ const AuthorizationScreen = (): JSX.Element => {
       navigation.navigate('HOME');
     }
   }, [userUid, navigation, isUserExists]);
+
   const renderBackButton = () => {
     return (
       <RN.TouchableOpacity onPress={goBack} style={{paddingTop: 24}}>

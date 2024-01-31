@@ -29,11 +29,9 @@ import ProfileScreen from '../screens/Profile/Profile';
 import TicketsScreen from '../screens/Profile/Tickets';
 import colors from '../utils/colors';
 import {MainStackNavigationParamList, navigationRef} from './types';
-// import ImageView from '../components/imageView';
 import AttendedPeople from '../screens/AttendedPeople';
 import Managers from '../screens/Community/Managers';
 import SoldTickets from '../screens/Events/Tickets/SoldTickets';
-// import {useTranslation} from 'react-i18next';
 import useAppStateHook from '../hooks/useAppState';
 import i18n from '../i18n/i118n';
 import ChangeLanguage from '../screens/ChangeLanguage';
@@ -319,7 +317,7 @@ const AppNavigator = () => {
               <MainStack.Screen
                 name="CreatePost"
                 component={CreatePostScreen}
-                options={{animation: 'slide_from_bottom', gestureEnabled: true}}
+                options={{animation: 'slide_from_bottom'}}
               />
             </>
           ) : (
