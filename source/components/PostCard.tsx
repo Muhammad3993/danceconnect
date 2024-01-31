@@ -67,7 +67,7 @@ export function PostCard({
   const haveChildren = post.children.length > 0;
 
   const getData = useCallback(async () => {
-    console.log(post.children);
+    // console.log(post.children);
 
     if (post.children.length > 0) {
       const postCh = await getPostImageInfo(post.children[0]);
@@ -120,7 +120,7 @@ export function PostCard({
     setMenuIsOpen(false);
   };
 
-  console.log({postImageUrl, videoUrl, videoPoster});
+  // console.log({postImageUrl, videoUrl, videoPoster});
 
   return (
     <View style={styles.container}>

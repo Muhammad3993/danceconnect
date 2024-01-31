@@ -13,10 +13,14 @@ import useTickets from '../../hooks/useTickets';
 import colors from '../../utils/colors';
 import {SCREEN_HEIGHT} from '../../utils/constants';
 import {MenuItems} from './ui/MenuItems';
+import usePeople from '../../hooks/usePeople';
+import {useIsFocused} from '@react-navigation/native';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
+  const isFocused = useIsFocused();
   const {getUser} = useProfile();
+  const {getEventsByUserId, getCommunitiesByUserId} = usePeople();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsloading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(true);
@@ -71,6 +75,13 @@ const ProfileScreen = ({navigation}) => {
     getUser();
     getPurchasedTickets();
   }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      getEventsByUserId(currentUser.id);
+      getCommunitiesByUserId(currentUser.id);
+    }
+  }, [isFocused, currentUser.id]);
 
   function createImagePost() {
     navigation.push('CreatePost');
