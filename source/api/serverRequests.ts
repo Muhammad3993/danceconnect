@@ -573,3 +573,13 @@ export const sendNotification = async (data: any) => {
   const response = await axios.post(`${apiUrl}send-notification/`, {data});
   return response.data;
 };
+
+export const getEventForUserId = async (user_id: string) => {
+  const response = await axios.get(`${apiUrl}events/${user_id}`);
+  return response.data;
+};
+
+export const getCommunitiesForUserId = async (user_id: string) => {
+  const response = await axios.get(`${apiUrl}communities/${user_id}`);
+  return response.data;
+};

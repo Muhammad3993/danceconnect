@@ -204,5 +204,6 @@
     "y_logout": "Yes, Logout",
     "del_acc": "Delete account",
     "del_acc_question": "Do you really want to delete account?",
-    "y_delete": "Yes, delete"
+    "y_delete": "Yes, delete",
+    "posts": "Posts"
 }

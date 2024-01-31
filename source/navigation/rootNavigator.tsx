@@ -48,6 +48,7 @@ import useBootsrap from '../hooks/useBootsrap';
 import {CreatePostScreen} from '../screens/Profile/CreatePost';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {BackIcon} from './backIcon';
+import messaging from '@react-native-firebase/messaging';
 
 const linking = {
   prefixes: ['https://danceconnect.online/', 'danceconnect://'],

@@ -82,7 +82,7 @@ const People = () => {
       <>
         <RN.View
           style={{
-            paddingHorizontal: isAndroid ? 0 : 16,
+            paddingHorizontal: isAndroid ? 0 : 20,
             marginTop: isAndroid ? 14 : 0,
           }}>
           <RN.TouchableOpacity
@@ -159,6 +159,7 @@ const People = () => {
         </>
       );
     }
+    return null;
   };
   const refreshControl = () => {
     return (

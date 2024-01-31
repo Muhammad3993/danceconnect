@@ -36,3 +36,6 @@ export const selectJoinedCommunities = createSelector(
     );
   },
 );
+
+export const selectCommunitiesByUserId = (state: IRootState) =>
+  state?.communities?.communities_by_user_id ?? [];

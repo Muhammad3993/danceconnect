@@ -5,6 +5,8 @@ import {
   changeInformationCommunitySuccessAction,
   createCommunityFailAction,
   createCommunitySuccessAction,
+  getCommunitiesByUserIdFailAction,
+  getCommunitiesByUserIdSuccessAction,
   getCommunitiesFailAction,
   getCommunitiesSuccessAction,
   getCommunityByIdFailAction,
@@ -28,6 +30,7 @@ import {
 import {
   createCommunityWithMongo,
   deleteCommunityById,
+  getCommunitiesForUserId,
   getCommunitiesWithMongo,
   getCommunitiesWithMongoByArray,
   getCommunityById,
@@ -359,6 +362,17 @@ function* getManagingCommunities() {
     console.log(err);
   }
 }
+
+function* getCommunitiesByUserId(action: {payload: {user_id: string}}) {
+  const {user_id} = action.payload;
+  try {
+    const response = yield call(getCommunitiesForUserId, user_id);
+    console.log('re', Object.values(response));
+    yield put(getCommunitiesByUserIdSuccessAction(Object.values(response)));
+  } catch (error) {
+    yield put(getCommunitiesByUserIdFailAction());
+  }
+}
 function* communititesSaga() {
   yield takeLatest(
     COMMUNITIES.GET_COMMUNITY_BY_ID_REQUEST,
@@ -398,6 +412,10 @@ function* communititesSaga() {
   yield takeLatest(
     COMMUNITIES.GET_MANAGING_COMMUNITIES_REQUEST,
     getManagingCommunities,
+  );
+  yield takeLatest(
+    COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_REQUEST,
+    getCommunitiesByUserId,
   );
 }
 

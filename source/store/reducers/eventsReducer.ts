@@ -37,6 +37,8 @@ export type eventAction = {
     event: any;
     isFollowed: boolean;
     personalEvents?: string[];
+    user_id?: string;
+    events_by_user_id?: string[];
   };
 };
 
@@ -245,6 +247,23 @@ export default (state = eventsInitialState, action: eventAction) => {
       return {
         ...state,
         personalEvents: [],
+      };
+
+    case EVENT.GET_EVENTS_BY_USER_ID_REQUEST:
+      return {
+        ...state,
+        user_id: action.payload?.user_id,
+        events_by_user_id: [],
+      };
+    case EVENT.GET_EVENTS_BY_USER_ID_SUCCESS:
+      return {
+        ...state,
+        events_by_user_id: action.payload?.events_by_user_id,
+      };
+    case EVENT.GET_EVENTS_BY_USER_ID_FAIL:
+      return {
+        ...state,
+        events_by_user_id: [],
       };
     default:
       return state;

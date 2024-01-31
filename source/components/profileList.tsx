@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import {defaultProfile} from '../utils/images';
@@ -17,7 +17,10 @@ import colors from '../utils/colors';
 import {getUserRole} from '../utils/helpers';
 import {Tab} from './tab';
 import {PostCard} from '../screens/Profile/ui/PostCard';
-
+import {useTranslation} from 'react-i18next';
+import CommunityCard from './communityCard';
+import EventCard from './eventCard';
+import usePeople from '../hooks/usePeople';
 interface Props {
   user: any;
   onEndReached?: () => void;
@@ -36,6 +39,24 @@ export function ProfileList({
   headerActions,
 }: Props) {
   const roles = user?.userRole ?? [];
+  const {t} = useTranslation();
+  const {
+    getEventsByUserId,
+    eventsByUser,
+    communitiesByUser,
+    getCommunitiesByUserId,
+  } = usePeople();
+  const [flatData, setFlatData] = useState<string[]>([]);
+  const [emptyTitle, setEmptyTitle] = useState('');
+  const TABS = [
+    {text: t('posts'), containerStyle: {flex: 1}},
+    {text: t('communities_tab'), containerStyle: {flex: 1.6}},
+    {
+      text: t('events_tab'),
+      containerStyle: {flex: 1, borderBottomWidth: 3},
+    },
+  ];
+  const [currentTab, setCurrentTab] = useState(TABS[0].text);
 
   const rolesString = roles.reduce((acc, next) => {
     const role = getUserRole(next.title);
@@ -43,7 +64,52 @@ export function ProfileList({
   }, '');
 
   const individualStyles = user?.individualStyles ?? [];
+  const renderItem = ({item}: any) => {
+    switch (currentTab) {
+      case t('posts'):
+        return <PostCard post={item} user={user} />;
+      case t('communities_tab'):
+        return (
+          <View style={{paddingTop: 12}}>
+            <CommunityCard item={item} isProfileScreen />
+          </View>
+        );
+      case t('events_tab'):
+        return (
+          <View style={{paddingTop: 12}}>
+            <EventCard item={item} />
+          </View>
+        );
+      default:
+        break;
+    }
+  };
 
+  useMemo(() => {
+    if (currentTab === t('posts')) {
+      setFlatData(posts);
+      if (!posts.length) {
+        setEmptyTitle('There are no records yet');
+      }
+    }
+    if (currentTab === t('events_tab')) {
+      setFlatData(eventsByUser);
+      if (!eventsByUser.length) {
+        setEmptyTitle(t('no_upcoming_communities'));
+      }
+    }
+    if (currentTab === t('communities_tab')) {
+      setFlatData(communitiesByUser);
+      if (!communitiesByUser.length) {
+        setEmptyTitle(t('non_communities'));
+      }
+    }
+  }, [communitiesByUser, currentTab, eventsByUser, posts, t]);
+
+  useEffect(() => {
+    getEventsByUserId(user.id);
+    getCommunitiesByUserId(user.id);
+  }, [user.id]);
   return (
     <FlatList
       bounces={false}
@@ -51,9 +117,9 @@ export function ProfileList({
       showsVerticalScrollIndicator={false}
       style={{
         flex: 1,
-        backgroundColor: posts.length == 0 ? colors.white : colors.gray200,
+        backgroundColor: !flatData?.length ? colors.white : colors.gray200,
       }}
-      data={posts}
+      data={flatData}
       ListHeaderComponent={
         <View style={{backgroundColor: colors.white}}>
           <View style={styles.header}>
@@ -68,7 +134,7 @@ export function ProfileList({
           <View style={styles.profile}>
             <FastImage
               source={{
-                uri: apiUrl + user.userImage,
+                uri: apiUrl + user?.userImage,
                 cache: FastImage.cacheControl.immutable,
                 priority: FastImage.priority.high,
               }}
@@ -105,26 +171,21 @@ export function ProfileList({
             itemStyle={{alignItems: 'center'}}
             containerStyle={styles.tabContainer}
             scrollEnabled={false}
-            data={[
-              {text: 'Posts', containerStyle: {flex: 1}},
-              {text: 'Communities', containerStyle: {flex: 1.6}},
-              {
-                text: 'Events',
-                containerStyle: {flex: 1, borderBottomWidth: 3},
-              },
-            ]}
-            currentTab={'Posts'}
-            onPressTab={() => {}}
+            data={TABS}
+            // currentTab={'Posts'}
+            currentTab={currentTab}
+            onPressTab={setCurrentTab}
           />
         </View>
       }
-      renderItem={({item}) => <PostCard post={item} user={user} />}
+      renderItem={renderItem}
+      // renderItem={({item}) => <PostCard post={item} user={user} />}
       ListEmptyComponent={
         <View style={{marginTop: 80}}>
           {isLoading ? (
             <ActivityIndicator size={'large'} />
           ) : (
-            <Text style={styles.emptyText}>Your feed is empty</Text>
+            <Text style={styles.emptyText}>{emptyTitle}</Text>
           )}
         </View>
       }

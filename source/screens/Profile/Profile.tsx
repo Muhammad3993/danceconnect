@@ -1,5 +1,5 @@
 import {PostRepository} from '@amityco/ts-sdk';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
 import {Modalize} from 'react-native-modalize';

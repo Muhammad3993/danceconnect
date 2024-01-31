@@ -26,6 +26,8 @@ export type communititesAction = {
     saveChanges?: boolean;
     isManagingLoading?: boolean;
     managingCommunities?: string[];
+    user_id?: string;
+    communities_by_user_id?: string[];
   };
 };
 
@@ -194,6 +196,23 @@ export default (
         ...state,
         isManagingLoading: false,
         managingCommunities: [],
+      };
+
+    case COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_REQUEST:
+      return {
+        ...state,
+        user_id: action.payload?.user_id,
+        communities_by_user_id: [],
+      };
+    case COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_SUCCESS:
+      return {
+        ...state,
+        communities_by_user_id: action.payload?.communities_by_user_id,
+      };
+    case COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_FAIL:
+      return {
+        ...state,
+        communities_by_user_id: [],
       };
     default:
       return state;

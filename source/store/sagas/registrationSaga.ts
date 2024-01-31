@@ -48,6 +48,7 @@ import {amitySessionHandler} from './bootstrapSaga';
 import {selectUser} from '../selectors/registrationSelector';
 // const socket = io('http://localhost:3000', {autoConnect: true});
 // socket.connect();
+import messaging from '@react-native-firebase/messaging';
 
 function* registrationEmail(action: any) {
   try {
@@ -183,6 +184,7 @@ function* logoutUser() {
     yield put(choosedCityAction({currentCity: ''}));
     yield put(clearPurchasedTicketsValue());
     yield call(Client.logout);
+    messaging().deleteToken();
   } catch (error) {
     yield put(logoutFail(error));
   }

@@ -21,4 +21,5 @@ export default {
   loadingManaging: false,
   communityByIdData: null,
   isLoadingChangeInformation: false,
+  communities_by_user_id: [],
 };

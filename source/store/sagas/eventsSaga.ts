@@ -25,6 +25,8 @@ import {
   getEventByIdCommunitySuccessAction,
   getEventByIdFailAction,
   getEventByIdSuccessAction,
+  getEventsByUserIdFailAction,
+  getEventsByUserIdSuccessAction,
   getEventsFailAction,
   getEventsRequestAction,
   getEventsSuccessAction,
@@ -51,6 +53,7 @@ import {
   updateEventById,
   subscribeEvent,
   getEventsWithMongoByArray,
+  getEventForUserId,
 } from '../../api/serverRequests';
 import {
   setLoadingAction,
@@ -540,6 +543,28 @@ function* getPersonalEvents() {
     yield put(getPersonalEventsFailAction());
   }
 }
+
+function* getEventsByUserId(action: {payload: {user_id: string}}) {
+  const {user_id} = action.payload;
+  try {
+    const response = yield call(getEventForUserId, user_id);
+    const events =
+      response.filter((event: {eventDate: {endDate: Date; startDate: Date}}) =>
+        event?.eventDate?.endDate !== null
+          ? moment(event?.eventDate?.endDate).format('YYYY-MM-DD') >=
+            moment(new Date()).format('YYYY-MM-DD')
+          : moment(event?.eventDate?.startDate).format('YYYY-MM-DD') >=
+            moment(new Date()).format('YYYY-MM-DD'),
+      ) ?? [];
+    const uniqueArray = events.filter((item, index, array) => {
+      return array.map(mapItem => mapItem.id).indexOf(item.id) === index;
+    });
+    console.log('events', uniqueArray);
+    yield put(getEventsByUserIdSuccessAction(uniqueArray));
+  } catch (error) {
+    yield put(getEventsByUserIdFailAction());
+  }
+}
 function* eventSaga() {
   yield takeLatest(EVENT.EVENT_CREATE_REQUEST, createEventRequest);
   yield takeLatest(EVENT.GET_EVENTS_REQUEST, getEventsRequest);
@@ -556,6 +581,7 @@ function* eventSaga() {
   yield takeLatest(EVENT.GET_MANAGING_EVENTS_REQUEST, getManagingEvents);
   yield takeLatest(EVENT.SET_LIMIT, getEventsRequest);
   yield takeLatest(EVENT.GET_PERSONAL_EVENTS_REQUEST, getPersonalEvents);
+  yield takeLatest(EVENT.GET_EVENTS_BY_USER_ID_REQUEST, getEventsByUserId);
   // yield debounce(1000, AUTHORIZATION_WITH_EMAIL.REQUEST, getEvents);
   // yield debounce(1000, AUTHORIZATION_WITH_GOOGLE.REQUEST, getEvents);
 }

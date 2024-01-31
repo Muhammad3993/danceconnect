@@ -279,3 +279,22 @@ export const getPersonalEventsSuccessAction = ({
 export const getPersonalEventsFailAction = () => ({
   type: EVENT.GET_PERSONAL_EVENTS_FAIL,
 });
+
+export const getEventsByUserIdRequestAction = (user_id: string) => ({
+  type: EVENT.GET_EVENTS_BY_USER_ID_REQUEST,
+  payload: {
+    user_id: user_id,
+  },
+});
+export const getEventsByUserIdSuccessAction = (
+  events_by_user_id: string[],
+) => ({
+  type: EVENT.GET_EVENTS_BY_USER_ID_SUCCESS,
+  payload: {
+    events_by_user_id: events_by_user_id,
+  },
+});
+
+export const getEventsByUserIdFailAction = () => ({
+  type: EVENT.GET_EVENTS_BY_USER_ID_FAIL,
+});

@@ -2,6 +2,7 @@ import {
   MessageContentType,
   MessageRepository,
   SubChannelRepository,
+  ChannelRepository,
 } from '@amityco/ts-sdk';
 import {NavigationProp} from '@react-navigation/native';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
@@ -34,6 +35,7 @@ export function ChatScreen({route, navigation}: Props) {
   const {channel} = route.params;
   const {sendMessageAction} = useAppStateHook();
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
   const [loadingMore, setLoadingMore] = useState(true);
   const [hasNextPage, setHasNextPage] = useState(false);
   const onNextPage = useRef<() => void>();
@@ -41,6 +43,18 @@ export function ChatScreen({route, navigation}: Props) {
 
   const [messages, setMessages] = useState<Amity.Message<'text'>[]>([]);
 
+  useEffect(() => {
+    if (channel?.defaultSubChannelId) {
+      ChannelRepository.getChannel(
+        route.params.channel?.defaultSubChannelId,
+        channelData => {
+          if (!channelData.loading) {
+            setData(channelData?.data);
+          }
+        },
+      );
+    }
+  }, [route.params]);
   useEffect(() => {
     SubChannelRepository.startReading(channel?.defaultSubChannelId);
     const msgSub = MessageRepository.getMessages(
@@ -81,7 +95,7 @@ export function ChatScreen({route, navigation}: Props) {
 
   const sendMessage = async (msg: IMessage[]) => {
     const textMessage = {
-      subChannelId: channel.channelId,
+      subChannelId: data.channelId,
       dataType: MessageContentType.TEXT,
       data: {
         text: msg[0].text ?? '',
@@ -91,23 +105,24 @@ export function ChatScreen({route, navigation}: Props) {
     };
 
     const {data: message} = await MessageRepository.createMessage(textMessage);
-    const usersList = channel?.metadata;
+    const usersList = data?.metadata;
     const users = usersList?.users ?? [];
-    const data = {
+    const dataChannel = {
       users: users,
       messages: [
         {
           ...textMessage,
-          channelId: channel.channelId,
+          channelId: dataChannel.channelId,
           userId: currentUser.id,
         },
       ],
     };
-    sendMessageAction(data);
+    // console.log('data', channel);
+    sendMessageAction(dataChannel);
     return message;
   };
 
-  const usersList = channel?.metadata;
+  const usersList = data?.metadata;
   const users = usersList?.users ?? [];
   const anotherUser = users.find(user => user.id !== currentUser.id);
 
@@ -120,9 +135,7 @@ export function ChatScreen({route, navigation}: Props) {
           <Header
             withLine
             title={
-              anotherUser?.userName ??
-              channel?.displayName ??
-              channel?.channelId
+              anotherUser?.userName ?? data?.displayName ?? data?.channelId
             }
             navigation={navigation}
             rightIcon={

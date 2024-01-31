@@ -115,3 +115,6 @@ export const selectPersonalEvents = (state: IRootState) =>
 
 export const selectIsCreatedEvent = (state: IRootState) =>
   state?.events?.createdEvent ?? false;
+
+export const selectEventByUserId = (state: IRootState) =>
+  state?.events?.events_by_user_id ?? [];

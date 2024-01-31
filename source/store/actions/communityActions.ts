@@ -197,3 +197,22 @@ export const removeCommunitySuccessAction = () => ({
 export const removeCommunityFailAction = () => ({
   type: COMMUNITIES.REMOVE_COMMUNITY_FAIL,
 });
+
+export const getCommunitiesByUserIdRequestAction = (user_id: string) => ({
+  type: COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_REQUEST,
+  payload: {
+    user_id: user_id,
+  },
+});
+export const getCommunitiesByUserIdSuccessAction = (
+  communities_by_user_id: string[],
+) => ({
+  type: COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_SUCCESS,
+  payload: {
+    communities_by_user_id: communities_by_user_id,
+  },
+});
+
+export const getCommunitiesByUserIdFailAction = () => ({
+  type: COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_FAIL,
+});

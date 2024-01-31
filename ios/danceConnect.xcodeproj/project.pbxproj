@@ -540,7 +540,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.incode.danceconnect;
 				PRODUCT_NAME = danceConnect;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "InCode Provisioning Profile";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "javoxir dance connect distribution";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

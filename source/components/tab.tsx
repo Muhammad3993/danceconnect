@@ -37,7 +37,7 @@ export function Tab({
     return (
       <View style={containerStyle}>
         <View style={styles.tabsWrapper}>
-          {data.map(item => {
+          {data?.map(item => {
             const active = currentTab === item.text;
             return (
               <TouchableOpacity
