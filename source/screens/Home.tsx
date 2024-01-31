@@ -13,6 +13,9 @@ import useTickets from '../hooks/useTickets';
 import {useTranslation} from 'react-i18next';
 import {isAndroid} from '../utils/constants';
 import {Client} from '@amityco/ts-sdk';
+import messaging from '@react-native-firebase/messaging';
+import {useProfile} from '../hooks/useProfile';
+import PushController from '../utils/pushController';
 
 const HomeScreen = () => {
   const routeProps = useRoute();
@@ -27,8 +30,20 @@ const HomeScreen = () => {
   const [events, setEvents] = useState<string[]>([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const {getPurchasedTickets} = useTickets();
+  const {setToken} = useProfile();
 
   const {t} = useTranslation();
+  const getFcmToken = async () => {
+    try {
+      const fcmToken = await messaging().getToken();
+      console.log('getFcmToken', fcmToken);
+      setToken(fcmToken);
+      return fcmToken;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     setTabs(['All', ...eventTypes]);
@@ -43,6 +58,7 @@ const HomeScreen = () => {
   }, [isFocused, routeProps.params?.logout, routeProps.params]);
 
   useEffect(() => {
+    getFcmToken();
     getDanceStyles();
     // getManagingEvents();
     getPersonalEvents();
@@ -183,6 +199,7 @@ const HomeScreen = () => {
         {/* </ScrollView> */}
       </RN.View>
       <RN.View style={{paddingBottom: 24, backgroundColor: '#FAFAFA'}} />
+      <PushController />
     </ScrollView>
   );
 };

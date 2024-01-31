@@ -23,6 +23,7 @@ import {defaultProfile} from '../../utils/images';
 import {Header} from './ui/Header';
 import useRegistration from '../../hooks/useRegistration';
 import {apiUrl} from '../../api/serverRequests';
+import useAppStateHook from '../../hooks/useAppState';
 
 interface Props {
   route: {params: {channel: Amity.Channel}};
@@ -31,6 +32,7 @@ interface Props {
 
 export function ChatScreen({route, navigation}: Props) {
   const {channel} = route.params;
+  const {sendMessageAction} = useAppStateHook();
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(true);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -40,9 +42,9 @@ export function ChatScreen({route, navigation}: Props) {
   const [messages, setMessages] = useState<Amity.Message<'text'>[]>([]);
 
   useEffect(() => {
-    SubChannelRepository.startReading(channel.defaultSubChannelId);
+    SubChannelRepository.startReading(channel?.defaultSubChannelId);
     const msgSub = MessageRepository.getMessages(
-      {subChannelId: channel.defaultSubChannelId, limit: 18, type: 'text'},
+      {subChannelId: channel?.defaultSubChannelId, limit: 18, type: 'text'},
       ({data, ...metadata}) => {
         if (!metadata.loading) {
           setLoading(false);
@@ -59,9 +61,9 @@ export function ChatScreen({route, navigation}: Props) {
 
     return () => {
       msgSub();
-      SubChannelRepository.stopReading(channel.defaultSubChannelId);
+      SubChannelRepository.stopReading(channel?.defaultSubChannelId);
     };
-  }, [channel.defaultSubChannelId]);
+  }, [channel?.defaultSubChannelId]);
 
   const localMessages: IMessage[] = useMemo(() => {
     if (messages.length) {
@@ -89,11 +91,23 @@ export function ChatScreen({route, navigation}: Props) {
     };
 
     const {data: message} = await MessageRepository.createMessage(textMessage);
-
+    const usersList = channel?.metadata;
+    const users = usersList?.users ?? [];
+    const data = {
+      users: users,
+      messages: [
+        {
+          ...textMessage,
+          channelId: channel.channelId,
+          userId: currentUser.id,
+        },
+      ],
+    };
+    sendMessageAction(data);
     return message;
   };
 
-  const usersList = channel.metadata;
+  const usersList = channel?.metadata;
   const users = usersList?.users ?? [];
   const anotherUser = users.find(user => user.id !== currentUser.id);
 

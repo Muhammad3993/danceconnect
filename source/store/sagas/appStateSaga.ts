@@ -1,5 +1,5 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
-import {getConstants, getPercentage} from '../../api/serverRequests';
+import {getConstants, getPercentage, sendNotification} from '../../api/serverRequests';
 import {APP_STATE} from '../actionTypes/appStateActionTypes';
 import {
   setCountriesAction,
@@ -70,10 +70,19 @@ function* getPricePercentRequest() {
   }
 }
 
+function* sendNotificationRequest(action: {payload: {data: any}}) {
+  const {data} = action.payload;
+  try {
+    yield call(sendNotification, data);
+  } catch (error) {
+    console.log('error sendNotificationRequest', error);
+  }
+}
 // getPercentage
 function* appStateSaga() {
   yield takeLatest(APP_STATE.GET_DANCE_STYLES, getDanceStylesRequest);
   yield takeLatest(APP_STATE.GET_STRIPE_KEY, getStripeKeyRequest);
   yield takeLatest(APP_STATE.GET_TICKET_PERCENT, getPricePercentRequest);
+  yield takeLatest(APP_STATE.SEND_NOTIFICATION, sendNotificationRequest);
 }
 export default appStateSaga;

@@ -14,7 +14,6 @@ import {isAndroid} from './source/utils/constants';
 
 const App = () => {
   const statusBarContent = isAndroid ? 'light-content' : 'dark-content';
-
   // useEffect(() => {
   //   // handles deep link when app is already open
   //   Linking.addEventListener('url', evt => {

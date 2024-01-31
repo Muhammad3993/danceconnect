@@ -19,6 +19,7 @@ import {
   getDanceStylesAction,
   getStripeKeyAction,
   getTicketPercentAction,
+  sendNotificationRequestAction,
   setCurrentCountryAction,
   setLanguage,
   setLoadingAction,
@@ -99,6 +100,10 @@ const useAppStateHook = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
   };
 
+  const sendMessageAction = (data: any) => {
+    dispatch(sendNotificationRequestAction(data));
+  };
+
   return {
     onLoading,
     setLoading,
@@ -123,6 +128,7 @@ const useAppStateHook = () => {
     pricePercent,
     getTicketPricePercent,
     regions,
+    sendMessageAction,
   };
 };
 export default useAppStateHook;

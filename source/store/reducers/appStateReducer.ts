@@ -18,6 +18,7 @@ export type appStateAction = {
     language?: string;
     ticket_percent?: number;
     ticket_fix_price?: number;
+    data?: any;
   };
 };
 
@@ -87,6 +88,11 @@ export default (state = appStateInitialState, action: appStateAction) => {
         ticket_fix_price: action?.payload?.ticket_fix_price,
       };
 
+    case APP_STATE.SEND_NOTIFICATION:
+      return {
+        ...state,
+        data: action.payload.data,
+      };
     default:
       return state;
   }

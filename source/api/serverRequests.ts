@@ -561,3 +561,15 @@ export const getUsersList = async (locations: string[]) => {
   });
   return response.data;
 };
+
+export const setFcmTocken = async (fcmToken: string) => {
+  const data = {
+    fcmToken: fcmToken,
+  };
+  const response = await axios.post(`${apiUrl}user/fcm_token`, data);
+  return response.data;
+};
+export const sendNotification = async (data: any) => {
+  const response = await axios.post(`${apiUrl}send-notification/`, {data});
+  return response.data;
+};

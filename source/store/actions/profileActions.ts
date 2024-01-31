@@ -131,3 +131,10 @@ export const clearChangePassData = ({changePasswordSuccess}: userParams) => ({
     changePasswordSuccess: changePasswordSuccess,
   },
 });
+
+export const setFcmTockenRequestAction = (fcmToken: string) => ({
+  type: PROFILE.SET_FCM_TOKEN,
+  payload: {
+    fcmToken: fcmToken,
+  },
+});
