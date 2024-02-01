@@ -25,6 +25,7 @@ import {Header} from './ui/Header';
 import useRegistration from '../../hooks/useRegistration';
 import {apiUrl} from '../../api/serverRequests';
 import useAppStateHook from '../../hooks/useAppState';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface Props {
   route: {params: {channel: Amity.Channel}};
@@ -35,7 +36,7 @@ export function ChatScreen({route, navigation}: Props) {
   const {channel} = route.params;
   const {sendMessageAction} = useAppStateHook();
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<Amity.Channel>();
   const [loadingMore, setLoadingMore] = useState(true);
   const [hasNextPage, setHasNextPage] = useState(false);
   const onNextPage = useRef<() => void>();
@@ -95,7 +96,7 @@ export function ChatScreen({route, navigation}: Props) {
 
   const sendMessage = async (msg: IMessage[]) => {
     const textMessage = {
-      subChannelId: data.channelId,
+      subChannelId: data?.channelId,
       dataType: MessageContentType.TEXT,
       data: {
         text: msg[0].text ?? '',
@@ -112,7 +113,7 @@ export function ChatScreen({route, navigation}: Props) {
       messages: [
         {
           ...textMessage,
-          channelId: dataChannel.channelId,
+          channelId: data?.channelId,
           userId: currentUser.id,
         },
       ],

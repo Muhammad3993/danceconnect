@@ -92,13 +92,13 @@ export function ProfileList({
         );
       case t('communities_tab'):
         return (
-          <View style={{paddingTop: 12}}>
+          <View style={{paddingTop: 12, marginBottom: -12}}>
             <CommunityCard item={item} isProfileScreen />
           </View>
         );
       case t('events_tab'):
         return (
-          <View style={{paddingTop: 12}}>
+          <View style={{paddingTop: 12, marginBottom: -12}}>
             <EventCard item={item} />
           </View>
         );
@@ -159,9 +159,14 @@ export function ProfileList({
       bounces={false}
       onEndReached={onEndReached}
       showsVerticalScrollIndicator={false}
+      // eslint-disable-next-line react-native/no-inline-styles
       style={{
         flex: 1,
-        backgroundColor: !flatData?.length ? colors.white : colors.gray200,
+        backgroundColor: !flatData?.length
+          ? colors.white
+          : currentTab !== t('posts')
+          ? colors.white
+          : colors.gray200,
       }}
       data={flatData}
       ListHeaderComponent={
