@@ -186,12 +186,10 @@ export function PostCard({
                   onPress={() => setIsPaused(!isPaused)}
                   style={styles.playOverlay}>
                   {isPaused && (
-                    // <View style={styles.playButton}>
                     <Image
                       source={{uri: 'playcircle'}}
                       style={{width: 40, height: 40, tintColor: colors.white}}
                     />
-                    // </View>
                   )}
                 </Pressable>
               </>

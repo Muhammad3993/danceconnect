@@ -28,7 +28,7 @@ import {
 } from '../../store/actions/appStateActions';
 import useRegistration from '../../hooks/useRegistration';
 import {useDispatch} from 'react-redux';
-import Video from 'react-native-video';
+// import Video from 'react-native-video';
 
 export function CreatePostScreen({navigation, route}) {
   const {postId, postText, postImage, postVideo} = route.params ?? {};
@@ -38,10 +38,10 @@ export function CreatePostScreen({navigation, route}) {
   const [initialImage, setinitalImage] = useState<string | undefined>(
     postImage,
   );
-  const [video, setVideo] = useState<Asset | null>(null);
-  const [initialVideo, setInitialVideo] = useState<string | undefined>(
-    postVideo,
-  );
+  // const [video, setVideo] = useState<Asset | null>(null);
+  // const [initialVideo, setInitialVideo] = useState<string | undefined>(
+  //   postVideo,
+  // );
   const [text, setText] = useState(postText ?? '');
   const [creatingPost, setCreatingPost] = useState(false);
   const isCreating = postId === undefined;
@@ -55,29 +55,29 @@ export function CreatePostScreen({navigation, route}) {
     const images = await launchImageLibrary(options);
 
     if (images.assets) {
-      setVideo(null);
-      setInitialVideo(undefined);
+      // setVideo(null);
+      // setInitialVideo(undefined);
       setinitalImage(undefined);
       setImage(images.assets[0]);
     }
   };
 
-  const uploadVideo = async () => {
-    let options: ImageLibraryOptions = {
-      mediaType: 'video',
-      selectionLimit: 1,
-      quality: 1,
-      videoQuality: 'medium',
-    };
-    const images = await launchImageLibrary(options);
+  // const uploadVideo = async () => {
+  //   let options: ImageLibraryOptions = {
+  //     mediaType: 'video',
+  //     selectionLimit: 1,
+  //     quality: 1,
+  //     videoQuality: 'medium',
+  //   };
+  //   const images = await launchImageLibrary(options);
 
-    if (images.assets) {
-      setImage(null);
-      setInitialVideo(undefined);
-      setinitalImage(undefined);
-      setVideo(images.assets[0]);
-    }
-  };
+  //   if (images.assets) {
+  //     setImage(null);
+  //     setInitialVideo(undefined);
+  //     setinitalImage(undefined);
+  //     setVideo(images.assets[0]);
+  //   }
+  // };
 
   const uploadCameraImage = async () => {
     try {
@@ -88,8 +88,8 @@ export function CreatePostScreen({navigation, route}) {
       const images = await launchCamera(options);
 
       if (images.assets) {
-        setVideo(null);
-        setInitialVideo(undefined);
+        // setVideo(null);
+        // setInitialVideo(undefined);
         setinitalImage(undefined);
         setImage(images.assets[0]);
       }
@@ -123,22 +123,22 @@ export function CreatePostScreen({navigation, route}) {
         attachments.push({type: PostContentType.IMAGE, fileId: data[0].fileId});
       }
 
-      if (video !== null) {
-        const formData = new FormData();
+      // if (video !== null) {
+      //   const formData = new FormData();
 
-        const uri = video.uri ?? '';
+      //   const uri = video.uri ?? '';
 
-        formData.append('files', {
-          type: video.type,
-          name: video.fileName,
-          uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
-        });
+      //   formData.append('files', {
+      //     type: video.type,
+      //     name: video.fileName,
+      //     uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
+      //   });
 
-        const {data} = await FileRepository.uploadVideo(formData);
-        // console.log(data);
+      //   const {data} = await FileRepository.uploadVideo(formData);
+      //   // console.log(data);
 
-        attachments.push({type: PostContentType.VIDEO, fileId: data[0].fileId});
-      }
+      //   attachments.push({type: PostContentType.VIDEO, fileId: data[0].fileId});
+      // }
 
       const newPost = {
         tags: ['post'],
@@ -161,7 +161,8 @@ export function CreatePostScreen({navigation, route}) {
     }
   };
 
-  const canCreate = image !== null || text.trim() !== '' || video !== null;
+  const canCreate = image !== null || text.trim() !== '';
+  // const canCreate = image !== null || text.trim() !== '' || video !== null;
 
   return (
     <KeyboardAvoidingView
@@ -213,7 +214,7 @@ export function CreatePostScreen({navigation, route}) {
             </View>
           )}
 
-          {(video !== null || initialVideo !== undefined) && (
+          {/* {(video !== null || initialVideo !== undefined) && (
             <View style={styles.mediaContent}>
               <Video
                 resizeMode="cover"
@@ -221,7 +222,7 @@ export function CreatePostScreen({navigation, route}) {
                 style={{flex: 1}}
               />
             </View>
-          )}
+          )} */}
         </ScrollView>
 
         <View style={styles.footer}>
@@ -235,12 +236,12 @@ export function CreatePostScreen({navigation, route}) {
             <Image source={{uri: 'image'}} style={{width: 24, height: 24}} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.footerItem} onPress={uploadVideo}>
+          {/* <TouchableOpacity style={styles.footerItem} onPress={uploadVideo}>
             <Image
               source={{uri: 'playcircle'}}
               style={{width: 24, height: 24}}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </SafeAreaView>
     </KeyboardAvoidingView>

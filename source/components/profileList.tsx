@@ -59,8 +59,6 @@ export function ProfileList({
     communitiesByUser,
     getCommunitiesByUserId,
   } = usePeople();
-  const [flatData, setFlatData] = useState<string[]>([]);
-  const [emptyTitle, setEmptyTitle] = useState('');
   const TABS = [
     {text: t('posts'), containerStyle: {flex: 1}},
     {text: t('communities_tab'), containerStyle: {flex: 1.6}},
@@ -78,6 +76,7 @@ export function ProfileList({
   }, '');
 
   const individualStyles = user?.individualStyles ?? [];
+
   const renderItem = ({item}: any) => {
     switch (currentTab) {
       case t('posts'):
@@ -108,31 +107,39 @@ export function ProfileList({
     }
   };
 
-  useMemo(() => {
+  const flatData = useMemo(() => {
     if (currentTab === t('posts')) {
-      setFlatData(posts);
-      if (!posts.length) {
-        setEmptyTitle('There are no records yet');
-      }
+      return posts;
     }
     if (currentTab === t('events_tab')) {
-      setFlatData(eventsByUser);
-      if (!eventsByUser.length) {
-        setEmptyTitle(t('no_upcoming_communities'));
-      }
+      return eventsByUser;
     }
     if (currentTab === t('communities_tab')) {
-      setFlatData(communitiesByUser);
-      if (!communitiesByUser.length) {
-        setEmptyTitle(t('non_communities'));
-      }
+      return communitiesByUser;
     }
+
+    return [];
   }, [communitiesByUser, currentTab, eventsByUser, posts, t]);
+
+  const emptyTitle = useMemo(() => {
+    if (currentTab === t('posts')) {
+      return 'There are no records yet';
+    }
+    if (currentTab === t('events_tab')) {
+      return t('no_upcoming_communities');
+    }
+    if (currentTab === t('communities_tab')) {
+      return t('non_communities');
+    }
+
+    return '';
+  }, [t, currentTab]);
 
   useEffect(() => {
     getEventsByUserId(user.id);
     getCommunitiesByUserId(user.id);
   }, [user.id]);
+
   const onViewableItemsChanged = useCallback(
     ({viewableItems}: {viewableItems: ViewToken[]; changed: ViewToken[]}) => {
       const map = {};
