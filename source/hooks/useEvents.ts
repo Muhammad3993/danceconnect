@@ -234,3 +234,5 @@ const useEvents = () => {
   };
 };
 export default useEvents;
+
+//TODO remove personal events and everything related to them

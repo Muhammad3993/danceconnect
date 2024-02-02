@@ -29,3 +29,6 @@ export const isSuccessResetPassword = (state: IRootState) =>
   state.profile?.changePasswordSuccess ?? false;
 export const changePasswordErrors = (state: IRootState) =>
   state.profile?.changePasswordErrors ?? null;
+
+export const selectFcmToken = (state: IRootState) =>
+  state.profile?.fcmToken ?? '';

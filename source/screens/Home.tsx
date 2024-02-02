@@ -3,7 +3,6 @@ import * as RN from 'react-native';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import CreateCommunityButton from '../components/createCommunityBtn';
-import useEvents from '../hooks/useEvents';
 import EventCard from '../components/eventCard';
 import EmptyContainer from '../components/emptyCommunitiesMain';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
@@ -17,6 +16,7 @@ import messaging from '@react-native-firebase/messaging';
 import {useProfile} from '../hooks/useProfile';
 import PushController from '../utils/pushController';
 import {Tab} from '../components/tab';
+import usePeople from '../hooks/usePeople';
 
 const HomeScreen = () => {
   const routeProps = useRoute();
@@ -27,19 +27,23 @@ const HomeScreen = () => {
     useAppStateHook();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const {personalEvents, getPersonalEvents} = useEvents();
+  const {getEventsByUserId, eventsByUser} = usePeople();
+  const {currentUser} = useRegistration();
+
   const [events, setEvents] = useState<string[]>([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const {getPurchasedTickets} = useTickets();
-  const {setToken} = useProfile();
+  const {setToken, userFcmToken} = useProfile();
 
   const {t} = useTranslation();
   const getFcmToken = async () => {
     try {
-      const fcmToken = await messaging().getToken();
-      console.log('getFcmToken', fcmToken);
-      setToken(fcmToken);
-      return fcmToken;
+      if (!userFcmToken) {
+        const fcmToken = await messaging().getToken();
+        console.log('getFcmToken', fcmToken);
+        setToken(fcmToken);
+        return fcmToken;
+      }
     } catch (error) {
       console.error(error);
       return null;
@@ -58,18 +62,22 @@ const HomeScreen = () => {
   }, [isFocused, routeProps.params?.logout, routeProps.params]);
 
   useEffect(() => {
+    if (isFocused) {
+      getEventsByUserId(currentUser.id);
+    }
+  }, [isFocused, currentUser.id]);
+
+  useEffect(() => {
     getFcmToken();
     getDanceStyles();
-    // getManagingEvents();
-    getPersonalEvents();
     getPurchasedTickets();
   }, []);
 
   useEffect(() => {
-    if (personalEvents?.length > 0) {
-      setEvents(personalEvents);
+    if (eventsByUser?.length > 0) {
+      setEvents(eventsByUser);
     }
-  }, [personalEvents, personalEvents?.length]);
+  }, [eventsByUser, eventsByUser?.length]);
 
   const onPressTab = useCallback(
     (value: string) => {
@@ -78,16 +86,16 @@ const HomeScreen = () => {
       // );
       setCurrentTab(value);
       if (value === 'All') {
-        setEvents(personalEvents);
+        setEvents(eventsByUser);
       } else {
         setEvents(
-          personalEvents?.filter(
+          eventsByUser?.filter(
             (event: {typeEvent: string}) => event?.typeEvent === value,
           ),
         );
       }
     },
-    [personalEvents],
+    [eventsByUser],
   );
 
   useEffect(() => {

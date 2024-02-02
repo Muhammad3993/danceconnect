@@ -5,6 +5,7 @@ import {
   getUserCountry,
   getUserLocation,
   isSuccessResetPassword,
+  selectFcmToken,
   selectUserData,
   selectUserImg,
   selectUserName,
@@ -35,6 +36,7 @@ export const useProfile = () => {
   const userCommunities = user?.joinedCommunities;
   const authProdiver = useSelector(selectorSocialProvider);
   const isSocialAuth = authProdiver !== 'email';
+  const userFcmToken = useSelector(selectFcmToken);
 
   const getCurrentUser = () => {
     dispatch(getUserDataRequestAction());
@@ -93,5 +95,6 @@ export const useProfile = () => {
     isSocialAuth,
     onChangeUserCountry,
     setToken,
+    userFcmToken,
   };
 };
