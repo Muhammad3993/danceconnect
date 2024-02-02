@@ -6,7 +6,7 @@ import {getIcon} from '../utils/helpers';
 import {useTranslation} from 'react-i18next';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-const BottomTabs = ({state, navigation, descriptors}: BottomTabBarProps) => {
+const BottomTabs = ({state, navigation}: BottomTabBarProps) => {
   const {t} = useTranslation();
   const {bottom} = useSafeAreaInsets();
   const tabs = state.routes;
@@ -99,6 +99,7 @@ const styles = RN.StyleSheet.create({
   },
   itemName: {
     fontSize: 12,
+    fontFamily: 'Lato-Regular',
   },
 });
 export default BottomTabs;

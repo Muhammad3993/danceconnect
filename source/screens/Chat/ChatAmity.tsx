@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   },
   friendMsgText: {
     color: colors.black,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     fontSize: 16,
   },
   right: {
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
   myMsgText: {
     color: colors.white,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     fontSize: 16,
   },
   input: {
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   inputInner: {
     flex: 1,
     lineHeight: 0,
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
     fontSize: 16,
     maxHeight: 120,
   },

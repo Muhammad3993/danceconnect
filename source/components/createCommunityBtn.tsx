@@ -58,7 +58,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 18,
     lineHeight: 21.8,
     fontWeight: '700',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
   },
   circleWrapper: {
     backgroundColor: colors.purple,
@@ -80,7 +80,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 19.6,
     fontWeight: '400',
     color: colors.darkGray,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     whiteSpace: 'pre-wrap',
     maxWidth: SCREEN_WIDTH - 140,
   },

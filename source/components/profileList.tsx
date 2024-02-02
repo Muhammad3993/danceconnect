@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   tagItemText: {
     color: colors.purple,
     fontSize: 12,
-    fontFamily: 'Mulish-Bold',
+    fontFamily: 'Lato-Bold',
     letterSpacing: 0.2,
   },
 
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 18,
-    fontFamily: 'Mulish-Bold',
+    fontFamily: 'Lato-Bold',
     color: colors.textPrimary,
     marginBottom: 4,
   },
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.gray700,
     marginBottom: 8,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     letterSpacing: 0.2,
   },
 
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.black,
     marginBottom: 4,
-    fontFamily: 'Mulish-Bold',
+    fontFamily: 'Lato-Bold',
     letterSpacing: 0.2,
   },
 
@@ -341,13 +341,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   tabText: {
-    fontFamily: 'Mulish-Bold',
     lineHeight: 22,
     fontSize: 16,
   },
   emptyText: {
     textAlign: 'center',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     fontSize: 16,
 
     color: colors.gray500,

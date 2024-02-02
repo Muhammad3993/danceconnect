@@ -53,7 +53,10 @@ export function Tab({
                 <Text
                   style={[
                     textStyle,
-                    {color: active ? colors.purple : colors.darkGray},
+                    {
+                      color: active ? colors.purple : colors.darkGray,
+                      fontFamily: 'Lato-Bold',
+                    },
                   ]}>
                   {text}
                 </Text>

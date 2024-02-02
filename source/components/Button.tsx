@@ -120,6 +120,6 @@ const styles = RN.StyleSheet.create({
     fontWeight: '700',
     lineHeight: 22.4,
     textAlign: 'center',
-    fontFamily: 'Mulish-Light',
+    fontFamily: 'Lato-Light',
   },
 });

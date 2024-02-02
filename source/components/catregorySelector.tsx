@@ -125,7 +125,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 22.4,
     letterSpacing: 0.2,
     fontWeight: '700',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
   },
   titleWrapper: {
     flexDirection: 'row',

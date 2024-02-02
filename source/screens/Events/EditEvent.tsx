@@ -682,7 +682,7 @@ const styles = RN.StyleSheet.create({
   createTitle: {
     fontSize: 24,
     fontWeight: '700',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     lineHeight: 24,
     color: colors.textPrimary,
     paddingVertical: 8,
@@ -690,7 +690,7 @@ const styles = RN.StyleSheet.create({
   createDescription: {
     fontSize: 16,
     fontWeight: '400',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     lineHeight: 16.7,
     color: colors.textPrimary,
     textAlign: 'center',

@@ -178,7 +178,7 @@ const EventCard = ({item, containerStyle}: Props) => {
         activeOpacity={0.7}>
         <RN.View
           style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <RN.View style={{maxWidth: SCREEN_WIDTH / 1.5}}>
+          <RN.View style={{maxWidth: SCREEN_WIDTH / 1.57}}>
             {data?.typeEvent && type()}
             <RN.View style={styles.dateEventContainer}>
               <RN.Image

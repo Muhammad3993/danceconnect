@@ -51,7 +51,6 @@ const styles = RN.StyleSheet.create({
   },
   filterWrapper: {
     paddingTop: 14,
-    paddingHorizontal: 14,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 14,

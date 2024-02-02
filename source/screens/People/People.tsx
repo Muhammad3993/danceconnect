@@ -82,7 +82,6 @@ const People = () => {
       <>
         <RN.View
           style={{
-            paddingHorizontal: isAndroid ? 0 : 20,
             marginTop: isAndroid ? 14 : 0,
           }}>
           <RN.TouchableOpacity
@@ -178,40 +177,43 @@ const People = () => {
   };
   return (
     <RN.SafeAreaView style={styles.container}>
-      {renderHeader()}
-      <RN.View style={{marginTop: -16, paddingHorizontal: 6}}>
-        {renderFilters()}
+      <RN.View style={styles.root}>
+        {renderHeader()}
+        <RN.View style={{marginTop: -16, paddingHorizontal: 6}}>
+          {renderFilters()}
+        </RN.View>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={usersList}
+          renderItem={renderItem}
+          ListEmptyComponent={renderEmpty}
+          refreshControl={refreshControl()}
+        />
+        {renderEmpty()}
+        {openModal && (
+          <Portal>
+            <FindCity
+              selectedLocation={currentCity}
+              setSelectedLocation={onChoosedCity}
+              isTabScreen
+              onClosed={() => setOpenModal(false)}
+              setCurrentCountry={() => console.log('setCurrentCountry')}
+              communityScreen
+            />
+          </Portal>
+        )}
+        <FiltersBottom
+          onOpening={openingFilters}
+          onClose={() => setOpeningFilters(false)}
+          selectedStyles={addedStyles}
+          setSelectedStyles={setAddedStyles}
+          onClear={() => {
+            setAddedStyles([]);
+            setUsersList(users);
+          }}
+          onFilter={onFilter}
+        />
       </RN.View>
-      <FlatList
-        data={usersList}
-        renderItem={renderItem}
-        ListEmptyComponent={renderEmpty}
-        refreshControl={refreshControl()}
-      />
-      {renderEmpty()}
-      {openModal && (
-        <Portal>
-          <FindCity
-            selectedLocation={currentCity}
-            setSelectedLocation={onChoosedCity}
-            isTabScreen
-            onClosed={() => setOpenModal(false)}
-            setCurrentCountry={() => console.log('setCurrentCountry')}
-            communityScreen
-          />
-        </Portal>
-      )}
-      <FiltersBottom
-        onOpening={openingFilters}
-        onClose={() => setOpeningFilters(false)}
-        selectedStyles={addedStyles}
-        setSelectedStyles={setAddedStyles}
-        onClear={() => {
-          setAddedStyles([]);
-          setUsersList(users);
-        }}
-        onFilter={onFilter}
-      />
     </RN.SafeAreaView>
   );
 };
@@ -221,8 +223,12 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
     zIndex: 1,
   },
+  root: {
+    paddingHorizontal: 16,
+    flex: 1,
+    backgroundColor: colors.white,
+  },
   userContainer: {
-    marginHorizontal: 16,
     paddingVertical: 6,
     flexDirection: 'row',
     zIndex: 1,

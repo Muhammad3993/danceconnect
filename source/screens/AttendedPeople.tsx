@@ -130,7 +130,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 24.4,
     fontWeight: '600',
     paddingLeft: 24,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
   },
   inputContainer: {
     backgroundColor: colors.white,

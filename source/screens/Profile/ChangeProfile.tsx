@@ -193,7 +193,7 @@ const styles = RN.StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 20,
     lineHeight: 24,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     paddingLeft: 16,
     fontWeight: '600',
   },

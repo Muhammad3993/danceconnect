@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 24,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     paddingLeft: 20,
     color: colors.textPrimary,
   },

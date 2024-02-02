@@ -1134,7 +1134,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 24,
     fontWeight: '700',
     color: colors.textPrimary,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
   },
   backIcon: {
     height: 20,

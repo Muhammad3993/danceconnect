@@ -119,7 +119,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 38.4,
     paddingHorizontal: 24,
     paddingTop: 18,
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
   },
   finishBtn: {
     paddingVertical: 28,

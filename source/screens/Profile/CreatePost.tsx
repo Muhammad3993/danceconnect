@@ -269,11 +269,11 @@ const styles = StyleSheet.create({
   },
   headerTitleText: {
     fontWeight: '600',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     fontSize: 18,
   },
   headerRight: {
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     fontSize: 15,
     color: colors.textHighlighted,
     letterSpacing: -0.2,

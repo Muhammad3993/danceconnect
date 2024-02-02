@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   headerTitle: {
-    fontFamily: 'Mulish-Bold',
+    fontFamily: 'Lato-Bold',
     fontSize: 20,
     marginLeft: 16,
   },

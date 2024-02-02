@@ -131,7 +131,6 @@ const CommunitiesScreen = () => {
     return (
       <RN.View
         style={{
-          paddingHorizontal: isAndroid ? 0 : 20,
           marginTop: isAndroid ? 14 : 0,
         }}>
         <RN.TouchableOpacity
@@ -210,20 +209,22 @@ const CommunitiesScreen = () => {
   };
   return (
     <RN.SafeAreaView style={styles.container}>
-      {renderHeader()}
-      {renderWrapper()}
-      {openModal && (
-        <Portal>
-          <FindCity
-            selectedLocation={currentCity}
-            setSelectedLocation={onChoosedCity}
-            isTabScreen
-            onClosed={onPressChange}
-            setCurrentCountry={() => console.log('setCurrentCountry')}
-            communityScreen
-          />
-        </Portal>
-      )}
+      <RN.View style={styles.root}>
+        {renderHeader()}
+        {renderWrapper()}
+        {openModal && (
+          <Portal>
+            <FindCity
+              selectedLocation={currentCity}
+              setSelectedLocation={onChoosedCity}
+              isTabScreen
+              onClosed={onPressChange}
+              setCurrentCountry={() => console.log('setCurrentCountry')}
+              communityScreen
+            />
+          </Portal>
+        )}
+      </RN.View>
     </RN.SafeAreaView>
   );
 };
@@ -232,8 +233,11 @@ const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  root: {
+    flex: 1,
+    backgroundColor: colors.white,
     paddingHorizontal: 12,
-    zIndex: 1,
   },
   userLocationWrapper: {
     flexDirection: 'row',

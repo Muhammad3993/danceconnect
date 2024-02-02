@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontFamily: 'Mulish-Bold',
+    fontFamily: 'Lato-Bold',
     fontSize: 20,
     marginLeft: 16,
   },

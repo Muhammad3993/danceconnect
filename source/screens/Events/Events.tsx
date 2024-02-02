@@ -164,11 +164,7 @@ const EventsScreen = () => {
 
   const renderHeader = () => {
     return (
-      <RN.View
-        style={{
-          paddingHorizontal: isAndroid ? 12 : 20,
-          marginTop: isAndroid ? 14 : 0,
-        }}>
+      <RN.View style={{marginTop: isAndroid ? 14 : 0}}>
         <RN.TouchableOpacity
           style={styles.userLocationWrapper}
           onPress={() => setOpenModal(true)}>
@@ -233,26 +229,28 @@ const EventsScreen = () => {
 
   return (
     <RN.SafeAreaView style={styles.container}>
-      {renderHeader()}
-      {/* {loadingEvents && !loadingAttend && renderLoading()} */}
-      {renderWrapper()}
-      {/* <CitySelector
+      <RN.View style={styles.root}>
+        {renderHeader()}
+        {/* {loadingEvents && !loadingAttend && renderLoading()} */}
+        {renderWrapper()}
+        {/* <CitySelector
         opening={openModal}
         onClose={() => setOpenModal(false)}
         onChoosedCity={onChoosedCity}
       /> */}
-      {openModal && (
-        <Portal>
-          <FindCity
-            selectedLocation={currentCity}
-            setSelectedLocation={onChoosedCity}
-            onClosed={() => setOpenModal(false)}
-            isTabScreen
-            communityScreen
-            setCurrentCountry={() => console.log('setCurrentCountry')}
-          />
-        </Portal>
-      )}
+        {openModal && (
+          <Portal>
+            <FindCity
+              selectedLocation={currentCity}
+              setSelectedLocation={onChoosedCity}
+              onClosed={() => setOpenModal(false)}
+              isTabScreen
+              communityScreen
+              setCurrentCountry={() => console.log('setCurrentCountry')}
+            />
+          </Portal>
+        )}
+      </RN.View>
     </RN.SafeAreaView>
   );
 };
@@ -261,8 +259,11 @@ const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingTop: isAndroid ? 0 : 40,
+  },
+  root: {
+    flex: 1,
     paddingHorizontal: 12,
+    backgroundColor: colors.white,
   },
   userLocationWrapper: {
     flexDirection: 'row',
@@ -307,7 +308,7 @@ const styles = RN.StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 22,
     fontWeight: '700',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     textAlign: 'center',
     paddingVertical: 16,
   },

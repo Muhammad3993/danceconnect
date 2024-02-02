@@ -226,7 +226,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 20,
     fontWeight: '400',
     color: colors.darkGray,
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
     textAlign: 'center',
     marginHorizontal: 40,
   },
@@ -262,7 +262,7 @@ const styles = RN.StyleSheet.create({
     textAlign: 'center',
     paddingTop: 41,
     paddingBottom: 36,
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
     color: colors.textPrimary,
   },
   logo: {
@@ -290,7 +290,7 @@ const styles = RN.StyleSheet.create({
     fontWeight: '400',
     paddingHorizontal: 16,
     color: colors.darkGray,
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
   },
   bottomWrapper: {
     flexDirection: 'row',
@@ -303,7 +303,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 20,
     fontWeight: '400',
     color: colors.darkGray,
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
   },
   logInText: {
     paddingLeft: 8,
@@ -311,7 +311,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     fontWeight: '600',
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
   },
   btnsWrapper: {
     paddingTop: 24,

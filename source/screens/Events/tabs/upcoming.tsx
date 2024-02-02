@@ -209,7 +209,7 @@ const styles = RN.StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 22,
     fontWeight: '700',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     textAlign: 'center',
     paddingVertical: 16,
   },

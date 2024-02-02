@@ -766,7 +766,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 24,
     lineHeight: 28.8,
     fontWeight: '700',
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
   },
   titleDesc: {
     color: '#424242',

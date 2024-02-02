@@ -4,7 +4,7 @@ import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import {useCommunities} from '../hooks/useCommunitites';
 import {useNavigation} from '@react-navigation/native';
-import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
+import {SCREEN_WIDTH} from '../utils/constants';
 import SkeletonCommunityCard from './skeleton/communityCard-Skeleton';
 import socket from '../api/sockets';
 import {apiUrl} from '../api/serverRequests';
@@ -203,7 +203,7 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
         onPress={goToCommunity}
         style={styles.headerItemContainer}
         activeOpacity={0.7}>
-        <RN.View style={{maxWidth: SCREEN_WIDTH / 1.5}}>
+        <RN.View style={{maxWidth: SCREEN_WIDTH / 1.57}}>
           <RN.Text numberOfLines={1} style={styles.itemTitle}>
             {data?.title}
           </RN.Text>
@@ -315,6 +315,7 @@ const styles = RN.StyleSheet.create({
     color: colors.textPrimary,
     paddingVertical: 8,
     paddingRight: 14,
+    fontFamily: 'Lato-Black',
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -338,6 +339,7 @@ const styles = RN.StyleSheet.create({
     fontWeight: '400',
     marginBottom: 8,
     paddingRight: 14,
+    fontFamily: 'Lato-Regular',
   },
   itemImg: {
     height: 105,

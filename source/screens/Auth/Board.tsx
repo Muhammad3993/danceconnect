@@ -371,7 +371,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 38.4,
     paddingHorizontal: 24,
     paddingTop: 18,
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
   },
   description: {
     fontSize: 18,
@@ -381,7 +381,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 25.2,
     letterSpacing: 0.2,
     paddingTop: 12,
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
   },
   inputWrapper: {
     marginHorizontal: 10,

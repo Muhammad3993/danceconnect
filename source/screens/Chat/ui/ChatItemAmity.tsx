@@ -72,17 +72,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontFamily: 'Mulish-Bold',
+    fontFamily: 'Lato-Bold',
     fontSize: 18,
     marginBottom: 6,
   },
   message: {
-    fontFamily: 'Mulish',
+    fontFamily: 'Lato-Regular',
     fontSize: 14,
     color: colors.gray700,
   },
   date: {
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     fontSize: 12,
     color: colors.gray700,
   },

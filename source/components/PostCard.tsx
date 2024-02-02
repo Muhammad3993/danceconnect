@@ -268,13 +268,13 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 14,
     color: colors.textPrimary,
-    fontFamily: 'Mulish-Bold',
+    fontFamily: 'Lato-Bold',
     letterSpacing: 0.2,
   },
   time: {
     fontSize: 12,
     color: colors.textSecondary,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     letterSpacing: 0.2,
   },
   headerAction: {
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textPrimary,
     marginVertical: 8,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
     lineHeight: 21,
   },
   mediaContainer: {
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textHighlighted,
     marginBottom: 8,
-    fontFamily: 'Mulish-Regular',
+    fontFamily: 'Lato-Regular',
   },
   menu: {
     width: 120,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   menuItem: {
     fontSize: 14,
     paddingVertical: 6,
-    fontFamily: 'Mulish-Bold',
+    fontFamily: 'Lato-Bold',
   },
 });
 
