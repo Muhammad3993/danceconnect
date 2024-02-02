@@ -91,11 +91,18 @@ const HomeScreen = () => {
   );
 
   useEffect(() => {
-    const unreadSub = Client.getUserUnread(({data}) => {
-      setUnreadMessages(data.unreadCount);
+    let unreadSub: Amity.Unsubscriber | undefined;
+    Client.startUnreadSync().then(() => {
+      unreadSub = Client.getUserUnread(({data}) => {
+        setUnreadMessages(data.unreadCount);
+      });
     });
+
     return () => {
-      unreadSub();
+      if (unreadSub) {
+        unreadSub();
+      }
+      Client.stopUnreadSync();
     };
   }, []);
 

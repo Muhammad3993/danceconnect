@@ -6,17 +6,17 @@ import {
   Pressable,
   TouchableOpacity,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {memo, useCallback, useEffect, useState} from 'react';
 import {FileRepository, PostRepository} from '@amityco/ts-sdk';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import {defaultProfile} from '../utils/images';
 import colors from '../utils/colors';
-import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../utils/constants';
+import {SCREEN_WIDTH} from '../utils/constants';
 import Video from 'react-native-video';
 import {NavigationProp} from '@react-navigation/native';
+import ScalableImage from './ScalabelImage';
 
 interface Props {
   post: Amity.Post;
@@ -224,28 +224,9 @@ const TextRenderer = ({text}: {text: string}) => {
     </Text>
   );
 };
-const ImageRenderer = ({uri}: {uri: string}) => {
-  const [height, setHeight] = useState(IMAGE_WIDTH);
-
-  return (
-    <FastImage
-      onLoad={({nativeEvent}) => {
-        if (Platform.OS === 'android') {
-          // Image.getSize(uri, (nativeEventwidth, nativeEventheight) => {
-          //   const aspectRatio = nativeEventheight / nativeEventwidth;
-          //   setHeight(SCREEN_HEIGHT / aspectRatio);
-          // });
-        } else {
-          const aspectRatio = nativeEvent.height / nativeEvent.width;
-          setHeight(SCREEN_HEIGHT / aspectRatio);
-        }
-      }}
-      style={{width: IMAGE_WIDTH, height, aspectRatio: 1}}
-      source={{uri}}
-      resizeMode={'contain'}
-    />
-  );
-};
+const ImageRenderer = memo(({uri}: {uri: string}) => {
+  return <ScalableImage originalWidth={IMAGE_WIDTH} uri={uri} />;
+});
 
 const styles = StyleSheet.create({
   container: {backgroundColor: colors.white, marginBottom: 8},
@@ -294,7 +275,7 @@ const styles = StyleSheet.create({
   },
   mediaContainer: {
     width: IMAGE_WIDTH,
-    minHeight: IMAGE_WIDTH,
+    minHeight: 200,
     marginVertical: 8,
     borderRadius: 8,
     overflow: 'hidden',
