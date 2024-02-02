@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
   SafeAreaView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,9 +19,10 @@ export function ChatsScreen({navigation}: any) {
   const {currentUser} = useRegistration();
   const [channels, setChannels] = useState<Amity.Channel[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // const [options, setOptions] =
-  //   useState<Amity.RunQueryOptions<typeof queryOptions>>();
+  const [loadingMore, setLoadingMore] = useState(true);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const onNextPage = useRef<() => void>();
 
   // const {nextPage, error} = options ?? {};
 
@@ -28,28 +30,39 @@ export function ChatsScreen({navigation}: any) {
     const queryData: Amity.ChannelLiveCollection = {
       sortBy: 'lastActivity',
       membership: 'member',
-      limit: 15,
+      limit: 20,
     };
 
-    const sub = ChannelRepository.getChannels(queryData, data => {
-      if (!data.loading) {
-        setLoading(false);
-        setChannels(data.data);
-      }
-    });
+    const sub = ChannelRepository.getChannels(
+      queryData,
+      ({data, ...metadata}) => {
+        if (!metadata.loading) {
+          setLoading(false);
+          setChannels(data);
+        }
+        setLoadingMore(metadata.loading);
+        setHasNextPage(metadata.hasNextPage ?? false);
+
+        onNextPage.current = metadata.onNextPage;
+
+        if (metadata.error) {
+          setError(metadata.error?.message ?? metadata.error);
+        }
+      },
+    );
 
     return () => {
       sub();
     };
   }, []);
 
-  // if (error) {
-  //   return (
-  //     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-  //       <Text>{error}</Text>
-  //     </View>
-  //   );
-  // }
+  if (error) {
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <Text>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.root}>
@@ -74,11 +87,16 @@ export function ChatsScreen({navigation}: any) {
             style={{padding: 24}}
             showsVerticalScrollIndicator={false}
             data={channels}
-            onEndReachedThreshold={0.3}
+            onEndReachedThreshold={0.5}
             onEndReached={() => {
-              // if ((chats?.length ?? 0) >= 25 && !paginateLoading) {
-              //   paginate();
-              // }
+              if (
+                channels.length % 20 === 0 &&
+                !loadingMore &&
+                hasNextPage &&
+                onNextPage.current
+              ) {
+                onNextPage.current();
+              }
             }}
             renderItem={({item}) => {
               return (

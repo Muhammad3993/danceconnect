@@ -37,6 +37,7 @@ interface Props {
   actions: React.ReactNode;
   headerActions?: React.ReactNode;
   isCurrentUser: boolean;
+  loadingMore: boolean;
 }
 
 export function ProfileList({
@@ -47,6 +48,7 @@ export function ProfileList({
   actions,
   headerActions,
   isCurrentUser,
+  loadingMore,
 }: Props) {
   // const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -162,7 +164,7 @@ export function ProfileList({
   return (
     <FlatList
       bounces={false}
-      onEndReached={onEndReached}
+      onEndReached={currentTab === t('posts') ? onEndReached : undefined}
       showsVerticalScrollIndicator={false}
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
@@ -245,6 +247,9 @@ export function ProfileList({
             <Text style={styles.emptyText}>{emptyTitle}</Text>
           )}
         </View>
+      }
+      ListFooterComponent={
+        loadingMore ? <ActivityIndicator size={'large'} /> : undefined
       }
       // keyExtractor={({postId}) => postId}
       // viewabilityConfig={viewabilityConfig}

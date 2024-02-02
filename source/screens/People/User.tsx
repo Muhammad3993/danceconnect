@@ -15,7 +15,7 @@ const User = ({route, navigation}) => {
 
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsloading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const [hasNextPage, setHasNextPage] = useState(false);
   const onNextPage = useRef<() => void>();
@@ -28,22 +28,18 @@ const User = ({route, navigation}) => {
         targetId: userId,
         targetType: 'user',
         includeDeleted: false,
-        limit: 20,
+        limit: 12,
       },
       ({data, ...metadata}) => {
         if (!metadata.loading) {
           setIsloading(false);
-          setPosts(data);
+          setLoadingMore(false);
+          setPosts(data ?? []);
         }
 
-        setLoadingMore(metadata.loading);
         setHasNextPage(metadata.hasNextPage ?? false);
 
-        if (metadata.onNextPage) {
-          onNextPage.current = metadata.onNextPage;
-        } else {
-          onNextPage.current = undefined;
-        }
+        onNextPage.current = metadata.onNextPage;
       },
     );
 
@@ -78,10 +74,19 @@ const User = ({route, navigation}) => {
         <LoadingView />
       ) : (
         <ProfileList
+          loadingMore={loadingMore}
           isCurrentUser={false}
-          onEndReached={
-            hasNextPage && !loadingMore ? onNextPage.current : undefined
-          }
+          onEndReached={() => {
+            if (
+              posts.length % 12 === 0 &&
+              !loadingMore &&
+              hasNextPage &&
+              onNextPage.current
+            ) {
+              setLoadingMore(true);
+              onNextPage.current();
+            }
+          }}
           isLoading={isLoading}
           posts={posts}
           user={differentUser}

@@ -1,5 +1,5 @@
 import {PostRepository} from '@amityco/ts-sdk';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
 import {Modalize} from 'react-native-modalize';
@@ -23,7 +23,7 @@ const ProfileScreen = ({navigation}) => {
   const {getEventsByUserId, getCommunitiesByUserId} = usePeople();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsloading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const [hasNextPage, setHasNextPage] = useState(false);
   const onNextPage = useRef<() => void>();
@@ -39,24 +39,18 @@ const ProfileScreen = ({navigation}) => {
         targetId: currentUser?.id,
         targetType: 'user',
         includeDeleted: false,
-        limit: 20,
+        limit: 12,
       },
       ({data, ...metadata}) => {
-        console.log(data);
-
         if (!metadata.loading) {
           setIsloading(false);
-          setPosts(data);
+          setLoadingMore(false);
+          setPosts(data ?? []);
         }
 
-        setLoadingMore(metadata.loading);
         setHasNextPage(metadata.hasNextPage ?? false);
 
-        if (metadata.onNextPage) {
-          onNextPage.current = metadata.onNextPage;
-        } else {
-          onNextPage.current = undefined;
-        }
+        onNextPage.current = metadata.onNextPage;
       },
     );
 
@@ -92,10 +86,19 @@ const ProfileScreen = ({navigation}) => {
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
       <ProfileList
+        loadingMore={loadingMore}
         isCurrentUser
-        onEndReached={
-          hasNextPage && !loadingMore ? onNextPage.current : undefined
-        }
+        onEndReached={() => {
+          if (
+            posts.length % 12 === 0 &&
+            !loadingMore &&
+            hasNextPage &&
+            onNextPage.current
+          ) {
+            setLoadingMore(true);
+            onNextPage.current();
+          }
+        }}
         isLoading={isLoading}
         posts={posts}
         user={currentUser}

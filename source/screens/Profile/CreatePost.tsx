@@ -167,7 +167,7 @@ export function CreatePostScreen({navigation, route}) {
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <SafeAreaView style={styles.contianer}>
         <View style={styles.header}>
           <View style={{flex: 1, alignItems: 'flex-start'}}>
@@ -196,7 +196,10 @@ export function CreatePostScreen({navigation, route}) {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.scroll}>
+        <ScrollView
+          keyboardDismissMode="on-drag"
+          showsVerticalScrollIndicator={false}
+          style={styles.scroll}>
           <TextInput
             value={text}
             onChangeText={setText}

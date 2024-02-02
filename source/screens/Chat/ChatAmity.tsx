@@ -25,7 +25,6 @@ import {Header} from './ui/Header';
 import useRegistration from '../../hooks/useRegistration';
 import {apiUrl} from '../../api/serverRequests';
 import useAppStateHook from '../../hooks/useAppState';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface Props {
   route: {params: {channel: Amity.Channel}};
@@ -69,9 +68,7 @@ export function ChatScreen({route, navigation}: Props) {
         setLoadingMore(metadata.loading);
         setHasNextPage(metadata.hasNextPage ?? false);
 
-        if (metadata.onNextPage) {
-          onNextPage.current = metadata.onNextPage;
-        }
+        onNextPage.current = metadata.onNextPage;
       },
     );
 
