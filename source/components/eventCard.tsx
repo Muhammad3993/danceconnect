@@ -13,7 +13,12 @@ import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile} from '../utils/images';
 
-const EventCard = ({item}: any) => {
+interface Props {
+  item: any;
+  containerStyle?: RN.ViewStyle;
+}
+
+const EventCard = ({item, containerStyle}: Props) => {
   const data = item;
   // const [data, setdata] = useState(data);
   const navigation = useNavigation();
@@ -166,7 +171,7 @@ const EventCard = ({item}: any) => {
     );
   }
   return (
-    <RN.View style={styles.container}>
+    <RN.View style={[styles.container, containerStyle]}>
       <RN.TouchableOpacity
         // style={styles.container}
         onPress={goToEvent}
@@ -250,7 +255,6 @@ const styles = RN.StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 12,
     marginBottom: 16,
-    marginHorizontal: isAndroid ? 0 : 10,
     backgroundColor: colors.white,
     shadowColor: colors.black,
     shadowOffset: {

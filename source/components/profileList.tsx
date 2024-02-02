@@ -7,9 +7,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ViewToken,
 } from 'react-native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import {defaultProfile} from '../utils/images';
@@ -23,12 +22,12 @@ import CommunityCard from './communityCard';
 import EventCard from './eventCard';
 import usePeople from '../hooks/usePeople';
 import {PostCard} from './PostCard';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-const viewabilityConfig = {
-  waitForInteraction: true,
-  viewAreaCoveragePercentThreshold: 19,
-};
+// const viewabilityConfig = {
+//   waitForInteraction: true,
+//   viewAreaCoveragePercentThreshold: 19,
+// };
 
 interface Props {
   user: any;
@@ -49,7 +48,7 @@ export function ProfileList({
   headerActions,
   isCurrentUser,
 }: Props) {
-  const isFocused = useIsFocused();
+  // const isFocused = useIsFocused();
   const navigation = useNavigation();
   const roles = user?.userRole ?? [];
   const {t} = useTranslation();
@@ -68,7 +67,7 @@ export function ProfileList({
     },
   ];
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
-  const [viewablesMap, setViewablesMap] = useState<Record<string, boolean>>({});
+  // const [viewablesMap, setViewablesMap] = useState<Record<string, boolean>>({});
 
   const rolesString = roles.reduce((acc, next) => {
     const role = getUserRole(next.title);
@@ -82,24 +81,32 @@ export function ProfileList({
       case t('posts'):
         return (
           <PostCard
-            isFocused={isFocused}
+            isFocused={false}
             canEdit={isCurrentUser}
             post={item}
             user={user}
-            inView={viewablesMap[item.postId] ?? false}
+            inView={false}
+            // inView={viewablesMap[item.postId] ?? false}
             navigation={navigation}
           />
         );
       case t('communities_tab'):
         return (
-          <View style={{paddingTop: 12, marginBottom: -12}}>
-            <CommunityCard item={item} isProfileScreen />
+          <View style={{paddingHorizontal: 16}}>
+            <CommunityCard
+              containerStyle={{marginTop: 8, marginBottom: 0}}
+              item={item}
+              isProfileScreen
+            />
           </View>
         );
       case t('events_tab'):
         return (
-          <View style={{paddingTop: 12, marginBottom: -12}}>
-            <EventCard item={item} />
+          <View style={{paddingHorizontal: 16}}>
+            <EventCard
+              containerStyle={{marginTop: 8, marginBottom: 0}}
+              item={item}
+            />
           </View>
         );
       default:
@@ -140,19 +147,17 @@ export function ProfileList({
     getCommunitiesByUserId(user.id);
   }, [user.id]);
 
-  const onViewableItemsChanged = useCallback(
-    ({viewableItems}: {viewableItems: ViewToken[]; changed: ViewToken[]}) => {
-      const map = {};
-
-      for (let index = 0; index < viewableItems.length; index++) {
-        const viewableItem = viewableItems[index];
-        map[viewableItem.item.postId] = viewableItem.isViewable;
-      }
-
-      setViewablesMap(map);
-    },
-    [],
-  );
+  // const onViewableItemsChanged = useCallback(
+  //   ({viewableItems}: {viewableItems: ViewToken[]; changed: ViewToken[]}) => {
+  // const map = {};
+  // for (let index = 0; index < viewableItems.length; index++) {
+  //   const viewableItem = viewableItems[index];
+  //   map[viewableItem.item.postId] = viewableItem.isViewable;
+  // }
+  // setViewablesMap(map);
+  //   },
+  //   [],
+  // );
 
   return (
     <FlatList
@@ -182,11 +187,15 @@ export function ProfileList({
           </View>
           <View style={styles.profile}>
             <FastImage
-              source={{
-                uri: apiUrl + user?.userImage,
-                cache: FastImage.cacheControl.immutable,
-                priority: FastImage.priority.high,
-              }}
+              source={
+                Boolean(user.userImage)
+                  ? {
+                      uri: apiUrl + user?.userImage,
+                      cache: FastImage.cacheControl.immutable,
+                      priority: FastImage.priority.high,
+                    }
+                  : defaultProfile
+              }
               defaultSource={defaultProfile}
               style={styles.image}
             />
@@ -228,9 +237,8 @@ export function ProfileList({
         </View>
       }
       renderItem={renderItem}
-      // renderItem={({item}) => <PostCard post={item} user={user} />}
       ListEmptyComponent={
-        <View style={{marginTop: 80}}>
+        <View style={{marginTop: 90}}>
           {isLoading ? (
             <ActivityIndicator size={'large'} />
           ) : (
@@ -239,8 +247,8 @@ export function ProfileList({
         </View>
       }
       // keyExtractor={({postId}) => postId}
-      viewabilityConfig={viewabilityConfig}
-      onViewableItemsChanged={onViewableItemsChanged}
+      // viewabilityConfig={viewabilityConfig}
+      // onViewableItemsChanged={onViewableItemsChanged}
       scrollEventThrottle={200}
     />
   );

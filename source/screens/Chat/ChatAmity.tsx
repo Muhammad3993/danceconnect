@@ -56,6 +56,7 @@ export function ChatScreen({route, navigation}: Props) {
       );
     }
   }, [route.params]);
+
   useEffect(() => {
     SubChannelRepository.startReading(channel?.defaultSubChannelId);
     const msgSub = MessageRepository.getMessages(
@@ -142,9 +143,9 @@ export function ChatScreen({route, navigation}: Props) {
             rightIcon={
               <FastImage
                 source={
-                  anotherUser?.userImage
+                  Boolean(anotherUser?.userImage)
                     ? {uri: apiUrl + anotherUser?.userImage}
-                    : undefined
+                    : defaultProfile
                 }
                 defaultSource={defaultProfile}
                 style={styles.avatar}
@@ -162,6 +163,7 @@ export function ChatScreen({route, navigation}: Props) {
             }}
             isLoadingEarlier={loadingMore}
             placeholder="Message"
+            timeFormat="HH:mm"
             onLoadEarlier={onNextPage.current}
             messages={localMessages}
             onSend={sendMessage}
@@ -207,6 +209,7 @@ export function ChatScreen({route, navigation}: Props) {
                     {marginBottom: sameUser ? 2 : 10},
                   ]}>
                   <Bubble
+                    // renderTime={}
                     {...message}
                     wrapperStyle={{
                       left: styles.friendMsg,

@@ -12,13 +12,6 @@ interface Props {
 }
 
 export function ChatItem({channel, currentUser}: Props) {
-  const channelCreateAt = new Date(channel?.createdAt);
-
-  let localTime = channelCreateAt.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
   const unreadCount = channel?.unreadCount ?? 0;
 
   const usersList = channel.metadata;
@@ -28,13 +21,22 @@ export function ChatItem({channel, currentUser}: Props) {
 
   const messagePreview = channel?.messagePreview?.data?.text;
 
+  const previewCreateAt = new Date(
+    channel?.messagePreview.createdAt ?? channel?.createdAt,
+  );
+
+  let localTime = previewCreateAt.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
   return (
     <View style={styles.item}>
       <FastImage
         source={
-          anotherUser?.userImage
+          Boolean(anotherUser?.userImage)
             ? {uri: apiUrl + anotherUser?.userImage}
-            : undefined
+            : defaultProfile
         }
         defaultSource={defaultProfile}
         style={styles.avatar}

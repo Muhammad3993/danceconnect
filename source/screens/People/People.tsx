@@ -113,17 +113,20 @@ const People = () => {
     );
   };
   const renderItem = ({item}: user) => {
+    const imgUri = Boolean(item.userImage)
+      ? {
+          uri: `${apiUrl}${item.userImage}`,
+          cache: FastImage.cacheControl.immutable,
+          priority: FastImage.priority.high,
+        }
+      : defaultProfile;
     return (
       <TouchableOpacity
         style={styles.userContainer}
         onPress={() => onPressUser(item.id)}
         activeOpacity={0.7}>
         <FastImage
-          source={{
-            uri: `${apiUrl}${item.userImage}`,
-            cache: FastImage.cacheControl.immutable,
-            priority: FastImage.priority.high,
-          }}
+          source={imgUri}
           resizeMode={FastImage.resizeMode.cover}
           defaultSource={defaultProfile}
           style={styles.userImage}

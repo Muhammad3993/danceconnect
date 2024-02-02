@@ -55,11 +55,15 @@ const AttendedPeople = () => {
         onPress={() => onPressUser(item.id)}
         activeOpacity={0.7}>
         <FastImage
-          source={{
-            uri: `${apiUrl}${item.userImage}`,
-            cache: FastImage.cacheControl.immutable,
-            priority: FastImage.priority.high,
-          }}
+          source={
+            Boolean(item.userImage)
+              ? {
+                  uri: `${apiUrl}${item.userImage}`,
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.high,
+                }
+              : defaultProfile
+          }
           resizeMode={FastImage.resizeMode.cover}
           defaultSource={defaultProfile}
           style={styles.userImage}

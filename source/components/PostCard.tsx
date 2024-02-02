@@ -5,6 +5,8 @@ import {
   View,
   Pressable,
   TouchableOpacity,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {FileRepository, PostRepository} from '@amityco/ts-sdk';
@@ -12,7 +14,7 @@ import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import {defaultProfile} from '../utils/images';
 import colors from '../utils/colors';
-import {SCREEN_WIDTH} from '../utils/constants';
+import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../utils/constants';
 import Video from 'react-native-video';
 import {NavigationProp} from '@react-navigation/native';
 
@@ -48,6 +50,8 @@ const getPostFile = async <T extends Amity.FileType>(fileId?: string) => {
   return file as Amity.File<T>;
 };
 
+const IMAGE_WIDTH = SCREEN_WIDTH - 32;
+
 export function PostCard({
   post,
   user,
@@ -67,8 +71,6 @@ export function PostCard({
   const haveChildren = post.children.length > 0;
 
   const getData = useCallback(async () => {
-    // console.log(post.children);
-
     if (post.children.length > 0) {
       const postCh = await getPostImageInfo(post.children[0]);
 
@@ -120,17 +122,19 @@ export function PostCard({
     setMenuIsOpen(false);
   };
 
-  // console.log({postImageUrl, videoUrl, videoPoster});
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <FastImage
-          source={{
-            uri: apiUrl + user.userImage,
-            cache: FastImage.cacheControl.immutable,
-            priority: FastImage.priority.high,
-          }}
+          source={
+            Boolean(user.userImage)
+              ? {
+                  uri: apiUrl + user.userImage,
+                  cache: FastImage.cacheControl.immutable,
+                  priority: FastImage.priority.high,
+                }
+              : defaultProfile
+          }
           defaultSource={defaultProfile}
           style={styles.avatar}
         />
@@ -165,10 +169,7 @@ export function PostCard({
         {haveChildren && (
           <View style={styles.mediaContainer}>
             {postImageUrl && (
-              <FastImage
-                style={styles.media}
-                source={{uri: postImageUrl + '?size=medium'}}
-              />
+              <ImageRenderer uri={postImageUrl + '?size=medium'} />
             )}
             {(videoPoster || videoUrl) && (
               <>
@@ -177,7 +178,7 @@ export function PostCard({
                   repeat
                   posterResizeMode="cover"
                   poster={videoPoster ? videoPoster + '?size=small' : undefined}
-                  style={{flex: 1}}
+                  style={styles.media}
                   resizeMode="cover"
                   source={{uri: videoUrl}}
                 />
@@ -193,6 +194,10 @@ export function PostCard({
                   )}
                 </Pressable>
               </>
+            )}
+
+            {!postImageUrl && !videoUrl && !videoPoster && (
+              <ActivityIndicator />
             )}
           </View>
         )}
@@ -217,6 +222,28 @@ const TextRenderer = ({text}: {text: string}) => {
         </Text>
       )}
     </Text>
+  );
+};
+const ImageRenderer = ({uri}: {uri: string}) => {
+  const [height, setHeight] = useState(IMAGE_WIDTH);
+
+  return (
+    <FastImage
+      onLoad={({nativeEvent}) => {
+        if (Platform.OS === 'android') {
+          // Image.getSize(uri, (nativeEventwidth, nativeEventheight) => {
+          //   const aspectRatio = nativeEventheight / nativeEventwidth;
+          //   setHeight(SCREEN_HEIGHT / aspectRatio);
+          // });
+        } else {
+          const aspectRatio = nativeEvent.height / nativeEvent.width;
+          setHeight(SCREEN_HEIGHT / aspectRatio);
+        }
+      }}
+      style={{width: IMAGE_WIDTH, height, aspectRatio: 1}}
+      source={{uri}}
+      resizeMode={'contain'}
+    />
   );
 };
 
@@ -266,17 +293,19 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   mediaContainer: {
-    width: '100%',
-    height: SCREEN_WIDTH - 32,
+    width: IMAGE_WIDTH,
+    minHeight: IMAGE_WIDTH,
     marginVertical: 8,
     borderRadius: 8,
     overflow: 'hidden',
     backgroundColor: colors.gray100,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  media: {flex: 1},
+  media: {width: IMAGE_WIDTH, minHeight: IMAGE_WIDTH},
   playOverlay: {
-    width: SCREEN_WIDTH - 32,
-    height: SCREEN_WIDTH - 32,
+    width: IMAGE_WIDTH,
+    height: IMAGE_WIDTH,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',

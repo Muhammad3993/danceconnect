@@ -16,6 +16,7 @@ import {Client} from '@amityco/ts-sdk';
 import messaging from '@react-native-firebase/messaging';
 import {useProfile} from '../hooks/useProfile';
 import PushController from '../utils/pushController';
+import {Tab} from '../components/tab';
 
 const HomeScreen = () => {
   const routeProps = useRoute();
@@ -109,30 +110,6 @@ const HomeScreen = () => {
 
   const goToCommunities = () => navigation.navigate('Communities');
 
-  const renderTab = ({item}: any) => {
-    return (
-      <RN.TouchableOpacity
-        onPress={() => onPressTab(item)}
-        style={[
-          styles.itemTabContainer,
-          {
-            borderBottomWidth: currentTab === item ? 3 : 0,
-            marginBottom: -1,
-            paddingHorizontal: 16,
-            paddingBottom: 8,
-          },
-        ]}>
-        <RN.Text
-          style={[
-            styles.itemTabText,
-            {color: currentTab === item ? colors.purple : colors.darkGray},
-          ]}>
-          {item}
-        </RN.Text>
-      </RN.TouchableOpacity>
-    );
-  };
-
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -171,15 +148,14 @@ const HomeScreen = () => {
           {t('your_upcoming')}
         </RN.Text>
         <RN.View style={styles.tabsWrapper}>
-          <RN.FlatList
+          <Tab
+            textStyle={styles.itemTabText}
+            onPressTab={onPressTab}
+            currentTab={currentTab}
             data={tabs}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderTab}
-            horizontal
+            wrapperStyle={{borderBottomWidth: 0}}
           />
         </RN.View>
-        {/* <ScrollView style={{ paddingTop: 8, paddingBottom: SCREEN_HEIGHT / 2}}> */}
         {events.map((item: any) => {
           return (
             <RN.View
@@ -284,11 +260,7 @@ const styles = RN.StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: colors.white,
   },
-  itemTabContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.purple,
-    paddingBottom: 6,
-  },
+
   itemTabText: {
     fontSize: 16,
     lineHeight: 28.2,

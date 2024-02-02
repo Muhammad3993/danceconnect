@@ -42,6 +42,8 @@ const ProfileScreen = ({navigation}) => {
         limit: 20,
       },
       ({data, ...metadata}) => {
+        console.log(data);
+
         if (!metadata.loading) {
           setIsloading(false);
           setPosts(data);

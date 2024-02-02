@@ -11,7 +11,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import colors from '../utils/colors';
 
 interface Props {
-  data: {text: string; containerStyle?: ViewStyle}[];
+  data: ({text: string; containerStyle?: ViewStyle} | string)[];
   currentTab: string;
   onPressTab: (val: string) => void;
   textStyle?: TextStyle;
@@ -38,15 +38,16 @@ export function Tab({
       <View style={containerStyle}>
         <View style={styles.tabsWrapper}>
           {data?.map(item => {
-            const active = currentTab === item.text;
+            const text = typeof item === 'string' ? item : item.text;
+            const active = currentTab === text;
             return (
               <TouchableOpacity
-                onPress={() => onPressTab(item.text)}
-                key={item.text}
+                onPress={() => onPressTab(text)}
+                key={text}
                 style={[
                   styles.item,
                   itemStyle,
-                  item.containerStyle,
+                  typeof item !== 'string' && item.containerStyle,
                   {borderBottomWidth: active ? 2 : 0},
                 ]}>
                 <Text
@@ -54,7 +55,7 @@ export function Tab({
                     textStyle,
                     {color: active ? colors.purple : colors.darkGray},
                   ]}>
-                  {item.text}
+                  {text}
                 </Text>
               </TouchableOpacity>
             );
@@ -72,10 +73,12 @@ export function Tab({
         contentContainerStyle={containerStyle}
         showsHorizontalScrollIndicator={false}
         renderItem={({item}) => {
-          const active = currentTab === item.text;
+          const text = typeof item === 'string' ? item : item.text;
+
+          const active = currentTab === text;
           return (
             <TouchableOpacity
-              onPress={() => onPressTab(item.text)}
+              onPress={() => onPressTab(text)}
               style={[
                 styles.item,
                 itemStyle,
@@ -86,7 +89,7 @@ export function Tab({
                   textStyle,
                   {color: active ? colors.purple : colors.darkGray},
                 ]}>
-                {item.text}
+                {text}
               </Text>
             </TouchableOpacity>
           );

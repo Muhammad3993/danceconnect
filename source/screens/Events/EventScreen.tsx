@@ -407,22 +407,20 @@ const EventScreen = () => {
                 marginLeft: idx !== 0 ? -12 : 0,
                 zIndex: idx !== 0 ? idx : -idx,
               }}>
-              {img?.userImage !== null ? (
-                <FastImage
-                  source={{
-                    uri: apiUrl + img?.userImage,
-                    cache: FastImage.cacheControl.immutable,
-                    priority: FastImage.priority.high,
-                  }}
-                  defaultSource={defaultProfile}
-                  style={styles.attendPeopleImg}
-                />
-              ) : (
-                <RN.Image
-                  source={defaultProfile}
-                  style={styles.attendPeopleImg}
-                />
-              )}
+              <FastImage
+                source={
+                  Boolean(img?.userImage)
+                    ? {
+                        uri: apiUrl + img?.userImage,
+                        cache: FastImage.cacheControl.immutable,
+                        priority: FastImage.priority.high,
+                      }
+                    : defaultProfile
+                }
+                defaultSource={defaultProfile}
+                style={styles.attendPeopleImg}
+              />
+
               {/* <FastImage
                 source={{
                   uri: apiUrl + img?.userImage,
@@ -529,19 +527,19 @@ const EventScreen = () => {
         <RN.View style={styles.organizerContainer}>
           <RN.View style={{flexDirection: 'row'}}>
             <RN.View style={{justifyContent: 'center'}}>
-              {eventData?.creator?.userImage !== null ? (
-                <FastImage
-                  source={{
-                    uri: apiUrl + eventData?.creator?.userImage,
-                    cache: FastImage.cacheControl.immutable,
-                    priority: FastImage.priority.high,
-                  }}
-                  defaultSource={defaultProfile}
-                  style={styles.organizerImg}
-                />
-              ) : (
-                <RN.Image source={defaultProfile} style={styles.organizerImg} />
-              )}
+              <FastImage
+                source={
+                  Boolean(eventData?.creator?.userImage)
+                    ? {
+                        uri: apiUrl + eventData?.creator?.userImage,
+                        cache: FastImage.cacheControl.immutable,
+                        priority: FastImage.priority.high,
+                      }
+                    : defaultProfile
+                }
+                defaultSource={defaultProfile}
+                style={styles.organizerImg}
+              />
             </RN.View>
             <RN.View style={{justifyContent: 'center'}}>
               <RN.Text style={styles.organizerName}>

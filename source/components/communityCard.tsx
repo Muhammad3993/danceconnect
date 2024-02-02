@@ -12,12 +12,13 @@ import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile} from '../utils/images';
 
-type props = {
+interface Props {
   item: any;
-  idx: number;
-};
+  isProfileScreen: boolean;
+  containerStyle?: RN.ViewStyle;
+}
 
-const CommunityCard = ({item, isProfileScreen}: any) => {
+const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
   const {userUid} = useRegistration();
   const navigation = useNavigation();
   const {t} = useTranslation();
@@ -197,7 +198,7 @@ const CommunityCard = ({item, isProfileScreen}: any) => {
   //   );
   // }
   return (
-    <RN.View style={styles.itemContainer}>
+    <RN.View style={[styles.itemContainer, containerStyle]}>
       <RN.TouchableOpacity
         onPress={goToCommunity}
         style={styles.headerItemContainer}
@@ -273,7 +274,6 @@ const styles = RN.StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 12,
     marginBottom: 16,
-    marginHorizontal: isAndroid ? 0 : 10,
     backgroundColor: colors.white,
     shadowColor: colors.black,
     shadowOffset: {
