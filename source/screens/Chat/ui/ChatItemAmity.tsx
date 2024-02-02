@@ -22,10 +22,10 @@ export function ChatItem({channel, currentUser}: Props) {
   const messagePreview = channel?.messagePreview?.data?.text;
 
   const previewCreateAt = new Date(
-    channel?.messagePreview.createdAt ?? channel?.createdAt,
+    channel?.messagePreview?.createdAt ?? channel?.createdAt,
   );
 
-  let localTime = previewCreateAt.toLocaleTimeString([], {
+  let localTime = previewCreateAt?.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
   });
