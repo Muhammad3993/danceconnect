@@ -2,7 +2,9 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  LayoutAnimation,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -23,6 +25,7 @@ import EventCard from './eventCard';
 import usePeople from '../hooks/usePeople';
 import {PostCard} from './PostCard';
 import {useNavigation} from '@react-navigation/native';
+import {isAndroid} from '../utils/constants';
 
 // const viewabilityConfig = {
 //   waitForInteraction: true,
@@ -69,6 +72,7 @@ export function ProfileList({
     },
   ];
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
+  const [showAbout, setShowAbout] = useState(false);
   // const [viewablesMap, setViewablesMap] = useState<Record<string, boolean>>({});
 
   const rolesString = roles.reduce((acc, next) => {
@@ -160,6 +164,68 @@ export function ProfileList({
   //   },
   //   [],
   // );
+  const onPressShare = async () => {
+    try {
+      const result = await Share.share({
+        title: `${user?.userName}`,
+        message: isAndroid
+          ? `https://danceconnect.online/user/${user?.id}`
+          : user?.userName,
+        url: `https://danceconnect.online/user/${user?.id}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log('result', result);
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const renderAbout = () => {
+    return (
+      <>
+        <Text style={styles.aboutUser}>
+          {user?.about?.length > 100 && !showAbout
+            ? `${user?.about?.slice(0, 100)}...`
+            : user?.about}
+        </Text>
+        {user?.about?.length > 40 && (
+          <TouchableOpacity
+            onPress={() => {
+              LayoutAnimation.configureNext(
+                LayoutAnimation.Presets.easeInEaseOut,
+              );
+              setShowAbout(v => !v);
+            }}
+            style={styles.showWrapper}>
+            <Text style={styles.showMoreText}>
+              {!showAbout ? t('show_more') : t('show_less')}
+            </Text>
+            <View style={{justifyContent: 'center'}}>
+              <Image
+                source={{uri: 'downlight'}}
+                style={[
+                  styles.arrowDownIcon,
+                  {
+                    transform: [
+                      {
+                        rotate: showAbout ? '180deg' : '0deg',
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </View>
+          </TouchableOpacity>
+        )}
+      </>
+    );
+  };
 
   return (
     <FlatList
@@ -179,7 +245,7 @@ export function ProfileList({
       ListHeaderComponent={
         <View style={{backgroundColor: colors.white}}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={onPressShare}>
               <Image
                 source={{uri: 'share'}}
                 style={{width: 28, height: 28, tintColor: colors.black}}
@@ -190,7 +256,7 @@ export function ProfileList({
           <View style={styles.profile}>
             <FastImage
               source={
-                Boolean(user.userImage)
+                user.userImage
                   ? {
                       uri: apiUrl + user?.userImage,
                       cache: FastImage.cacheControl.immutable,
@@ -224,6 +290,8 @@ export function ProfileList({
             </View>
           </View>
           <Text style={styles.roles}>{rolesString}</Text>
+          {user?.about?.length > 0 && renderAbout()}
+
           <View style={styles.actions}>{actions}</View>
 
           <Tab
@@ -322,7 +390,31 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
     letterSpacing: 0.2,
   },
-
+  aboutUser: {
+    paddingHorizontal: 16,
+    fontSize: 14,
+    color: colors.textPrimary,
+    fontFamily: 'Lato-Regular',
+    letterSpacing: 0.2,
+  },
+  showMoreText: {
+    color: colors.purple,
+    fontSize: 14,
+    lineHeight: 22.4,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+  },
+  showWrapper: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    marginBottom: 4,
+  },
+  arrowDownIcon: {
+    height: 14,
+    width: 14,
+    marginTop: 2,
+    tintColor: colors.purple,
+  },
   actions: {
     marginTop: 8,
     paddingHorizontal: 16,

@@ -69,6 +69,7 @@ export default (state = profileInitialState, action: profileAction) => {
         name: action.payload?.name,
         gender: action.payload?.gender,
         profileImg: action.payload?.profileImg,
+        about: action.payload?.about,
       };
     case PROFILE.CHANGE_DATA_SUCCESS:
       return {

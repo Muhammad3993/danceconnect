@@ -16,4 +16,5 @@ export default {
   changePasswordErrors: null,
   userCountry: '',
   fcmToken: '',
+  about: '',
 };

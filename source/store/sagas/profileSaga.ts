@@ -91,7 +91,7 @@ function* getUserByIdRequest() {
   }
 }
 function* changeInformation(action: any) {
-  const {name, gender, profileImg} = action?.payload;
+  const {name, gender, profileImg, about} = action?.payload;
   try {
     yield put(setLoadingAction({onLoading: true}));
     const crntUser = yield select(selectUser);
@@ -99,6 +99,7 @@ function* changeInformation(action: any) {
       userName: name,
       userGender: gender,
       userImage: profileImg,
+      about: about,
       jwt: {
         userId: crntUser.id,
       },

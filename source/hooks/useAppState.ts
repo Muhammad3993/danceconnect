@@ -54,8 +54,8 @@ const useAppStateHook = () => {
   const pricePercent = useSelector(selectTicketPricePercent);
   useEffect(() => {
     if (!currentCity?.length) {
-      const worldwide = regions.find(i => i.name === 'Worldwide');
-      dispatch(choosedCityAction({currentCity: worldwide?.name}));
+      // const worldwide = regions.find(i => i.name === 'Worldwide');
+      dispatch(choosedCityAction({currentCity: userCountry})); //TODO worldwide = worldwide.name
     }
   }, []);
 

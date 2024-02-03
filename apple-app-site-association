@@ -12,7 +12,8 @@
                     "/community/*",
                     "/events/*",
                     "/products/*",
-                    "/communities/*"
+                    "/communities/*",
+                    "/user/*"
                 ]
             }
         ]

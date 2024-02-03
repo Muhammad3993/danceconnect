@@ -2,7 +2,7 @@ import {IRootState} from '..';
 
 export const selectUsersList = (state: IRootState) => state.people?.users ?? [];
 export const selectDifferentUser = (state: IRootState) =>
-  state.people?.different_user ?? [];
+  state.people?.different_user ?? null;
 
 export const selectLoadingDifferentUser = (state: IRootState) =>
   state.people?.loadingDifferentUser ?? false;

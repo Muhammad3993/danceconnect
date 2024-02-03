@@ -37,7 +37,7 @@ const AttendedPeople = () => {
       setUsers(usersArray);
     }
   };
-  const onPressUser = (id: string) => navigation.navigate('User', {id: id});
+  const onPressUser = (id: string) => navigation.push('User', {id: id});
 
   const renderHeader = () => {
     return (

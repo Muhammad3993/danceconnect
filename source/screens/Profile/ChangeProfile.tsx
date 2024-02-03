@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import * as RN from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {genders, isAndroid, statusBarHeight} from '../../utils/constants';
@@ -21,6 +21,10 @@ const ChangeProfile = () => {
   const [changeName, setChangeName] = useState(userName);
   const [openGenders, setOpenGenders] = useState(false);
   const [choosedGender, setGender] = useState(currentUser?.userGender);
+  const [about, setAbout] = useState<string>(currentUser?.about);
+  const [keyboardBehavior, setKeyboardBehavior] = useState(
+    RN.Platform.OS === 'ios' ? 'position' : undefined,
+  );
 
   const onBack = () => {
     navigation.goBack();
@@ -50,7 +54,7 @@ const ChangeProfile = () => {
     setOpenGenders(v => !v);
   };
   const onPressSave = () => {
-    onChange(changeName, choosedGender, userImg);
+    onChange(changeName, choosedGender, userImg, about);
   };
 
   const header = () => {
@@ -148,27 +152,57 @@ const ChangeProfile = () => {
       </RN.View>
     );
   };
+  const renderAboutContainer = () => {
+    return (
+      <RN.TextInput
+        value={about}
+        onChangeText={setAbout}
+        style={styles.aboutInputContainer}
+        placeholder="About me"
+        placeholderTextColor={colors.darkGray}
+        multiline
+        onFocus={() =>
+          setKeyboardBehavior(RN.Platform.OS === 'ios' ? 'position' : undefined)
+        }
+      />
+    );
+  };
+  const onPressChangeName = (value: string) => {
+    setChangeName(value);
+  };
   return (
     <RN.View style={styles.container}>
       {header()}
-      <RN.ScrollView>
-        {renderImage()}
-        <RN.View style={styles.inputContainer}>
-          <Input
-            value={changeName}
-            onChange={setChangeName}
-            placeholder="Your name"
-            isErrorBorder={changeName?.length <= 0}
-          />
-        </RN.View>
-        {renderGenderSelect()}
-        {/* <RN.View style={styles.inputContainer}>
+      <RN.KeyboardAvoidingView
+        // style={{flex: 1}}
+        // keyboardVerticalOffset={40}
+        behavior={keyboardBehavior}>
+        <RN.ScrollView>
+          {renderImage()}
+          <RN.View style={styles.inputContainer}>
+            <Input
+              value={changeName}
+              onChange={onPressChangeName}
+              placeholder="Your name"
+              isErrorBorder={changeName?.length <= 0}
+              onFocusInput={() =>
+                setKeyboardBehavior(
+                  RN.Platform.OS === 'ios' ? 'padding' : undefined,
+                )
+              }
+            />
+          </RN.View>
+
+          {renderGenderSelect()}
+          {renderAboutContainer()}
+          {/* <RN.View style={styles.inputContainer}>
           {renderEmailContainer()}
         </RN.View> */}
-      </RN.ScrollView>
-      <RN.View style={styles.footerWrapper}>
-        <Button onPress={onPressSave} title="Save" disabled />
-      </RN.View>
+          <RN.View style={styles.footerWrapper}>
+            <Button onPress={onPressSave} title="Save" disabled />
+          </RN.View>
+        </RN.ScrollView>
+      </RN.KeyboardAvoidingView>
     </RN.View>
   );
 };
@@ -176,6 +210,18 @@ const styles = RN.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  aboutInputContainer: {
+    borderWidth: 0.5,
+    borderColor: colors.gray,
+    marginHorizontal: 22,
+    marginVertical: 24,
+    minHeight: 100,
+    borderRadius: 4,
+    padding: 10,
+    paddingTop: 14,
+    lineHeight: 22.4,
+    fontSize: 16,
   },
   backIcon: {
     height: 16,

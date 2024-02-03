@@ -161,6 +161,9 @@ const CommunityScreen = ({route, navigation}) => {
       </RN.View>
     );
   };
+  const onPressOrganizer = () => {
+    navigation.navigate('User', {id: communityData?.creator.uid});
+  };
 
   const headerOptionButtons = [
     {
@@ -342,7 +345,7 @@ const CommunityScreen = ({route, navigation}) => {
         ? `+${t('followers', {count: attendedImgs?.length - 6})}`
         : t('followed');
     const onPressAttended = () => {
-      navigation.navigate('AttendedPeople', {
+      navigation.push('AttendedPeople', {
         usersArray: attendedImgs,
         header: 'Community Members',
       });
@@ -366,7 +369,7 @@ const CommunityScreen = ({route, navigation}) => {
               }}>
               <FastImage
                 source={
-                  Boolean(img?.userImage)
+                  img?.userImage
                     ? {
                         uri: apiUrl + img?.userImage,
                         cache: FastImage.cacheControl.immutable,
@@ -429,11 +432,13 @@ const CommunityScreen = ({route, navigation}) => {
           </RN.View>
         </RN.TouchableOpacity>
         <RN.View style={styles.organizerContainer}>
-          <RN.View style={{flexDirection: 'row'}}>
+          <RN.TouchableOpacity
+            style={{flexDirection: 'row'}}
+            onPress={onPressOrganizer}>
             <RN.View style={{justifyContent: 'center'}}>
               <FastImage
                 source={
-                  Boolean(communityData?.creator?.image)
+                  communityData?.creator?.image
                     ? {
                         uri: apiUrl + communityData?.creator?.image,
                         cache: FastImage.cacheControl.immutable,
@@ -452,7 +457,7 @@ const CommunityScreen = ({route, navigation}) => {
               </RN.Text>
               <RN.Text style={styles.organizer}>{t('organizer')}</RN.Text>
             </RN.View>
-          </RN.View>
+          </RN.TouchableOpacity>
           {/* {!isAdmin && (
             <RN.TouchableOpacity style={styles.contactBtn}>
               <RN.Text style={styles.contactText}>Contact</RN.Text>

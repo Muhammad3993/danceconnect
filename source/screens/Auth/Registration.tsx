@@ -134,7 +134,7 @@ const RegistraionScreen = (): JSX.Element => {
             />
             <RN.Text style={styles.welcome}>{t('create_account')}</RN.Text>
             <Input
-              value={email}
+              value={email.toLowerCase()}
               onChange={setEmail}
               isErrorBorder={isErrors?.type?.includes('email')}
               placeholder={t('email')}

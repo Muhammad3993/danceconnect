@@ -18,6 +18,7 @@ type userParams = {
   newPassword?: string;
   changePasswordSuccess?: boolean;
   changePasswordErrors?: object | null;
+  about?: string;
 };
 export const getUserDataRequestAction = () => ({
   type: PROFILE.GET_DATA_REQUEST,
@@ -57,12 +58,14 @@ export const changeUserInformationRequestAction = ({
   name,
   gender,
   profileImg,
+  about,
 }: userParams) => ({
   type: PROFILE.CHANGE_DATA_REQUEST,
   payload: {
     name: name,
     gender: gender,
     profileImg: profileImg,
+    about: about,
   },
 });
 

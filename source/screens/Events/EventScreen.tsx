@@ -229,6 +229,9 @@ const EventScreen = () => {
     }
   };
 
+  const onPressOrganizer = () => {
+    navigation.navigate('User', {id: eventData?.creator.uid});
+  };
   const canDelete = useMemo(() => {
     return ticketsList.every(el => el.items.length === 0);
   }, [ticketsList]);
@@ -259,7 +262,7 @@ const EventScreen = () => {
     {
       key: 'share',
       icon: 'share',
-      isEnabled: true,
+      isEnabled: false,
       onPress:
         isAdmin || isManager ? () => onPressShareBtn() : () => onPressShare(),
       options: [
@@ -386,7 +389,7 @@ const EventScreen = () => {
         ? `+${attendedImgs?.length - 6}` + t('going')
         : t('going');
     const onPressAttended = () => {
-      navigation.navigate('AttendedPeople', {
+      navigation.push('AttendedPeople', {
         usersArray: attendedImgs,
         header: 'Participants',
       });
@@ -409,7 +412,7 @@ const EventScreen = () => {
               }}>
               <FastImage
                 source={
-                  Boolean(img?.userImage)
+                  img?.userImage
                     ? {
                         uri: apiUrl + img?.userImage,
                         cache: FastImage.cacheControl.immutable,
@@ -525,11 +528,13 @@ const EventScreen = () => {
     return (
       <>
         <RN.View style={styles.organizerContainer}>
-          <RN.View style={{flexDirection: 'row'}}>
+          <RN.TouchableOpacity
+            style={{flexDirection: 'row'}}
+            onPress={onPressOrganizer}>
             <RN.View style={{justifyContent: 'center'}}>
               <FastImage
                 source={
-                  Boolean(eventData?.creator?.userImage)
+                  eventData?.creator?.userImage
                     ? {
                         uri: apiUrl + eventData?.creator?.userImage,
                         cache: FastImage.cacheControl.immutable,
@@ -547,7 +552,7 @@ const EventScreen = () => {
               </RN.Text>
               <RN.Text style={styles.organizer}>{t('organizer')}</RN.Text>
             </RN.View>
-          </RN.View>
+          </RN.TouchableOpacity>
         </RN.View>
         {renderEventDate()}
         <RN.TouchableOpacity

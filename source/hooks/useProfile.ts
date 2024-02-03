@@ -44,11 +44,17 @@ export const useProfile = () => {
   const getUser = () => {
     dispatch(getUserByIdRequestAction());
   };
-  const onChange = (name: string, gender: string, profileImg: object) => {
+  const onChange = (
+    name: string,
+    gender: string,
+    profileImg: object,
+    about: string,
+  ) => {
     const data = {
       name: name,
       gender: gender,
       profileImg: profileImg ?? null,
+      about: about,
     };
     dispatch(changeUserInformationRequestAction(data));
   };

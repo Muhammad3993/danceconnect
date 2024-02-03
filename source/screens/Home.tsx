@@ -176,6 +176,7 @@ const HomeScreen = () => {
             <RN.View
               style={{
                 paddingTop: 8,
+                paddingHorizontal: 12,
                 minHeight: events.length > 1 ? 200 : 260,
               }}
               key={item?.id}>

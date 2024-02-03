@@ -8,6 +8,7 @@ import {ProfileList} from '../../components/profileList';
 import usePeople from '../../hooks/usePeople';
 import useRegistration from '../../hooks/useRegistration';
 import colors from '../../utils/colors';
+import Unavailable from '../../utils/404';
 
 const User = ({route, navigation}) => {
   const {getDifferentUser, differentUser, isLoadingUser} = usePeople();
@@ -72,7 +73,7 @@ const User = ({route, navigation}) => {
     <SafeAreaView edges={['bottom']} style={styles.container}>
       {isLoadingUser ? (
         <LoadingView />
-      ) : (
+      ) : differentUser ? (
         <ProfileList
           loadingMore={loadingMore}
           isCurrentUser={false}
@@ -102,6 +103,8 @@ const User = ({route, navigation}) => {
             />
           }
         />
+      ) : (
+        <Unavailable information="Looks like the user you're looking for doesn't exist." />
       )}
     </SafeAreaView>
   );

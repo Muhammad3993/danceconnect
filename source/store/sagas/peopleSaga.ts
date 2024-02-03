@@ -39,7 +39,11 @@ function* getDifferenetUserRequest(action: {payload: {id: string}}) {
   const {id} = action.payload;
   try {
     const user: Response = yield call(getUserById, id);
-    yield put(getDifferentUserSuccessAction(user));
+    if (user) {
+      yield put(getDifferentUserSuccessAction(user));
+    } else {
+      yield put(getDifferentUserFailAction());
+    }
   } catch (error) {
     yield put(getDifferentUserFailAction());
   }
