@@ -1,18 +1,17 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {ReactNode} from 'react';
 import colors from '../../../utils/colors';
-import {NavigationProp} from '@react-navigation/native';
 
 interface Props {
   title: string;
-  navigation: NavigationProp<any>;
+  onBackPress: () => {};
   rightIcon: ReactNode;
   withLine?: boolean;
 }
 
 export function Header({
   title,
-  navigation,
+  onBackPress,
   rightIcon,
   withLine = false,
 }: Props) {
@@ -22,7 +21,7 @@ export function Header({
         styles.header,
         withLine && {borderBottomColor: colors.gray200, borderBottomWidth: 1},
       ]}>
-      <TouchableOpacity onPress={navigation.goBack}>
+      <TouchableOpacity onPress={onBackPress}>
         <View style={styles.headerLeft}>
           <Image source={{uri: 'backicon'}} style={styles.backIcon} />
           <Text style={styles.headerTitle}>{title}</Text>

@@ -136,7 +136,7 @@ export function ChatScreen({route, navigation}: Props) {
             title={
               anotherUser?.userName ?? data?.displayName ?? data?.channelId
             }
-            navigation={navigation}
+            onBackPress={() => navigation.navigate('Chats')}
             rightIcon={
               <FastImage
                 source={
