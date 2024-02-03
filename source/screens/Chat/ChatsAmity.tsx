@@ -69,7 +69,7 @@ export function ChatsScreen({navigation}: any) {
       <View style={styles.container}>
         <Header
           title="Messages"
-          navigation={navigation}
+          onBackPress={() => navigation.navigate('Home')}
           rightIcon={
             <TouchableOpacity style={{marginLeft: 'auto'}} onPress={() => {}}>
               <Image
