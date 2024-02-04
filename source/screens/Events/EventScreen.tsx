@@ -190,7 +190,7 @@ const EventScreen = () => {
     } catch (error) {
       console.log(error.message);
     }
-    setShareOptions(v => !v);
+    (isAdmin || isManager) && setShareOptions(v => !v);
   };
   const onPressShareWeb = async () => {
     try {
@@ -213,7 +213,6 @@ const EventScreen = () => {
     } catch (error) {
       console.log(error.message);
     }
-    setShareOptions(v => !v);
   };
   const onPressMoreBtn = () => {
     setUnFollowOpen(v => !v);
@@ -262,7 +261,7 @@ const EventScreen = () => {
     {
       key: 'share',
       icon: 'share',
-      isEnabled: false,
+      isEnabled: true,
       onPress:
         isAdmin || isManager ? () => onPressShareBtn() : () => onPressShare(),
       options: [

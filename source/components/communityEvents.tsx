@@ -143,7 +143,13 @@ const CommunityEvents = ({isAdmin, eventsIds}: props) => {
         events()?.length > 0 &&
         events()?.map((item: any) => {
           if (item && item.id) {
-            return <EventCard key={item?.id} item={item} />;
+            return (
+              <EventCard
+                key={item?.id}
+                item={item}
+                containerStyle={{marginHorizontal: 12}}
+              />
+            );
           }
         })}
       {loadingEvents && renderLoading()}
