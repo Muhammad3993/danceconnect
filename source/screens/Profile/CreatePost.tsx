@@ -28,6 +28,7 @@ import {
 } from '../../store/actions/appStateActions';
 import useRegistration from '../../hooks/useRegistration';
 import {useDispatch} from 'react-redux';
+import ScalableImage from '../../components/ScalabelImage';
 // import Video from 'react-native-video';
 
 export function CreatePostScreen({navigation, route}) {
@@ -210,9 +211,9 @@ export function CreatePostScreen({navigation, route}) {
 
           {(image !== null || initialImage !== undefined) && (
             <View style={styles.mediaContent}>
-              <Image
-                style={{flex: 1}}
-                source={{uri: image?.uri ?? initialImage + '?size=medium'}}
+              <ScalableImage
+                originalWidth={SCREEN_WIDTH - 32}
+                uri={image?.uri ?? initialImage + '?size=medium'}
               />
             </View>
           )}
@@ -286,7 +287,7 @@ const styles = StyleSheet.create({
   },
   mediaContent: {
     width: SCREEN_WIDTH - 32,
-    height: SCREEN_WIDTH - 32,
+    minHeight: SCREEN_WIDTH - 32,
     borderRadius: 8,
     marginVertical: 12,
     overflow: 'hidden',

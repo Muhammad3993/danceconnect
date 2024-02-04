@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, memo} from 'react';
 
 import {Image} from 'react-native';
 
@@ -8,7 +8,7 @@ interface Props {
   originalHeight?: number;
 }
 
-const ScalableImage = ({uri, originalWidth, originalHeight}: Props) => {
+const ScalableImage = memo(({uri, originalWidth, originalHeight}: Props) => {
   const [scalableWidth, setScalableWidth] = useState(originalWidth);
   const [scalableHeight, setScalableHeight] = useState(200);
 
@@ -53,6 +53,6 @@ const ScalableImage = ({uri, originalWidth, originalHeight}: Props) => {
       }}
     />
   );
-};
+});
 
 export default ScalableImage;

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import React, {memo, useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {FileRepository, PostRepository} from '@amityco/ts-sdk';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
@@ -108,8 +108,8 @@ export function PostCard({
     setMenuIsOpen(!menuIsOpen);
   };
 
-  const deletePost = async () => {
-    await PostRepository.deletePost(post.postId, true);
+  const deletePost = () => {
+    PostRepository.deletePost(post.postId, true);
   };
 
   const editePost = async () => {
@@ -150,7 +150,9 @@ export function PostCard({
             </TouchableOpacity>
             {menuIsOpen && (
               <View style={styles.menu}>
-                <TouchableOpacity onPress={editePost}>
+                <TouchableOpacity
+                  style={{borderBottomWidth: 0.5}}
+                  onPress={editePost}>
                   <Text style={styles.menuItem}>Edit</Text>
                 </TouchableOpacity>
 
@@ -169,7 +171,10 @@ export function PostCard({
         {haveChildren && (
           <View style={styles.mediaContainer}>
             {postImageUrl && (
-              <ImageRenderer uri={postImageUrl + '?size=medium'} />
+              <ScalableImage
+                originalWidth={IMAGE_WIDTH}
+                uri={postImageUrl + '?size=medium'}
+              />
             )}
             {(videoPoster || videoUrl) && (
               <>
@@ -224,12 +229,9 @@ const TextRenderer = ({text}: {text: string}) => {
     </Text>
   );
 };
-const ImageRenderer = memo(({uri}: {uri: string}) => {
-  return <ScalableImage originalWidth={IMAGE_WIDTH} uri={uri} />;
-});
 
 const styles = StyleSheet.create({
-  container: {backgroundColor: colors.white, marginBottom: 8},
+  container: {backgroundColor: colors.white, marginBottom: 8, minHeight: 122},
   header: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -309,7 +311,7 @@ const styles = StyleSheet.create({
   },
   menu: {
     width: 120,
-    paddingHorizontal: 5,
+
     borderRadius: 8,
     backgroundColor: colors.white,
     shadowColor: '#000',
@@ -326,8 +328,9 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     fontSize: 14,
-    paddingVertical: 6,
+    padding: 14,
     fontFamily: 'Lato-Bold',
+    textAlign: 'center',
   },
 });
 

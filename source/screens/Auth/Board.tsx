@@ -50,11 +50,11 @@ const Board = () => {
       setRole([...role, item]);
     }
   };
-  useEffect(() => {
-    if (isRegistrationsSuccess) {
-      navigation.navigate('HOME');
-    }
-  }, [isRegistrationsSuccess, navigation]);
+  // useEffect(() => {
+  //   if (isRegistrationsSuccess) {
+  //     navigation.navigate('HOME');
+  //   }
+  // }, [isRegistrationsSuccess, navigation]);
 
   const onPressFinish = () => {
     onChoosedCity(selectedLocation);

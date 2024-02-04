@@ -91,9 +91,9 @@ const RegistraionScreen = (): JSX.Element => {
     if (userUid && !isUserExists) {
       navigation.navigate('ONBOARDING', {email: saveEmail, password: userUid});
     }
-    if (isUserExists) {
-      navigation.navigate('HOME');
-    }
+    // if (isUserExists) {
+    //   navigation.navigate('HOME');
+    // }
   }, [userUid, navigation, isUserExists]);
 
   const onPressSignUp = () => {

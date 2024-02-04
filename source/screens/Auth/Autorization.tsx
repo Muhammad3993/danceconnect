@@ -2,17 +2,16 @@ import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import {AuthStackNavigationParamList} from '../../navigation/types';
-import AuthButton from '../../components/authBtn';
-import {authButtons} from '../../utils/btnsConstans';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Input} from '../../components/input';
-import colors from '../../utils/colors';
-import {Button} from '../../components/Button';
-import useRegistration from '../../hooks/useRegistration';
-import {forgotPassword} from '../../api/authSocial';
-import useAppStateHook from '../../hooks/useAppState';
 import {useTranslation} from 'react-i18next';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {Button} from '../../components/Button';
+import AuthButton from '../../components/authBtn';
+import {Input} from '../../components/input';
+import useAppStateHook from '../../hooks/useAppState';
+import useRegistration from '../../hooks/useRegistration';
+import {AuthStackNavigationParamList} from '../../navigation/types';
+import {authButtons} from '../../utils/btnsConstans';
+import colors from '../../utils/colors';
 const AuthorizationScreen = (): JSX.Element => {
   const navigation = useNavigation<AuthStackNavigationParamList>();
   const {t} = useTranslation();
@@ -100,9 +99,9 @@ const AuthorizationScreen = (): JSX.Element => {
     if (userUid && !isUserExists) {
       navigation.navigate('ONBOARDING', {email: saveEmail, password: userUid});
     }
-    if (isUserExists) {
-      navigation.navigate('HOME');
-    }
+    // if (isUserExists) {
+    //   navigation.navigate('HOME');
+    // }
   }, [userUid, navigation, isUserExists]);
 
   const renderBackButton = () => {

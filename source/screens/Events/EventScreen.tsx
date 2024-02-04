@@ -640,20 +640,18 @@ const EventScreen = () => {
       </>
     );
   };
-  const renderLoading = () => {
-    return (
-      <RN.View style={{alignItems: 'center', paddingVertical: 8}}>
-        <RN.ActivityIndicator
-          animating={onLoading}
-          size={'small'}
-          color={colors.orange}
-        />
-      </RN.View>
-    );
-  };
+
   const renderPrice = () => {
     if (onLoading) {
-      return renderLoading();
+      return (
+        <RN.View style={{alignItems: 'center', paddingVertical: 8}}>
+          <RN.ActivityIndicator
+            animating={onLoading}
+            size={'small'}
+            color={colors.orange}
+          />
+        </RN.View>
+      );
     }
     if (ticketsList?.length > 0) {
       return (

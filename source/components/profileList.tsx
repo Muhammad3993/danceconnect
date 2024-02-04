@@ -212,11 +212,7 @@ export function ProfileList({
                 style={[
                   styles.arrowDownIcon,
                   {
-                    transform: [
-                      {
-                        rotate: showAbout ? '180deg' : '0deg',
-                      },
-                    ],
+                    transform: [{rotate: showAbout ? '180deg' : '0deg'}],
                   },
                 ]}
               />
@@ -319,7 +315,9 @@ export function ProfileList({
       ListFooterComponent={
         loadingMore ? <ActivityIndicator size={'large'} /> : undefined
       }
-      // keyExtractor={({postId}) => postId}
+      keyExtractor={(item, index) =>
+        item?.postId ?? item?.id ?? index.toString()
+      }
       // viewabilityConfig={viewabilityConfig}
       // onViewableItemsChanged={onViewableItemsChanged}
       scrollEventThrottle={200}

@@ -71,9 +71,9 @@ const WeclomeScreen = (): JSX.Element => {
     if (userUid && !isUserExists) {
       navigation.navigate('ONBOARDING', {email: saveEmail, password: userUid});
     }
-    if (isUserExists) {
-      navigation.navigate('HOME');
-    }
+    // if (isUserExists) {
+    //   navigation.navigate('HOME');
+    // }
     // console.log('isUserExists', isUserExists, userUid);
   }, [userUid, navigation, isUserExists]);
   const onPressSocial = (iconName: string) => {

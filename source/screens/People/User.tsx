@@ -9,10 +9,14 @@ import usePeople from '../../hooks/usePeople';
 import useRegistration from '../../hooks/useRegistration';
 import colors from '../../utils/colors';
 import Unavailable from '../../utils/404';
+import ProfileScreen from '../Profile/Profile';
 
 const User = ({route, navigation}) => {
   const {getDifferentUser, differentUser, isLoadingUser} = usePeople();
   const {currentUser} = useRegistration();
+  const userId = route.params.id;
+
+  const isCurrentUser = userId === currentUser?.id;
 
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsloading] = useState(true);
@@ -22,32 +26,33 @@ const User = ({route, navigation}) => {
   const onNextPage = useRef<() => void>();
 
   useEffect(() => {
-    const userId = route.params.id;
-    getDifferentUser(userId);
-    const sub = PostRepository.getPosts(
-      {
-        targetId: userId,
-        targetType: 'user',
-        includeDeleted: false,
-        limit: 12,
-      },
-      ({data, ...metadata}) => {
-        if (!metadata.loading) {
-          setIsloading(false);
-          setLoadingMore(false);
-          setPosts(data ?? []);
-        }
+    if (!isCurrentUser) {
+      getDifferentUser(userId);
+      const sub = PostRepository.getPosts(
+        {
+          targetId: userId,
+          targetType: 'user',
+          includeDeleted: false,
+          limit: 12,
+        },
+        ({data, ...metadata}) => {
+          if (!metadata.loading) {
+            setIsloading(false);
+            setLoadingMore(false);
+            setPosts(data ?? []);
+          }
 
-        setHasNextPage(metadata.hasNextPage ?? false);
+          setHasNextPage(metadata.hasNextPage ?? false);
 
-        onNextPage.current = metadata.onNextPage;
-      },
-    );
+          onNextPage.current = metadata.onNextPage;
+        },
+      );
 
-    return () => {
-      sub();
-    };
-  }, [route]);
+      return () => {
+        sub();
+      };
+    }
+  }, [route, userId, isCurrentUser]);
 
   const writeMessage = async () => {
     try {
@@ -68,6 +73,10 @@ const User = ({route, navigation}) => {
       console.log(err);
     }
   };
+
+  if (isCurrentUser) {
+    return <ProfileScreen navigation={navigation} />;
+  }
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
