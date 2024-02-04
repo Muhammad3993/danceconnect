@@ -73,7 +73,7 @@ const CreateCommunity = ({navigation}) => {
 
   useEffect(() => {
     RN.DeviceEventEmitter.addListener('upload_finished', (data: any) => {
-      navigation.navigate('CommunityScreen', {data});
+      navigation.push('CommunityScreen', {data});
     });
   }, []);
   useEffect(() => {

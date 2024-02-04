@@ -183,7 +183,7 @@ const EventsScreen = () => {
           </RN.View>
         </RN.TouchableOpacity>
         <Search
-          onPressAdd={() => navigation.navigate('CreateEvent')}
+          onPressAdd={() => navigation.push('CreateEvent')}
           onSearch={onChangeTextSearch}
           searchValue={searchValue}
           placeholder={t('input_search_events')}

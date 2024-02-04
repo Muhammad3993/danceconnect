@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
@@ -18,11 +18,11 @@ const ChangeLanguage = () => {
     // console.log(lg);
     // navigation.goBack();
   };
-  useEffect(() => {
-    i18n.on('languageChanged', () => {
-      navigation.navigate('LANGUAGE');
-    });
-  }, [i18n, navigation]);
+  // useEffect(() => {
+  //   i18n.on('languageChanged', () => {
+  //     navigation.navigate('LANGUAGE');
+  //   });
+  // }, [i18n, navigation]);
   const header = () => {
     return (
       <RN.TouchableOpacity

@@ -61,7 +61,7 @@ export function MenuItems({navigation, close}: Props) {
 
   const onPressDanceStyles = () => {
     close();
-    navigation.navigate('ProfileDanceStyles');
+    navigation.push('ProfileDanceStyles');
   };
 
   const onPressTickets = () => {

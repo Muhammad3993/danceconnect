@@ -209,7 +209,7 @@ const MakeEvent = () => {
           setPaidTicketsErrors(true);
         } else {
           if (inAppTickets) {
-            navigation.navigate('EventScreen', {
+            navigation.push('EventScreen', {
               data: preCreatedEvent,
               createEvent: true,
             });
@@ -356,7 +356,7 @@ const MakeEvent = () => {
     setPaidTicketsErrors(false);
   };
   const onPressAddTicket = () => {
-    navigation.navigate('CreateTicket', {event: preCreatedEvent});
+    navigation.push('CreateTicket', {event: preCreatedEvent});
     setPaidTicketsErrors(false);
   };
   const renderTabs = () => {
@@ -1020,7 +1020,7 @@ const MakeEvent = () => {
           <RN.View style={{flexDirection: 'row'}}>
             <RN.TouchableOpacity
               style={{justifyContent: 'center'}}
-              onPress={() => navigation.navigate('EditTicket', ticket)}>
+              onPress={() => navigation.push('EditTicket', ticket)}>
               <RN.Image
                 source={{uri: 'edit'}}
                 style={{

@@ -4,16 +4,17 @@ import colors from '../utils/colors';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {SCREEN_WIDTH} from '../utils/constants';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type props = {
   onPress?: () => void;
 };
 
 const CreateCommunityButton = ({onPress}: props) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const {t} = useTranslation();
   const onPressBtn = () => {
-    navigation.navigate('CreateCommunity');
+    navigation.push('CreateCommunity');
   };
   return (
     <RN.TouchableOpacity

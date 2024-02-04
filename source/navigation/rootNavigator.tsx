@@ -51,6 +51,24 @@ const linking = {
   prefixes: ['https://danceconnect.online/', 'danceconnect://'],
   config: {
     screens: {
+      ['EventScreen']: {
+        path: 'event/:id',
+        parse: {
+          id: (id: string) => id,
+        },
+      },
+      ['CommunityScreen']: {
+        path: 'community/:id',
+        parse: {
+          id: (id: string) => id,
+        },
+      },
+      ['User']: {
+        path: 'user/:id',
+        parse: {
+          id: (id: string) => id,
+        },
+      },
       ['TABS']: {
         path: '/',
         screens: {
@@ -67,30 +85,6 @@ const linking = {
             screens: {
               ['Events']: {
                 path: 'events',
-              },
-            },
-          },
-          ['EventScreen']: {
-            path: 'event/:id',
-            parse: {
-              id: (id: string) => {
-                return id;
-              },
-            },
-          },
-          ['CommunityScreen']: {
-            path: 'community/:id',
-            parse: {
-              id: (id: string) => {
-                return id;
-              },
-            },
-          },
-          ['User']: {
-            path: 'user/:id',
-            parse: {
-              id: (id: string) => {
-                return id;
               },
             },
           },
@@ -241,6 +235,7 @@ const AppNavigator = () => {
   if (!isBootstraped) {
     return null;
   }
+  console.log(navigationRef);
 
   return (
     <NavigationContainer

@@ -82,7 +82,7 @@ const CommunityScreen = ({route, navigation}) => {
   }, [communityId, userUid]);
 
   const onPressEditCommunity = () => {
-    navigation.navigate('EditCommunity', communityData);
+    navigation.push('EditCommunity', communityData);
   };
 
   const onPressJoin = () => {
@@ -105,7 +105,7 @@ const CommunityScreen = ({route, navigation}) => {
   };
   const onPressAddMenegers = () => {
     setUnFollowOpen(v => !v);
-    navigation.navigate('Managers', {id: communityId});
+    navigation.push('Managers', {id: communityId});
   };
   const onPressBack = () => {
     if (isProfileScreen) {
@@ -162,7 +162,7 @@ const CommunityScreen = ({route, navigation}) => {
     );
   };
   const onPressOrganizer = () => {
-    navigation.navigate('User', {id: communityData?.creator.uid});
+    navigation.push('User', {id: communityData?.creator.uid});
   };
 
   const headerOptionButtons = [
@@ -504,9 +504,7 @@ const CommunityScreen = ({route, navigation}) => {
           <RN.View style={styles.btnJoin}>
             <Button
               onPress={() =>
-                navigation.navigate('CreateEvent', {
-                  communityData: communityData,
-                })
+                navigation.push('CreateEvent', {communityData: communityData})
               }
               disabled
               // isLoading={isLoadingWithFollow}

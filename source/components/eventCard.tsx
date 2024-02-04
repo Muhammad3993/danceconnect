@@ -12,6 +12,7 @@ import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile} from '../utils/images';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 interface Props {
   item: any;
@@ -21,7 +22,7 @@ interface Props {
 const EventCard = ({item, containerStyle}: Props) => {
   const data = item;
   // const [data, setdata] = useState(data);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const {t} = useTranslation();
   const {userUid} = useRegistration();
   const {loadingEvents} = useEvents();
@@ -40,7 +41,7 @@ const EventCard = ({item, containerStyle}: Props) => {
     data?.place?.length > 16 ? data?.place?.slice(0, 16) + '...' : data?.place;
 
   const goToEvent = () => {
-    navigation.navigate('EventScreen', {data});
+    navigation.push('EventScreen', {data});
   };
   const [isFollowed, setIsFollowed] = useState(false);
 

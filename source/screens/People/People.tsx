@@ -44,7 +44,7 @@ const People = () => {
     setUsersList(users);
   }, [users, users.length]);
 
-  const onPressUser = (id: string) => navigation.navigate('User', {id: id});
+  const onPressUser = (id: string) => navigation.push('User', {id: id});
   const onChangeTextSearch = (value: string) => {
     setSearchValue(value);
     if (value?.length === 0) {

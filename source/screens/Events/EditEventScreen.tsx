@@ -358,7 +358,7 @@ const EditEventScreen = () => {
     setPaidTicketsErrors(false);
   };
   const onPressAddTicket = () => {
-    navigation.navigate('CreateTicket', {event: routeParams?.params});
+    navigation.push('CreateTicket', {event: routeParams?.params});
     setPaidTicketsErrors(false);
   };
   const renderTabs = () => {
@@ -1041,7 +1041,7 @@ const EditEventScreen = () => {
           <RN.View style={{flexDirection: 'row'}}>
             <RN.TouchableOpacity
               style={{justifyContent: 'center'}}
-              onPress={() => navigation.navigate('EditTicket', ticket)}>
+              onPress={() => navigation.push('EditTicket', ticket)}>
               <RN.Image
                 source={{uri: 'edit'}}
                 style={{

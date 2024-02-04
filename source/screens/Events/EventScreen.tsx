@@ -124,7 +124,7 @@ const EventScreen = () => {
     if (isFollowed) {
       if (!myTicketsByEvent.length) {
         if (ticketsList.length > 0) {
-          navigation.navigate('BuyTickets', {
+          navigation.push('BuyTickets', {
             tickets: ticketsList,
             eventUid: eventData.id,
           });
@@ -135,7 +135,7 @@ const EventScreen = () => {
         onPressTicket();
       }
     } else if (ticketsList.length > 0) {
-      navigation.navigate('BuyTickets', {
+      navigation.push('BuyTickets', {
         tickets: ticketsList,
         eventUid: eventData.id,
       });
@@ -154,7 +154,7 @@ const EventScreen = () => {
     attendEvent(eventData?.id);
   };
   const onPressEditEvent = () => {
-    navigation.navigate('EditEvent', eventData);
+    navigation.push('EditEvent', eventData);
   };
   const onPressRemove = async () => {
     setUnFollowOpen(v => !v);
@@ -230,7 +230,7 @@ const EventScreen = () => {
   };
 
   const onPressOrganizer = () => {
-    navigation.navigate('User', {id: eventData?.creator.uid});
+    navigation.push('User', {id: eventData?.creator.uid});
   };
   const canDelete = useMemo(() => {
     return ticketsList.every(el => el.items.length === 0);
@@ -610,7 +610,7 @@ const EventScreen = () => {
                 title={t('manage_tickets')}
                 disabled
                 onPress={() =>
-                  navigation.navigate('EditEvent', {
+                  navigation.push('EditEvent', {
                     ...eventData,
                     isEditTicket: true,
                   })
@@ -823,7 +823,7 @@ const EventScreen = () => {
             0 && (
             <RN.TouchableOpacity
               onPress={() => {
-                navigation.navigate('BuyTickets', {
+                navigation.push('BuyTickets', {
                   tickets: ticketsList,
                   eventUid: eventData.id,
                 });

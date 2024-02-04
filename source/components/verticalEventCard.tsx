@@ -8,6 +8,7 @@ import useEvents from '../hooks/useEvents';
 import useRegistration from '../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
 import {SCREEN_WIDTH} from '../utils/constants';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type props = {
   data: object;
@@ -17,7 +18,7 @@ const VerticalCard = ({data, eventsLength}: props) => {
   const {attendEvent} = useEvents();
   const {userUid} = useRegistration();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const dateEvent = `${String(
     minWeekDay.weekdaysMin(moment(data?.eventDate?.startDate)),
   ).toUpperCase()}, ${String(
@@ -39,7 +40,7 @@ const VerticalCard = ({data, eventsLength}: props) => {
     });
   };
   const onPress = () => {
-    navigation.navigate('EventScreen', {data});
+    navigation.push('EventScreen', {data});
   };
   return (
     <RN.TouchableOpacity

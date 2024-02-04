@@ -60,7 +60,7 @@ const ProfileScreen = ({navigation}) => {
   }, [currentUser?.id]);
 
   const editProfile = () => {
-    navigation.navigate('ChangeProfile');
+    navigation.push('ChangeProfile');
   };
 
   const onPressMenu = () => {

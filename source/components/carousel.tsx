@@ -107,7 +107,7 @@ const Carousel = ({items}: any) => {
       //       images: items,
       //     })
       //   }>
-        <Slide data={item} key={items.indexOf(item)} />
+      <Slide data={item} key={items.indexOf(item)} />
       // </TouchableOpacity>
     );
   }, []);

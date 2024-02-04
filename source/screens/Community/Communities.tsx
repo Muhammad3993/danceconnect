@@ -15,7 +15,7 @@ import AllTab from './tabs/allTab';
 import JoinTab from './tabs/joinedTab';
 import ManagingTab from './tabs/managingTab';
 
-const CommunitiesScreen = () => {
+const CommunitiesScreen = ({navigation}) => {
   const {
     communitiesData,
     managingCommunity,
@@ -31,7 +31,6 @@ const CommunitiesScreen = () => {
     {text: t('managing')},
   ];
   const routeProps = useRoute();
-  const navigation = useNavigation();
   const [searchValue, onSearch] = useState('');
   const [tabs, setTabs] = useState(TABS);
   const [currentTab, setCurrentTab] = useState(tabs[0].text);
@@ -155,7 +154,7 @@ const CommunitiesScreen = () => {
           onSearch={onChangeTextSearch}
           searchValue={searchValue}
           placeholder={t('input_search_communities')}
-          onPressAdd={() => navigation.navigate('CreateCommunity')}
+          onPressAdd={() => navigation.push('CreateCommunity')}
         />
         <Tab
           data={tabs}

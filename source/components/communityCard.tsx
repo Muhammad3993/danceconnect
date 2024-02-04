@@ -48,7 +48,7 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
   const [attendedImgs, setAttendedImgs] = useState(displayedData?.userImages);
 
   const goToCommunity = () => {
-    navigation.navigate('CommunityScreen', {data, isProfileScreen});
+    navigation.push('CommunityScreen', {data, isProfileScreen});
   };
   // console.log('di', data.followers, isFollowed);
   useEffect(() => {

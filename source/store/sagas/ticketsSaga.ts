@@ -1,4 +1,13 @@
-import {call, put, select, takeLatest} from 'redux-saga/effects';
+import {call, put, takeLatest} from 'redux-saga/effects';
+import {
+  changeTicket,
+  getPurchasedTickets,
+  getTickets,
+  makeTicket,
+  removeTicket,
+} from '../../api/serverRequests';
+import {TICKET} from '../actionTypes/ticketActionTypes';
+import {setLoadingAction} from '../actions/appStateActions';
 import {
   createTicketFailAction,
   createTicketSuccessAction,
@@ -7,20 +16,6 @@ import {
   getTicketsRequestAction,
   getTicketsSuccessAction,
 } from '../actions/ticketActions';
-import {
-  changeTicket,
-  getEventById,
-  getPurchasedTickets,
-  getTickets,
-  makeTicket,
-  purchasedTickets,
-  removeTicket,
-} from '../../api/serverRequests';
-import {TICKET} from '../actionTypes/ticketActionTypes';
-import {navigationRef} from '../../navigation/types';
-import {CommonActions} from '@react-navigation/native';
-import {getPreCreateEvent} from '../selectors/eventsSelector';
-import {setLoadingAction} from '../actions/appStateActions';
 
 function* createTicketRequest(action: any) {
   const {ticket} = action.payload;
