@@ -80,6 +80,10 @@ const EventScreen = () => {
 
   useEffect(() => {
     getEvent();
+
+    return () => {
+      onClearEventDataById();
+    };
   }, [linkId]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -88,6 +92,7 @@ const EventScreen = () => {
         setTickers(res);
       });
     });
+
     return unsubscribe;
   }, [navigation, eventData?.id]);
 
@@ -161,11 +166,10 @@ const EventScreen = () => {
     remove();
   };
   const onPressBack = () => {
-    onClearEventDataById();
     if (!createEvent && navigation.canGoBack()) {
       navigation.goBack();
     } else {
-      navigation.navigate('Events');
+      navigation.navigate('TABS', {screen: 'Events'});
     }
   };
   const onPressShare = async () => {

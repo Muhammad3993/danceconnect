@@ -47,6 +47,10 @@ const CommunityScreen = ({route, navigation}: Props) => {
 
   useEffect(() => {
     getCommunity();
+
+    return () => {
+      onClearCommunityDataById();
+    };
   }, []);
 
   useEffect(() => {
@@ -116,9 +120,8 @@ const CommunityScreen = ({route, navigation}: Props) => {
     if (isProfileScreen && navigation.canGoBack()) {
       navigation.goBack();
     } else {
-      navigation.navigate('CommunitiesMain');
+      navigation.navigate('TABS', {screen: 'Communities'});
     }
-    onClearCommunityDataById();
   };
   const onPressShare = async () => {
     try {
