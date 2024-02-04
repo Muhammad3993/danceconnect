@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
     fontSize: 18,
     marginBottom: 6,
+    color: colors.textPrimary,
   },
   message: {
     fontFamily: 'Lato-Regular',

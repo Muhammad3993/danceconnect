@@ -3,6 +3,7 @@ import PushNotification from 'react-native-push-notification';
 import messaging from '@react-native-firebase/messaging';
 import {useNavigation} from '@react-navigation/native';
 import {navigationRef} from '../navigation/types';
+import { Platform } from 'react-native';
 
 const PushController = () => {
   const navigation = useNavigation();
@@ -17,7 +18,10 @@ const PushController = () => {
         console.log('NOTIFICATION:', notification, channel);
 
         // process the notification here
-        if (channel) {
+        if (channel && Platform.OS === 'ios') {
+          navigation.push('Chat', {channel: channel});
+        }
+        if (notification.userInteraction && Platform.OS === 'android') {
           navigation.push('Chat', {channel: channel});
         }
       },
@@ -64,6 +68,7 @@ const PushController = () => {
           navigation.push('Chat', {
             channel: data,
           });
+          PushNotification.removeAllDeliveredNotifications();
         }
         return;
       },

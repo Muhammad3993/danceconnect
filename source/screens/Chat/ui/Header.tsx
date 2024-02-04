@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
     fontSize: 20,
     marginLeft: 16,
+    color: colors.textPrimary,
   },
   headerLeft: {flexDirection: 'row', alignItems: 'center'},
   backIcon: {

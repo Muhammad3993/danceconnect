@@ -307,6 +307,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Regular',
     fontSize: 16,
     maxHeight: 120,
+    color: colors.textPrimary,
   },
   sendButton: {
     // width: 44,

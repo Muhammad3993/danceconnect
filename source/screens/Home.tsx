@@ -38,12 +38,12 @@ const HomeScreen = () => {
   const {t} = useTranslation();
   const getFcmToken = async () => {
     try {
-      if (!userFcmToken) {
-        const fcmToken = await messaging().getToken();
-        console.log('getFcmToken', fcmToken);
-        setToken(fcmToken);
-        return fcmToken;
-      }
+      // if (!userFcmToken) {
+      const fcmToken = await messaging().getToken();
+      console.log('getFcmToken', fcmToken);
+      setToken(fcmToken);
+      return fcmToken;
+      // }
     } catch (error) {
       console.error(error);
       return null;
