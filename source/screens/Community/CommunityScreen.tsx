@@ -18,8 +18,13 @@ import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile} from '../../utils/images';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-const CommunityScreen = ({route, navigation}) => {
+interface Props {
+  navigation: NativeStackNavigationProp<any>;
+}
+
+const CommunityScreen = ({route, navigation}: Props) => {
   const {t} = useTranslation();
   const removeModalizeRef = useRef<Modalize>(null);
   const {userUid} = useRegistration();
@@ -108,7 +113,7 @@ const CommunityScreen = ({route, navigation}) => {
     navigation.push('Managers', {id: communityId});
   };
   const onPressBack = () => {
-    if (isProfileScreen) {
+    if (isProfileScreen && navigation.canGoBack()) {
       navigation.goBack();
     } else {
       navigation.navigate('CommunitiesMain');

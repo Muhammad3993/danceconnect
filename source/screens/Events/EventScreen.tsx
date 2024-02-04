@@ -162,10 +162,10 @@ const EventScreen = () => {
   };
   const onPressBack = () => {
     onClearEventDataById();
-    if (createEvent) {
-      navigation.navigate('Events');
-    } else {
+    if (!createEvent && navigation.canGoBack()) {
       navigation.goBack();
+    } else {
+      navigation.navigate('Events');
     }
   };
   const onPressShare = async () => {
