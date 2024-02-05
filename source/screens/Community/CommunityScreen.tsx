@@ -1,11 +1,10 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
 import {useCommunities} from '../../hooks/useCommunitites';
 import {useCommunityById} from '../../hooks/useCommunityById';
-import useEvents from '../../hooks/useEvents';
 import Carousel from '../../components/carousel';
 import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
 import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
@@ -19,6 +18,7 @@ import {Portal} from 'react-native-portalize';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile} from '../../utils/images';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+// import {ChannelRepository} from '@amityco/ts-sdk';
 
 interface Props {
   navigation: NativeStackNavigationProp<any>;
@@ -74,6 +74,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
       ),
     );
   }, [communityData?.followers, userUid]);
+
   useEffect(() => {
     socket.on('subscribed', socket_data => {
       // console.log('socket_data?.currentCommunity', socket_data);
@@ -98,6 +99,38 @@ const CommunityScreen = ({route, navigation}: Props) => {
     setLoadSubscribe(true);
     startFollowed(communityData?.id);
   };
+
+  const onWriteChat = async () => {
+    try {
+      // const newChannel = {
+      //   displayName: communityData?.title,
+      //   tags: ['community'],
+      //   type: 'community' as Amity.ChannelType,
+      //   userIds: communityData?.followers?.map(el => el.id) ?? [],
+      //   metadata: {
+      //     name: communityData?.title,
+      //     image:
+      //       communityData?.images?.length > 0
+      //         ? communityData?.images[0]
+      //         : undefined,
+      //   },
+      //   isPublic: true,
+      // };
+      // const {data: channel} = await ChannelRepository.updateChannel('65c0da9e6a5eb2bd4e9a9331', {});
+      // console.log(channel);
+      // console.log(channel.channelId);
+      // console.log('channel.channelId');
+      // navigation.push('Chat', {
+      //   channel: {
+      //     defaultSubChannelId: '65c0da9e6a5eb2bd4e9a9331',
+      //     channelId: '65c0da9e6a5eb2bd4e9a9331',
+      //   },
+      // });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const onPressUnfollow = () => {
     setLoadSubscribe(true);
     startFollowed(communityData?.id);
@@ -210,6 +243,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
     .filter(i => i?.options)
     .map(i => i.options)
     .flat(1);
+
   const opacity = new RN.Animated.Value(0);
 
   const onScroll = (ev: RN.NativeSyntheticEvent<RN.NativeScrollEvent>) => {
@@ -221,6 +255,9 @@ const CommunityScreen = ({route, navigation}: Props) => {
     }).start();
     setUnFollowOpen(false);
   };
+
+  const shouldJoinChat = !isAdmin && !isJoined && !isManager;
+
   const header = () => {
     return (
       <RN.View style={styles.headerContainer}>
@@ -293,6 +330,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
       </RN.View>
     );
   };
+
   const renderTitle = () => {
     return (
       <>
@@ -323,9 +361,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
                     styles.arrowDownIcon,
                     {
                       transform: [
-                        {
-                          rotate: openingDescription ? '180deg' : '0deg',
-                        },
+                        {rotate: openingDescription ? '180deg' : '0deg'},
                       ],
                     },
                   ]}
@@ -338,9 +374,6 @@ const CommunityScreen = ({route, navigation}: Props) => {
     );
   };
 
-  const renderLoading = () => {
-    return <RN.ActivityIndicator size={'small'} color={colors.orange} />;
-  };
   const onOpenMaps = () => {
     const url = isAndroid
       ? `geo:0,0?q=${communityData?.location}`
@@ -492,22 +525,16 @@ const CommunityScreen = ({route, navigation}: Props) => {
         <Carousel items={communityData?.images} />
         {renderTitle()}
         {renderMapInfoOrganizer()}
-        {loadSubscribe
-          ? renderLoading()
-          : !isAdmin &&
-            !isJoined &&
-            !isManager && (
-              <RN.View style={styles.btnJoin}>
-                <Button
-                  onPress={onPressJoin}
-                  // iconName={isJoined && 'chat'}
-                  disabled
-                  // isLoading={loadingFollow}
-                  buttonStyle={isJoined && styles.btnMessage}
-                  title={t('join')}
-                />
-              </RN.View>
-            )}
+
+        <RN.View style={styles.btnJoin}>
+          <Button
+            isLoading={loadSubscribe}
+            onPress={shouldJoinChat ? onPressJoin : onWriteChat}
+            disabled
+            buttonStyle={shouldJoinChat ? undefined : styles.btnMessage}
+            title={shouldJoinChat ? t('join') : 'Write to chat'}
+          />
+        </RN.View>
         {(isAdmin || isManager) && (
           <RN.View style={styles.btnJoin}>
             <Button

@@ -1,43 +1,15 @@
-import React, {useCallback, memo, useRef, useState} from 'react';
-import {
-  FlatList,
-  View,
-  StyleSheet,
-  Image,
-  LayoutAnimation,
-  Touchable,
-  TouchableOpacity,
-} from 'react-native';
+import React, {memo, useCallback, useRef, useState} from 'react';
+import {FlatList, Image, LayoutAnimation, StyleSheet, View} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import {apiUrl} from '../api/serverRequests';
 import colors from '../utils/colors';
 import {SCREEN_WIDTH} from '../utils/constants';
-import {apiUrl} from '../api/serverRequests';
-import FastImage from 'react-native-fast-image';
-import {useNavigation} from '@react-navigation/native';
 
-type itemProp = {
-  data: any;
-  key: number;
-};
 type paginationProp = {
   index: number;
   data: string[];
 };
-const Slide = memo(function Slide(data: itemProp) {
-  return (
-    <View style={styles.slide}>
-      <FastImage
-        source={{
-          uri: apiUrl + data?.data?.item,
-          cache: FastImage.cacheControl.immutable,
-          priority: FastImage.priority.high,
-        }}
-        resizeMode={FastImage.resizeMode.cover}
-        defaultSource={require('../assets/images/default.jpeg')}
-        style={styles.slideImage}
-      />
-    </View>
-  );
-});
+
 const Pagination = ({index, data}: paginationProp) => {
   return (
     <View style={styles.pagination}>
@@ -61,8 +33,22 @@ const Pagination = ({index, data}: paginationProp) => {
   );
 };
 
-const Carousel = ({items}: any) => {
-  const navigation = useNavigation();
+const flatListOptimizationProps = {
+  initialNumToRender: 0,
+  maxToRenderPerBatch: 1,
+  removeClippedSubviews: true,
+  scrollEventThrottle: 20,
+  windowSize: SCREEN_WIDTH,
+  keyExtractor: (s: string) => s,
+  getItemLayout: (_: any, index: number) => ({
+    index,
+    length: SCREEN_WIDTH,
+    offset: index * SCREEN_WIDTH,
+  }),
+};
+
+const Carousel = ({items}: {items: string[]}) => {
+  // const navigation = useNavigation();
   const [index, setIndex] = useState(0);
   const indexRef = useRef(index);
   indexRef.current = index;
@@ -80,35 +66,20 @@ const Carousel = ({items}: any) => {
     }
   }, []);
 
-  const flatListOptimizationProps = {
-    initialNumToRender: 0,
-    maxToRenderPerBatch: 1,
-    removeClippedSubviews: true,
-    scrollEventThrottle: 16,
-    windowSize: 2,
-    keyExtractor: useCallback((s: {id: number}) => String(s.id), []),
-    getItemLayout: useCallback(
-      (_: any, index: number) => ({
-        index,
-        length: SCREEN_WIDTH,
-        offset: index * SCREEN_WIDTH,
-      }),
-      [],
-    ),
-  };
-
-  const renderItem = useCallback(function renderItem(item: any) {
+  const renderItem = useCallback(({item}: any) => {
     return (
-      // <TouchableOpacity
-      //   activeOpacity={0.9}
-      //   onPress={idx =>
-      //     navigation.navigate('ImageView', {
-      //       idx,
-      //       images: items,
-      //     })
-      //   }>
-      <Slide data={item} key={items.indexOf(item)} />
-      // </TouchableOpacity>
+      <View style={styles.slide}>
+        <FastImage
+          source={{
+            uri: apiUrl + item,
+            cache: FastImage.cacheControl.immutable,
+            priority: FastImage.priority.high,
+          }}
+          resizeMode={FastImage.resizeMode.cover}
+          defaultSource={require('../assets/images/default.jpeg')}
+          style={styles.slideImage}
+        />
+      </View>
     );
   }, []);
 
@@ -122,12 +93,13 @@ const Carousel = ({items}: any) => {
       </View>
     );
   }
+
   return (
     <>
       <FlatList
         data={items}
         style={styles.carousel}
-        renderItem={item => renderItem(item)}
+        renderItem={renderItem}
         pagingEnabled
         horizontal
         showsHorizontalScrollIndicator={false}

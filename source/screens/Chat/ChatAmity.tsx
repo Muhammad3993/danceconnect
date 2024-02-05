@@ -4,7 +4,6 @@ import {
   SubChannelRepository,
   ChannelRepository,
 } from '@amityco/ts-sdk';
-import {NavigationProp} from '@react-navigation/native';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {ActivityIndicator, Image, StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -25,13 +24,9 @@ import {Header} from './ui/Header';
 import useRegistration from '../../hooks/useRegistration';
 import {apiUrl} from '../../api/serverRequests';
 import useAppStateHook from '../../hooks/useAppState';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-interface Props {
-  route: {params: {channel: Amity.Channel}};
-  navigation: NavigationProp<any>;
-}
-
-export function ChatScreen({route, navigation}: Props) {
+export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
   const {channel} = route.params;
   const {sendMessageAction} = useAppStateHook();
   const [loading, setLoading] = useState(true);
@@ -46,7 +41,7 @@ export function ChatScreen({route, navigation}: Props) {
   useEffect(() => {
     if (channel?.defaultSubChannelId) {
       ChannelRepository.getChannel(
-        route.params.channel?.defaultSubChannelId,
+        channel?.defaultSubChannelId,
         channelData => {
           if (!channelData.loading) {
             setData(channelData?.data);
@@ -121,9 +116,24 @@ export function ChatScreen({route, navigation}: Props) {
     return message;
   };
 
-  const usersList = data?.metadata;
-  const users = usersList?.users ?? [];
+  const metadata = data?.metadata;
+  const users = metadata?.users ?? [];
   const anotherUser = users.find(user => user.id !== currentUser.id);
+
+  const image = anotherUser?.userImage ?? metadata?.image;
+  const title =
+    anotherUser?.userName ??
+    metadata?.name ??
+    data?.displayName ??
+    data?.channelId;
+
+  const goBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('Chats');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -133,17 +143,11 @@ export function ChatScreen({route, navigation}: Props) {
         <View style={styles.container}>
           <Header
             withLine
-            title={
-              anotherUser?.userName ?? data?.displayName ?? data?.channelId
-            }
-            onBackPress={() => navigation.navigate('Chats')}
+            title={title}
+            onBackPress={goBack}
             rightIcon={
               <FastImage
-                source={
-                  Boolean(anotherUser?.userImage)
-                    ? {uri: apiUrl + anotherUser?.userImage}
-                    : defaultProfile
-                }
+                source={Boolean(image) ? {uri: apiUrl + image} : defaultProfile}
                 defaultSource={defaultProfile}
                 style={styles.avatar}
               />

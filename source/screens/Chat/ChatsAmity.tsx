@@ -14,8 +14,9 @@ import {LoadingView} from '../../components/loadingView';
 import {ChannelRepository} from '@amityco/ts-sdk';
 import {ChatItem} from './ui/ChatItemAmity';
 import useRegistration from '../../hooks/useRegistration';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-export function ChatsScreen({navigation}: any) {
+export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
   const {currentUser} = useRegistration();
   const [channels, setChannels] = useState<Amity.Channel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +57,14 @@ export function ChatsScreen({navigation}: any) {
     };
   }, []);
 
+  const goBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('Home');
+    }
+  };
+
   if (error) {
     return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -69,7 +78,7 @@ export function ChatsScreen({navigation}: any) {
       <View style={styles.container}>
         <Header
           title="Messages"
-          onBackPress={() => navigation.navigate('Home')}
+          onBackPress={goBack}
           rightIcon={
             <TouchableOpacity style={{marginLeft: 'auto'}} onPress={() => {}}>
               <Image

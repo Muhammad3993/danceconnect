@@ -4,7 +4,7 @@ import colors from '../../../utils/colors';
 
 interface Props {
   title: string;
-  onBackPress: () => {};
+  onBackPress: () => void;
   rightIcon: ReactNode;
   withLine?: boolean;
 }

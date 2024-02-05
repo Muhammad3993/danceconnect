@@ -14,11 +14,21 @@ interface Props {
 export function ChatItem({channel, currentUser}: Props) {
   const unreadCount = channel?.unreadCount ?? 0;
 
-  const usersList = channel.metadata;
-  const users = usersList?.users ?? [];
+  const metadata = channel.metadata;
+  const users = metadata?.users ?? [];
 
   const anotherUser = users.find(user => user.id !== currentUser.id);
 
+  // IMAGE
+
+  const image = anotherUser?.userImage ?? metadata?.image;
+  const title =
+    anotherUser?.userName ??
+    metadata?.name ??
+    channel?.displayName ??
+    channel?.channelId;
+
+  // PREVIEW
   const messagePreview = channel?.messagePreview?.data?.text;
 
   const previewCreateAt = new Date(
@@ -33,18 +43,12 @@ export function ChatItem({channel, currentUser}: Props) {
   return (
     <View style={styles.item}>
       <FastImage
-        source={
-          Boolean(anotherUser?.userImage)
-            ? {uri: apiUrl + anotherUser?.userImage}
-            : defaultProfile
-        }
+        source={Boolean(image) ? {uri: apiUrl + image} : defaultProfile}
         defaultSource={defaultProfile}
         style={styles.avatar}
       />
       <View style={styles.content}>
-        <Text style={styles.name}>
-          {anotherUser?.userName ?? channel?.displayName ?? channel?.channelId}
-        </Text>
+        <Text style={styles.name}>{title}</Text>
         <Text style={styles.message}>{messagePreview}</Text>
       </View>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
