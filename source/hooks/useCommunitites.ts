@@ -59,6 +59,7 @@ export const useCommunities = () => {
     location,
     categories,
     images,
+    type,
   }: communityParams) => {
     dispatch(
       createCommunityRequestAction({
@@ -68,6 +69,7 @@ export const useCommunities = () => {
         location,
         categories,
         images,
+        type,
       }),
     );
     setTimeout(() => {

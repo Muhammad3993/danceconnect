@@ -198,7 +198,17 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
   //   );
   // }
   return (
-    <RN.View style={[styles.itemContainer, containerStyle]}>
+    <RN.View
+      style={[
+        styles.itemContainer,
+        containerStyle,
+        {
+          borderColor:
+            data?.type && data?.type === 'paid'
+              ? colors.purple
+              : colors.gray200,
+        },
+      ]}>
       <RN.TouchableOpacity
         onPress={goToCommunity}
         style={styles.headerItemContainer}
@@ -268,7 +278,7 @@ const styles = RN.StyleSheet.create({
   itemContainer: {
     zIndex: 2,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    // borderColor: '#E0E0E0',
     borderRadius: 8,
     paddingTop: 12,
     paddingBottom: 8,

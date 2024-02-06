@@ -19,6 +19,7 @@ export type communityParams = {
   managingCommunities?: string[];
   loadingManaging?: boolean;
   screen?: string;
+  type: string;
 };
 export type followingParams = {
   isLoadingFollow?: boolean;
@@ -66,6 +67,7 @@ export const createCommunityRequestAction = ({
   creatorUid,
   categories,
   images,
+  type,
 }: communityParams) => ({
   type: COMMUNITIES.CREATE_REQUEST,
   payload: {
@@ -76,6 +78,7 @@ export const createCommunityRequestAction = ({
     creatorUid: creatorUid,
     categories: categories,
     images: images,
+    type: type,
   },
 });
 
@@ -156,6 +159,7 @@ export const changeInformationCommunityRequestAction = ({
   categories,
   followers,
   images,
+  type,
 }: communityParams) => ({
   type: COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_REQUEST,
   payload: {
@@ -167,6 +171,7 @@ export const changeInformationCommunityRequestAction = ({
     followers: followers,
     categories: categories,
     images: images,
+    type: type,
   },
 });
 export const changeInformationCommunitySuccessAction = () => ({

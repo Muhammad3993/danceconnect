@@ -62,6 +62,7 @@ const ManagingCommunities = () => {
         item={item}
         key={item?.item?.id ?? item?.id}
         isProfileScreen
+        containerStyle={{marginHorizontal: 12}}
       />
     );
   }, []);

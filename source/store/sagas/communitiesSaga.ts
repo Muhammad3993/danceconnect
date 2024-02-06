@@ -75,7 +75,8 @@ function* getCommunitiesRequest() {
   }
 }
 function* createCommunityRequest(action: any) {
-  const {name, description, location, categories, images} = action?.payload;
+  const {name, description, location, categories, images, type} =
+    action?.payload;
   try {
     // const creatorUid = yield select(selectUserUid);
     yield put(setLoadingAction({onLoading: true}));
@@ -87,6 +88,7 @@ function* createCommunityRequest(action: any) {
       // creatorUid,
       categories: categories,
       images: images,
+      type: type,
     };
     const response = yield call(createCommunityWithMongo, data);
 
@@ -263,6 +265,7 @@ function* changeInformation(action: any) {
     categories,
     images,
     followers,
+    type,
   } = action?.payload;
   const data = {
     title: name,
@@ -273,6 +276,7 @@ function* changeInformation(action: any) {
     followers: followers,
     categories: categories,
     images: images,
+    type: type,
   };
   try {
     yield put(setLoadingAction({onLoading: true}));

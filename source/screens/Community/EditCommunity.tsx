@@ -1,4 +1,4 @@
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
@@ -8,6 +8,7 @@ import {useCommunityById} from '../../hooks/useCommunityById';
 import {launchImageLibrary} from 'react-native-image-picker';
 import CategorySelector from '../../components/catregorySelector';
 import {
+  SCREEN_WIDTH,
   dataDanceCategory,
   isAndroid,
   statusBarHeight,
@@ -24,18 +25,41 @@ interface city {
   };
   terms: [{offset: 0; value: ''}, {offset: 1; value: ''}];
 }
-const EditCommunity = () => {
+const EditCommunity = ({navigation}) => {
   const routeParams = useRoute();
-  const navigation = useNavigation();
   const {t} = useTranslation();
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
-    routeParams?.params?._id,
+    routeParams?.params?.id,
   );
-  // console.log('routeParams?.params?.id', routeParams?.params);
-  const {description, categories, location, id, images, followers} =
+  const {description, categories, location, id, images, followers, type} =
     routeParams?.params;
-  // const {isSaveChanges} = useCommunities();
-  // console.log('route', images);
+
+  const SCREENS = [
+    {idx: 0, title: t('community_type')},
+    {idx: 1, title: t('basic_info')},
+  ];
+  const COMMUNITY_TYPES = [
+    {
+      idx: 0,
+      type: 'free',
+      title: t('ct_free.title'),
+      description: t('ct_free.description'),
+    },
+    {
+      idx: 1,
+      type: 'paid',
+      title: t('ct_paid.title'),
+      description: t('ct_paid.description'),
+    },
+  ];
+  const [currentScreen, setCurrentScreen] = useState(0);
+  const [communityType, setCommunityType] = useState(
+    COMMUNITY_TYPES.find((ctype: {type: string}) => ctype.type === type),
+  );
+
+  const community_type = currentScreen === 0;
+  const basicInfo = currentScreen === 1;
+
   const [title, setTitle] = useState(routeParams?.params?.title);
   const [desc, setDesc] = useState(description);
   const [imgs, setImgs] = useState(images);
@@ -57,7 +81,19 @@ const EditCommunity = () => {
   });
   const [addedStyles, setAddedStyles] = useState<string[]>(categories);
   const [visibleFooter, setVisibleFooter] = useState(true);
+  const closeBtn = () => {
+    navigation.goBack();
+  };
+  const backBtn = () => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    if (currentScreen !== 0) {
+      setCurrentScreen(v => v - 1);
+    }
+  };
   useEffect(() => {
+    if (!type) {
+      setCommunityType(COMMUNITY_TYPES[0]);
+    }
     const subscribeShow = RN.Keyboard.addListener('keyboardDidShow', () =>
       setVisibleFooter(false),
     );
@@ -70,7 +106,6 @@ const EditCommunity = () => {
     };
   }, []);
 
-  const goBack = () => navigation.goBack();
   const onChangeValueName = (value: string) => {
     setTitle(value);
     setCountNameSymbols({
@@ -124,43 +159,170 @@ const EditCommunity = () => {
       maxSymbols: 1000,
     });
   };
-
-  const onPressSaveChanges = () => {
-    const locationEdt =
-      selectedLocation?.structured_formatting?.main_text?.length > 0
-        ? selectedLocation?.structured_formatting?.main_text +
-          ', ' +
-          (selectedLocation?.structured_formatting?.main_text?.length > 0
-            ? selectedLocation?.terms[1].value
-            : '')
-        : selectedLocation;
-    if (title?.length <= 0) {
-      setTitleError(true);
-    } else if (desc?.length <= 0) {
-      setDescriptionError(true);
-    } else if (!addedStyles.length) {
-      setCategoriesError(true);
-    } else {
-      changeInformation({
-        name: title,
-        description: desc,
-        // country: countryEdit,
-        location: locationEdt,
-        categories: addedStyles,
-        followers: followers,
-        images: imgs,
-      });
+  const onPressCommuntyType = (type: {
+    idx: number;
+    type: string;
+    title: string;
+    description: string;
+  }) => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    setCommunityType(type);
+  };
+  const onPressNextBtn = () => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    switch (currentScreen) {
+      case 0:
+        setCurrentScreen(v => v + 1);
+        break;
+      case 1:
+        const locationEdt =
+          selectedLocation?.structured_formatting?.main_text?.length > 0
+            ? selectedLocation?.structured_formatting?.main_text +
+              ', ' +
+              (selectedLocation?.structured_formatting?.main_text?.length > 0
+                ? selectedLocation?.terms[1].value
+                : '')
+            : selectedLocation;
+        if (title?.length <= 0) {
+          setTitleError(true);
+        } else if (desc?.length <= 0) {
+          setDescriptionError(true);
+        } else if (!addedStyles.length) {
+          setCategoriesError(true);
+        } else {
+          changeInformation({
+            name: title,
+            description: desc,
+            // country: countryEdit,
+            location: locationEdt,
+            categories: addedStyles,
+            followers: followers?.map(user => {
+              return {
+                ...user,
+                userUid: user?.id,
+              };
+            }),
+            images: imgs,
+            type: communityType.type,
+          });
+        }
+      default:
+        break;
     }
-
-    // goBack();
   };
 
+  const renderTabs = () => {
+    return (
+      <RN.View style={styles.screensContainer}>
+        {SCREENS.map((val: {idx: number; title: string}) => {
+          return (
+            <RN.View key={val.idx}>
+              <RN.View
+                style={[
+                  styles.lineScreen,
+                  {
+                    backgroundColor:
+                      currentScreen === val.idx
+                        ? colors.purple
+                        : currentScreen > val.idx
+                        ? colors.green
+                        : colors.gray,
+                  },
+                ]}
+              />
+              <RN.Text
+                style={[
+                  styles.screenName,
+                  {
+                    fontWeight: currentScreen === val.idx ? '700' : '400',
+                  },
+                ]}>
+                {val.title}
+              </RN.Text>
+            </RN.View>
+          );
+        })}
+      </RN.View>
+    );
+  };
   const renderHeader = () => {
     return (
-      <RN.View style={styles.headerWrapper}>
-        <RN.TouchableOpacity onPress={goBack}>
-          <RN.Image source={{uri: 'backicon'}} style={styles.iconHeader} />
-        </RN.TouchableOpacity>
+      <>
+        <RN.View style={styles.headerContainer}>
+          <RN.TouchableOpacity
+            onPress={backBtn}
+            style={{justifyContent: 'center'}}>
+            <RN.Image
+              source={{uri: 'backicon'}}
+              style={[
+                styles.backIcon,
+                {
+                  tintColor:
+                    currentScreen !== 0 ? colors.textPrimary : colors.white,
+                },
+              ]}
+            />
+          </RN.TouchableOpacity>
+          <RN.Text style={styles.headerTitle}>
+            {t('change_community_title')}
+          </RN.Text>
+          <RN.TouchableOpacity
+            onPress={closeBtn}
+            style={{justifyContent: 'center'}}>
+            <RN.Image source={{uri: 'close'}} style={styles.closeIcon} />
+          </RN.TouchableOpacity>
+        </RN.View>
+        {renderTabs()}
+      </>
+    );
+  };
+  const renderTypeCommunity = () => {
+    return (
+      <RN.View style={{paddingTop: 30}}>
+        {COMMUNITY_TYPES.map(
+          (type: {
+            idx: number;
+            type: string;
+            title: string;
+            description: string;
+          }) => {
+            return (
+              <RN.TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => onPressCommuntyType(type)}
+                key={type.idx}
+                style={
+                  communityType && communityType?.idx === type.idx
+                    ? styles.communityTypeActive
+                    : styles.communityTypeInActive
+                }>
+                <RN.View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <RN.View style={{justifyContent: 'center'}}>
+                    <RN.Text style={styles.communityTypeTitle}>
+                      {type.title}
+                    </RN.Text>
+                  </RN.View>
+                  <RN.Image
+                    source={{
+                      uri:
+                        communityType && communityType.idx === type.idx
+                          ? 'checkactive'
+                          : 'checkinactive',
+                    }}
+                    style={{height: 20, width: 20}}
+                  />
+                </RN.View>
+                <RN.Text style={styles.communityTypeDescription}>
+                  {type.description}
+                </RN.Text>
+              </RN.TouchableOpacity>
+            );
+          },
+        )}
       </RN.View>
     );
   };
@@ -168,10 +330,10 @@ const EditCommunity = () => {
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title={t('save_changes')}
+          title={currentScreen === 0 ? t('next') : t('save_changes')}
           disabled
           buttonStyle={styles.createBtn}
-          onPress={onPressSaveChanges}
+          onPress={onPressNextBtn}
           isLoading={loadingWithChangeInformation}
         />
       </RN.View>
@@ -374,56 +536,60 @@ const EditCommunity = () => {
   };
   return (
     <>
-      {renderHeader()}
-      <KeyboardAwareScrollView
-        keyboardShouldPersistTaps="handled"
-        enableOnAndroid
-        extraScrollHeight={isAndroid ? 0 : 90}
-        showsVerticalScrollIndicator={false}
-        style={{backgroundColor: colors.white}}
-        // contentContainerStyle={styles.content}
-      >
-        <RN.SafeAreaView style={styles.container}>
-          <RN.ScrollView>
-            {renderNameCommunity()}
-            {renderDescription()}
-            {renderChooseCategory()}
-            {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
-            <RN.TouchableOpacity
-              onPress={() => setOpenLocation(true)}
-              style={styles.selectLocationBtn}>
-              <RN.Text style={styles.locationText}>
-                {selectedLocation?.structured_formatting?.main_text?.length > 0
-                  ? `${
-                      selectedLocation?.structured_formatting?.main_text +
-                      ', ' +
-                      selectedLocation?.terms[1]?.value
-                    }`
-                  : selectedLocation}
-              </RN.Text>
+      <RN.SafeAreaView style={styles.container}>
+        {renderHeader()}
+        <KeyboardAwareScrollView
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid
+          extraScrollHeight={isAndroid ? 0 : 90}
+          showsVerticalScrollIndicator={false}
+          style={{backgroundColor: colors.white}}
+          // contentContainerStyle={styles.content}
+        >
+          {basicInfo && (
+            <RN.ScrollView>
+              {renderNameCommunity()}
+              {renderDescription()}
+              {renderChooseCategory()}
+              {renderChooseImage()}
+              <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
+              <RN.TouchableOpacity
+                onPress={() => setOpenLocation(true)}
+                style={styles.selectLocationBtn}>
+                <RN.Text style={styles.locationText}>
+                  {selectedLocation?.structured_formatting?.main_text?.length >
+                  0
+                    ? `${
+                        selectedLocation?.structured_formatting?.main_text +
+                        ', ' +
+                        selectedLocation?.terms[1]?.value
+                      }`
+                    : selectedLocation}
+                </RN.Text>
 
-              <RN.View
-                style={{
-                  justifyContent: 'center',
-                }}>
-                <RN.Image
-                  source={{uri: 'arrowdown'}}
-                  style={{height: 20, width: 20}}
-                />
-              </RN.View>
-            </RN.TouchableOpacity>
-          </RN.ScrollView>
-        </RN.SafeAreaView>
-      </KeyboardAwareScrollView>
-      {openLocation && (
-        <FindCity
-          selectedLocation={selectedLocation}
-          setSelectedLocation={setSelectedLocation}
-          onClosed={() => setOpenLocation(false)}
-          setCurrentCountry={() => console.log('setCurrentCountry')}
-        />
-      )}
+                <RN.View
+                  style={{
+                    justifyContent: 'center',
+                  }}>
+                  <RN.Image
+                    source={{uri: 'arrowdown'}}
+                    style={{height: 20, width: 20}}
+                  />
+                </RN.View>
+              </RN.TouchableOpacity>
+            </RN.ScrollView>
+          )}
+          {community_type && renderTypeCommunity()}
+        </KeyboardAwareScrollView>
+        {openLocation && (
+          <FindCity
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+            onClosed={() => setOpenLocation(false)}
+            setCurrentCountry={() => console.log('setCurrentCountry')}
+          />
+        )}
+      </RN.SafeAreaView>
       {visibleFooter && renderFooter()}
     </>
   );
@@ -519,6 +685,82 @@ const styles = RN.StyleSheet.create({
   },
   createBtn: {
     marginVertical: 14,
+  },
+  backIcon: {
+    height: 20,
+    width: 24,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 24,
+    marginVertical: 4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    lineHeight: 20,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    fontFamily: 'Lato-Regular',
+  },
+  closeIcon: {
+    height: 20,
+    width: 20,
+  },
+  screensContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginVertical: 14,
+    marginTop: 32,
+    marginBottom: 6,
+  },
+  screenName: {
+    fontSize: 12,
+    lineHeight: 16.8,
+    fontWeight: '400',
+    marginTop: 4,
+    textAlign: 'left',
+  },
+  lineScreen: {
+    height: 4,
+    marginRight: 26,
+    minWidth: SCREEN_WIDTH / 2.5,
+    maxWidth: SCREEN_WIDTH / 2.6,
+    borderRadius: 100,
+  },
+  communityTypeActive: {
+    marginHorizontal: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.purple,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    marginBottom: 12,
+  },
+  communityTypeInActive: {
+    marginHorizontal: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.gray,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    marginBottom: 12,
+  },
+  communityTypeTitle: {
+    fontSize: 16,
+    lineHeight: 21.6,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    paddingRight: 18,
+  },
+  communityTypeDescription: {
+    fontSize: 14,
+    lineHeight: 22.4,
+    fontWeight: '400',
+    color: colors.darkGray,
+    letterSpacing: 0.2,
+    maxWidth: SCREEN_WIDTH - 100,
+    paddingTop: 6,
   },
   footerWrapper: {
     paddingHorizontal: 14,
