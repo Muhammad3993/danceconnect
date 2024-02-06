@@ -1,30 +1,60 @@
-import {CommonActions, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import colors from '../../utils/colors';
-import {Button} from '../../components/Button';
-import {Input} from '../../components/input';
-import CategorySelector from '../../components/catregorySelector';
 import {
+  SCREEN_WIDTH,
   dataDanceCategory,
   isAndroid,
   statusBarHeight,
 } from '../../utils/constants';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {useCommunities} from '../../hooks/useCommunitites';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {Button} from '../../components/Button';
+import {useCommunities} from '../../hooks/useCommunitites';
 import {useProfile} from '../../hooks/useProfile';
+import {launchImageLibrary} from 'react-native-image-picker';
 import FindCity from '../../components/findCity';
 import FastImage from 'react-native-fast-image';
-import {useTranslation} from 'react-i18next';
+import CategorySelector from '../../components/catregorySelector';
+import {Input} from '../../components/input';
 
 const CreateCommunity = ({navigation}) => {
   const {t} = useTranslation();
-  const {create, isLoading} = useCommunities();
-  const goBackBtn = () => {
-    // navigation.navigate('CommunitiesMain');
+  const SCREENS = [
+    {idx: 0, title: t('community_type')},
+    {idx: 1, title: t('basic_info')},
+  ];
+  const COMMUNITY_TYPES = [
+    {
+      idx: 0,
+      type: 'free',
+      title: t('ct_free.title'),
+      description: t('ct_free.description'),
+    },
+    {
+      idx: 1,
+      type: 'paid',
+      title: t('ct_paid.title'),
+      description: t('ct_paid.description'),
+    },
+  ];
+  const [currentScreen, setCurrentScreen] = useState(0);
+  const [communityType, setCommunityType] = useState(COMMUNITY_TYPES[0]);
+
+  const community_type = currentScreen === 0;
+  const basicInfo = currentScreen === 1;
+  const closeBtn = () => {
     navigation.goBack();
   };
+  const backBtn = () => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    if (currentScreen !== 0) {
+      setCurrentScreen(v => v - 1);
+    }
+  };
+  const {create, isLoading} = useCommunities();
+
   const {userCountry, individualStyles} = useProfile();
 
   const [name, setName] = useState('');
@@ -79,33 +109,6 @@ const CreateCommunity = ({navigation}) => {
   useEffect(() => {
     onClear();
   }, []);
-  // city and state required
-  const onPressCreate = () => {
-    const location =
-      selectedLocation?.structured_formatting?.main_text?.length > 0
-        ? selectedLocation?.structured_formatting?.main_text +
-          ', ' +
-          (selectedLocation?.structured_formatting?.main_text?.length > 0
-            ? selectedLocation?.terms[1].value
-            : '')
-        : selectedLocation;
-    if (name?.length <= 0) {
-      setIsErrorName(true);
-    } else if (description?.length <= 0) {
-      setIsDescriptionError(true);
-    } else if (!addedStyles.length) {
-      setCategoriesError(true);
-    } else {
-      create({
-        name: name,
-        description: description,
-        // country: country,
-        location: location,
-        categories: addedStyles,
-        images: images,
-      });
-    }
-  };
 
   const onClear = () => {
     setName('');
@@ -164,38 +167,180 @@ const CreateCommunity = ({navigation}) => {
       maxSymbols: 1000,
     });
   };
-  const renderHeader = () => {
-    //
+  const onPressCommuntyType = (type: {
+    idx: number;
+    type: string;
+    title: string;
+    description: string;
+  }) => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    setCommunityType(type);
+  };
+  const onPressNextBtn = () => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    switch (currentScreen) {
+      case 0:
+        setCurrentScreen(v => v + 1);
+        break;
+      case 1:
+        const location =
+          selectedLocation?.structured_formatting?.main_text?.length > 0
+            ? selectedLocation?.structured_formatting?.main_text +
+              ', ' +
+              (selectedLocation?.structured_formatting?.main_text?.length > 0
+                ? selectedLocation?.terms[1].value
+                : '')
+            : selectedLocation;
+        if (name?.length <= 0) {
+          setIsErrorName(true);
+        } else if (description?.length <= 0) {
+          setIsDescriptionError(true);
+        } else if (!addedStyles.length) {
+          setCategoriesError(true);
+        } else {
+          create({
+            name: name,
+            description: description,
+            // country: country,
+            location: location,
+            categories: addedStyles,
+            images: images,
+            type: communityType.type,
+          });
+        }
+      default:
+        break;
+    }
+  };
+
+  const renderTabs = () => {
     return (
-      <RN.View style={styles.headerWrapper}>
-        <RN.TouchableOpacity onPress={goBackBtn}>
-          <RN.Image source={{uri: 'backicon'}} style={styles.iconHeader} />
-        </RN.TouchableOpacity>
-        {/* <RN.TouchableOpacity onPress={goBackBtn}>
-          <RN.Image source={{uri: 'close'}} style={styles.iconHeader} />
-        </RN.TouchableOpacity> */}
+      <RN.View style={styles.screensContainer}>
+        {SCREENS.map((val: {idx: number; title: string}) => {
+          return (
+            <RN.View key={val.idx}>
+              <RN.View
+                style={[
+                  styles.lineScreen,
+                  {
+                    backgroundColor:
+                      currentScreen === val.idx
+                        ? colors.purple
+                        : currentScreen > val.idx
+                        ? colors.green
+                        : colors.gray,
+                  },
+                ]}
+              />
+              <RN.Text
+                style={[
+                  styles.screenName,
+                  {
+                    fontWeight: currentScreen === val.idx ? '700' : '400',
+                  },
+                ]}>
+                {val.title}
+              </RN.Text>
+            </RN.View>
+          );
+        })}
+      </RN.View>
+    );
+  };
+  const renderHeader = () => {
+    return (
+      <>
+        <RN.View style={styles.headerContainer}>
+          <RN.TouchableOpacity
+            onPress={backBtn}
+            style={{justifyContent: 'center'}}>
+            <RN.Image
+              source={{uri: 'backicon'}}
+              style={[
+                styles.backIcon,
+                {
+                  tintColor:
+                    currentScreen !== 0 ? colors.textPrimary : colors.white,
+                },
+              ]}
+            />
+          </RN.TouchableOpacity>
+          <RN.Text style={styles.headerTitle}>
+            {t('create_community_card_title')}
+          </RN.Text>
+          <RN.TouchableOpacity
+            onPress={closeBtn}
+            style={{justifyContent: 'center'}}>
+            <RN.Image source={{uri: 'close'}} style={styles.closeIcon} />
+          </RN.TouchableOpacity>
+        </RN.View>
+        {renderTabs()}
+      </>
+    );
+  };
+  const renderTypeCommunity = () => {
+    return (
+      <RN.View style={{paddingTop: 30}}>
+        {COMMUNITY_TYPES.map(
+          (type: {
+            idx: number;
+            type: string;
+            title: string;
+            description: string;
+          }) => {
+            return (
+              <RN.TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => onPressCommuntyType(type)}
+                key={type.idx}
+                style={
+                  communityType.idx === type.idx
+                    ? styles.communityTypeActive
+                    : styles.communityTypeInActive
+                }>
+                <RN.View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <RN.View style={{justifyContent: 'center'}}>
+                    <RN.Text style={styles.communityTypeTitle}>
+                      {type.title}
+                    </RN.Text>
+                  </RN.View>
+                  <RN.Image
+                    source={{
+                      uri:
+                        communityType.idx === type.idx
+                          ? 'checkactive'
+                          : 'checkinactive',
+                    }}
+                    style={{height: 20, width: 20}}
+                  />
+                </RN.View>
+                <RN.Text style={styles.communityTypeDescription}>
+                  {type.description}
+                </RN.Text>
+              </RN.TouchableOpacity>
+            );
+          },
+        )}
       </RN.View>
     );
   };
   const renderFooter = () => {
     return (
       <RN.View style={styles.footerWrapper}>
-        {/* <Button
-          title="Clear All"
-          disabled
-          buttonStyle={styles.clearBtn}
-          onPress={onClear}
-        /> */}
         <Button
-          title={t('create_community')}
+          title={currentScreen === 0 ? t('next') : t('create_community')}
           disabled
           buttonStyle={styles.createBtn}
-          onPress={onPressCreate}
-          isLoading={isLoading}
+          onPress={onPressNextBtn}
         />
       </RN.View>
     );
   };
+
   const renderCreateHeader = () => {
     return (
       <RN.View style={styles.createWrapper}>
@@ -274,15 +419,6 @@ const CreateCommunity = ({navigation}) => {
             <RN.Text style={styles.countMaxSymbols}> {t('few')}</RN.Text>
           </RN.Text>
         </RN.View>
-        {/* <RN.Text
-          style={[
-            styles.definition,
-            {
-              marginBottom: addedStyles?.length > 0 ? 0 : 12,
-            },
-          ]}>
-          Create and share events, discuss them with your group members
-        </RN.Text> */}
         {addedStyles?.length > 0 && (
           <RN.View style={styles.danceStyleContainer}>
             {addedStyles?.map(item => {
@@ -452,49 +588,50 @@ const CreateCommunity = ({navigation}) => {
     );
   };
   return (
-    <>
+    <SafeAreaView style={styles.container}>
       {renderHeader()}
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         enableOnAndroid
         style={{backgroundColor: colors.white}}
         extraScrollHeight={isAndroid ? 0 : 90}
-        showsVerticalScrollIndicator={false}
-        // contentContainerStyle={styles.content}
-      >
-        <RN.SafeAreaView style={styles.container}>
-          <RN.ScrollView>
-            {renderCreateHeader()}
-            {renderNameCommunity()}
-            {renderChooseCategory()}
-            {renderDescription()}
-            {renderChooseImage()}
-            <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
-            <RN.TouchableOpacity
-              onPress={() => setOpenLocation(true)}
-              style={styles.selectLocationBtn}>
-              <RN.Text style={styles.locationText}>
-                {selectedLocation?.structured_formatting?.main_text?.length > 0
-                  ? `${
-                      selectedLocation?.structured_formatting?.main_text +
-                      ', ' +
-                      selectedLocation?.terms[1]?.value
-                    }`
-                  : selectedLocation}
-              </RN.Text>
-              <RN.View
-                style={{
-                  justifyContent: 'center',
-                }}>
-                <RN.Image
-                  source={{uri: 'arrowdown'}}
-                  style={{height: 20, width: 20}}
-                />
-              </RN.View>
-            </RN.TouchableOpacity>
-            {/* <RN.View style={{paddingBottom: 40}} /> */}
-          </RN.ScrollView>
-        </RN.SafeAreaView>
+        showsVerticalScrollIndicator={false}>
+        <RN.View>
+          {basicInfo && (
+            <RN.ScrollView>
+              {renderCreateHeader()}
+              {renderNameCommunity()}
+              {renderChooseCategory()}
+              {renderDescription()}
+              {renderChooseImage()}
+              <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
+              <RN.TouchableOpacity
+                onPress={() => setOpenLocation(true)}
+                style={styles.selectLocationBtn}>
+                <RN.Text style={styles.locationText}>
+                  {selectedLocation?.structured_formatting?.main_text?.length >
+                  0
+                    ? `${
+                        selectedLocation?.structured_formatting?.main_text +
+                        ', ' +
+                        selectedLocation?.terms[1]?.value
+                      }`
+                    : selectedLocation}
+                </RN.Text>
+                <RN.View
+                  style={{
+                    justifyContent: 'center',
+                  }}>
+                  <RN.Image
+                    source={{uri: 'arrowdown'}}
+                    style={{height: 20, width: 20}}
+                  />
+                </RN.View>
+              </RN.TouchableOpacity>
+            </RN.ScrollView>
+          )}
+          {community_type && renderTypeCommunity()}
+        </RN.View>
       </KeyboardAwareScrollView>
       {openLocation && (
         <FindCity
@@ -505,19 +642,103 @@ const CreateCommunity = ({navigation}) => {
         />
       )}
       {visibleFooter && renderFooter()}
-    </>
+    </SafeAreaView>
   );
 };
 
 const styles = RN.StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     backgroundColor: colors.white,
-    paddingTop: 24,
   },
-  iconHeader: {
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 24,
+    marginVertical: 4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    lineHeight: 20,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    fontFamily: 'Lato-Regular',
+  },
+  backIcon: {
     height: 20,
     width: 24,
+  },
+  closeIcon: {
+    height: 20,
+    width: 20,
+  },
+  screensContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginVertical: 14,
+    marginTop: 32,
+    marginBottom: 6,
+  },
+  screenName: {
+    fontSize: 12,
+    lineHeight: 16.8,
+    fontWeight: '400',
+    marginTop: 4,
+    textAlign: 'left',
+  },
+  lineScreen: {
+    height: 4,
+    marginRight: 26,
+    minWidth: SCREEN_WIDTH / 2.5,
+    maxWidth: SCREEN_WIDTH / 2.6,
+    borderRadius: 100,
+  },
+  communityTypeActive: {
+    marginHorizontal: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.purple,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    marginBottom: 12,
+  },
+  communityTypeInActive: {
+    marginHorizontal: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.gray,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    marginBottom: 12,
+  },
+  communityTypeTitle: {
+    fontSize: 16,
+    lineHeight: 21.6,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    paddingRight: 18,
+  },
+  communityTypeDescription: {
+    fontSize: 14,
+    lineHeight: 22.4,
+    fontWeight: '400',
+    color: colors.darkGray,
+    letterSpacing: 0.2,
+    maxWidth: SCREEN_WIDTH - 100,
+    paddingTop: 6,
+  },
+  createBtn: {
+    marginVertical: 14,
+    // paddingHorizontal: 24,
+  },
+  footerWrapper: {
+    // flexDirection: 'row',
+    // justifyContent: 'space-around',
+    paddingHorizontal: 14,
+    borderTopColor: colors.gray,
+    borderTopWidth: 1,
+    backgroundColor: colors.white,
+    paddingBottom: isAndroid ? 0 : 8,
   },
   selectLocationBtn: {
     marginHorizontal: 20,
@@ -586,19 +807,6 @@ const styles = RN.StyleSheet.create({
     paddingHorizontal: 24,
     marginVertical: 14,
     width: '40%',
-  },
-  createBtn: {
-    marginVertical: 14,
-    // paddingHorizontal: 24,
-  },
-  footerWrapper: {
-    // flexDirection: 'row',
-    // justifyContent: 'space-around',
-    paddingHorizontal: 14,
-    borderTopColor: colors.gray,
-    borderTopWidth: 1,
-    backgroundColor: colors.white,
-    paddingBottom: isAndroid ? 0 : 8,
   },
   title: {
     fontSize: 16,

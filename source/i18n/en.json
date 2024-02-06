@@ -106,6 +106,7 @@
     "optional": "(Optional)",
     "create_community": "Create Community",
     "create_community_card_title": "Create Your Community",
+    "change_community_title": "Change Your Community",
     "create_community_card_desc": "Create and share evetns, discuss them with your group members",
     "create_name": "Create Name",
     "change_name": "Change Name",
@@ -205,5 +206,14 @@
     "del_acc": "Delete account",
     "del_acc_question": "Do you really want to delete account?",
     "y_delete": "Yes, delete",
-    "posts": "Posts"
+    "posts": "Posts",
+    "community_type": "Set community type",
+    "ct_paid": {
+        "title": "Community Plus",
+        "description": "- Post events\n- Group chats\n- Community posts"
+    },
+    "ct_free": {
+        "title": "Community Standard",
+        "description": "- Post events"
+    }
 }

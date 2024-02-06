@@ -30,6 +30,7 @@ export const useCommunityById = (id: string) => {
     categories,
     followers,
     images,
+    type,
   }: communityParams) => {
     dispatch(
       changeInformationCommunityRequestAction({
@@ -41,6 +42,7 @@ export const useCommunityById = (id: string) => {
         followers,
         categories,
         images,
+        type
       }),
     );
   };

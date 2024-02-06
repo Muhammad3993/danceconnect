@@ -28,6 +28,7 @@ export type communititesAction = {
     managingCommunities?: string[];
     user_id?: string;
     communities_by_user_id?: string[];
+    type: string;
   };
 };
 
@@ -68,6 +69,7 @@ export default (
         creatorUid: action?.payload?.creatorUid,
         categories: action?.payload?.categories,
         images: action?.payload?.images,
+        type: action?.payload?.type,
         errors: null,
       };
     case COMMUNITIES.CREATE_SUCCESS:
@@ -82,6 +84,7 @@ export default (
         creatorUid: '',
         categories: [],
         images: [],
+        type: '',
       };
     case COMMUNITIES.CREATE_FAIL:
       return {
@@ -155,6 +158,7 @@ export default (
         categories: action?.payload?.categories,
         followers: action?.payload?.followers,
         images: action?.payload?.images,
+        type: action?.payload?.type,
         saveChanges: false,
       };
     case COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_SUCCESS:

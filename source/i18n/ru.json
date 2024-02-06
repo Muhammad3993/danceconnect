@@ -108,6 +108,7 @@
 
     "optional": "(Опционально)",
     "create_community_card_title": "Создайте свое сообщество",
+    "change_community_title": "Измените свое сообщество",
     "create_community_card_desc": "Создавайте и обмениваетесь эвентами, их обсуждение с участниками сообщества",
     "create_name": "Название",
     "change_name": "Изменить Название",
@@ -212,5 +213,14 @@
     "del_acc": "Удалить аккаунт",
     "del_acc_question": "Вы действительно хотите удалить аккаунт?",
     "y_delete": "Да, удалить",
-    "posts": "Записи"
+    "posts": "Записи",
+    "community_type": "Тип сообщества",
+    "ct_paid": {
+        "title": "Community Plus",
+        "description": "- Создание событий\n- Групповые чаты\n- Записи сообщества"
+    },
+    "ct_free": {
+        "title": "Community Standard",
+        "description": "- Создание событий"
+    }
 }
