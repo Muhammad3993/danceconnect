@@ -235,7 +235,7 @@ const AppNavigator = () => {
   if (!isBootstraped) {
     return null;
   }
-  console.log(navigationRef);
+  // console.log(navigationRef);
 
   return (
     <NavigationContainer

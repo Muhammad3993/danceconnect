@@ -21,7 +21,7 @@ const FullLoading = () => {
 
 const styles = RN.StyleSheet.create({
   container: {
-    zIndex: 1,
+    zIndex: 10,
     position: 'absolute',
     height: '100%',
     width: '100%',

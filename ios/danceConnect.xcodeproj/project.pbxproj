@@ -225,6 +225,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				56E8A7768A750CA80E6A8992 /* [CP] Copy Pods Resources */,
 				FB7643CA2C0CC3DDF484AB82 /* [CP-User] [RNFB] Core Configuration */,
+				59BB82191F07E8F98FA3ACD7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -336,6 +337,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-danceConnect/Pods-danceConnect-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		59BB82191F07E8F98FA3ACD7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-danceConnect/Pods-danceConnect-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-danceConnect/Pods-danceConnect-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-danceConnect/Pods-danceConnect-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D1C91685F02D2AAF5E762756 /* [CP] Check Pods Manifest.lock */ = {

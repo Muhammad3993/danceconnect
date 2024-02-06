@@ -9,8 +9,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewToken,
 } from 'react-native';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import {defaultProfile} from '../utils/images';
@@ -24,13 +25,13 @@ import CommunityCard from './communityCard';
 import EventCard from './eventCard';
 import usePeople from '../hooks/usePeople';
 import {PostCard} from './PostCard';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {isAndroid} from '../utils/constants';
 
-// const viewabilityConfig = {
-//   waitForInteraction: true,
-//   viewAreaCoveragePercentThreshold: 19,
-// };
+const viewabilityConfig = {
+  waitForInteraction: true,
+  viewAreaCoveragePercentThreshold: 40,
+};
 
 interface Props {
   user: any;
@@ -53,7 +54,7 @@ export function ProfileList({
   isCurrentUser,
   loadingMore,
 }: Props) {
-  // const isFocused = useIsFocused();
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const roles = user?.userRole ?? [];
   const {t} = useTranslation();
@@ -73,7 +74,7 @@ export function ProfileList({
   ];
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
   const [showAbout, setShowAbout] = useState(false);
-  // const [viewablesMap, setViewablesMap] = useState<Record<string, boolean>>({});
+  const [viewablesMap, setViewablesMap] = useState<Record<string, boolean>>({});
 
   const rolesString = roles.reduce((acc, next) => {
     const role = getUserRole(next.title);
@@ -87,12 +88,11 @@ export function ProfileList({
       case t('posts'):
         return (
           <PostCard
-            isFocused={false}
+            isFocused={isFocused}
             canEdit={isCurrentUser}
             post={item}
             user={user}
-            inView={false}
-            // inView={viewablesMap[item.postId] ?? false}
+            inView={viewablesMap[item.postId] ?? false}
             navigation={navigation}
           />
         );
@@ -153,17 +153,17 @@ export function ProfileList({
     getCommunitiesByUserId(user.id);
   }, [user.id]);
 
-  // const onViewableItemsChanged = useCallback(
-  //   ({viewableItems}: {viewableItems: ViewToken[]; changed: ViewToken[]}) => {
-  // const map = {};
-  // for (let index = 0; index < viewableItems.length; index++) {
-  //   const viewableItem = viewableItems[index];
-  //   map[viewableItem.item.postId] = viewableItem.isViewable;
-  // }
-  // setViewablesMap(map);
-  //   },
-  //   [],
-  // );
+  const onViewableItemsChanged = useCallback(
+    ({viewableItems}: {viewableItems: ViewToken[]; changed: ViewToken[]}) => {
+      const map = {};
+      for (let index = 0; index < viewableItems.length; index++) {
+        const viewableItem = viewableItems[index];
+        map[viewableItem.item.postId] = viewableItem.isViewable;
+      }
+      setViewablesMap(map);
+    },
+    [],
+  );
   const onPressShare = async () => {
     try {
       const result = await Share.share({
@@ -318,8 +318,8 @@ export function ProfileList({
       keyExtractor={(item, index) =>
         item?.postId ?? item?.id ?? index.toString()
       }
-      // viewabilityConfig={viewabilityConfig}
-      // onViewableItemsChanged={onViewableItemsChanged}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={onViewableItemsChanged}
       scrollEventThrottle={200}
     />
   );

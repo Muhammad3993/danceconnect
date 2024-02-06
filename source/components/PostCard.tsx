@@ -1,22 +1,21 @@
+import {FileRepository, PostRepository} from '@amityco/ts-sdk';
+import {NavigationProp} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
   StyleSheet,
   Text,
-  View,
-  Pressable,
   TouchableOpacity,
-  ActivityIndicator,
+  View,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import {FileRepository, PostRepository} from '@amityco/ts-sdk';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
-import {defaultProfile} from '../utils/images';
 import colors from '../utils/colors';
 import {SCREEN_WIDTH} from '../utils/constants';
-import Video from 'react-native-video';
-import {NavigationProp} from '@react-navigation/native';
+import {defaultProfile} from '../utils/images';
 import ScalableImage from './ScalabelImage';
+import {VideoView} from './VideoView';
 
 interface Props {
   post: Amity.Post;
@@ -67,7 +66,6 @@ export function PostCard({
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const [videoPoster, setVideoPoster] = useState<string | undefined>(undefined);
-  const [isPaused, setIsPaused] = useState(true);
   const haveChildren = post.children.length > 0;
 
   const getData = useCallback(async () => {
@@ -80,9 +78,6 @@ export function PostCard({
         if (thumbnailFileId) {
           const postVideoPoster = await getPostFile<'image'>(thumbnailFileId);
           setVideoPoster(postVideoPoster?.fileUrl);
-        } else {
-          setVideoPoster(undefined);
-          setIsPaused(false);
         }
         const videoFileId = postCh.data?.videoFileId?.original;
 
@@ -177,28 +172,15 @@ export function PostCard({
               />
             )}
             {(videoPoster || videoUrl) && (
-              <>
-                <Video
-                  paused={isPaused || !isFocused || !inView}
-                  repeat
-                  posterResizeMode="cover"
-                  poster={videoPoster ? videoPoster + '?size=small' : undefined}
-                  style={styles.media}
-                  resizeMode="cover"
-                  source={{uri: videoUrl}}
-                />
-
-                <Pressable
-                  onPress={() => setIsPaused(!isPaused)}
-                  style={styles.playOverlay}>
-                  {isPaused && (
-                    <Image
-                      source={{uri: 'playcircle'}}
-                      style={{width: 40, height: 40, tintColor: colors.white}}
-                    />
-                  )}
-                </Pressable>
-              </>
+              <VideoView
+                width={IMAGE_WIDTH}
+                height={IMAGE_WIDTH}
+                paused={!isFocused || !inView}
+                videoPoster={
+                  videoPoster ? videoPoster + '?size=small' : undefined
+                }
+                videoUrl={videoUrl}
+              />
             )}
 
             {!postImageUrl && !videoUrl && !videoPoster && (
@@ -285,24 +267,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  media: {width: IMAGE_WIDTH, minHeight: IMAGE_WIDTH},
-  playOverlay: {
-    width: IMAGE_WIDTH,
-    height: IMAGE_WIDTH,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  playButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
+
   readMore: {
     fontSize: 14,
     color: colors.textHighlighted,

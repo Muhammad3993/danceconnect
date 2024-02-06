@@ -8,6 +8,7 @@ export const Notice = () => {
   const {errorMessage, isVisible, setMessageNotice, setVisibleNotice} =
     useAppStateHook();
   RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+
   React.useEffect(() => {
     if (isVisible) {
       setTimeout(() => {

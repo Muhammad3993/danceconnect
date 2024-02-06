@@ -1,110 +1,102 @@
 import {
+  ContentFeedType,
+  FileRepository,
+  PostContentType,
+  PostRepository,
+} from '@amityco/ts-sdk';
+import React, {useCallback, useLayoutEffect, useState} from 'react';
+import {
+  ActivityIndicator,
   Image,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
   SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import React, {useState} from 'react';
-import colors from '../../utils/colors';
-import {SCREEN_WIDTH} from '../../utils/constants';
-import {
-  Asset,
-  CameraOptions,
-  ImageLibraryOptions,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
-import {FileRepository, PostContentType, PostRepository} from '@amityco/ts-sdk';
+import {useDispatch} from 'react-redux';
+import ScalableImage from '../../components/ScalabelImage';
+import useRegistration from '../../hooks/useRegistration';
 import {
   setNoticeMessage,
   setNoticeVisible,
 } from '../../store/actions/appStateActions';
-import useRegistration from '../../hooks/useRegistration';
-import {useDispatch} from 'react-redux';
-import ScalableImage from '../../components/ScalabelImage';
-// import Video from 'react-native-video';
+import colors from '../../utils/colors';
+import {SCREEN_WIDTH} from '../../utils/constants';
+import {useUploadImage} from './hooks/useUploadImage';
+import {useUploadVideo} from './hooks/useUploadVideo';
+import {VideoView} from '../../components/VideoView';
 
 export function CreatePostScreen({navigation, route}) {
   const {postId, postText, postImage, postVideo} = route.params ?? {};
   const dispatch = useDispatch();
+
   const {currentUser} = useRegistration();
-  const [image, setImage] = useState<Asset | null>(null);
-  const [initialImage, setinitalImage] = useState<string | undefined>(
-    postImage,
-  );
-  // const [video, setVideo] = useState<Asset | null>(null);
-  // const [initialVideo, setInitialVideo] = useState<string | undefined>(
-  //   postVideo,
-  // );
-  const [text, setText] = useState(postText ?? '');
-  const [creatingPost, setCreatingPost] = useState(false);
+
   const isCreating = postId === undefined;
 
-  const uploadImage = async () => {
-    let options: ImageLibraryOptions = {
-      mediaType: 'photo',
-      selectionLimit: 1,
-      quality: 1,
-    };
-    const images = await launchImageLibrary(options);
+  const [touched, setTouched] = useState(false);
+  const [mediaType, setMediaType] = useState<'photo' | 'video'>(
+    postImage ? 'photo' : 'video',
+  );
 
-    if (images.assets) {
-      // setVideo(null);
-      // setInitialVideo(undefined);
-      setinitalImage(undefined);
-      setImage(images.assets[0]);
+  const onUploadVideo = useCallback(() => {
+    setTouched(true);
+    setMediaType('video');
+  }, []);
+
+  const onUploadImage = useCallback(() => {
+    setTouched(true);
+    setMediaType('photo');
+  }, []);
+
+  const {selectVideo, viedoUrl} = useUploadVideo(onUploadVideo);
+  const [videSavePercent, setVideSavePercent] = useState<number | null>(null);
+  const [videFileId, setVideFileId] = useState<string | null>(null);
+
+  const {uploadCameraImage, uploadImage, image} = useUploadImage(onUploadImage);
+
+  const [text, setText] = useState(postText ?? '');
+  const [creatingPost, setCreatingPost] = useState(false);
+
+  const saveVideo = useCallback(async () => {
+    if (viedoUrl !== null) {
+      const formData = new FormData();
+
+      formData.append('files', {
+        type: 'video/mp4',
+        name: viedoUrl,
+        uri:
+          Platform.OS === 'android'
+            ? viedoUrl
+            : viedoUrl.replace('file://', ''),
+      });
+      const {data} = await FileRepository.uploadVideo(
+        formData,
+        ContentFeedType.POST,
+        percent => {
+          setVideSavePercent(percent);
+        },
+      );
+
+      setVideFileId(data[0].fileId);
     }
-  };
+  }, [viedoUrl]);
 
-  // const uploadVideo = async () => {
-  //   let options: ImageLibraryOptions = {
-  //     mediaType: 'video',
-  //     selectionLimit: 1,
-  //     quality: 1,
-  //     videoQuality: 'medium',
-  //   };
-  //   const images = await launchImageLibrary(options);
-
-  //   if (images.assets) {
-  //     setImage(null);
-  //     setInitialVideo(undefined);
-  //     setinitalImage(undefined);
-  //     setVideo(images.assets[0]);
-  //   }
-  // };
-
-  const uploadCameraImage = async () => {
-    try {
-      let options: CameraOptions = {
-        mediaType: 'photo',
-        quality: 1,
-      };
-      const images = await launchCamera(options);
-
-      if (images.assets) {
-        // setVideo(null);
-        // setInitialVideo(undefined);
-        setinitalImage(undefined);
-        setImage(images.assets[0]);
-      }
-    } catch (er) {
-      console.log(er);
-    }
-  };
+  useLayoutEffect(() => {
+    saveVideo();
+  }, [saveVideo]);
 
   const createPost = async () => {
     try {
       setCreatingPost(true);
       const attachments = [];
 
-      if (image !== null) {
+      if (mediaType === 'photo' && image !== null) {
         const formData = new FormData();
 
         const imageUri = image.uri ?? '';
@@ -119,27 +111,13 @@ export function CreatePostScreen({navigation, route}) {
         });
 
         const {data} = await FileRepository.uploadImage(formData);
-        // console.log(data);
 
         attachments.push({type: PostContentType.IMAGE, fileId: data[0].fileId});
       }
 
-      // if (video !== null) {
-      //   const formData = new FormData();
-
-      //   const uri = video.uri ?? '';
-
-      //   formData.append('files', {
-      //     type: video.type,
-      //     name: video.fileName,
-      //     uri: Platform.OS === 'android' ? uri : uri.replace('file://', ''),
-      //   });
-
-      //   const {data} = await FileRepository.uploadVideo(formData);
-      //   // console.log(data);
-
-      //   attachments.push({type: PostContentType.VIDEO, fileId: data[0].fileId});
-      // }
+      if (mediaType === 'video' && videFileId !== null) {
+        attachments.push({type: PostContentType.VIDEO, fileId: videFileId});
+      }
 
       const newPost = {
         tags: ['post'],
@@ -162,93 +140,109 @@ export function CreatePostScreen({navigation, route}) {
     }
   };
 
-  const canCreate = image !== null || text.trim() !== '';
-  // const canCreate = image !== null || text.trim() !== '' || video !== null;
+  const canCreate = image !== null || text.trim() !== '' || viedoUrl !== null;
+
+  const initalImage = postImage ? postVideo + '?size=medium' : null;
+
+  const currImage = touched ? image?.uri : initalImage;
+  const currVideo = touched ? viedoUrl : postVideo;
+
+  const uploadingVideo =
+    mediaType === 'video' &&
+    Boolean(videSavePercent && videSavePercent > 0 && videSavePercent < 99);
 
   return (
-    <KeyboardAvoidingView
-      style={{flex: 1}}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <SafeAreaView style={styles.contianer}>
-        <View style={styles.header}>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
-            <TouchableOpacity onPress={navigation.goBack}>
-              <Image source={{uri: 'close'}} style={{width: 20, height: 20}} />
+    <SafeAreaView style={styles.contianer}>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <View style={styles.contianer}>
+          <View style={styles.header}>
+            <View style={{flex: 1, alignItems: 'flex-start'}}>
+              <TouchableOpacity onPress={navigation.goBack}>
+                <Image
+                  source={{uri: 'close'}}
+                  style={{width: 20, height: 20}}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={{flex: 2, alignItems: 'center'}}>
+              <Text style={styles.headerTitleText}>
+                {isCreating ? 'Add' : 'Edit'} Post
+              </Text>
+            </View>
+
+            <View style={{flex: 1, alignItems: 'flex-end'}}>
+              {creatingPost ? (
+                <ActivityIndicator size="small" />
+              ) : (
+                <Text
+                  style={[
+                    styles.headerRight,
+                    {opacity: canCreate && !uploadingVideo ? 1 : 0.6},
+                  ]}
+                  disabled={!canCreate || uploadingVideo}
+                  onPress={createPost}>
+                  Post
+                </Text>
+              )}
+            </View>
+          </View>
+
+          <ScrollView
+            keyboardDismissMode="on-drag"
+            showsVerticalScrollIndicator={false}
+            style={styles.scroll}>
+            <TextInput
+              style={{marginBottom: 12}}
+              value={text}
+              onChangeText={setText}
+              placeholder="What’s going on..."
+              multiline
+              autoFocus
+            />
+
+            {mediaType === 'photo' && currImage && (
+              <View style={styles.mediaContent}>
+                <ScalableImage
+                  originalWidth={SCREEN_WIDTH - 32}
+                  uri={currImage}
+                />
+              </View>
+            )}
+
+            {mediaType === 'video' && currVideo && (
+              <VideoView
+                videoUrl={currVideo}
+                width={SCREEN_WIDTH - 32}
+                height={SCREEN_WIDTH - 32}
+                uploadPercent={videSavePercent}
+              />
+            )}
+          </ScrollView>
+
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={styles.footerItem}
+              onPress={uploadCameraImage}>
+              <Image source={{uri: 'photo'}} style={{width: 24, height: 24}} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.footerItem} onPress={uploadImage}>
+              <Image source={{uri: 'image'}} style={{width: 24, height: 24}} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.footerItem} onPress={selectVideo}>
+              <Image
+                source={{uri: 'playcircle'}}
+                style={{width: 24, height: 24}}
+              />
             </TouchableOpacity>
           </View>
-
-          <View style={{flex: 2, alignItems: 'center'}}>
-            <Text style={styles.headerTitleText}>
-              {isCreating ? 'Add' : 'Edit'} Post
-            </Text>
-          </View>
-
-          <View style={{flex: 1, alignItems: 'flex-end'}}>
-            {creatingPost ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <Text
-                style={[styles.headerRight, {opacity: canCreate ? 1 : 0.6}]}
-                disabled={!canCreate}
-                onPress={createPost}>
-                Post
-              </Text>
-            )}
-          </View>
         </View>
-
-        <ScrollView
-          keyboardDismissMode="on-drag"
-          showsVerticalScrollIndicator={false}
-          style={styles.scroll}>
-          <TextInput
-            value={text}
-            onChangeText={setText}
-            placeholder="What’s going on..."
-            multiline
-            autoFocus
-          />
-
-          {(image !== null || initialImage !== undefined) && (
-            <View style={styles.mediaContent}>
-              <ScalableImage
-                originalWidth={SCREEN_WIDTH - 32}
-                uri={image?.uri ?? initialImage + '?size=medium'}
-              />
-            </View>
-          )}
-
-          {/* {(video !== null || initialVideo !== undefined) && (
-            <View style={styles.mediaContent}>
-              <Video
-                resizeMode="cover"
-                source={{uri: video?.uri ?? initialVideo}}
-                style={{flex: 1}}
-              />
-            </View>
-          )} */}
-        </ScrollView>
-
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.footerItem}
-            onPress={uploadCameraImage}>
-            <Image source={{uri: 'photo'}} style={{width: 24, height: 24}} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.footerItem} onPress={uploadImage}>
-            <Image source={{uri: 'image'}} style={{width: 24, height: 24}} />
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity style={styles.footerItem} onPress={uploadVideo}>
-            <Image
-              source={{uri: 'playcircle'}}
-              style={{width: 24, height: 24}}
-            />
-          </TouchableOpacity> */}
-        </View>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -302,11 +296,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     shadowColor: '#000',
     shadowOffset: {
-      width: 0,
-      height: -2,
+      width: 1,
+      height: -2.7,
     },
     shadowOpacity: 0.1,
-    shadowRadius: 2.5,
+    shadowRadius: 2,
     elevation: 3,
     paddingHorizontal: 16,
     alignItems: 'center',
