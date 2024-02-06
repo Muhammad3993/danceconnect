@@ -147,7 +147,11 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
             onBackPress={goBack}
             rightIcon={
               <FastImage
-                source={Boolean(image) ? {uri: apiUrl + image} : defaultProfile}
+                source={
+                  anotherUser?.userImage
+                    ? {uri: apiUrl + anotherUser?.userImage}
+                    : defaultProfile
+                }
                 defaultSource={defaultProfile}
                 style={styles.avatar}
               />
@@ -307,10 +311,9 @@ const styles = StyleSheet.create({
   },
   inputInner: {
     flex: 1,
-    lineHeight: 0,
+    // lineHeight: 0,
     fontFamily: 'Lato-Regular',
     fontSize: 16,
-    maxHeight: 120,
     color: colors.textPrimary,
   },
   sendButton: {

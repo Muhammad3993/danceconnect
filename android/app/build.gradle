@@ -139,8 +139,8 @@ android {
         applicationId "com.danceconnect"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 11
-        versionName "4.3"
+        versionCode 12
+        versionName "5.0"
 //        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         // if (isNewArchitectureEnabled()) {

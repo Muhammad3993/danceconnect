@@ -119,10 +119,10 @@ const EventCard = ({item, containerStyle}: Props) => {
                   marginLeft: idx !== 0 ? -8 : 0,
                   zIndex: idx !== 0 ? -idx : idx,
                 }}>
-                <RN.Image
+                <FastImage
                   source={imgUri}
-                  style={styles.attendPeopleImg}
                   defaultSource={defaultProfile}
+                  style={styles.attendPeopleImg}
                 />
               </RN.View>
             );
