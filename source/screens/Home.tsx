@@ -65,7 +65,7 @@ const HomeScreen = () => {
     if (isFocused) {
       getEventsByUserId(currentUser.id);
     }
-  }, [isFocused, currentUser.id]);
+  }, [isFocused, currentUser?.id]);
 
   useEffect(() => {
     getFcmToken();

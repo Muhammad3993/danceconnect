@@ -31,8 +31,16 @@ const EditCommunity = ({navigation}) => {
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
     routeParams?.params?.id,
   );
-  const {description, categories, location, id, images, followers, type} =
-    routeParams?.params;
+  const {
+    description,
+    categories,
+    location,
+    id,
+    images,
+    followers,
+    type,
+    channelId,
+  } = routeParams?.params;
 
   const SCREENS = [
     {idx: 0, title: t('community_type')},
@@ -193,6 +201,7 @@ const EditCommunity = ({navigation}) => {
           changeInformation({
             name: title,
             description: desc,
+            channelId,
             // country: countryEdit,
             location: locationEdt,
             categories: addedStyles,

@@ -72,27 +72,18 @@ export const useCommunities = () => {
         type,
       }),
     );
-    setTimeout(() => {
-      dispatch(createCommunitySuccessAction());
-    }, 3000);
   };
   const getCommunitites = () => {
     dispatch(getCommunitiesRequestAction());
   };
-  const startFollowed = (communityUid: string) => {
+  const startFollowed = (communityUid: string, channelId: string) => {
     // console.log('startFollowed', communityUid);
-    dispatch(
-      startFollowedCommunityRequestAction({
-        communityUid: communityUid,
-      }),
-    );
+    dispatch(startFollowedCommunityRequestAction({communityUid, channelId}));
     // dispatch(getCommunityByIdRequestAction({communityUid: communityUid}));
   };
-  const cancelFollowed = (communityUid: string) => {
+  const cancelFollowed = (communityUid: string, channelId: string) => {
     // console.log('cancelFollowed', communityUid);
-    dispatch(
-      cancelFollowedCommunityRequestAction({communityUid: communityUid}),
-    );
+    dispatch(cancelFollowedCommunityRequestAction({communityUid, channelId}));
   };
 
   const isFollowedCurrentCommunity = (communityUid: string) => {

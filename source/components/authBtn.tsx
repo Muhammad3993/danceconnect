@@ -84,7 +84,6 @@ const styles = RN.StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     lineHeight: 22.4,
-    letterSpacing: 0.2,
     paddingLeft: 14,
     color: colors.textPrimary,
   },

@@ -20,10 +20,12 @@ export type communityParams = {
   loadingManaging?: boolean;
   screen?: string;
   type: string;
+  channelId: string;
 };
 export type followingParams = {
   isLoadingFollow?: boolean;
   communityUid: string;
+  channelId: string;
   userUid?: string;
   userImg?: string;
 };
@@ -93,11 +95,10 @@ export const createCommunityFailAction = ({errors}: communityParams) => ({
 
 export const startFollowedCommunityRequestAction = ({
   communityUid,
+  channelId,
 }: followingParams) => ({
   type: COMMUNITIES.START_FOLLOWING_REQUEST,
-  payload: {
-    communityUid: communityUid,
-  },
+  payload: {communityUid, channelId},
 });
 export const startFollowedCommunitySuccessAction = () => ({
   type: COMMUNITIES.START_FOLLOWING_SUCCESS,
@@ -107,11 +108,10 @@ export const startFollowedCommunityFailAction = () => ({
 });
 export const cancelFollowedCommunityRequestAction = ({
   communityUid,
+  channelId,
 }: communityParams) => ({
   type: COMMUNITIES.CANCEL_FOLLOWING_REQUEST,
-  payload: {
-    communityUid: communityUid,
-  },
+  payload: {communityUid, channelId},
 });
 
 export const cancelFollowedCommunitySuccessAction = () => ({
@@ -160,18 +160,20 @@ export const changeInformationCommunityRequestAction = ({
   followers,
   images,
   type,
+  channelId,
 }: communityParams) => ({
   type: COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_REQUEST,
   payload: {
-    name: name,
-    description: description,
+    name,
+    description,
+    channelId,
     // country: country,
-    location: location,
-    communityUid: communityUid,
-    followers: followers,
-    categories: categories,
-    images: images,
-    type: type,
+    location,
+    communityUid,
+    followers,
+    categories,
+    images,
+    type,
   },
 });
 export const changeInformationCommunitySuccessAction = () => ({

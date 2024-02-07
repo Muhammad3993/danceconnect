@@ -97,43 +97,21 @@ const CommunityScreen = ({route, navigation}: Props) => {
 
   const onPressJoin = () => {
     setLoadSubscribe(true);
-    startFollowed(communityData?.id);
+    startFollowed(communityData?.id, communityData.channelId);
   };
 
   const onWriteChat = async () => {
-    try {
-      // const newChannel = {
-      //   displayName: communityData?.title,
-      //   tags: ['community'],
-      //   type: 'community' as Amity.ChannelType,
-      //   userIds: communityData?.followers?.map(el => el.id) ?? [],
-      //   metadata: {
-      //     name: communityData?.title,
-      //     image:
-      //       communityData?.images?.length > 0
-      //         ? communityData?.images[0]
-      //         : undefined,
-      //   },
-      //   isPublic: true,
-      // };
-      // const {data: channel} = await ChannelRepository.updateChannel('65c0da9e6a5eb2bd4e9a9331', {});
-      // console.log(channel);
-      // console.log(channel.channelId);
-      // console.log('channel.channelId');
-      // navigation.push('Chat', {
-      //   channel: {
-      //     defaultSubChannelId: '65c0da9e6a5eb2bd4e9a9331',
-      //     channelId: '65c0da9e6a5eb2bd4e9a9331',
-      //   },
-      // });
-    } catch (err) {
-      console.log(err);
-    }
+    navigation.push('Chat', {
+      channel: {
+        defaultSubChannelId: communityData.channelId,
+        channelId: communityData.channelId,
+      },
+    });
   };
 
   const onPressUnfollow = () => {
     setLoadSubscribe(true);
-    startFollowed(communityData?.id);
+    startFollowed(communityData?.id, communityData.channelId);
     setUnFollowOpen(v => !v);
   };
   const onPressRemove = async () => {

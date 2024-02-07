@@ -20,7 +20,6 @@ import {
   startFollowedCommunitySuccessAction,
 } from '../actions/communityActions';
 import {navigationRef} from '../../navigation/types';
-import {CommonActions} from '@react-navigation/native';
 import {getCommunitiesRequestAction} from '../actions/communityActions';
 import {
   setLoadingAction,
@@ -48,6 +47,7 @@ import {DeviceEventEmitter} from 'react-native';
 import {getPersonalEventsSuccessAction} from '../actions/eventActions';
 import moment from 'moment';
 import {EVENT} from '../actionTypes/eventActionTypes';
+import {ChannelRepository} from '@amityco/ts-sdk';
 
 function* getCommunitiesRequest() {
   try {
@@ -80,6 +80,18 @@ function* createCommunityRequest(action: any) {
   try {
     // const creatorUid = yield select(selectUserUid);
     yield put(setLoadingAction({onLoading: true}));
+
+    const newChannel = {
+      displayName: name,
+      tags: ['community'],
+      type: 'community' as Amity.ChannelType,
+      metadata: {name, image: images?.length > 0 ? images[0] : undefined},
+      isPublic: true,
+    };
+    const channel = yield call(ChannelRepository.createChannel, newChannel);
+
+    console.log('channel.data', channel.data);
+
     const data = {
       title: name,
       description: description,
@@ -89,6 +101,7 @@ function* createCommunityRequest(action: any) {
       categories: categories,
       images: images,
       type: type,
+      channelId: channel?.data?.channelId,
     };
     const response = yield call(createCommunityWithMongo, data);
 
@@ -111,8 +124,10 @@ function* createCommunityRequest(action: any) {
 }
 
 function* startFollowingCommunity(action: any) {
-  const {communityUid} = action?.payload;
+  const {communityUid, channelId} = action?.payload;
   try {
+    yield call(ChannelRepository.joinChannel, channelId);
+
     const userUid: string = yield select(selectUserUid);
     // socket.connect();
     socket.emit('follow_community', communityUid, userUid);
@@ -123,9 +138,11 @@ function* startFollowingCommunity(action: any) {
   }
 }
 function* cancelFollowingCommunity(action: any) {
-  const {communityUid} = action?.paylod;
+  const {communityUid, channelId} = action?.paylod;
   try {
     const userUid = yield select(selectUserUid);
+    yield call(ChannelRepository.leaveChannel, channelId);
+
     // socket.connect();
     socket.emit('follow_community', communityUid, userUid);
   } catch (error) {
@@ -266,7 +283,9 @@ function* changeInformation(action: any) {
     images,
     followers,
     type,
+    channelId,
   } = action?.payload;
+
   const data = {
     title: name,
     description: description,
@@ -278,8 +297,17 @@ function* changeInformation(action: any) {
     images: images,
     type: type,
   };
+
+  const newChannel = {
+    displayName: name,
+    metadata: {name, image: images?.length > 0 ? images[0] : undefined},
+  };
+
   try {
     yield put(setLoadingAction({onLoading: true}));
+
+    yield call(ChannelRepository.updateChannel, channelId, newChannel);
+
     const response = yield call(updateCommunityById, communityUid, data);
     // const response = yield call(getCommunityById, communityUid);
     console.log('changeInformation', response);
@@ -309,32 +337,18 @@ function* removeCommunityRequest(action: any) {
   try {
     yield put(setLoadingAction({onLoading: true}));
     yield call(deleteCommunityById, action?.payload?.uid);
+
+    yield call(ChannelRepository.deleteChannel, action.payload.channelId);
+
     yield put(removeCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
     yield put(getManagingCommunitiesRequestAction());
     if (action?.payload?.screen === 'Profile') {
       navigationRef.current?.goBack();
-      // navigationRef.current?.dispatch(CommonActions.goBack());
     } else {
-      navigationRef.current?.navigate(
-        'CommunitiesMain',
-        {removedCommunity: true},
-        //     ,
-        // CommonActions.navigate({
-        //   name: 'CommunitiesMain',
-        //   params: {
-        //     removedCommunity: true,
-        //   },
-        // }),
-      );
-      // navigationRef.current?.dispatch(
-      //   CommonActions.navigate({
-      //     name: 'CommunitiesMain',
-      //     params: {
-      //       removedCommunity: true,
-      //     },
-      //   }),
-      // );
+      navigationRef.current?.navigate('CommunitiesMain', {
+        removedCommunity: true,
+      });
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {

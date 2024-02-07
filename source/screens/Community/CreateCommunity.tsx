@@ -208,6 +208,7 @@ const CreateCommunity = ({navigation}) => {
             type: communityType.type,
           });
         }
+        break;
       default:
         break;
     }

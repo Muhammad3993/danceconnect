@@ -31,6 +31,7 @@ export const useCommunityById = (id: string) => {
     followers,
     images,
     type,
+    channelId,
   }: communityParams) => {
     dispatch(
       changeInformationCommunityRequestAction({
@@ -42,7 +43,8 @@ export const useCommunityById = (id: string) => {
         followers,
         categories,
         images,
-        type
+        type,
+        channelId,
       }),
     );
   };
