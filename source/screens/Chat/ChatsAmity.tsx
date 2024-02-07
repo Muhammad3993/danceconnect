@@ -39,7 +39,12 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
       ({data, ...metadata}) => {
         if (!metadata.loading) {
           setLoading(false);
-          setChannels(data);
+          const list = data.filter(el => {
+            console.log(el?.messagePreview);
+
+            return Boolean(el?.messagePreview);
+          });
+          setChannels(list);
         }
         setLoadingMore(metadata.loading);
         setHasNextPage(metadata.hasNextPage ?? false);
@@ -98,12 +103,7 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
             data={channels}
             onEndReachedThreshold={0.5}
             onEndReached={() => {
-              if (
-                channels.length % 20 === 0 &&
-                !loadingMore &&
-                hasNextPage &&
-                onNextPage.current
-              ) {
+              if (!loadingMore && hasNextPage && onNextPage.current) {
                 onNextPage.current();
               }
             }}

@@ -55,10 +55,13 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
     SubChannelRepository.startReading(channel?.defaultSubChannelId);
     const msgSub = MessageRepository.getMessages(
       {subChannelId: channel?.defaultSubChannelId, limit: 18, type: 'text'},
-      ({data, ...metadata}) => {
+      ({data: list, ...metadata}) => {
+        console.log('work');
+
         if (!metadata.loading) {
           setLoading(false);
-          setMessages(data as Amity.Message<'text'>[]);
+
+          setMessages(list as Amity.Message<'text'>[]);
         }
         setLoadingMore(metadata.loading);
         setHasNextPage(metadata.hasNextPage ?? false);
