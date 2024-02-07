@@ -189,42 +189,6 @@ export function ProfileList({
       console.log(error.message);
     }
   };
-  const renderAbout = () => {
-    return (
-      <>
-        <Text style={styles.aboutUser}>
-          {user?.about?.length > 100 && !showAbout
-            ? `${user?.about?.slice(0, 100)}...`
-            : user?.about}
-        </Text>
-        {user?.about?.length > 40 && (
-          <TouchableOpacity
-            onPress={() => {
-              LayoutAnimation.configureNext(
-                LayoutAnimation.Presets.easeInEaseOut,
-              );
-              setShowAbout(v => !v);
-            }}
-            style={styles.showWrapper}>
-            <Text style={styles.showMoreText}>
-              {!showAbout ? t('show_more') : t('show_less')}
-            </Text>
-            <View style={{justifyContent: 'center'}}>
-              <Image
-                source={{uri: 'downlight'}}
-                style={[
-                  styles.arrowDownIcon,
-                  {
-                    transform: [{rotate: showAbout ? '180deg' : '0deg'}],
-                  },
-                ]}
-              />
-            </View>
-          </TouchableOpacity>
-        )}
-      </>
-    );
-  };
 
   return (
     <FlatList
@@ -289,7 +253,40 @@ export function ProfileList({
             </View>
           </View>
           <Text style={styles.roles}>{rolesString}</Text>
-          {user?.about?.length > 0 && renderAbout()}
+          {user?.about?.length > 0 && (
+            <>
+              <Text style={styles.aboutUser}>
+                {user?.about?.length > 100 && !showAbout
+                  ? `${user?.about?.slice(0, 100)}...`
+                  : user?.about}
+              </Text>
+              {user?.about?.length > 40 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    LayoutAnimation.configureNext(
+                      LayoutAnimation.Presets.easeInEaseOut,
+                    );
+                    setShowAbout(v => !v);
+                  }}
+                  style={styles.showWrapper}>
+                  <Text style={styles.showMoreText}>
+                    {!showAbout ? t('show_more') : t('show_less')}
+                  </Text>
+                  <View style={{justifyContent: 'center'}}>
+                    <Image
+                      source={{uri: 'downlight'}}
+                      style={[
+                        styles.arrowDownIcon,
+                        {
+                          transform: [{rotate: showAbout ? '180deg' : '0deg'}],
+                        },
+                      ]}
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
+            </>
+          )}
 
           <View style={styles.actions}>{actions}</View>
 
@@ -323,7 +320,7 @@ export function ProfileList({
       }
       viewabilityConfig={viewabilityConfig}
       onViewableItemsChanged={onViewableItemsChanged}
-      scrollEventThrottle={200}
+      scrollEventThrottle={300}
     />
   );
 }
