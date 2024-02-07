@@ -132,7 +132,7 @@ def reactNativeArchitectures() {
 
 android {
     ndkVersion '21.1.6352462'
-
+    namespace "com.danceconnect"
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {

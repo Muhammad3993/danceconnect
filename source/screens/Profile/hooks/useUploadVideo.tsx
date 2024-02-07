@@ -79,6 +79,8 @@ export function useUploadVideo(onUploadVideo: () => void) {
         setLoading(false);
         onUploadVideo();
       }
+    } else {
+      setLoading(false);
     }
   }, [onUploadVideo]);
 

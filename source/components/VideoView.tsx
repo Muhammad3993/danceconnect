@@ -1,4 +1,11 @@
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, {memo, useCallback, useState} from 'react';
 import Video from 'react-native-video';
 import colors from '../utils/colors';
@@ -25,6 +32,7 @@ export const VideoView = memo(
     const [isMute, setIsMute] = useState(true);
     const [scalableWidth, setScalableWidth] = useState(width);
     const [scalableHeight, setScalableHeight] = useState(height ?? width);
+    const [sizing, setSizing] = useState(true);
 
     const showPercent = Boolean(
       uploadPercent && uploadPercent > 0 && uploadPercent < 99,
@@ -48,6 +56,7 @@ export const VideoView = memo(
 
         setScalableWidth(computedWidth);
         setScalableHeight(computedHeight);
+        setSizing(false);
       },
       [height, width],
     );
@@ -58,6 +67,15 @@ export const VideoView = memo(
           styles.mediaContainer,
           {width: scalableWidth, height: scalableHeight},
         ]}>
+        {sizing && (
+          <View
+            style={[
+              styles.sizingOverlay,
+              {width: scalableWidth, height: scalableHeight},
+            ]}>
+            <ActivityIndicator />
+          </View>
+        )}
         <Video
           paused={localPause || paused}
           repeat
@@ -69,45 +87,47 @@ export const VideoView = memo(
           source={{uri: videoUrl}}
           ignoreSilentSwitch="ignore"
           onLoad={({naturalSize}) => {
-            if (naturalSize.orientation === 'landscape') {
-              adjustSize(naturalSize.height, naturalSize.width);
-            } else {
-              adjustSize(naturalSize.width, naturalSize.height);
-            }
+            adjustSize(naturalSize.width, naturalSize.height);
           }}
         />
 
-        <Pressable
-          onPress={() => setLocalPause(!localPause)}
-          style={[
-            styles.playOverlay,
-            {width: scalableWidth, height: scalableHeight},
-          ]}>
-          {localPause && (
-            <Image source={{uri: 'playcircle'}} style={styles.img} />
-          )}
-        </Pressable>
+        {!sizing && (
+          <>
+            <Pressable
+              onPress={() => setLocalPause(!localPause)}
+              style={[
+                styles.playOverlay,
+                {width: scalableWidth, height: scalableHeight},
+              ]}>
+              {localPause && (
+                <Image source={{uri: 'playcircle'}} style={styles.img} />
+              )}
+            </Pressable>
 
-        {!localPause && (
-          <Pressable
-            onPress={() => setIsMute(!isMute)}
-            style={styles.muteOverlay}>
-            <Image
-              source={{uri: isMute ? 'plus' : 'minus'}}
-              style={styles.img}
-            />
-          </Pressable>
-        )}
+            {!localPause && (
+              <Pressable
+                onPress={() => setIsMute(!isMute)}
+                style={styles.muteOverlay}>
+                <Image
+                  source={{uri: isMute ? 'sound' : 'unsound'}}
+                  style={styles.img}
+                />
+              </Pressable>
+            )}
 
-        {showPercent && (
-          <View
-            style={[
-              styles.uploadOverlay,
-              {width: scalableWidth, height: scalableHeight},
-            ]}>
-            <Text style={{fontSize: 25, color: '#fff'}}>{uploadPercent}</Text>
-            <Text style={{fontSize: 25, color: '#fff'}}>uploading</Text>
-          </View>
+            {showPercent && (
+              <View
+                style={[
+                  styles.uploadOverlay,
+                  {width: scalableWidth, height: scalableHeight},
+                ]}>
+                <Text style={{fontSize: 25, color: '#fff'}}>
+                  {uploadPercent}
+                </Text>
+                <Text style={{fontSize: 25, color: '#fff'}}>uploading</Text>
+              </View>
+            )}
+          </>
         )}
       </View>
     );
@@ -119,6 +139,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     backgroundColor: colors.gray100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 8,
+  },
+
+  sizingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   playOverlay: {
     alignItems: 'center',

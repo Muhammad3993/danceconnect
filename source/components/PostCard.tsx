@@ -1,6 +1,6 @@
 import {FileRepository, PostRepository} from '@amityco/ts-sdk';
 import {NavigationProp} from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {memo, useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -65,7 +65,6 @@ export function PostCard({
   const [videoUrl, setVideoUrl] = useState<string | undefined>(undefined);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
-  const [videoPoster, setVideoPoster] = useState<string | undefined>(undefined);
   const haveChildren = post.children.length > 0;
 
   const getData = useCallback(async () => {
@@ -73,12 +72,12 @@ export function PostCard({
       const postCh = await getPostImageInfo(post.children[0]);
 
       if (postCh.dataType === 'video') {
-        const thumbnailFileId = postCh.data?.thumbnailFileId;
+        // const thumbnailFileId = postCh.data?.thumbnailFileId;
 
-        if (thumbnailFileId) {
-          const postVideoPoster = await getPostFile<'image'>(thumbnailFileId);
-          setVideoPoster(postVideoPoster?.fileUrl);
-        }
+        // if (thumbnailFileId) {
+        //   const postVideoPoster = await getPostFile<'image'>(thumbnailFileId);
+        //   setVideoPoster(postVideoPoster?.fileUrl);
+        // }
         const videoFileId = postCh.data?.videoFileId?.original;
 
         const postVideo = await getPostFile<'video'>(videoFileId);
@@ -90,7 +89,7 @@ export function PostCard({
 
         setPostImageUrl(postImage?.fileUrl);
         setVideoUrl(undefined);
-        setVideoPoster(undefined);
+        // setVideoPoster(undefined);
       }
     }
   }, [post]);
@@ -164,35 +163,34 @@ export function PostCard({
       <View style={styles.content}>
         <TextRenderer text={post.data.text} />
         {haveChildren && (
-          <View style={styles.mediaContainer}>
-            {postImageUrl && (
-              <ScalableImage
-                originalWidth={IMAGE_WIDTH}
-                uri={postImageUrl + '?size=medium'}
-              />
+          <>
+            {!postImageUrl && !videoUrl ? (
+              <ActivityIndicator style={{marginVertical: 20}} />
+            ) : (
+              <>
+                {postImageUrl && (
+                  <ScalableImage
+                    originalWidth={IMAGE_WIDTH}
+                    uri={postImageUrl + '?size=medium'}
+                  />
+                )}
+                {videoUrl && (
+                  <VideoView
+                    width={IMAGE_WIDTH}
+                    paused={!isFocused || !inView}
+                    videoUrl={videoUrl}
+                  />
+                )}
+              </>
             )}
-            {(videoPoster || videoUrl) && (
-              <VideoView
-                width={IMAGE_WIDTH}
-                paused={!isFocused || !inView}
-                videoPoster={
-                  videoPoster ? videoPoster + '?size=small' : undefined
-                }
-                videoUrl={videoUrl}
-              />
-            )}
-
-            {!postImageUrl && !videoUrl && !videoPoster && (
-              <ActivityIndicator />
-            )}
-          </View>
+          </>
         )}
       </View>
     </View>
   );
 }
 
-const TextRenderer = ({text}: {text: string}) => {
+const TextRenderer = memo(({text}: {text: string}) => {
   const [expanded, setExpanded] = useState(text.length < 255);
 
   if (text === '') {
@@ -209,7 +207,7 @@ const TextRenderer = ({text}: {text: string}) => {
       )}
     </Text>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {backgroundColor: colors.white, marginBottom: 8, minHeight: 122},
@@ -258,7 +256,6 @@ const styles = StyleSheet.create({
   },
   mediaContainer: {
     width: IMAGE_WIDTH,
-    minHeight: 200,
     marginVertical: 8,
     borderRadius: 8,
     overflow: 'hidden',

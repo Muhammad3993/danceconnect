@@ -68,7 +68,7 @@ export function CreatePostScreen({navigation, route}) {
       const formData = new FormData();
 
       formData.append('files', {
-        type: 'video/mp4',
+        type: viedoUrl.includes('MOV') ? "'video/mov'" : 'video/mp4',
         name: viedoUrl,
         uri:
           Platform.OS === 'android'

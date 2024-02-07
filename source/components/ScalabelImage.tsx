@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useCallback, memo} from 'react';
 
-import {Image} from 'react-native';
+import {ActivityIndicator, Image, StyleSheet, View} from 'react-native';
+import colors from '../utils/colors';
 
 interface Props {
   uri: string;
@@ -10,7 +11,10 @@ interface Props {
 
 const ScalableImage = memo(({uri, originalWidth, originalHeight}: Props) => {
   const [scalableWidth, setScalableWidth] = useState(originalWidth);
-  const [scalableHeight, setScalableHeight] = useState(200);
+  const [scalableHeight, setScalableHeight] = useState(
+    originalHeight ?? originalWidth,
+  );
+  const [sizing, setSizing] = useState(true);
 
   const adjustSize = useCallback(
     (sourceWidth: number, sourceHeight: number) => {
@@ -32,6 +36,7 @@ const ScalableImage = memo(({uri, originalWidth, originalHeight}: Props) => {
 
       setScalableWidth(computedWidth);
       setScalableHeight(computedHeight);
+      setSizing(false);
     },
     [originalHeight, originalWidth],
   );
@@ -44,6 +49,18 @@ const ScalableImage = memo(({uri, originalWidth, originalHeight}: Props) => {
     );
   }, [adjustSize, uri]);
 
+  if (sizing) {
+    return (
+      <View
+        style={[
+          styles.mediaContainer,
+          {width: scalableWidth, height: scalableHeight},
+        ]}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   return (
     <Image
       source={{uri}}
@@ -53,6 +70,17 @@ const ScalableImage = memo(({uri, originalWidth, originalHeight}: Props) => {
       }}
     />
   );
+});
+
+const styles = StyleSheet.create({
+  mediaContainer: {
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: colors.gray100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 8,
+  },
 });
 
 export default ScalableImage;
