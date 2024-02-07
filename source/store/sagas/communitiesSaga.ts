@@ -215,7 +215,6 @@ function* getCommunityByIdRequest(action: any) {
   const {communityUid} = action?.payload;
   // console.log('getCommunityByIdRequest', communityUid);
   const {community} = yield call(getCommunityById, communityUid);
-  // console.log('getCommunityByIdRequest', community);
 
   try {
     // console.log('getCommunityByIdRequest', communityUid, community);

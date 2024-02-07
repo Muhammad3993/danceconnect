@@ -56,11 +56,8 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
     const msgSub = MessageRepository.getMessages(
       {subChannelId: channel?.defaultSubChannelId, limit: 18, type: 'text'},
       ({data: list, ...metadata}) => {
-        console.log('work');
-
         if (!metadata.loading) {
           setLoading(false);
-
           setMessages(list as Amity.Message<'text'>[]);
         }
         setLoadingMore(metadata.loading);
@@ -83,7 +80,7 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
           _id: el.uniqueId,
           text: el.data?.text ?? '',
           createdAt: new Date(el.createdAt),
-          user: {_id: el.creatorId, name: el.creatorId},
+          user: {_id: el.creatorId, name: el.metadata?.name},
         } as IMessage;
       });
     }
@@ -98,7 +95,9 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
         text: msg[0].text ?? '',
       },
       tags: [currentUser.id],
-      metadata: {},
+      metadata: {
+        name: currentUser?.userName,
+      },
     };
 
     const {data: message} = await MessageRepository.createMessage(textMessage);
@@ -138,6 +137,8 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
     }
   };
 
+  const isCommunityChat = data?.type === 'community';
+
   return (
     <SafeAreaView style={styles.root}>
       {loading ? (
@@ -150,11 +151,7 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
             onBackPress={goBack}
             rightIcon={
               <FastImage
-                source={
-                  anotherUser?.userImage
-                    ? {uri: apiUrl + anotherUser?.userImage}
-                    : defaultProfile
-                }
+                source={image ? {uri: apiUrl + image} : defaultProfile}
                 defaultSource={defaultProfile}
                 style={styles.avatar}
               />
@@ -177,6 +174,7 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
             onSend={sendMessage}
             user={{_id: currentUser.id}}
             renderLoading={() => <ActivityIndicator />}
+            renderUsernameOnMessage={isCommunityChat}
             renderInputToolbar={props => {
               return (
                 <InputToolbar
@@ -210,6 +208,8 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
                 message.nextMessage,
               );
 
+              // const userName = currentMessage.user.name;
+
               return (
                 <View
                   style={[
@@ -217,10 +217,12 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
                     {marginBottom: sameUser ? 2 : 10},
                   ]}>
                   <Bubble
-                    // renderTime={}
                     {...message}
                     wrapperStyle={{
                       left: styles.friendMsg,
+                      // userName
+                      //   ? {backgroundColor: getColor(userName)}
+                      //   : undefined,
                       right: styles.myMsg,
                     }}
                     textStyle={{
@@ -329,3 +331,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+function getColor(username: string) {
+  let sumChars = 0;
+  for (let i = 0; i < username.length; i++) {
+    sumChars += username.charCodeAt(i);
+  }
+
+  const clr = [
+    '#e67e22', // carrot
+    '#2ecc71', // emerald
+    '#3498db', // peter river
+    '#8e44ad', // wisteria
+    '#e74c3c', // alizarin
+    '#1abc9c', // turquoise
+    '#2c3e50', // midnight blue
+  ];
+  return clr[sumChars % clr.length];
+}

@@ -1,0 +1,23 @@
+diff --git a/node_modules/react-native-gifted-chat/lib/Bubble.js b/node_modules/react-native-gifted-chat/lib/Bubble.js
+index 70b74ae..12786b6 100644
+--- a/node_modules/react-native-gifted-chat/lib/Bubble.js
++++ b/node_modules/react-native-gifted-chat/lib/Bubble.js
+@@ -234,11 +234,13 @@ export default class Bubble extends React.Component {
+             if (renderUsername) {
+                 return renderUsername(currentMessage.user);
+             }
+-            return (<View style={styles.content.usernameView}>
+-          <Text style={[styles.content.username, this.props.usernameStyle]}>
+-            ~ {currentMessage.user.name}
+-          </Text>
+-        </View>);
++            if(currentMessage.user.name)  {
++                return (<View style={styles.content.usernameView}>
++                    <Text style={[styles.content.username, this.props.usernameStyle]}>
++                      ~ {currentMessage.user.name}
++                    </Text>
++                  </View>);
++            }
+         }
+         return null;
+     }

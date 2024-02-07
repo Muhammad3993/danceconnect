@@ -6,18 +6,18 @@ import {
 } from '../store/actionTypes/authorizationActionTypes';
 // import {navigationRef} from '../navigation/types';
 // import {CommonActions} from '@react-navigation/native';
-import {isAndroid} from '../utils/constants';
+// import {isAndroid} from '../utils/constants';
 // import {DeviceEventEmitter} from 'react-native';
 // import socketIoClient from 'socket.io-client';
 // const socket = socketIoClient('http://localhost:3000', {autoConnect: false});
-export const apiUrl = isAndroid
-  ? 'http://192.168.1.101:4000/'
-  : 'http://localhost:4000/';
+// export const apiUrl = isAndroid
+//   ? 'http://192.168.1.101:4000/'
+//   : 'http://localhost:4000/';
 
 // export const apiUrl = isAndroid
 // ? 'http://10.10.16.99:4000/'
 // : 'http://localhost:4000/';
-// export const apiUrl = 'https://api.danceconnect.online/';
+export const apiUrl = 'https://api.danceconnect.online/';
 // const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
 
 type user = {

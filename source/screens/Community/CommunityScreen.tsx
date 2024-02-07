@@ -18,7 +18,6 @@ import {Portal} from 'react-native-portalize';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile} from '../../utils/images';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-// import {ChannelRepository} from '@amityco/ts-sdk';
 
 interface Props {
   navigation: NativeStackNavigationProp<any>;
