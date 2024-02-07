@@ -174,7 +174,6 @@ export function PostCard({
             {(videoPoster || videoUrl) && (
               <VideoView
                 width={IMAGE_WIDTH}
-                height={IMAGE_WIDTH}
                 paused={!isFocused || !inView}
                 videoPoster={
                   videoPoster ? videoPoster + '?size=small' : undefined

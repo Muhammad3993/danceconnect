@@ -1,0 +1,61 @@
+diff --git a/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/utils/StorageUtil.java b/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/utils/StorageUtil.java
+index b39d6cd..93499d1 100644
+--- a/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/utils/StorageUtil.java
++++ b/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/utils/StorageUtil.java
+@@ -19,9 +19,15 @@ import java.util.ArrayList;
+ import java.util.List;
+ 
+ public class StorageUtil {
+-  public static String getOutputPath(Context context) { // use same extension as inputFile
++  public static String getOutputPath(Context context, String surcePath) { // use same extension as inputFile
+     long timestamp = System.currentTimeMillis() / 1000;
+-    File file = new File(context.getFilesDir(), VideoTrimmerUtil.FILE_PREFIX + "_" + timestamp + ".mp4"); // always use mp4 to prevent any issue with ffmpeg
++
++    String[] parts = Paths.get(path).getFileName().toString().split("\\.");
++
++    String extension  = parts[parts.length - 1].toLowerCase();
++
++    String extString = extension == "mov" ? "MOV": "mp4";
++    File file = new File(context.getFilesDir(), VideoTrimmerUtil.FILE_PREFIX + "_" + timestamp + "." + extString); // always use mp4 to prevent any issue with ffmpeg
+     return file.getAbsolutePath();
+   }
+ 
+diff --git a/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/widgets/VideoTrimmerView.java b/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/widgets/VideoTrimmerView.java
+index 3653d4d..ca2d7ed 100644
+--- a/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/widgets/VideoTrimmerView.java
++++ b/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/widgets/VideoTrimmerView.java
+@@ -271,9 +271,10 @@ public class VideoTrimmerView extends FrameLayout implements IVideoTrimmerView {
+       Toast.makeText(mContext, "Video shorter than 3s, can't proceed", Toast.LENGTH_SHORT).show();
+     } else {
+       mVideoView.pause();
++      String surcePath = mSourceUri.getPath();
+       VideoTrimmerUtil.trim(
+-        mSourceUri.getPath(),
+-        StorageUtil.getOutputPath(mContext),
++        surcePath,
++        StorageUtil.getOutputPath(mContext, surcePath),
+         mDuration,
+         mLeftProgressPos,
+         mRightProgressPos,
+@@ -281,6 +282,7 @@ public class VideoTrimmerView extends FrameLayout implements IVideoTrimmerView {
+     }
+   }
+ 
++
+   private void seekTo(long msec) {
+     mVideoView.seekTo((int) msec);
+   }
+diff --git a/node_modules/react-native-video-trim/ios/VideoTrim.swift b/node_modules/react-native-video-trim/ios/VideoTrim.swift
+index 722383f..3f669f9 100644
+--- a/node_modules/react-native-video-trim/ios/VideoTrim.swift
++++ b/node_modules/react-native-video-trim/ios/VideoTrim.swift
+@@ -277,7 +277,8 @@ class VideoTrim: RCTEventEmitter {
+     @available(iOS 13.0, *)
+     private func trim(viewController: VideoTrimmerViewController, inputFile: URL, videoDuration: Double, startTime: Double, endTime: Double) {
+         let timestamp = Int(Date().timeIntervalSince1970)
+-        let outputName = "\(FILE_PREFIX)_\(timestamp).mp4" // use mp4 to prevent any issue with ffmpeg about file extension
++        let extension = url.pathExtension.lowercased() == "mov" ? "MOV": "mp4"
++        let outputName = "\(FILE_PREFIX)_\(timestamp).\(extension)" // use mp4 to prevent any issue with ffmpeg about file extension
+         let outputFile = "\(inputFile.deletingLastPathComponent().absoluteURL)\(outputName)"
+         let cmd = "-i \(inputFile) -ss \(startTime * 1000)ms -to \(endTime * 1000)ms -c copy \(outputFile)";
+                 

@@ -1,12 +1,12 @@
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import React, {memo, useState} from 'react';
+import React, {memo, useCallback, useState} from 'react';
 import Video from 'react-native-video';
 import colors from '../utils/colors';
 
 interface Props {
   paused?: boolean;
   width: number;
-  height: number;
+  height?: number;
   videoPoster?: string;
   videoUrl?: string;
   uploadPercent?: null | number;
@@ -23,28 +23,66 @@ export const VideoView = memo(
   }: Props) => {
     const [localPause, setLocalPause] = useState(false);
     const [isMute, setIsMute] = useState(true);
+    const [scalableWidth, setScalableWidth] = useState(width);
+    const [scalableHeight, setScalableHeight] = useState(height ?? width);
 
     const showPercent = Boolean(
       uploadPercent && uploadPercent > 0 && uploadPercent < 99,
     );
 
+    const adjustSize = useCallback(
+      (sourceWidth: number, sourceHeight: number) => {
+        let ratio = 1;
+
+        if (width && height) {
+          ratio = Math.min(width / sourceWidth, height / sourceHeight);
+          console.log(ratio);
+        } else if (width) {
+          ratio = width / sourceWidth;
+        } else if (height) {
+          ratio = height / sourceHeight;
+        }
+
+        const computedWidth = sourceWidth * ratio;
+        const computedHeight = sourceHeight * ratio;
+
+        setScalableWidth(computedWidth);
+        setScalableHeight(computedHeight);
+      },
+      [height, width],
+    );
+
     return (
-      <View style={[styles.mediaContainer, {width}]}>
+      <View
+        style={[
+          styles.mediaContainer,
+          {width: scalableWidth, height: scalableHeight},
+        ]}>
         <Video
           paused={localPause || paused}
           repeat
           muted={isMute}
           posterResizeMode="cover"
           poster={videoPoster}
-          style={{width, height}}
+          style={{width: scalableWidth, height: scalableHeight}}
           resizeMode="cover"
           source={{uri: videoUrl}}
           ignoreSilentSwitch="ignore"
+          onLoad={({naturalSize}) => {
+            if (naturalSize.orientation === 'landscape') {
+              adjustSize(naturalSize.height, naturalSize.width);
+            } else {
+              adjustSize(naturalSize.width, naturalSize.height);
+            }
+          }}
         />
 
         <Pressable
           onPress={() => setLocalPause(!localPause)}
-          style={[styles.playOverlay, {width, height}]}>
+          style={[
+            styles.playOverlay,
+            {width: scalableWidth, height: scalableHeight},
+          ]}>
           {localPause && (
             <Image source={{uri: 'playcircle'}} style={styles.img} />
           )}
@@ -62,7 +100,11 @@ export const VideoView = memo(
         )}
 
         {showPercent && (
-          <View style={[styles.uploadOverlay, {width, height}]}>
+          <View
+            style={[
+              styles.uploadOverlay,
+              {width: scalableWidth, height: scalableHeight},
+            ]}>
             <Text style={{fontSize: 25, color: '#fff'}}>{uploadPercent}</Text>
             <Text style={{fontSize: 25, color: '#fff'}}>uploading</Text>
           </View>
@@ -74,7 +116,6 @@ export const VideoView = memo(
 
 const styles = StyleSheet.create({
   mediaContainer: {
-    minHeight: 200,
     borderRadius: 8,
     overflow: 'hidden',
     backgroundColor: colors.gray100,

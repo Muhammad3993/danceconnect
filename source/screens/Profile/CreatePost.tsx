@@ -216,7 +216,6 @@ export function CreatePostScreen({navigation, route}) {
               <VideoView
                 videoUrl={currVideo}
                 width={SCREEN_WIDTH - 32}
-                height={SCREEN_WIDTH - 32}
                 uploadPercent={videSavePercent}
               />
             )}
