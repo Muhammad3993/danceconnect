@@ -1,56 +1,49 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import {legacy_createStore as createStore, applyMiddleware} from 'redux';
-import {combineReducers} from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import {persistStore, persistReducer} from 'redux-persist';
-import registrationReducer from './reducers/registrationReducer';
-import registrationInitialState from './initialState/registrationInitialState';
-import rootSaga from './sagas';
+import {
+  applyMiddleware,
+  combineReducers,
+  legacy_createStore as createStore,
+} from 'redux';
 import {createLogger} from 'redux-logger';
-import profileReducer from './reducers/profileReducer';
-import profileInitialState from './initialState/profileInitialState';
-import communitiesReducer from './reducers/communitiesReducer';
-import communitiesInitialState from './initialState/communitiesInitialState';
-import eventsReducer from './reducers/eventsReducer';
-import eventsInitialState from './initialState/eventsInitialState';
-import appStateInitialState from './initialState/appStateInitialState';
-import appStateReducer from './reducers/appStateReducer';
+import {persistReducer, persistStore} from 'redux-persist';
+import createSagaMiddleware from 'redux-saga';
 import {saveAuthToken} from '../api/serverRequests';
-import ticketsReducer from './reducers/ticketsReducer';
-import ticketsINitialState from './initialState/ticketsINitialState';
-import peopleReducer from './reducers/peopleReducer';
-import peopleInitialState from './initialState/peopleInitialState';
+import appStateReducer from './reducers/appStateReducer';
 import bootstrap from './reducers/bootstrapReducer';
+import communitiesReducer from './reducers/communitiesReducer';
+import eventsReducer from './reducers/eventsReducer';
+import peopleReducer from './reducers/peopleReducer';
+import profileReducer from './reducers/profileReducer';
+import registrationReducer from './reducers/registrationReducer';
+import ticketsReducer from './reducers/ticketsReducer';
+import rootSaga from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
 const loggerMiddleware = createLogger();
+
+const authPersistConfig = {
+  key: 'appState',
+  storage: AsyncStorage,
+  timeout: 3600000,
+  blacklist: ['onLoading'],
+};
 
 const appReducer = combineReducers({
   registration: registrationReducer,
   profile: profileReducer,
   communities: communitiesReducer,
   events: eventsReducer,
-  appState: appStateReducer,
+  appState: persistReducer(authPersistConfig, appStateReducer),
   tickets: ticketsReducer,
   people: peopleReducer,
   bootstrap: bootstrap,
 });
-const rootState = {
-  registration: registrationInitialState,
-  profile: profileInitialState,
-  communities: communitiesInitialState,
-  events: eventsInitialState,
-  appState: appStateInitialState,
-  tickets: ticketsINitialState,
-  people: peopleInitialState,
-  bootstrap: bootstrap,
-};
 
 const rootPersistConfig = {
   key: 'keyOfStore',
   storage: AsyncStorage,
   timeout: 3600000,
-  blacklist: ['bootstrap'],
+  blacklist: ['bootstrap', 'appState'],
 };
 
 let middleware = applyMiddleware(sagaMiddleware, saveAuthToken);
@@ -58,7 +51,9 @@ if (__DEV__) {
   middleware = applyMiddleware(sagaMiddleware, loggerMiddleware, saveAuthToken);
 }
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);
-const store = createStore(persistedReducer, rootState, middleware);
+
+const store = createStore(persistedReducer, middleware);
+
 sagaMiddleware.run(rootSaga);
 
 export type IRootState = ReturnType<typeof store.getState>;

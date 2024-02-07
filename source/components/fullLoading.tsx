@@ -5,7 +5,6 @@ import useAppStateHook from '../hooks/useAppState';
 
 const FullLoading = () => {
   const {onLoading} = useAppStateHook();
-  // console.log(onLoading);
 
   // console.log('FullLoading', onLoading);
 
