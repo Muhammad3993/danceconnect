@@ -46,7 +46,7 @@ index 3653d4d..ca2d7ed 100644
      mVideoView.seekTo((int) msec);
    }
 diff --git a/node_modules/react-native-video-trim/ios/VideoTrim.swift b/node_modules/react-native-video-trim/ios/VideoTrim.swift
-index 722383f..3f669f9 100644
+index 722383f..eab692e 100644
 --- a/node_modules/react-native-video-trim/ios/VideoTrim.swift
 +++ b/node_modules/react-native-video-trim/ios/VideoTrim.swift
 @@ -277,7 +277,8 @@ class VideoTrim: RCTEventEmitter {
@@ -54,8 +54,8 @@ index 722383f..3f669f9 100644
      private func trim(viewController: VideoTrimmerViewController, inputFile: URL, videoDuration: Double, startTime: Double, endTime: Double) {
          let timestamp = Int(Date().timeIntervalSince1970)
 -        let outputName = "\(FILE_PREFIX)_\(timestamp).mp4" // use mp4 to prevent any issue with ffmpeg about file extension
-+        let extension = url.pathExtension.lowercased() == "mov" ? "MOV": "mp4"
-+        let outputName = "\(FILE_PREFIX)_\(timestamp).\(extension)" // use mp4 to prevent any issue with ffmpeg about file extension
++        let ext = inputFile.pathExtension.lowercased() == "mov" ? "MOV": "mp4"
++        let outputName = "\(FILE_PREFIX)_\(timestamp).\(ext)" // use mp4 to prevent any issue with ffmpeg about file extension
          let outputFile = "\(inputFile.deletingLastPathComponent().absoluteURL)\(outputName)"
          let cmd = "-i \(inputFile) -ss \(startTime * 1000)ms -to \(endTime * 1000)ms -c copy \(outputFile)";
                  
