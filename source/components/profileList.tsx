@@ -83,42 +83,45 @@ export function ProfileList({
 
   const individualStyles = user?.individualStyles ?? [];
 
-  const renderItem = ({item}: any) => {
-    switch (currentTab) {
-      case t('posts'):
-        return (
-          <PostCard
-            isFocused={isFocused}
-            canEdit={isCurrentUser}
-            post={item}
-            user={user}
-            inView={viewablesMap[item.postId] ?? false}
-            navigation={navigation}
-          />
-        );
-      case t('communities_tab'):
-        return (
-          <View style={{paddingHorizontal: 16}}>
-            <CommunityCard
-              containerStyle={{marginTop: 8, marginBottom: 0}}
-              item={item}
-              isProfileScreen
+  const renderItem = useCallback(
+    ({item}: any) => {
+      switch (currentTab) {
+        case t('posts'):
+          return (
+            <PostCard
+              isFocused={isFocused}
+              canEdit={isCurrentUser}
+              post={item}
+              user={user}
+              inView={viewablesMap[item.postId] ?? false}
+              navigation={navigation}
             />
-          </View>
-        );
-      case t('events_tab'):
-        return (
-          <View style={{paddingHorizontal: 16}}>
-            <EventCard
-              containerStyle={{marginTop: 8, marginBottom: 0}}
-              item={item}
-            />
-          </View>
-        );
-      default:
-        break;
-    }
-  };
+          );
+        case t('communities_tab'):
+          return (
+            <View style={{paddingHorizontal: 16}}>
+              <CommunityCard
+                containerStyle={{marginTop: 8, marginBottom: 0}}
+                item={item}
+                isProfileScreen
+              />
+            </View>
+          );
+        case t('events_tab'):
+          return (
+            <View style={{paddingHorizontal: 16}}>
+              <EventCard
+                containerStyle={{marginTop: 8, marginBottom: 0}}
+                item={item}
+              />
+            </View>
+          );
+        default:
+          break;
+      }
+    },
+    [currentTab, isCurrentUser, isFocused, navigation, t, user, viewablesMap],
+  );
 
   const flatData = useMemo(() => {
     if (currentTab === t('posts')) {
