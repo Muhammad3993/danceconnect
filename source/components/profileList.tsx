@@ -14,7 +14,7 @@ import {
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
-import {defaultProfile} from '../utils/images';
+import {defaultProfile, getDefaultImgUser} from '../utils/images';
 
 import colors from '../utils/colors';
 import {getUserRole} from '../utils/helpers';
@@ -225,9 +225,9 @@ export function ProfileList({
                       cache: FastImage.cacheControl.immutable,
                       priority: FastImage.priority.high,
                     }
-                  : defaultProfile
+                  : getDefaultImgUser(user.userGender)
               }
-              defaultSource={defaultProfile}
+              defaultSource={getDefaultImgUser(user.userGender)}
               style={styles.image}
             />
             <View style={styles.profileData}>

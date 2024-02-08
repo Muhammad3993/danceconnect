@@ -60,6 +60,7 @@ export const useCommunities = () => {
     categories,
     images,
     type,
+    channelId,
   }: communityParams) => {
     dispatch(
       createCommunityRequestAction({
@@ -70,6 +71,7 @@ export const useCommunities = () => {
         categories,
         images,
         type,
+        channelId,
       }),
     );
   };

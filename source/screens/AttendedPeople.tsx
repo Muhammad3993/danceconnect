@@ -6,7 +6,7 @@ import {statusBarHeight} from '../utils/constants';
 import {Input} from '../components/input';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
-import {defaultProfile} from '../utils/images';
+import {defaultProfile, getDefaultImgUser} from '../utils/images';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 type user = {
   item: {
@@ -15,6 +15,7 @@ type user = {
     userCountry: string;
     id: string;
     individualStyles: string[];
+    userGender: string;
   };
 };
 const AttendedPeople = () => {
@@ -62,10 +63,10 @@ const AttendedPeople = () => {
                   cache: FastImage.cacheControl.immutable,
                   priority: FastImage.priority.high,
                 }
-              : defaultProfile
+              : getDefaultImgUser(item.userGender)
           }
           resizeMode={FastImage.resizeMode.cover}
-          defaultSource={defaultProfile}
+          defaultSource={getDefaultImgUser(item.userGender)}
           style={styles.userImage}
         />
         <RN.View style={styles.userWrapper}>

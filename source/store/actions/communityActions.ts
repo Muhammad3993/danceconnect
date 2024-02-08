@@ -19,8 +19,8 @@ export type communityParams = {
   managingCommunities?: string[];
   loadingManaging?: boolean;
   screen?: string;
-  type: string;
-  channelId: string;
+  type?: string;
+  channelId?: string;
 };
 export type followingParams = {
   isLoadingFollow?: boolean;
@@ -70,6 +70,7 @@ export const createCommunityRequestAction = ({
   categories,
   images,
   type,
+  channelId,
 }: communityParams) => ({
   type: COMMUNITIES.CREATE_REQUEST,
   payload: {
@@ -81,6 +82,7 @@ export const createCommunityRequestAction = ({
     categories: categories,
     images: images,
     type: type,
+    channelId: channelId,
   },
 });
 

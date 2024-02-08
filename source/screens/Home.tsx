@@ -63,7 +63,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (isFocused) {
-      getEventsByUserId(currentUser.id);
+      getEventsByUserId(currentUser?.id);
     }
   }, [isFocused, currentUser?.id]);
 

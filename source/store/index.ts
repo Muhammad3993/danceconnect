@@ -47,9 +47,9 @@ const rootPersistConfig = {
 };
 
 let middleware = applyMiddleware(sagaMiddleware, saveAuthToken);
-// if (__DEV__) {
-//   middleware = applyMiddleware(sagaMiddleware, loggerMiddleware, saveAuthToken);
-// }
+if (__DEV__) {
+  middleware = applyMiddleware(sagaMiddleware, loggerMiddleware, saveAuthToken);
+}
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);
 
 const store = createStore(persistedReducer, middleware);

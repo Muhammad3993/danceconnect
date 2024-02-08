@@ -11,7 +11,7 @@ import SkeletonEventCard from './skeleton/eventCard-Skeleton';
 import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
-import {defaultProfile} from '../utils/images';
+import {defaultProfile, getDefaultImgUser} from '../utils/images';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 interface Props {
@@ -55,10 +55,10 @@ const EventCard = ({item, containerStyle}: Props) => {
   }, [data?.attendedPeople, userUid]);
 
   useEffect(() => {
-    if (data?.userImages?.length > 0) {
-      setAttendedImgs(data?.userImages);
+    if (data?.attendedPeople?.length > 0) {
+      setAttendedImgs(data?.attendedPeople);
     }
-  }, [data?.userImages]);
+  }, [data?.attendedPeople]);
 
   const renderTags = (tags: string[]) => {
     return (
@@ -111,7 +111,7 @@ const EventCard = ({item, containerStyle}: Props) => {
 
             if (img?.userImage === null || img === null) {
               // console.log(imgUri);
-              imgUri = defaultProfile;
+              imgUri = getDefaultImgUser(img.userGender);
             }
             return (
               <RN.View
@@ -121,7 +121,7 @@ const EventCard = ({item, containerStyle}: Props) => {
                 }}>
                 <FastImage
                   source={imgUri}
-                  defaultSource={defaultProfile}
+                  defaultSource={getDefaultImgUser(img.userGender)}
                   style={styles.attendPeopleImg}
                 />
               </RN.View>

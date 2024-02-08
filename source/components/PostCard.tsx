@@ -13,7 +13,7 @@ import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import colors from '../utils/colors';
 import {SCREEN_WIDTH} from '../utils/constants';
-import {defaultProfile} from '../utils/images';
+import {defaultProfile, getDefaultImgUser} from '../utils/images';
 import ScalableImage from './ScalabelImage';
 import {VideoView} from './VideoView';
 
@@ -127,9 +127,9 @@ export function PostCard({
                   cache: FastImage.cacheControl.immutable,
                   priority: FastImage.priority.high,
                 }
-              : defaultProfile
+              : getDefaultImgUser(user.userGender)
           }
-          defaultSource={defaultProfile}
+          defaultSource={getDefaultImgUser(user.userGender)}
           style={styles.avatar}
         />
         <View style={styles.headerUser}>

@@ -16,7 +16,7 @@ import {Animated} from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {useTranslation} from 'react-i18next';
-import {defaultProfile} from '../../utils/images';
+import {defaultProfile, getDefaultImgUser} from '../../utils/images';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 interface Props {
@@ -114,7 +114,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
     setUnFollowOpen(v => !v);
   };
   const onPressRemove = async () => {
-    setUnFollowOpen(v => !v);
+    // setUnFollowOpen(v => !v);
     remove(isProfileScreen ? 'Profile' : 'Community');
     // navigation.navigate('CommunitiesMain', {removedCommunity: true});
   };
@@ -393,9 +393,9 @@ const CommunityScreen = ({route, navigation}: Props) => {
                         cache: FastImage.cacheControl.immutable,
                         priority: FastImage.priority.high,
                       }
-                    : defaultProfile
+                    : getDefaultImgUser(img.userGender)
                 }
-                defaultSource={defaultProfile}
+                defaultSource={getDefaultImgUser(img.userGender)}
                 style={styles.attendPeopleImg}
               />
             </RN.View>
@@ -462,9 +462,11 @@ const CommunityScreen = ({route, navigation}: Props) => {
                         cache: FastImage.cacheControl.immutable,
                         priority: FastImage.priority.high,
                       }
-                    : defaultProfile
+                    : getDefaultImgUser(communityData?.creator.userGender)
                 }
-                defaultSource={defaultProfile}
+                defaultSource={getDefaultImgUser(
+                  communityData?.creator.userGender,
+                )}
                 style={styles.organizerImg}
               />
             </RN.View>
