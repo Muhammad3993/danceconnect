@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -30,8 +30,9 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
   useEffect(() => {
     const queryData: Amity.ChannelLiveCollection = {
       sortBy: 'lastActivity',
+      types: ['community', 'conversation'],
       membership: 'member',
-      limit: 20,
+      limit: 30,
     };
 
     const sub = ChannelRepository.getChannels(
@@ -39,12 +40,8 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
       ({data, ...metadata}) => {
         if (!metadata.loading) {
           setLoading(false);
-          const list = data.filter(el => {
-            // console.log(el?.messagePreview);
 
-            return Boolean(el?.messagePreview);
-          });
-          setChannels(list);
+          setChannels(data);
         }
         setLoadingMore(metadata.loading);
         setHasNextPage(metadata.hasNextPage ?? false);
@@ -69,6 +66,12 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
       navigation.navigate('Home');
     }
   };
+
+  const filtered = useMemo(() => {
+    return channels.filter(el => {
+      return Boolean(el?.messagePreview);
+    });
+  }, [channels]);
 
   if (error) {
     return (
@@ -100,10 +103,15 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
           <FlatList
             style={{padding: 24}}
             showsVerticalScrollIndicator={false}
-            data={channels}
-            onEndReachedThreshold={0.5}
+            data={filtered}
+            onEndReachedThreshold={0.2}
             onEndReached={() => {
-              if (!loadingMore && hasNextPage && onNextPage.current) {
+              if (
+                channels.length % 20 === 0 &&
+                !loadingMore &&
+                hasNextPage &&
+                onNextPage.current
+              ) {
                 onNextPage.current();
               }
             }}

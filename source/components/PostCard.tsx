@@ -4,7 +4,6 @@ import React, {memo, useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
-  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,9 +13,10 @@ import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import colors from '../utils/colors';
 import {SCREEN_WIDTH} from '../utils/constants';
-import {defaultProfile, getDefaultImgUser} from '../utils/images';
+import {getDefaultImgUser} from '../utils/images';
 import ScalableImage from './ScalabelImage';
 import {VideoView} from './VideoView';
+import Share, {ShareSingleOptions, Social} from 'react-native-share';
 
 interface Props {
   post: Amity.Post;
@@ -118,12 +118,17 @@ export function PostCard({
   };
 
   const sharePost = async () => {
-    // const options = {
-    //   title: 'XYZ',
-    //   message: 'HELLO',
-    //   social: Share.Social.INSTAGRAM,
-    // };
-    // const shareResponse = await Share.share(options);
+    const shareOptions: ShareSingleOptions = {
+      backgroundImage: postImageUrl ? postImageUrl + '?size=medium' : undefined,
+      backgroundVideo: videoUrl,
+      stickerImage: undefined,
+      backgroundBottomColor: '#fefefe',
+      backgroundTopColor: '#906df4',
+      social: Share.Social.INSTAGRAM as Social,
+      appId: 'com.danceconnect', // required since  Jan 2023 (see: https://developers.facebook.com/docs/instagram/sharing-to-stories/#sharing-to-stories)
+    };
+
+    Share.shareSingle(shareOptions);
     setMenuIsOpen(false);
   };
 

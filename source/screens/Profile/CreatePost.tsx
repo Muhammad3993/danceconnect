@@ -94,9 +94,9 @@ export function CreatePostScreen({navigation, route}) {
     }
   }, [viedoUrl]);
 
-  // useLayoutEffect(() => {
-  //   saveVideo();
-  // }, [saveVideo]);
+  useLayoutEffect(() => {
+    saveVideo();
+  }, [saveVideo]);
 
   const createPost = async () => {
     try {
