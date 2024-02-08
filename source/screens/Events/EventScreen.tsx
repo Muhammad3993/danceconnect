@@ -17,7 +17,7 @@ import useTickets from '../../hooks/useTickets';
 import FastImage from 'react-native-fast-image';
 import {Animated} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {defaultProfile} from '../../utils/images';
+import {defaultProfile, getDefaultImgUser} from '../../utils/images';
 
 const EventScreen = () => {
   const routeProps = useRoute();
@@ -421,9 +421,9 @@ const EventScreen = () => {
                         cache: FastImage.cacheControl.immutable,
                         priority: FastImage.priority.high,
                       }
-                    : defaultProfile
+                    : getDefaultImgUser(img.userGender)
                 }
-                defaultSource={defaultProfile}
+                defaultSource={getDefaultImgUser(img.userGender)}
                 style={styles.attendPeopleImg}
               />
 
@@ -543,9 +543,11 @@ const EventScreen = () => {
                         cache: FastImage.cacheControl.immutable,
                         priority: FastImage.priority.high,
                       }
-                    : defaultProfile
+                    : getDefaultImgUser(eventData?.creator?.userGender)
                 }
-                defaultSource={defaultProfile}
+                defaultSource={getDefaultImgUser(
+                  eventData?.creator?.userGender,
+                )}
                 style={styles.organizerImg}
               />
             </RN.View>

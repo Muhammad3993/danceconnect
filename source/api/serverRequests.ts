@@ -15,7 +15,6 @@ import {
 //   : 'http://localhost:4000/';
 
 // export const apiUrl = 'http://10.10.16.99:4000/';
-
 export const apiUrl = 'https://api.danceconnect.online/';
 // const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
 
@@ -295,7 +294,7 @@ export const deleteCommunityById = async (id: string) => {
     const response = await axios.delete(`${apiUrl}communities/${id}`);
     return response.data;
   } catch (error) {
-    return console.log('createCommunityWithMongo er', error);
+    return console.log('deleteCommunityById er', error);
   }
 };
 

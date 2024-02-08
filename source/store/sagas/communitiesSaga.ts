@@ -75,25 +75,11 @@ function* getCommunitiesRequest() {
   }
 }
 function* createCommunityRequest(action: any) {
-  const {name, description, location, categories, images, type} =
+  const {name, description, location, categories, images, type, channelId} =
     action?.payload;
   try {
     // const creatorUid = yield select(selectUserUid);
     yield put(setLoadingAction({onLoading: true}));
-
-    const newChannel = {
-      displayName: name,
-      tags: ['community'],
-      type: 'community' as Amity.ChannelType,
-      metadata: {name, image: undefined},
-      isPublic: true,
-    };
-    const {data: channel} = yield call(
-      ChannelRepository.createChannel,
-      newChannel,
-    );
-
-    // console.log('channel.data', channel.data);
 
     const data = {
       title: name,
@@ -104,10 +90,11 @@ function* createCommunityRequest(action: any) {
       categories: categories,
       images: images,
       type: type,
-      channelId: channel?.channelId,
+      channelId: channelId,
     };
-    const response = yield call(createCommunityWithMongo, data);
+    const response: Response = yield call(createCommunityWithMongo, data);
 
+    // console.log('data', data);
     if (!response) {
       yield put(setNoticeVisible({isVisible: true}));
       yield put(setNoticeMessage({errorMessage: 'Server error'}));
@@ -117,15 +104,16 @@ function* createCommunityRequest(action: any) {
       yield put(createCommunitySuccessAction());
       yield put(getCommunitiesRequestAction());
       yield put(getManagingCommunitiesRequestAction());
-      yield call(ChannelRepository.updateChannel, channel?.channelId, {
+      yield call(ChannelRepository.updateChannel, response?.channelId, {
         metadata: {
-          name,
+          name: response?.title,
           image: response?.images ? response?.images[0] : undefined,
         },
       });
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
+    console.log('data', action.payload);
     console.log('createCommunityRequest error', error);
     yield put(setLoadingAction({onLoading: false}));
     yield put(createCommunityFailAction(error));
@@ -300,7 +288,7 @@ function* changeInformation(action: any) {
 
     const response = yield call(updateCommunityById, communityUid, data);
     // const response = yield call(getCommunityById, communityUid);
-    console.log('changeInformation', response);
+    // console.log('changeInformation', response);
     if (!response) {
       yield put(setNoticeVisible({isVisible: true}));
       yield put(
@@ -334,8 +322,9 @@ function* changeInformation(action: any) {
 function* removeCommunityRequest(action: any) {
   try {
     yield put(setLoadingAction({onLoading: true}));
-    yield call(ChannelRepository.deleteChannel, action.payload.channelId);
-
+    if (action.payload?.channelId) {
+      yield call(ChannelRepository.deleteChannel, action.payload?.channelId);
+    }
     yield call(deleteCommunityById, action?.payload?.uid);
 
     yield put(removeCommunitySuccessAction());

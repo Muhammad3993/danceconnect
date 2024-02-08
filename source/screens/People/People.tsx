@@ -13,7 +13,7 @@ import FiltersBottom from '../../components/bottomFilters';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../../api/serverRequests';
 import {useNavigation} from '@react-navigation/native';
-import {defaultProfile} from '../../utils/images';
+import {defaultProfile, getDefaultImgUser} from '../../utils/images';
 import Filters from '../../components/filters';
 import SkeletonUserCard from '../../components/skeleton/userCard-Skeleton';
 type user = {
@@ -23,6 +23,7 @@ type user = {
     userCountry: string;
     id: string;
     individualStyles: string[];
+    userGender: string;
   };
 };
 const People = () => {
@@ -118,7 +119,7 @@ const People = () => {
           cache: FastImage.cacheControl.immutable,
           priority: FastImage.priority.high,
         }
-      : defaultProfile;
+      : getDefaultImgUser(item.userGender);
     return (
       <TouchableOpacity
         style={styles.userContainer}
@@ -127,7 +128,7 @@ const People = () => {
         <FastImage
           source={imgUri}
           resizeMode={FastImage.resizeMode.cover}
-          defaultSource={defaultProfile}
+          defaultSource={getDefaultImgUser(item.userGender)}
           style={styles.userImage}
         />
         <RN.View style={styles.userWrapper}>
