@@ -142,7 +142,7 @@ export function CreatePostScreen({navigation, route}) {
 
   const canCreate = image !== null || text.trim() !== '' || viedoUrl !== null;
 
-  const initalImage = postImage ? postVideo + '?size=medium' : null;
+  const initalImage = postImage ? postImage + '?size=medium' : null;
 
   const currImage = touched ? image?.uri : initalImage;
   const currVideo = touched ? viedoUrl : postVideo;
@@ -279,11 +279,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   mediaContent: {
-    width: SCREEN_WIDTH - 32,
-    minHeight: SCREEN_WIDTH - 32,
     borderRadius: 8,
     marginVertical: 12,
     overflow: 'hidden',
+    backgroundColor: colors.gray100,
   },
   footer: {
     height: 48,

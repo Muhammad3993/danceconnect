@@ -6,9 +6,11 @@ import {
 } from 'react-native-image-picker';
 import {showEditor} from 'react-native-video-trim';
 import useAppStateHook from '../../../hooks/useAppState';
+import {useDispatch} from 'react-redux';
 
 export function useUploadVideo(onUploadVideo: () => void) {
-  const {setLoading} = useAppStateHook();
+  const dispatch = useDispatch();
+  const {setLoading, setMessageNotice, setVisibleNotice} = useAppStateHook();
   const [viedoUrl, setVideourl] = useState<null | string>(null);
   // const [isUploading, setIsUploading] = useState(false);
 
@@ -47,6 +49,9 @@ export function useUploadVideo(onUploadVideo: () => void) {
         case 'onError': {
           // any error occured: invalid file, lack of permissions to write to photo/gallery, unexpected error...
           console.log('onError', event);
+          setMessageNotice(event?.message);
+          setVisibleNotice(true);
+          setLoading(false);
           break;
         }
       }
@@ -55,7 +60,7 @@ export function useUploadVideo(onUploadVideo: () => void) {
     return () => {
       subscription.remove();
     };
-  }, [onUploadVideo]);
+  }, [onUploadVideo, dispatch]);
 
   const selectVideo = useCallback(async () => {
     Keyboard.dismiss();
@@ -67,12 +72,15 @@ export function useUploadVideo(onUploadVideo: () => void) {
     setLoading(true);
 
     const videos = await launchImageLibrary(options);
+    // console.log(file.uri);
+
     if (videos.assets) {
       const file = videos.assets[0];
       const duration = file?.duration ?? 0;
       if (duration > 31) {
         await showEditor(file.uri ?? '', {
           maxDuration: 30,
+          removeAfterSavedToPhoto: true,
         });
       } else {
         setVideourl(file.uri ?? null);

@@ -295,15 +295,8 @@ function* changeInformation(action: any) {
     type: type,
   };
 
-  const newChannel = {
-    displayName: name,
-    metadata: {name, image: undefined},
-  };
-
   try {
     yield put(setLoadingAction({onLoading: true}));
-
-    yield call(ChannelRepository.updateChannel, channelId, newChannel);
 
     const response = yield call(updateCommunityById, communityUid, data);
     // const response = yield call(getCommunityById, communityUid);
@@ -331,6 +324,8 @@ function* changeInformation(action: any) {
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
+    console.log('changeInformation', error);
+
     yield put(cancelFollowedCommunityFailAction());
     yield put(setLoadingAction({onLoading: false}));
   }

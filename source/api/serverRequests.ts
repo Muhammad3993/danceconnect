@@ -15,8 +15,7 @@ import {
 //   : 'http://localhost:4000/';
 
 export const apiUrl = 'http://10.10.16.99:4000/';
-// ? 'http://10.10.16.99:4000/'
-// : 'http://localhost:4000/';
+
 // export const apiUrl = 'https://api.danceconnect.online/';
 // const apiUrl = 'https://dance-connect-528e8b559e89.herokuapp.com';
 
