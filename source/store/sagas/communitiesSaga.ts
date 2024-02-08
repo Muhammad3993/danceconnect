@@ -80,7 +80,6 @@ function* createCommunityRequest(action: any) {
   try {
     // const creatorUid = yield select(selectUserUid);
     yield put(setLoadingAction({onLoading: true}));
-    console.log(images);
 
     const newChannel = {
       displayName: name,
@@ -235,12 +234,6 @@ function* getCommunityByIdRequest(action: any) {
       yield put(setNoticeVisible({isVisible: true}));
       yield put(setNoticeMessage({errorMessage: 'Server error'}));
       navigationRef.current?.navigate('CommunitiesMain');
-
-      // dispatch(
-      //   CommonActions.navigate({
-      //     name: 'CommunitiesMain',
-      //   }),
-      // );
     }
     // else {
     //   yield put(setNoticeVisible({isVisible: true}));
@@ -263,12 +256,7 @@ function* getCommunityByIdRequest(action: any) {
         errorMessage: 'Server error',
       }),
     );
-    navigationRef.current?.navigate(
-      'CommunitiesMain',
-      // CommonActions.navigate({
-      //   name: 'CommunitiesMain',
-      // }),
-    );
+    navigationRef.current?.navigate('CommunitiesMain');
     yield put(getCommunityByIdFailAction(error));
   }
 }
@@ -300,7 +288,7 @@ function* changeInformation(action: any) {
 
   const newChannel = {
     displayName: name,
-    metadata: {name, image: images?.length > 0 ? images[0] : undefined},
+    metadata: {name, image: undefined},
   };
 
   try {

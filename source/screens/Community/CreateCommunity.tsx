@@ -13,7 +13,11 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Button} from '../../components/Button';
 import {useCommunities} from '../../hooks/useCommunitites';
 import {useProfile} from '../../hooks/useProfile';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {
+  Asset,
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import FindCity from '../../components/findCity';
 import FastImage from 'react-native-fast-image';
 import CategorySelector from '../../components/catregorySelector';
@@ -75,7 +79,7 @@ const CreateCommunity = ({navigation}) => {
     maxSymbols: 1000,
   });
   const [addedStyles, setAddedStyles] = useState<string[]>(individualStyles);
-  const [images, setImages] = useState(new Array(0).fill(''));
+  const [images, setImages] = useState<Asset[]>([]);
   const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(userCountry);
 
@@ -113,7 +117,7 @@ const CreateCommunity = ({navigation}) => {
   const onClear = () => {
     setName('');
     setDescription('');
-    setImages(new Array(0).fill(''));
+    setImages([]);
     setCountNameSymbols({
       current: 0,
       maxSymbols: 100,
@@ -126,7 +130,7 @@ const CreateCommunity = ({navigation}) => {
 
   const onChooseImage = async () => {
     setLoadImg(true);
-    let options = {
+    let options: ImageLibraryOptions = {
       mediaType: 'photo',
       quality: 1,
       includeBase64: true,
