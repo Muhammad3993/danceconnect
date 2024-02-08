@@ -88,7 +88,10 @@ function* createCommunityRequest(action: any) {
       metadata: {name, image: undefined},
       isPublic: true,
     };
-    const channel = yield call(ChannelRepository.createChannel, newChannel);
+    const {data: channel} = yield call(
+      ChannelRepository.createChannel,
+      newChannel,
+    );
 
     // console.log('channel.data', channel.data);
 
@@ -101,7 +104,7 @@ function* createCommunityRequest(action: any) {
       categories: categories,
       images: images,
       type: type,
-      channelId: channel?.data?.channelId,
+      channelId: channel?.channelId,
     };
     const response = yield call(createCommunityWithMongo, data);
 
@@ -114,6 +117,12 @@ function* createCommunityRequest(action: any) {
       yield put(createCommunitySuccessAction());
       yield put(getCommunitiesRequestAction());
       yield put(getManagingCommunitiesRequestAction());
+      yield call(ChannelRepository.updateChannel, channel?.channelId, {
+        metadata: {
+          name,
+          image: response?.images ? response?.images[0] : undefined,
+        },
+      });
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
@@ -313,6 +322,12 @@ function* changeInformation(action: any) {
       yield put(getCommunitiesRequestAction());
       // yield put(getCommunityByIdRequestAction({communityUid: communityUid}));
       // yield put(changeInformationValueAction());
+      yield call(ChannelRepository.updateChannel, channelId, {
+        metadata: {
+          name,
+          image: response?.images ? response?.images[0] : undefined,
+        },
+      });
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
