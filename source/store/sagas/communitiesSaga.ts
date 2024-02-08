@@ -281,7 +281,6 @@ function* changeInformation(action: any) {
     categories: categories,
     images: images,
     type: type,
-    channelId: channelId,
   };
 
   try {
@@ -313,6 +312,8 @@ function* changeInformation(action: any) {
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
+    console.log('changeInformation', error);
+
     yield put(cancelFollowedCommunityFailAction());
     yield put(setLoadingAction({onLoading: false}));
   }
