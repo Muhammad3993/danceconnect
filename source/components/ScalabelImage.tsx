@@ -1,76 +1,89 @@
 import React, {useState, useEffect, useCallback, memo} from 'react';
 
-import {ActivityIndicator, Image, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  ImageStyle,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from 'react-native';
 import colors from '../utils/colors';
 
 interface Props {
   uri: string;
   originalWidth: number;
   originalHeight?: number;
+  style?: ImageStyle;
 }
 
-const ScalableImage = memo(({uri, originalWidth, originalHeight}: Props) => {
-  const [scalableWidth, setScalableWidth] = useState(originalWidth);
-  const [scalableHeight, setScalableHeight] = useState(
-    originalHeight ?? originalWidth,
-  );
-  const [sizing, setSizing] = useState(true);
-
-  const adjustSize = useCallback(
-    (sourceWidth: number, sourceHeight: number) => {
-      let ratio = 1;
-
-      if (originalWidth && originalHeight) {
-        ratio = Math.min(
-          originalWidth / sourceWidth,
-          originalHeight / sourceHeight,
-        );
-      } else if (originalWidth) {
-        ratio = originalWidth / sourceWidth;
-      } else if (originalHeight) {
-        ratio = originalHeight / sourceHeight;
-      }
-
-      const computedWidth = sourceWidth * ratio;
-      const computedHeight = sourceHeight * ratio;
-
-      setScalableWidth(computedWidth);
-      setScalableHeight(computedHeight);
-      setSizing(false);
-    },
-    [originalHeight, originalWidth],
-  );
-
-  useEffect(() => {
-    Image.getSize(
-      uri,
-      (width, height) => adjustSize(width, height),
-      console.log,
+const ScalableImage = memo(
+  ({uri, originalWidth, originalHeight, style}: Props) => {
+    const [scalableWidth, setScalableWidth] = useState(originalWidth);
+    const [scalableHeight, setScalableHeight] = useState(
+      originalHeight ?? originalWidth,
     );
-  }, [adjustSize, uri]);
+    const [sizing, setSizing] = useState(true);
 
-  if (sizing) {
+    const adjustSize = useCallback(
+      (sourceWidth: number, sourceHeight: number) => {
+        let ratio = 1;
+
+        if (originalWidth && originalHeight) {
+          ratio = Math.min(
+            originalWidth / sourceWidth,
+            originalHeight / sourceHeight,
+          );
+        } else if (originalWidth) {
+          ratio = originalWidth / sourceWidth;
+        } else if (originalHeight) {
+          ratio = originalHeight / sourceHeight;
+        }
+
+        const computedWidth = sourceWidth * ratio;
+        const computedHeight = sourceHeight * ratio;
+
+        setScalableWidth(computedWidth);
+        setScalableHeight(computedHeight);
+        setSizing(false);
+      },
+      [originalHeight, originalWidth],
+    );
+
+    useEffect(() => {
+      Image.getSize(
+        uri,
+        (width, height) => adjustSize(width, height),
+        console.log,
+      );
+    }, [adjustSize, uri]);
+
+    if (sizing) {
+      return (
+        <View
+          style={[
+            styles.mediaContainer,
+            {width: scalableWidth, height: scalableHeight},
+          ]}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
+
     return (
-      <View
+      <Image
+        source={{uri}}
         style={[
-          styles.mediaContainer,
-          {width: scalableWidth, height: scalableHeight},
-        ]}>
-        <ActivityIndicator />
-      </View>
+          {
+            width: scalableWidth,
+            height: scalableHeight,
+          },
+          style,
+        ]}
+      />
     );
-  }
-
-  return (
-    <Image
-      source={{uri}}
-      style={{
-        width: scalableWidth,
-        height: scalableHeight,
-      }}
-    />
-  );
-});
+  },
+);
 
 const styles = StyleSheet.create({
   mediaContainer: {

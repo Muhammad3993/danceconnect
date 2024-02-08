@@ -118,11 +118,11 @@ export function PostCard({
   };
 
   const sharePost = async () => {
-    const options = {
-      title: 'XYZ',
-      message: 'HELLO',
-      social: Share.Social.INSTAGRAM,
-    };
+    // const options = {
+    //   title: 'XYZ',
+    //   message: 'HELLO',
+    //   social: Share.Social.INSTAGRAM,
+    // };
     // const shareResponse = await Share.share(options);
     setMenuIsOpen(false);
   };
@@ -187,6 +187,7 @@ export function PostCard({
                   <ScalableImage
                     originalWidth={IMAGE_WIDTH}
                     uri={postImageUrl + '?size=medium'}
+                    style={{marginVertical: 8, borderRadius: 8}}
                   />
                 )}
                 {videoUrl && (

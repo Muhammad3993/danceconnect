@@ -68,6 +68,7 @@ export function useUploadVideo(onUploadVideo: () => void) {
       mediaType: 'video',
       selectionLimit: 1,
       videoQuality: 'medium',
+      formatAsMp4: true,
     };
     setLoading(true);
 
