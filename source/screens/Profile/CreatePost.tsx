@@ -30,12 +30,14 @@ import {SCREEN_WIDTH} from '../../utils/constants';
 import {useUploadImage} from './hooks/useUploadImage';
 import {useUploadVideo} from './hooks/useUploadVideo';
 import {VideoView} from '../../components/VideoView';
+import useAppStateHook from '../../hooks/useAppState';
 
 export function CreatePostScreen({navigation, route}) {
   const {postId, postText, postImage, postVideo} = route.params ?? {};
   const dispatch = useDispatch();
 
   const {currentUser} = useRegistration();
+  const {setMessageNotice, setVisibleNotice} = useAppStateHook();
 
   const isCreating = postId === undefined;
 
@@ -64,26 +66,31 @@ export function CreatePostScreen({navigation, route}) {
   const [creatingPost, setCreatingPost] = useState(false);
 
   const saveVideo = useCallback(async () => {
-    if (viedoUrl !== null) {
-      const formData = new FormData();
+    try {
+      if (viedoUrl !== null) {
+        const formData = new FormData();
 
-      formData.append('files', {
-        type: viedoUrl.includes('MOV') ? "'video/mov'" : 'video/mp4',
-        name: viedoUrl,
-        uri:
-          Platform.OS === 'android'
-            ? viedoUrl
-            : viedoUrl.replace('file://', ''),
-      });
-      const {data} = await FileRepository.uploadVideo(
-        formData,
-        ContentFeedType.POST,
-        percent => {
-          setVideSavePercent(percent);
-        },
-      );
+        formData.append('files', {
+          type: viedoUrl.includes('MOV') ? 'video/mov' : 'video/mp4',
+          name: viedoUrl,
+          uri:
+            Platform.OS === 'android'
+              ? viedoUrl
+              : viedoUrl.replace('file://', ''),
+        });
+        const {data} = await FileRepository.uploadVideo(
+          formData,
+          ContentFeedType.POST,
+          percent => {
+            setVideSavePercent(percent);
+          },
+        );
 
-      setVideFileId(data[0].fileId);
+        setVideFileId(data[0].fileId);
+      }
+    } catch (err) {
+      setMessageNotice(err?.message);
+      setVisibleNotice(true);
     }
   }, [viedoUrl]);
 

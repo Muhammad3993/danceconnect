@@ -12,7 +12,6 @@ export function useUploadVideo(onUploadVideo: () => void) {
   const dispatch = useDispatch();
   const {setLoading, setMessageNotice, setVisibleNotice} = useAppStateHook();
   const [viedoUrl, setVideourl] = useState<null | string>(null);
-  // const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.VideoTrim);
@@ -52,6 +51,7 @@ export function useUploadVideo(onUploadVideo: () => void) {
           setMessageNotice(event?.message);
           setVisibleNotice(true);
           setLoading(false);
+          setVideourl(null);
           break;
         }
       }
@@ -72,11 +72,10 @@ export function useUploadVideo(onUploadVideo: () => void) {
     setLoading(true);
 
     const videos = await launchImageLibrary(options);
-    // console.log(file.uri);
 
     if (videos.assets) {
       const file = videos.assets[0];
-      const duration = file?.duration ?? 0;
+
       if (duration > 31) {
         await showEditor(file.uri ?? '', {
           maxDuration: 30,
