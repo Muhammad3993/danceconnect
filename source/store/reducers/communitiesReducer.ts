@@ -29,6 +29,7 @@ export type communititesAction = {
     user_id?: string;
     communities_by_user_id?: string[];
     type: string;
+    channelId: string;
   };
 };
 
@@ -70,6 +71,7 @@ export default (
         categories: action?.payload?.categories,
         images: action?.payload?.images,
         type: action?.payload?.type,
+        channelId: action?.payload?.channelId,
         errors: null,
       };
     case COMMUNITIES.CREATE_SUCCESS:
@@ -159,6 +161,7 @@ export default (
         followers: action?.payload?.followers,
         images: action?.payload?.images,
         type: action?.payload?.type,
+        channelId: action?.payload?.channelId,
         saveChanges: false,
       };
     case COMMUNITIES.CHANGE_INFORMATION_COMMUNITY_SUCCESS:

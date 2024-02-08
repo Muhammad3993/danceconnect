@@ -113,7 +113,6 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
         },
       ],
     };
-    // console.log('data', channel);
     sendMessageAction(dataChannel);
     return message;
   };

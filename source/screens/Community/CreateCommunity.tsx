@@ -22,6 +22,7 @@ import FindCity from '../../components/findCity';
 import FastImage from 'react-native-fast-image';
 import CategorySelector from '../../components/catregorySelector';
 import {Input} from '../../components/input';
+import {ChannelRepository} from '@amityco/ts-sdk';
 
 const CreateCommunity = ({navigation}) => {
   const {t} = useTranslation();
@@ -79,7 +80,7 @@ const CreateCommunity = ({navigation}) => {
     maxSymbols: 1000,
   });
   const [addedStyles, setAddedStyles] = useState<string[]>(individualStyles);
-  const [images, setImages] = useState<Asset[]>([]);
+  const [images, setImages] = useState<string[]>([]);
   const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(userCountry);
 
@@ -180,42 +181,58 @@ const CreateCommunity = ({navigation}) => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setCommunityType(type);
   };
-  const onPressNextBtn = () => {
-    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    switch (currentScreen) {
-      case 0:
-        setCurrentScreen(v => v + 1);
-        break;
-      case 1:
-        const location =
-          selectedLocation?.structured_formatting?.main_text?.length > 0
-            ? selectedLocation?.structured_formatting?.main_text +
-              ', ' +
-              (selectedLocation?.structured_formatting?.main_text?.length > 0
-                ? selectedLocation?.terms[1].value
-                : '')
-            : selectedLocation;
-        if (name?.length <= 0) {
-          setIsErrorName(true);
-        } else if (description?.length <= 0) {
-          setIsDescriptionError(true);
-        } else if (!addedStyles.length) {
-          setCategoriesError(true);
-        } else {
-          create({
-            name: name,
-            description: description,
-            // country: country,
-            location: location,
-            categories: addedStyles,
-            images: images,
-            type: communityType.type,
-          });
-        }
-        break;
-      default:
-        break;
-    }
+  const onPressNextBtn = async () => {
+    const newChannel = {
+      displayName: name,
+      tags: ['community'],
+      type: 'community' as Amity.ChannelType,
+      metadata: {name, image: undefined},
+      isPublic: true,
+    };
+    try {
+      RN.LayoutAnimation.configureNext(
+        RN.LayoutAnimation.Presets.easeInEaseOut,
+      );
+      switch (currentScreen) {
+        case 0:
+          setCurrentScreen(v => v + 1);
+          break;
+        case 1:
+          const {data: channel} = await ChannelRepository.createChannel(
+            newChannel,
+          );
+          // console.log('chan', channel);
+          const location =
+            selectedLocation?.structured_formatting?.main_text?.length > 0
+              ? selectedLocation?.structured_formatting?.main_text +
+                ', ' +
+                (selectedLocation?.structured_formatting?.main_text?.length > 0
+                  ? selectedLocation?.terms[1].value
+                  : '')
+              : selectedLocation;
+          if (name?.length <= 0) {
+            setIsErrorName(true);
+          } else if (description?.length <= 0) {
+            setIsDescriptionError(true);
+          } else if (!addedStyles.length) {
+            setCategoriesError(true);
+          } else {
+            create({
+              name: name,
+              description: description,
+              // country: country,
+              location: location,
+              categories: addedStyles,
+              images: images,
+              type: communityType.type,
+              channelId: channel?.channelId,
+            });
+          }
+          break;
+        default:
+          break;
+      }
+    } catch (error) {}
   };
 
   const renderTabs = () => {

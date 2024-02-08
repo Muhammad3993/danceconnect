@@ -74,10 +74,10 @@ const ProfileScreen = ({navigation}) => {
 
   useEffect(() => {
     if (isFocused) {
-      getEventsByUserId(currentUser.id);
-      getCommunitiesByUserId(currentUser.id);
+      getEventsByUserId(currentUser?.id);
+      getCommunitiesByUserId(currentUser?.id);
     }
-  }, [isFocused, currentUser.id]);
+  }, [isFocused, currentUser?.id]);
 
   function createImagePost() {
     navigation.push('CreatePost');
@@ -137,7 +137,7 @@ const ProfileScreen = ({navigation}) => {
 
       <Portal>
         <Modalize
-          modalHeight={SCREEN_HEIGHT * 0.75}
+          modalHeight={SCREEN_HEIGHT * 0.80}
           handlePosition="inside"
           handleStyle={{height: 3, width: 38}}
           ref={menuRef}>
