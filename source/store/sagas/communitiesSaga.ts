@@ -305,7 +305,7 @@ function* changeInformation(action: any) {
       // yield put(changeInformationValueAction());
       yield call(ChannelRepository.updateChannel, channelId, {
         metadata: {
-          name,
+          title: name,
           image: response?.images ? response?.images[0] : undefined,
         },
       });

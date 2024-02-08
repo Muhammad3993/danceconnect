@@ -164,6 +164,7 @@ function* getEventForCommunity(action: any) {
                 // const maxPriceTickets = Math.max(...prices)
                 const eventData = {
                   ...event,
+                  attendedPeople: event.userImages,
                   minPriceTickets:
                     minPriceTickets === Infinity ? null : minPriceTickets,
                 };
