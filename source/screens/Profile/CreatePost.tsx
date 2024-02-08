@@ -133,6 +133,7 @@ export function CreatePostScreen({navigation, route}) {
         targetType: 'user',
         targetId: currentUser.id,
       };
+      console.log(newPost);
 
       if (isCreating) {
         await PostRepository.createPost(newPost);
@@ -143,6 +144,7 @@ export function CreatePostScreen({navigation, route}) {
     } catch (err) {
       dispatch(setNoticeMessage({errorMessage: err?.message}));
       dispatch(setNoticeVisible({isVisible: true}));
+      setCreatingPost(false);
       console.log(err);
     }
   };
@@ -198,6 +200,7 @@ export function CreatePostScreen({navigation, route}) {
           </View>
 
           <ScrollView
+            contentContainerStyle={{paddingBottom: 70}}
             keyboardDismissMode="on-drag"
             showsVerticalScrollIndicator={false}
             style={styles.scroll}>
@@ -221,6 +224,7 @@ export function CreatePostScreen({navigation, route}) {
 
             {mediaType === 'video' && currVideo && (
               <VideoView
+                isCreating
                 videoUrl={currVideo}
                 width={SCREEN_WIDTH - 32}
                 uploadPercent={videSavePercent}
@@ -281,7 +285,7 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-    paddingBottom: 50,
+
     paddingTop: 20,
     paddingHorizontal: 16,
   },
