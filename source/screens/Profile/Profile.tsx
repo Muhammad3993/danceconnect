@@ -89,12 +89,7 @@ const ProfileScreen = ({navigation}) => {
         loadingMore={loadingMore}
         isCurrentUser
         onEndReached={() => {
-          if (
-            posts.length % 12 === 0 &&
-            !loadingMore &&
-            hasNextPage &&
-            onNextPage.current
-          ) {
+          if (!loadingMore && hasNextPage && onNextPage.current) {
             setLoadingMore(true);
             onNextPage.current();
           }
@@ -137,7 +132,7 @@ const ProfileScreen = ({navigation}) => {
 
       <Portal>
         <Modalize
-          modalHeight={SCREEN_HEIGHT * 0.80}
+          modalHeight={SCREEN_HEIGHT * 0.8}
           handlePosition="inside"
           handleStyle={{height: 3, width: 38}}
           ref={menuRef}>
