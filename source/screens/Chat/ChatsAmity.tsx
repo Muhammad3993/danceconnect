@@ -40,7 +40,7 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
         if (!metadata.loading) {
           setLoading(false);
           const list = data.filter(el => {
-            console.log(el?.messagePreview);
+            // console.log(el?.messagePreview);
 
             return Boolean(el?.messagePreview);
           });

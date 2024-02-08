@@ -98,6 +98,7 @@ export default (
       return {
         ...state,
         communityUid: action.payload?.following?.communityUid,
+        channelId: action.payload?.channelId,
       };
     case COMMUNITIES.START_FOLLOWING_SUCCESS:
       return {

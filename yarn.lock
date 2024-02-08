@@ -7824,7 +7824,7 @@ react-native-gesture-handler@^2.13.0:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
-react-native-gifted-chat@^2.4.0:
+react-native-gifted-chat@2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/react-native-gifted-chat/-/react-native-gifted-chat-2.4.0.tgz#cb98ab99bcb6c02f8a237f5febfe7543d65a4b26"
   integrity sha512-dTpSMH8T4s16dM75oLXiDawpXoVSnApJZY9TWf0jYSRShw++0knnp38hO857zOrt6XhqJKm0JntT0pywYI3rYg==

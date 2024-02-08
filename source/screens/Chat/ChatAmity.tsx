@@ -31,6 +31,7 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
   const {sendMessageAction} = useAppStateHook();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Amity.Channel>();
+  const [members, setMembers] = useState<string[]>([]);
   const [loadingMore, setLoadingMore] = useState(true);
   const [hasNextPage, setHasNextPage] = useState(false);
   const onNextPage = useRef<() => void>();
@@ -44,7 +45,22 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
         channel?.defaultSubChannelId,
         channelData => {
           if (!channelData.loading) {
+            // console.log('channelData', channelData);
             setData(channelData?.data);
+            if (channelData.data?.type === 'community') {
+              ChannelRepository.Membership.getMembers(
+                {channelId: channel?.defaultSubChannelId},
+                memberships => {
+                  const users = memberships.data.map(user => {
+                    return {
+                      ...user,
+                      id: user.userId,
+                    };
+                  });
+                  setMembers(users);
+                },
+              );
+            }
           }
         },
       );
@@ -104,7 +120,8 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
     const usersList = data?.metadata;
     const users = usersList?.users ?? [];
     const dataChannel = {
-      users: users,
+      users: data?.type === 'community' ? members : users,
+      communityTitle: data?.type === 'community' ? data.displayName : '',
       messages: [
         {
           ...textMessage,

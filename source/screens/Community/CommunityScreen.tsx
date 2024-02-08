@@ -170,7 +170,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
           {communityData?.categories?.map((item: string, idx: number) => {
             return (
               <RN.View style={styles.tagItem} key={idx}>
-                <RN.Text style={{color: colors.white}}>{item}</RN.Text>
+                <RN.Text style={{color: colors.purple}}>{item}</RN.Text>
               </RN.View>
             );
           })}
@@ -418,7 +418,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
               <RN.View
                 style={{
                   backgroundColor: colors.transparentPurple,
-                  padding: 10,
+                  padding: 12,
                   borderRadius: 100,
                 }}>
                 <RN.Image
@@ -634,7 +634,7 @@ const styles = RN.StyleSheet.create({
     lineHeight: 18.9,
     fontWeight: '400',
     color: '#616161',
-    paddingLeft: 8,
+    paddingLeft: 12,
   },
   loadingContainer: {
     position: 'absolute',
@@ -672,7 +672,7 @@ const styles = RN.StyleSheet.create({
   organizerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: 22,
+    marginHorizontal: 20,
     paddingVertical: 14,
     paddingBottom: 20,
   },
@@ -684,10 +684,10 @@ const styles = RN.StyleSheet.create({
     fontWeight: '700',
   },
   organizerImg: {
-    height: 38,
-    width: 38,
+    height: 44,
+    width: 44,
     borderRadius: 100,
-    marginRight: 16,
+    marginRight: 12,
   },
   organizer: {
     color: colors.darkGray,
@@ -788,9 +788,10 @@ const styles = RN.StyleSheet.create({
   titleDesc: {
     color: '#424242',
     fontSize: 16,
-    lineHeight: 20,
+    lineHeight: 22.4,
     letterSpacing: 0.2,
     fontWeight: '500',
+    paddingTop: 8,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -798,7 +799,9 @@ const styles = RN.StyleSheet.create({
     zIndex: 1,
   },
   tagItem: {
-    backgroundColor: colors.purple,
+    backgroundColor: colors.white,
+    borderColor: colors.purple,
+    borderWidth: 1,
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 4,

@@ -95,7 +95,7 @@ export const createCommunityFailAction = ({errors}: communityParams) => ({
   payload: errors,
 });
 
-export const startFollowedCommunityRequestAction = ({
+export const цstartFollowedCommunityRequestAction = ({
   communityUid,
   channelId,
 }: followingParams) => ({

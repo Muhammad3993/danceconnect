@@ -198,9 +198,6 @@ const CreateCommunity = ({navigation}) => {
           setCurrentScreen(v => v + 1);
           break;
         case 1:
-          const {data: channel} = await ChannelRepository.createChannel(
-            newChannel,
-          );
           // console.log('chan', channel);
           const location =
             selectedLocation?.structured_formatting?.main_text?.length > 0
@@ -217,6 +214,9 @@ const CreateCommunity = ({navigation}) => {
           } else if (!addedStyles.length) {
             setCategoriesError(true);
           } else {
+            const {data: channel} = await ChannelRepository.createChannel(
+              newChannel,
+            );
             create({
               name: name,
               description: description,

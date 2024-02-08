@@ -185,7 +185,7 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
   }, [loadSubscribe]);
   const onPressJoin = (communityId: string, idx: number) => {
     setCrntIndex(idx);
-    startFollowed(communityId);
+    startFollowed(communityId, data.channelId);
     setLoadSubscribe(true);
   };
   // if (isLoading) {
