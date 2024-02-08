@@ -132,7 +132,7 @@ const ProfileScreen = ({navigation}) => {
 
       <Portal>
         <Modalize
-          modalHeight={SCREEN_HEIGHT * 0.8}
+          modalHeight={SCREEN_HEIGHT * 0.80}
           handlePosition="inside"
           handleStyle={{height: 3, width: 38}}
           ref={menuRef}>
