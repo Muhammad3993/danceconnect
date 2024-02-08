@@ -17,6 +17,7 @@ interface Props {
   videoPoster?: string;
   videoUrl?: string;
   uploadPercent?: null | number;
+  isCreating?: boolean;
 }
 
 export const VideoView = memo(
@@ -27,6 +28,7 @@ export const VideoView = memo(
     videoPoster,
     videoUrl,
     uploadPercent,
+    isCreating = false,
   }: Props) => {
     const [localPause, setLocalPause] = useState(false);
     const [isMute, setIsMute] = useState(true);
@@ -44,7 +46,6 @@ export const VideoView = memo(
 
         if (width && height) {
           ratio = Math.min(width / sourceWidth, height / sourceHeight);
-          console.log(ratio);
         } else if (width) {
           ratio = width / sourceWidth;
         } else if (height) {
@@ -53,6 +54,8 @@ export const VideoView = memo(
 
         const computedWidth = sourceWidth * ratio;
         const computedHeight = sourceHeight * ratio;
+
+        console.log({computedWidth, computedHeight});
 
         setScalableWidth(computedWidth);
         setScalableHeight(computedHeight);
@@ -87,7 +90,11 @@ export const VideoView = memo(
           source={{uri: videoUrl}}
           ignoreSilentSwitch="ignore"
           onLoad={({naturalSize}) => {
-            adjustSize(naturalSize.width, naturalSize.height);
+            if (isCreating && naturalSize.orientation === 'portrait') {
+              adjustSize(naturalSize.height, naturalSize.width);
+            } else {
+              adjustSize(naturalSize.width, naturalSize.height);
+            }
           }}
         />
 

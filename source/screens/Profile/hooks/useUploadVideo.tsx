@@ -94,8 +94,6 @@ export function useUploadVideo(onUploadVideo: () => void) {
 
   return {
     viedoUrl,
-    // isUploading,
-    // isProccessing,
     selectVideo,
   };
 }

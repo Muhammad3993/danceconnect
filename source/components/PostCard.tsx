@@ -4,6 +4,7 @@ import React, {memo, useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -116,6 +117,16 @@ export function PostCard({
     setMenuIsOpen(false);
   };
 
+  const sharePost = async () => {
+    const options = {
+      title: 'XYZ',
+      message: 'HELLO',
+      social: Share.Social.INSTAGRAM,
+    };
+    // const shareResponse = await Share.share(options);
+    setMenuIsOpen(false);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -149,7 +160,11 @@ export function PostCard({
                   onPress={editePost}>
                   <Text style={styles.menuItem}>Edit</Text>
                 </TouchableOpacity>
-
+                <TouchableOpacity
+                  style={{borderBottomWidth: 0.5}}
+                  onPress={sharePost}>
+                  <Text style={styles.menuItem}>Share Post</Text>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={deletePost}>
                   <Text style={[styles.menuItem, {color: colors.redError}]}>
                     Delete
