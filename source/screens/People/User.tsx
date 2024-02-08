@@ -87,12 +87,7 @@ const User = ({route, navigation}) => {
           loadingMore={loadingMore}
           isCurrentUser={false}
           onEndReached={() => {
-            if (
-              posts.length % 12 === 0 &&
-              !loadingMore &&
-              hasNextPage &&
-              onNextPage.current
-            ) {
+            if (!loadingMore && hasNextPage && onNextPage.current) {
               setLoadingMore(true);
               onNextPage.current();
             }

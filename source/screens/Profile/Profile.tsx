@@ -89,12 +89,7 @@ const ProfileScreen = ({navigation}) => {
         loadingMore={loadingMore}
         isCurrentUser
         onEndReached={() => {
-          if (
-            posts.length % 12 === 0 &&
-            !loadingMore &&
-            hasNextPage &&
-            onNextPage.current
-          ) {
+          if (!loadingMore && hasNextPage && onNextPage.current) {
             setLoadingMore(true);
             onNextPage.current();
           }
