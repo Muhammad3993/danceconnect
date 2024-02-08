@@ -191,12 +191,10 @@ export const changeInformationValueAction = () => ({
 export const removeCommunityRequestAction = ({
   communityUid,
   screen,
+  channelId,
 }: communityParams) => ({
   type: COMMUNITIES.REMOVE_COMMUNITY_REQUEST,
-  payload: {
-    uid: communityUid,
-    screen: screen,
-  },
+  payload: {uid: communityUid, screen, channelId},
 });
 export const removeCommunitySuccessAction = () => ({
   type: COMMUNITIES.REMOVE_COMMUNITY_SUCCESS,

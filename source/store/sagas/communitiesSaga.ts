@@ -80,17 +80,18 @@ function* createCommunityRequest(action: any) {
   try {
     // const creatorUid = yield select(selectUserUid);
     yield put(setLoadingAction({onLoading: true}));
+    console.log(images);
 
     const newChannel = {
       displayName: name,
       tags: ['community'],
       type: 'community' as Amity.ChannelType,
-      metadata: {name, image: images?.length > 0 ? images[0] : undefined},
+      metadata: {name, image: undefined},
       isPublic: true,
     };
     const channel = yield call(ChannelRepository.createChannel, newChannel);
 
-    console.log('channel.data', channel.data);
+    // console.log('channel.data', channel.data);
 
     const data = {
       title: name,
@@ -335,9 +336,9 @@ function* changeInformation(action: any) {
 function* removeCommunityRequest(action: any) {
   try {
     yield put(setLoadingAction({onLoading: true}));
-    yield call(deleteCommunityById, action?.payload?.uid);
-
     yield call(ChannelRepository.deleteChannel, action.payload.channelId);
+
+    yield call(deleteCommunityById, action?.payload?.uid);
 
     yield put(removeCommunitySuccessAction());
     yield put(getCommunitiesRequestAction());
@@ -351,6 +352,9 @@ function* removeCommunityRequest(action: any) {
     }
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
+    console.log('removeCommunityRequest==');
+    console.log(error);
+
     yield put(setLoadingAction({onLoading: false}));
     yield put(removeCommunityFailAction());
   }

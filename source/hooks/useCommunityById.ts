@@ -50,7 +50,13 @@ export const useCommunityById = (id: string) => {
   };
 
   const remove = (screen: string) => {
-    dispatch(removeCommunityRequestAction({communityUid: id, screen: screen}));
+    dispatch(
+      removeCommunityRequestAction({
+        communityUid: id,
+        screen: screen,
+        channelId: communityData.channelId,
+      }),
+    );
   };
 
   return {

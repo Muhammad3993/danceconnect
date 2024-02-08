@@ -70,9 +70,9 @@ export function useUploadVideo(onUploadVideo: () => void) {
     if (videos.assets) {
       const file = videos.assets[0];
       const duration = file?.duration ?? 0;
-      if (duration > 11) {
+      if (duration > 31) {
         await showEditor(file.uri ?? '', {
-          maxDuration: 10,
+          maxDuration: 30,
         });
       } else {
         setVideourl(file.uri ?? null);
