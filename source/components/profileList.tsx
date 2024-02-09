@@ -101,7 +101,7 @@ export function ProfileList({
           return (
             <View style={{paddingHorizontal: 16}}>
               <CommunityCard
-                containerStyle={{marginTop: 8, marginBottom: 0}}
+                containerStyle={{marginTop: 8, marginBottom: 12}}
                 item={item}
                 isProfileScreen
               />
@@ -111,7 +111,7 @@ export function ProfileList({
           return (
             <View style={{paddingHorizontal: 16}}>
               <EventCard
-                containerStyle={{marginTop: 8, marginBottom: 0}}
+                containerStyle={{marginTop: 8, marginBottom: 12}}
                 item={item}
               />
             </View>
@@ -152,9 +152,9 @@ export function ProfileList({
   }, [t, currentTab]);
 
   useEffect(() => {
-    getEventsByUserId(user.id);
-    getCommunitiesByUserId(user.id);
-  }, [user.id]);
+    getEventsByUserId(user?.id);
+    getCommunitiesByUserId(user?.id);
+  }, [user?.id]);
 
   const onViewableItemsChanged = useCallback(
     ({viewableItems}: {viewableItems: ViewToken[]; changed: ViewToken[]}) => {
@@ -219,15 +219,15 @@ export function ProfileList({
           <View style={styles.profile}>
             <FastImage
               source={
-                user.userImage
+                user?.userImage
                   ? {
                       uri: apiUrl + user?.userImage,
                       cache: FastImage.cacheControl.immutable,
                       priority: FastImage.priority.high,
                     }
-                  : getDefaultImgUser(user.userGender)
+                  : getDefaultImgUser(user?.userGender)
               }
-              defaultSource={getDefaultImgUser(user.userGender)}
+              defaultSource={getDefaultImgUser(user?.userGender)}
               style={styles.image}
             />
             <View style={styles.profileData}>

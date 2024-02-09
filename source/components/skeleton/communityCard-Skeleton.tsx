@@ -67,7 +67,6 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'space-between',
   },
   container: {
-    marginHorizontal: 12,
     borderRadius: 8,
     borderWidth: 1,
     padding: 12,
@@ -75,12 +74,12 @@ const styles = RN.StyleSheet.create({
   },
   title: {
     height: 20,
-    width: SCREEN_WIDTH / 1.6,
+    width: SCREEN_WIDTH / 2,
     borderRadius: 8,
   },
   desc: {
     height: 50,
-    width: SCREEN_WIDTH / 1.6,
+    width: SCREEN_WIDTH / 2,
     borderRadius: 8,
   },
   img: {

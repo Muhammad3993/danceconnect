@@ -185,7 +185,10 @@ const Board = () => {
         </RN.ScrollView>
         <LocationSelector
           isProfileScreen={false}
-          setSelectedLocation={setSelectedLocation}
+          setSelectedLocation={(value) => {
+            onChoosedCity(selectedLocation);
+            setSelectedLocation(value);
+          }}
         />
         <RN.Text style={[styles.placeholderTitle, {marginTop: -4}]}>
           {`${t('role')}, ${t('few')}`}

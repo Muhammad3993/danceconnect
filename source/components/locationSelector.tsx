@@ -23,11 +23,11 @@ const LocationSelector = ({
   isProfileScreen = false,
 }: Props) => {
   const modalizeRef = useRef();
-  const {countries, onChoosedCity} = useAppStateHook();
+  const {countries, onChoosedCity, currentCity} = useAppStateHook();
   const {onChangeUserCountry, userCountry} = useProfile();
   const {currentUser} = useRegistration();
   const handleStyle = {height: 3, width: 38};
-  const [currentCity, setCurrentCity] = useState<string | undefined>('');
+  const [currentCityValue, setCurrentCity] = useState<string | undefined>('');
   const [searchValue, setSearchValue] = useState<string | undefined>();
   const [searchCities, setSearchCities] = useState([]);
   const [searchCountryValue, setSearchCountryValue] = useState('');
@@ -64,8 +64,8 @@ const LocationSelector = ({
     setOpenCountry(v => !v);
   };
   useEffect(() => {
-    if (currentCity) {
-      setSearchValue(currentCity.split(', ')[0]);
+    if (currentCityValue) {
+      setSearchValue(currentCityValue.split(', ')[0]);
     }
     const isCountry = countries.find((c: {country: string}) =>
       c.country?.includes(userCountry?.split(', ')[0]),
@@ -130,14 +130,15 @@ const LocationSelector = ({
     setSearchValue(item?.structured_formatting?.main_text);
   };
   const onPressConfirm = () => {
-    if (currentCity) {
+    if (currentCityValue) {
       modalizeRef?.current?.close();
+      onChoosedCity(currentCityValue);
     } else {
       return;
     }
     if (isProfileScreen) {
-      onChoosedCity(currentCity);
-      onChangeUserCountry(currentCity);
+      onChoosedCity(currentCityValue);
+      onChangeUserCountry(currentCityValue);
     }
   };
 
@@ -292,8 +293,8 @@ const LocationSelector = ({
                     style={styles.selectLocationBtn}
                     onPress={() => setOpenCities(v => !v)}>
                     <RN.Text style={styles.locationText}>
-                      {currentCity
-                        ? currentCity?.split(', ')[1]
+                      {currentCityValue
+                        ? currentCityValue?.split(', ')[1]
                         : currentCountry?.cities[0].name}
                     </RN.Text>
                     <RN.View style={styles.justifyCenter}>

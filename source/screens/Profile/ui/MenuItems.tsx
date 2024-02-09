@@ -20,6 +20,7 @@ import {deleteUser} from '../../../api/serverRequests';
 import {removeAccount} from '../../../api/authSocial';
 import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../../store/actions/authorizationActions';
+import { choosedCityAction } from '../../../store/actions/appStateActions';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -75,6 +76,7 @@ export function MenuItems({navigation, close}: Props) {
     deleteUser(userUid);
     removeAccount();
     dispatch(logoutSuccess());
+    dispatch(choosedCityAction({currentCity: ''}));
   };
 
   const handleLogout = () => {

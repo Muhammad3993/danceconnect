@@ -3,11 +3,12 @@ import PushNotification from 'react-native-push-notification';
 import messaging from '@react-native-firebase/messaging';
 import {useNavigation} from '@react-navigation/native';
 import {navigationRef} from '../navigation/types';
-import { Platform } from 'react-native';
+import {Platform} from 'react-native';
 
 const PushController = () => {
   const navigation = useNavigation();
   const [channel, setChannel] = useState<any>();
+  const [eventUid, setEventUid] = useState<string>('');
   useEffect(() => {
     PushNotification.configure({
       onRegister: function (token) {
@@ -15,14 +16,18 @@ const PushController = () => {
       },
 
       onNotification: notification => {
-        console.log('NOTIFICATION:', notification, channel);
+        // console.log('NOTIFICATION:', notification, channel);
 
         // process the notification here
-        if (channel && Platform.OS === 'ios') {
+        if (!!channel && Platform.OS === 'ios') {
           navigation.push('Chat', {channel: channel});
         }
         if (notification.userInteraction && Platform.OS === 'android') {
           navigation.push('Chat', {channel: channel});
+        }
+
+        if (eventUid && !channel) {
+          navigation.push('EventScreen', {id: eventUid});
         }
       },
       // iOS only
@@ -34,15 +39,19 @@ const PushController = () => {
       popInitialNotification: true,
       requestPermissions: true,
     });
-  }, [channel, navigation]);
+  }, [channel, eventUid, navigation]);
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
       // console.log(remoteMessage);
-
-      setChannel({
-        defaultSubChannelId: remoteMessage.data.channelId,
-      });
+      if (remoteMessage.data.eventUid) {
+        setEventUid(remoteMessage.data.eventUid);
+      }
+      if (remoteMessage.data.channelId) {
+        setChannel({
+          defaultSubChannelId: remoteMessage.data.channelId,
+        });
+      }
 
       if (navigationRef?.current?.getCurrentRoute()?.name !== 'Chat') {
         PushNotification.localNotification({
@@ -68,8 +77,11 @@ const PushController = () => {
           navigation.push('Chat', {
             channel: data,
           });
-          PushNotification.removeAllDeliveredNotifications();
         }
+        if (message.data.eventUid) {
+          navigation.push('EventScreen', {id: message.data.eventUid});
+        }
+        PushNotification.removeAllDeliveredNotifications();
         return;
       },
     );

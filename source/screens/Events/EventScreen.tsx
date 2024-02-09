@@ -899,9 +899,9 @@ const styles = RN.StyleSheet.create({
   typeEventContainer: {
     backgroundColor: colors.purple,
     paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingHorizontal: isAndroid ? 14 : 10,
     borderRadius: 4,
-    marginRight: 4,
+    marginRight: 8,
   },
   seeMapsText: {
     color: colors.purple,
@@ -1072,7 +1072,7 @@ const styles = RN.StyleSheet.create({
   tagItem: {
     backgroundColor: colors.white,
     paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingHorizontal: isAndroid ? 14 : 10,
     borderRadius: 4,
     marginRight: 4,
     borderWidth: 1,
