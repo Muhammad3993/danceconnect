@@ -17,6 +17,7 @@ import {getDefaultImgUser} from '../utils/images';
 import ScalableImage from './ScalabelImage';
 import {VideoView} from './VideoView';
 import Share, {ShareSingleOptions, Social} from 'react-native-share';
+import useAppStateHook from '../hooks/useAppState';
 
 interface Props {
   post: Amity.Post;
@@ -65,6 +66,7 @@ export function PostCard({
   );
   const [videoUrl, setVideoUrl] = useState<string | undefined>(undefined);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const {setLoading} = useAppStateHook();
 
   const haveChildren = post.children.length > 0;
 
@@ -83,7 +85,12 @@ export function PostCard({
 
         const postVideo = await getPostFile<'video'>(videoFileId);
 
-        setVideoUrl(postVideo?.videoUrl?.['480p'] ?? postVideo?.fileUrl);
+        setVideoUrl(
+          postVideo?.videoUrl?.['720p'] ??
+            postVideo?.videoUrl?.['480p'] ??
+            postVideo?.videoUrl?.original ??
+            postVideo?.fileUrl,
+        );
         setPostImageUrl(undefined);
       } else {
         const postImage = await getPostFile<'image'>(postCh.data?.fileId);
@@ -118,18 +125,20 @@ export function PostCard({
   };
 
   const sharePost = async () => {
+    setMenuIsOpen(false);
     const shareOptions: ShareSingleOptions = {
-      backgroundImage: postImageUrl ? postImageUrl + '?size=medium' : undefined,
+      backgroundImage: postImageUrl ? postImageUrl + '?size=large' : undefined,
       backgroundVideo: videoUrl,
       stickerImage: undefined,
       backgroundBottomColor: '#fefefe',
       backgroundTopColor: '#906df4',
-      social: Share.Social.INSTAGRAM as Social,
+      social: Share.Social.INSTAGRAM_STORIES as Social,
       appId: 'com.danceconnect', // required since  Jan 2023 (see: https://developers.facebook.com/docs/instagram/sharing-to-stories/#sharing-to-stories)
+      title: post.data.text,
+      message: post.data.text,
     };
 
-    Share.shareSingle(shareOptions);
-    setMenuIsOpen(false);
+    await Share.shareSingle(shareOptions);
   };
 
   return (
@@ -165,11 +174,13 @@ export function PostCard({
                   onPress={editePost}>
                   <Text style={styles.menuItem}>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={{borderBottomWidth: 0.5}}
-                  onPress={sharePost}>
-                  <Text style={styles.menuItem}>Share Post</Text>
-                </TouchableOpacity>
+                {haveChildren && (
+                  <TouchableOpacity
+                    style={{borderBottomWidth: 0.5}}
+                    onPress={sharePost}>
+                    <Text style={styles.menuItem}>Share Post</Text>
+                  </TouchableOpacity>
+                )}
                 <TouchableOpacity onPress={deletePost}>
                   <Text style={[styles.menuItem, {color: colors.redError}]}>
                     Delete

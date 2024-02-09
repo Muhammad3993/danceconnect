@@ -1,7 +1,6 @@
 diff --git a/node_modules/react-native-video-trim/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-video-trim/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
 new file mode 100644
-index 0000000..cc77eee
-Binary files /dev/null and b/node_modules/react-native-video-trim/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
+index 0000000..e69de29
 diff --git a/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/utils/StorageUtil.java b/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/utils/StorageUtil.java
 index b39d6cd..4def783 100644
 --- a/node_modules/react-native-video-trim/android/src/main/java/com/videotrim/utils/StorageUtil.java
@@ -68,3 +67,82 @@ index 722383f..eab692e 100644
          let outputFile = "\(inputFile.deletingLastPathComponent().absoluteURL)\(outputName)"
          let cmd = "-i \(inputFile) -ss \(startTime * 1000)ms -to \(endTime * 1000)ms -c copy \(outputFile)";
                  
+diff --git a/node_modules/react-native-video-trim/ios/VideoTrimmer.swift b/node_modules/react-native-video-trim/ios/VideoTrimmer.swift
+index f9cf3c4..9f81278 100644
+--- a/node_modules/react-native-video-trim/ios/VideoTrimmer.swift
++++ b/node_modules/react-native-video-trim/ios/VideoTrimmer.swift
+@@ -554,6 +554,7 @@ import AVFoundation
+ 
+ 
+     @objc private func leadingGrabberPanned(_ sender: UILongPressGestureRecognizer) {
++        
+         switch sender.state {
+             case .began:
+                 trimmingState = .leading
+@@ -562,10 +563,23 @@ import AVFoundation
+                 startPanning()
+ 
+             case .changed:
++                let rengeDiff = selectedRange.end - selectedRange.start
++            
++         
+                 let location = sender.location(in: self)
+                 var time = timeForLocation(location.x + grabberOffset)
+-                let newDuration = CMTimeSubtract(selectedRange.end, time)
+-                let newRange = CMTimeRange(start: time, end: selectedRange.end)
++//                var canGoBack = CMTimeCompare(rengeDiff, maximumDuration) == -1
++                
++                let onEnd = (range.end.seconds - selectedRange.end.seconds) <= 1.0
++                
++                let canGoForward =  CMTimeCompare(time,selectedRange.start ) == 1
++
++                let shouldResize = (onEnd  && canGoForward)
++                
++                let newDuration = shouldResize ?  CMTimeSubtract(selectedRange.end, time) : rengeDiff
++                let newRange = CMTimeRange(start: time, end: shouldResize ? selectedRange.end : time +  rengeDiff)
++                
++
+             
+                 if CMTimeCompare(newRange.duration, maximumDuration) == 1 {
+                     return
+@@ -575,6 +589,15 @@ import AVFoundation
+                     return
+                 }
+                 
++              
++                if(!shouldResize) {
++                    if CMTimeCompare(newRange.end, range.duration) == 1 { // prevent endTime to be greater than video endTime
++                        return
++                    }
++                }
++              
++
++
+                 var didClamp = false
+                 if CMTimeCompare(newDuration, minimumDuration) == -1 {
+                     time = CMTimeSubtract(selectedRange.end, minimumDuration)
+@@ -589,6 +612,15 @@ import AVFoundation
+                     didClamp = true
+                 }
+                 
++                if(!shouldResize) {
++                    if CMTimeCompare(newDuration, minimumDuration) == -1 {
++                        time = CMTimeAdd(selectedRange.start, minimumDuration)
++                        didClamp = true
++                    }
++                }
++                
++            
++
+ 
+                 if didClamp == true && didClamp != didClampWhilePanning {
+                     impactFeedbackGenerator?.impactOccurred()
+@@ -620,6 +652,8 @@ import AVFoundation
+         }
+     }
+     
++
++
+     @objc private func trailingGrabberPanned(_ sender: UILongPressGestureRecognizer) {
+         switch sender.state {
+             case .began:
