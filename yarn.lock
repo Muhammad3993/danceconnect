@@ -7968,7 +7968,7 @@ react-native-uuid@^2.0.1:
   resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"
   integrity sha512-cptnoIbL53GTCrWlb/+jrDC6tvb7ypIyzbXNJcpR3Vab0mkeaaVd5qnB3f0whXYzS+SMoSQLcUUB0gEWqkPC0g==
 
-react-native-video-trim@^1.0.13:
+react-native-video-trim@1.0.13:
   version "1.0.13"
   resolved "https://registry.yarnpkg.com/react-native-video-trim/-/react-native-video-trim-1.0.13.tgz#ed02f4f618c8f565db1bb2ddbf6e0227e6a34e30"
   integrity sha512-wa7tXD4L+f3V0OXiBGT7kqyny68gWrrSs3BwAxj5eb2ph+OzHKRZdGuAABRzsUq7NpuPBhYn7B1L/6abhbBoGw==

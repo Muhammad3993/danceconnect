@@ -108,6 +108,12 @@ export const getUserRole = (title: string) => {
       return 'Dancer';
     case "I'm Teacher":
       return 'Teacher';
+    case 'Organizer':
+      return 'Organizer';
+    case 'Dancer':
+      return 'Dancer';
+    case 'Teacher':
+      return 'Teacher';
     default:
       break;
   }
