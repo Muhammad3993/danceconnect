@@ -79,6 +79,8 @@
 	<string>To install images in the community and events, allow the application access to camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To install images in the community and events, allow the application access to photos</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>To install images in the community and events, allow the application access to photos</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Lato-Black.ttf</string>

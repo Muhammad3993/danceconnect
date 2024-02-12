@@ -16,8 +16,10 @@ import {SCREEN_WIDTH} from '../utils/constants';
 import {getDefaultImgUser} from '../utils/images';
 import ScalableImage from './ScalabelImage';
 import {VideoView} from './VideoView';
-import Share, {ShareSingleOptions, Social} from 'react-native-share';
+import Share from 'react-native-share';
 import useAppStateHook from '../hooks/useAppState';
+import RNFetchBlob from 'rn-fetch-blob';
+import CameraRoll from '@react-native-community/cameraroll';
 
 interface Props {
   post: Amity.Post;
@@ -125,20 +127,40 @@ export function PostCard({
   };
 
   const sharePost = async () => {
-    setMenuIsOpen(false);
-    const shareOptions: ShareSingleOptions = {
-      backgroundImage: postImageUrl ? postImageUrl + '?size=large' : undefined,
-      backgroundVideo: videoUrl,
-      stickerImage: undefined,
-      backgroundBottomColor: '#fefefe',
-      backgroundTopColor: '#906df4',
-      social: Share.Social.INSTAGRAM_STORIES as Social,
-      appId: 'com.danceconnect', // required since  Jan 2023 (see: https://developers.facebook.com/docs/instagram/sharing-to-stories/#sharing-to-stories)
-      title: post.data.text,
-      message: post.data.text,
-    };
+    setLoading(true);
 
-    await Share.shareSingle(shareOptions);
+    setMenuIsOpen(false);
+    if (videoUrl) {
+      const cache = await RNFetchBlob.config({
+        fileCache: true,
+        appendExt: 'mp4',
+      }).fetch('GET', videoUrl, {});
+      const gallery = await CameraRoll.save(cache.path(), {type: 'video'});
+      cache.flush();
+      await Share.shareSingle({
+        social: Share.Social.INSTAGRAM,
+        url: gallery,
+        type: 'video/*',
+      });
+    } else {
+      const resp = await RNFetchBlob.config({
+        fileCache: true,
+      }).fetch('GET', postImageUrl + '?size=large', {});
+      const base64 = await resp.readFile('base64');
+
+      await Share.shareSingle({
+        social: Share.Social.INSTAGRAM,
+        url: ('data:image/png;base64,' + base64) as string,
+        type: 'image/*',
+        title: 'test',
+        message: 'test',
+        subject: 'for email',
+        instagramCaption: 'for insta',
+      });
+      resp.flush();
+    }
+
+    setLoading(false);
   };
 
   return (

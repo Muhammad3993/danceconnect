@@ -107,19 +107,21 @@ export const VideoView = memo(
                 {width: scalableWidth, height: scalableHeight},
               ]}>
               {localPause && (
-                <Image source={{uri: 'playcircle'}} style={styles.img} />
+                <View style={styles.playButton}>
+                  <Image source={{uri: 'play'}} style={styles.palyImg} />
+                </View>
               )}
             </Pressable>
 
             {!localPause && (
-              <Pressable
-                onPress={() => setIsMute(!isMute)}
-                style={styles.muteOverlay}>
-                <Image
-                  source={{uri: isMute ? 'sound' : 'unsound'}}
-                  style={styles.img}
-                />
-              </Pressable>
+              <View style={styles.soundBtn}>
+                <Pressable onPress={() => setIsMute(!isMute)}>
+                  <Image
+                    source={{uri: isMute ? 'unsound' : 'sound'}}
+                    style={styles.img}
+                  />
+                </Pressable>
+              </View>
             )}
 
             {showPercent && (
@@ -166,15 +168,27 @@ const styles = StyleSheet.create({
     left: 0,
   },
 
-  muteOverlay: {
+  playbtn: {
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     zIndex: 10,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 20,
+  },
+
+  soundBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    zIndex: 10,
+    backgroundColor: 'rgba(33,33,33,0.5)',
+    borderRadius: 20,
+    position: 'absolute',
+    bottom: 12,
+    right: 12,
   },
 
   uploadOverlay: {
@@ -194,9 +208,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
+  palyImg: {
+    width: 24,
+    height: 24,
+  },
   img: {
-    width: 40,
-    height: 40,
-    tintColor: colors.white,
+    width: 28,
+    height: 28,
   },
 });
