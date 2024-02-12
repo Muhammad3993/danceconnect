@@ -169,8 +169,13 @@ const LocationSelector = ({
           if (!item?.availableSearchString) {
             if (item?.cities instanceof Array) {
               setCurrentCity(item.cities[0]?.name);
+              onChoosedCity(item.cities[0]?.name);
             } else {
+              onChoosedCity(item.cities);
               setCurrentCity(item.cities);
+              if (setSelectedLocation) {
+                setSelectedLocation(item.country + ', ' + item.cities);
+              }
             }
           }
           RN.LayoutAnimation.configureNext(
