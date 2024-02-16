@@ -168,8 +168,11 @@ const LocationSelector = ({
           setSearchCountryValue(item.country);
           if (!item?.availableSearchString) {
             if (item?.cities instanceof Array) {
-              setCurrentCity(item.cities[0]?.name);
-              onChoosedCity(item.cities[0]?.name);
+              setCurrentCity(item.country + ', ' + item.cities[0]?.name);
+              onChoosedCity(item.country + ', ' + item.cities[0]?.name);
+              if (setSelectedLocation) {
+                setSelectedLocation(item.country + ', ' + item.cities[0]?.name);
+              }
             } else {
               onChoosedCity(item.cities);
               setCurrentCity(item.cities);
