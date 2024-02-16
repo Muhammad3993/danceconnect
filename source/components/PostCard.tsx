@@ -16,7 +16,7 @@ import {SCREEN_WIDTH} from '../utils/constants';
 import {getDefaultImgUser} from '../utils/images';
 import ScalableImage from './ScalabelImage';
 import {VideoView} from './VideoView';
-import Share from 'react-native-share';
+import Share, {Social} from 'react-native-share';
 import useAppStateHook from '../hooks/useAppState';
 import RNFetchBlob from 'rn-fetch-blob';
 import CameraRoll from '@react-native-community/cameraroll';
@@ -138,9 +138,10 @@ export function PostCard({
       const gallery = await CameraRoll.save(cache.path(), {type: 'video'});
       cache.flush();
       await Share.shareSingle({
-        social: Share.Social.INSTAGRAM,
+        social: Share.Social.INSTAGRAM as Social,
         url: gallery,
         type: 'video/*',
+        appId: 'com.danceconnect',
       });
     } else {
       const resp = await RNFetchBlob.config({
@@ -149,13 +150,10 @@ export function PostCard({
       const base64 = await resp.readFile('base64');
 
       await Share.shareSingle({
-        social: Share.Social.INSTAGRAM,
+        social: Share.Social.INSTAGRAM as Social,
         url: ('data:image/png;base64,' + base64) as string,
         type: 'image/*',
-        title: 'test',
-        message: 'test',
-        subject: 'for email',
-        instagramCaption: 'for insta',
+        appId: 'com.danceconnect',
       });
       resp.flush();
     }
