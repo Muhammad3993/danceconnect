@@ -29,8 +29,8 @@ type user = {
 };
 axios.defaults.headers.common.Accept = 'application/json';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
-axios.defaults.headers.post['Content-Type'] = 'application/json';
-axios.defaults.headers.get['Content-Type'] = 'application/json';
+// axios.defaults.headers.post['Content-Type'] = 'application/json';
+// axios.defaults.headers.get['Content-Type'] = 'application/json';
 
 // axios.interceptors.response.use(
 //   response => {

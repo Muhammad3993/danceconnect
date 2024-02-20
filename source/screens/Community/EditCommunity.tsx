@@ -5,7 +5,7 @@ import colors from '../../utils/colors';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import {useCommunityById} from '../../hooks/useCommunityById';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import CategorySelector from '../../components/catregorySelector';
 import {
   SCREEN_WIDTH,
@@ -18,6 +18,7 @@ import FindCity from '../../components/findCity';
 import {apiUrl} from '../../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
+import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
 
 interface city {
   structured_formatting: {
@@ -70,7 +71,7 @@ const EditCommunity = ({navigation}) => {
 
   const [title, setTitle] = useState(routeParams?.params?.title);
   const [desc, setDesc] = useState(description);
-  const [imgs, setImgs] = useState(images);
+  const [imgs, setImgs] = useState<(Image | string)[]>(images);
   const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<city>(location);
   const [loadImg, setLoadImg] = useState(false);
@@ -143,22 +144,21 @@ const EditCommunity = ({navigation}) => {
   };
 
   const onChooseImage = async () => {
-    let options = {
+    ImageCropPicker.openPicker({
       mediaType: 'photo',
-      quality: 1,
+      width: 550,
+      height: 500,
+      cropping: true,
       includeBase64: true,
-    };
-    launchImageLibrary(options, response => {
-      if (response.assets) {
-        if (imgs?.length > 0) {
-          setImgs([...imgs, response?.assets[0]]);
-        } else {
-          setImgs([response?.assets[0]]);
-        }
-      } else {
+    })
+      .then(res => {
+        console.log(res);
+        setImgs([...imgs, res]);
+      })
+      .catch(() => {
         console.log('cancel');
-      }
-    });
+        setLoadImg(false);
+      });
   };
   const onChangeValueDescription = (value: string) => {
     setDesc(value);
@@ -211,7 +211,14 @@ const EditCommunity = ({navigation}) => {
                 userUid: user?.id,
               };
             }),
-            images: imgs,
+            images: imgs.map(el =>
+              typeof el === 'object'
+                ? {
+                    base64: el?.data,
+                    uri: el.path,
+                  }
+                : el,
+            ) as (Asset | string)[],
             type: communityType.type,
           });
         }
@@ -442,8 +449,9 @@ const EditCommunity = ({navigation}) => {
                     onLoadStart={() => setLoadImg(true)}
                     onLoadEnd={() => setLoadImg(false)}
                     source={{
-                      uri: img?.base64?.length > 0 ? img?.uri : apiUrl + img,
+                      uri: typeof img === 'object' ? img?.path : apiUrl + img,
                     }}
+                    resizeMode={FastImage.resizeMode.contain}
                   />
                   <RN.TouchableOpacity
                     onPress={() => onPressDeleteImg(img)}

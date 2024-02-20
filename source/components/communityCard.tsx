@@ -221,6 +221,7 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
             {data?.description}
           </RN.Text>
         </RN.View>
+
         <FastImage
           source={
             data?.images[0]

@@ -13,16 +13,13 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Button} from '../../components/Button';
 import {useCommunities} from '../../hooks/useCommunitites';
 import {useProfile} from '../../hooks/useProfile';
-import {
-  Asset,
-  ImageLibraryOptions,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import {Asset} from 'react-native-image-picker';
 import FindCity from '../../components/findCity';
 import FastImage from 'react-native-fast-image';
 import CategorySelector from '../../components/catregorySelector';
 import {Input} from '../../components/input';
 import {ChannelRepository} from '@amityco/ts-sdk';
+import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
 
 const CreateCommunity = ({navigation}) => {
   const {t} = useTranslation();
@@ -58,7 +55,7 @@ const CreateCommunity = ({navigation}) => {
       setCurrentScreen(v => v - 1);
     }
   };
-  const {create, isLoading} = useCommunities();
+  const {create} = useCommunities();
 
   const {userCountry, individualStyles} = useProfile();
 
@@ -80,7 +77,7 @@ const CreateCommunity = ({navigation}) => {
     maxSymbols: 1000,
   });
   const [addedStyles, setAddedStyles] = useState<string[]>(individualStyles);
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<Image[]>([]);
   const [openLocation, setOpenLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(userCountry);
 
@@ -131,19 +128,21 @@ const CreateCommunity = ({navigation}) => {
 
   const onChooseImage = async () => {
     setLoadImg(true);
-    let options: ImageLibraryOptions = {
+    ImageCropPicker.openPicker({
       mediaType: 'photo',
-      quality: 1,
+      width: 550,
+      height: 500,
+      cropping: true,
       includeBase64: true,
-    };
-    launchImageLibrary(options, response => {
-      if (response.assets) {
-        setImages([...images, response?.assets[0]]);
-      } else {
+    })
+      .then(res => {
+        console.log(res);
+        setImages([...images, res]);
+      })
+      .catch(() => {
         console.log('cancel');
         setLoadImg(false);
-      }
-    });
+      });
   };
   useEffect(() => {
     const subscribeShow = RN.Keyboard.addListener('keyboardDidShow', () =>
@@ -217,13 +216,17 @@ const CreateCommunity = ({navigation}) => {
             const {data: channel} = await ChannelRepository.createChannel(
               newChannel,
             );
+
             create({
               name: name,
               description: description,
               // country: country,
               location: location,
               categories: addedStyles,
-              images: images,
+              images: images.map(el => ({
+                base64: el?.data,
+                uri: el.path,
+              })) as Asset[],
               type: communityType.type,
               channelId: channel?.channelId,
             });
@@ -547,7 +550,7 @@ const CreateCommunity = ({navigation}) => {
                     }}
                     onLoadStart={() => setLoadImg(true)}
                     onLoadEnd={() => setLoadImg(false)}
-                    source={{uri: img?.uri}}
+                    source={{uri: img?.path}}
                   />
                   <RN.TouchableOpacity
                     onPress={() => onPressDeleteImg(img)}

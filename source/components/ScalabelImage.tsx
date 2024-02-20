@@ -6,7 +6,6 @@ import {
   ImageStyle,
   StyleSheet,
   View,
-  ViewStyle,
 } from 'react-native';
 import colors from '../utils/colors';
 

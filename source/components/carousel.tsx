@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {FlatList, Image, LayoutAnimation, StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
@@ -75,7 +75,6 @@ const Carousel = ({items}: {items: string[]}) => {
             cache: FastImage.cacheControl.immutable,
             priority: FastImage.priority.high,
           }}
-          resizeMode={FastImage.resizeMode.cover}
           defaultSource={require('../assets/images/default.jpeg')}
           style={styles.slideImage}
         />

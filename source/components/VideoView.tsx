@@ -55,8 +55,6 @@ export const VideoView = memo(
         const computedWidth = sourceWidth * ratio;
         const computedHeight = sourceHeight * ratio;
 
-        console.log({computedWidth, computedHeight});
-
         setScalableWidth(computedWidth);
         setScalableHeight(computedHeight);
         setSizing(false);

@@ -16,7 +16,7 @@ import {Animated} from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {useTranslation} from 'react-i18next';
-import {defaultProfile, getDefaultImgUser} from '../../utils/images';
+import {getDefaultImgUser} from '../../utils/images';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 interface Props {
@@ -507,9 +507,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
         <RN.View
           style={[
             styles.btnsContainer,
-            {
-              flexDirection: !(isAdmin || isManager) ? 'column' : 'row',
-            },
+            {flexDirection: !(isAdmin || isManager) ? 'column' : 'row'},
           ]}>
           {(isAdmin || isManager) && (
             <Button
@@ -530,7 +528,9 @@ const CommunityScreen = ({route, navigation}: Props) => {
             onPress={shouldJoinChat ? onPressJoin : onWriteChat}
             disabled
             iconName={shouldJoinChat ? '' : 'chat'}
-            buttonStyle={shouldJoinChat ? styles.dontJoinedBtn : styles.btnMessage}
+            buttonStyle={
+              shouldJoinChat ? styles.dontJoinedBtn : styles.btnMessage
+            }
             title={shouldJoinChat ? t('join') : 'Write to chat'}
           />
         </RN.View>

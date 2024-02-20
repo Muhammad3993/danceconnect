@@ -114,7 +114,7 @@ function* createCommunityRequest(action: any) {
     yield put(setLoadingAction({onLoading: false}));
   } catch (error) {
     console.log('data', action.payload);
-    console.log('createCommunityRequest error', error);
+    console.log('createCommunityRequest error', error?.message);
     yield put(setLoadingAction({onLoading: false}));
     yield put(createCommunityFailAction(error));
   }
