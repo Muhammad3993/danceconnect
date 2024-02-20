@@ -57,7 +57,7 @@ const AttendedPeople = () => {
         activeOpacity={0.7}>
         <FastImage
           source={
-            Boolean(item.userImage)
+            item.userImage
               ? {
                   uri: `${apiUrl}${item.userImage}`,
                   cache: FastImage.cacheControl.immutable,
@@ -93,19 +93,25 @@ const AttendedPeople = () => {
   return (
     <>
       {renderHeader()}
-      <RN.View style={styles.inputContainer}>
-        <Input
-          value={serachValue.toLowerCase()}
-          onChange={onSearch}
-          placeholder="User Name"
-        />
-      </RN.View>
       <FlatList
         data={Object.values(users)}
         renderItem={renderItem}
         style={styles.container}
+        ListHeaderComponent={() => {
+          return (
+            <RN.View style={styles.inputContainer}>
+              <Input
+                value={serachValue.toLowerCase()}
+                onChange={onSearch}
+                placeholder="User Name"
+              />
+            </RN.View>
+          );
+        }}
+        onScroll={() => RN.Keyboard.dismiss()}
         // ListEmptyComponent={renderEmpty}
         // refreshControl={refreshControl()}
+        ListFooterComponent={() => <RN.View style={{paddingBottom: 40}} />}
       />
     </>
   );

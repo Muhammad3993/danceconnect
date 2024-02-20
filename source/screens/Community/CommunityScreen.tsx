@@ -504,28 +504,37 @@ const CommunityScreen = ({route, navigation}: Props) => {
         <Carousel items={communityData?.images} />
         {renderTitle()}
         {renderMapInfoOrganizer()}
-
-        <RN.View style={styles.btnJoin}>
-          <Button
-            isLoading={loadSubscribe}
-            onPress={shouldJoinChat ? onPressJoin : onWriteChat}
-            disabled
-            buttonStyle={shouldJoinChat ? undefined : styles.btnMessage}
-            title={shouldJoinChat ? t('join') : 'Write to chat'}
-          />
-        </RN.View>
-        {(isAdmin || isManager) && (
-          <RN.View style={styles.btnJoin}>
+        <RN.View
+          style={[
+            styles.btnsContainer,
+            {
+              flexDirection: !(isAdmin || isManager) ? 'column' : 'row',
+            },
+          ]}>
+          {(isAdmin || isManager) && (
             <Button
               onPress={() =>
                 navigation.push('CreateEvent', {communityData: communityData})
               }
               disabled
+              iconName="plusoutline"
+              iconColor={colors.white}
+              buttonStyle={styles.createEventBtn}
               // isLoading={isLoadingWithFollow}
               title={t('create_event')}
             />
-          </RN.View>
-        )}
+          )}
+          <RN.View style={{width: 8}} />
+          <Button
+            isLoading={loadSubscribe}
+            onPress={shouldJoinChat ? onPressJoin : onWriteChat}
+            disabled
+            iconName={shouldJoinChat ? '' : 'chat'}
+            buttonStyle={shouldJoinChat ? styles.dontJoinedBtn : styles.btnMessage}
+            title={shouldJoinChat ? t('join') : 'Write to chat'}
+          />
+        </RN.View>
+
         {!loadingById && (
           <CommunityEvents
             isAdmin={isAdmin}
@@ -807,11 +816,29 @@ const styles = RN.StyleSheet.create({
     borderRadius: 4,
     marginRight: 4,
   },
+  dontJoinedBtn: {
+    marginVertical: 12,
+    marginHorizontal: 0,
+  },
+  btnsContainer: {
+    justifyContent: 'space-around',
+    paddingHorizontal: 16,
+  },
   btnMessage: {
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: colors.purple,
     color: colors.purple,
+    flex: 1,
+    marginHorizontal: 0,
+    paddingVertical: 12,
+    marginVertical: 12,
+  },
+  createEventBtn: {
+    flex: 1,
+    marginHorizontal: 0,
+    paddingVertical: 12,
+    marginVertical: 12,
   },
   btnJoin: {
     paddingVertical: 24,

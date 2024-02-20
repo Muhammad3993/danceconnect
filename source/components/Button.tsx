@@ -74,7 +74,7 @@ export const Button = ({
         />
       ) : (
         <>
-          {iconName && (
+          {iconName && iconName?.length > 0 && (
             <RN.Image
               source={{uri: iconName}}
               style={{

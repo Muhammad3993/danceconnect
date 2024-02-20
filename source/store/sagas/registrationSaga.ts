@@ -288,11 +288,11 @@ function* authWthApple() {
           authProvider: 'apple',
         }),
       );
-      yield put(getEventsRequestAction({limit: 1, offset: 0}));
+      // yield put(getEventsRequestAction({limit: 1, offset: 0}));
       yield put(getPersonalEventsRequestAction());
     }
 
-    yield put(getEventsRequestAction({limit: 1, offset: 0}));
+    // yield put(getEventsRequestAction({limit: 1, offset: 0}));
     yield put(setLoadingAction({onLoading: false}));
   } catch (error: string | undefined | unknown) {
     // console.log('authWthApple error', error);

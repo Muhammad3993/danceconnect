@@ -50,17 +50,16 @@ const Board = () => {
       setRole([...role, item]);
     }
   };
-  // useEffect(() => {
-  //   if (isRegistrationsSuccess) {
-  //     navigation.navigate('HOME');
-  //   }
-  // }, [isRegistrationsSuccess, navigation]);
+  useEffect(() => {
+    if (userName === 'null null') {
+      setName('');
+    }
+  }, [userName]);
 
   const onPressFinish = () => {
     onChoosedCity(selectedLocation);
     const email = routeProps?.params?.email;
     const password = routeProps?.params?.password;
-    // console.log('e', email, password);
 
     const data = {
       email: email,

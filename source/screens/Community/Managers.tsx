@@ -13,6 +13,8 @@ import {
   getManagersForCommunityUid,
 } from '../../api/serverRequests';
 import {useTranslation} from 'react-i18next';
+import {getDefaultImgUser} from '../../utils/images';
+import FastImage from 'react-native-fast-image';
 
 const Managers = () => {
   const navigation = useNavigation();
@@ -125,15 +127,18 @@ const Managers = () => {
               <RN.View style={styles.memberContainer} key={i.id}>
                 <RN.View style={{flexDirection: 'row'}}>
                   <RN.View style={styles.memberImgContainer}>
-                    <RN.Image
-                      source={{
-                        uri: i.userImage
-                          ? apiUrl + i.userImage
-                          : 'profileoutline',
-                      }}
-                      style={
-                        i.userImage ? styles.memberImg : styles.memberImgNone
+                    <FastImage
+                      source={
+                        i?.userImage
+                          ? {
+                              uri: apiUrl + i?.userImage,
+                              cache: FastImage.cacheControl.immutable,
+                              priority: FastImage.priority.high,
+                            }
+                          : getDefaultImgUser(i?.userGender)
                       }
+                      defaultSource={getDefaultImgUser(i?.userGender)}
+                      style={styles.memberImg}
                     />
                   </RN.View>
                   <RN.View style={{justifyContent: 'center', paddingLeft: 8}}>
@@ -185,12 +190,6 @@ const styles = RN.StyleSheet.create({
     height: 34,
     width: 34,
     borderRadius: 100,
-  },
-  memberImgNone: {
-    height: 10,
-    width: 10,
-    tintColor: colors.textPrimary,
-    padding: 16,
   },
   memberDeleteBtn: {
     borderWidth: 1,
