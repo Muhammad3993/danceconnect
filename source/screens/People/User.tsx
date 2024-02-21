@@ -75,7 +75,7 @@ const User = ({route, navigation}) => {
   };
 
   if (isCurrentUser) {
-    return <ProfileScreen navigation={navigation} />;
+    return <ProfileScreen isUserScreen navigation={navigation} />;
   }
 
   return (

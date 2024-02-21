@@ -16,7 +16,7 @@ import {MenuItems} from './ui/MenuItems';
 import usePeople from '../../hooks/usePeople';
 import {useIsFocused} from '@react-navigation/native';
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({navigation, isUserScreen = false}) => {
   const {t} = useTranslation();
   const isFocused = useIsFocused();
   const {getUser} = useProfile();
@@ -84,7 +84,7 @@ const ProfileScreen = ({navigation}) => {
   }
 
   return (
-    <SafeAreaView edges={['top']} style={styles.container}>
+    <SafeAreaView edges={isUserScreen ? [] : ['top']} style={styles.container}>
       <ProfileList
         loadingMore={loadingMore}
         isCurrentUser
@@ -132,7 +132,7 @@ const ProfileScreen = ({navigation}) => {
 
       <Portal>
         <Modalize
-          modalHeight={SCREEN_HEIGHT * 0.80}
+          modalHeight={SCREEN_HEIGHT * 0.8}
           handlePosition="inside"
           handleStyle={{height: 3, width: 38}}
           ref={menuRef}>
