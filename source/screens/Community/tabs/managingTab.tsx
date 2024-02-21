@@ -102,7 +102,6 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
     justifyContent: 'center',
     paddingVertical: 18,
-    paddingHorizontal: 20,
   },
 
   emptyText: {

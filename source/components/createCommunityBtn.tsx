@@ -3,7 +3,7 @@ import * as RN from 'react-native';
 import colors from '../utils/colors';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
-import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../utils/constants';
+import {SCREEN_WIDTH} from '../utils/constants';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type props = {
@@ -56,7 +56,7 @@ const styles = RN.StyleSheet.create({
   },
   title: {
     color: colors.textPrimary,
-    fontSize: SCREEN_WIDTH <= 375 ? 15 : 18,
+    fontSize: SCREEN_WIDTH <= 375 ? 17 : 18,
     lineHeight: 21.8,
     fontWeight: '700',
     fontFamily: 'Lato-Regular',
@@ -77,7 +77,7 @@ const styles = RN.StyleSheet.create({
     width: 18,
   },
   description: {
-    fontSize: SCREEN_WIDTH <= 375 ? 9 : 12,
+    fontSize: SCREEN_WIDTH <= 375 ? 11 : 12,
     lineHeight: 19.6,
     fontWeight: '400',
     color: colors.darkGray,
