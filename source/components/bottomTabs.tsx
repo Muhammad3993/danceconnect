@@ -5,6 +5,7 @@ import colors from '../utils/colors';
 import {getIcon} from '../utils/helpers';
 import {useTranslation} from 'react-i18next';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SCREEN_WIDTH} from '../utils/constants';
 
 const BottomTabs = ({state, navigation}: BottomTabBarProps) => {
   const {t} = useTranslation();
@@ -98,7 +99,7 @@ const styles = RN.StyleSheet.create({
     width: 24,
   },
   itemName: {
-    fontSize: 12,
+    fontSize: SCREEN_WIDTH <= 375 ? 10 : 12,
     fontFamily: 'Lato-Regular',
   },
 });
