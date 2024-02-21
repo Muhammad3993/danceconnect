@@ -15,9 +15,16 @@ import {apiUrl, getTicketByEventUid} from '../../api/serverRequests';
 import socket from '../../api/sockets';
 import useTickets from '../../hooks/useTickets';
 import FastImage from 'react-native-fast-image';
-import {Animated} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile, getDefaultImgUser} from '../../utils/images';
+import Animated, {
+  Extrapolation,
+  interpolate,
+  runOnJS,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 const EventScreen = () => {
   const routeProps = useRoute();
@@ -48,6 +55,29 @@ const EventScreen = () => {
   const isAdmin = eventData?.creator?.uid === userUid;
 
   const [tickets, setTickers] = useState([]);
+
+  const closeActions = () => {
+    setUnFollowOpen(false);
+    setShareOptions(false);
+  };
+
+  const scrollY = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler({
+    onBeginDrag: () => {
+      runOnJS(closeActions)();
+    },
+    onScroll: e => {
+      scrollY.value = e.contentOffset.y;
+    },
+  });
+
+  const animatedStyles = useAnimatedStyle(() => {
+    const opacity = interpolate(scrollY.value, [0, 80], [0, 1], {
+      extrapolateRight: Extrapolation.CLAMP,
+    });
+
+    return {opacity};
+  });
 
   const [myTicketsByEvent, setMyTicketsByEvent] = useState([]);
 
@@ -283,30 +313,19 @@ const EventScreen = () => {
     },
   ];
 
-  const opacity = new Animated.Value(0);
   const shareActions = headerOptionButtons
     .filter(i => i?.options)
     .map(i => i.options)
     .flat(1);
 
-  const onScroll = (ev: RN.NativeSyntheticEvent<RN.NativeScrollEvent>) => {
-    const {y} = ev.nativeEvent.contentOffset;
-    Animated.timing(opacity, {
-      toValue: y / 100,
-      duration: 100,
-      useNativeDriver: false,
-    }).start();
-    setUnFollowOpen(false);
-    setShareOptions(false);
-  };
-
   const header = () => {
     return (
       <RN.View style={styles.headerContainer}>
-        <RN.Animated.View
+        <Animated.View
           style={[
             styles.headerAnimateContainer,
-            {backgroundColor: colors.white, opacity},
+            {backgroundColor: colors.white},
+            animatedStyles,
           ]}
         />
         <RN.TouchableOpacity
@@ -851,9 +870,9 @@ const EventScreen = () => {
   return (
     <>
       {header()}
-      <RN.ScrollView
-        onScroll={onScroll}
-        scrollEventThrottle={1}
+      <Animated.ScrollView
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
         style={styles.container}
         showsVerticalScrollIndicator={false}>
         <Carousel items={eventData?.images} />
@@ -862,7 +881,7 @@ const EventScreen = () => {
         {renderOrganizer()}
         {!isAdmin && renderAttendBtn()}
         {renderDescription()}
-      </RN.ScrollView>
+      </Animated.ScrollView>
     </>
   );
 };

@@ -26,7 +26,8 @@ import EventCard from './eventCard';
 import usePeople from '../hooks/usePeople';
 import {PostCard} from './PostCard';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {isAndroid} from '../utils/constants';
+import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
+import {Screen} from 'react-native-screens';
 
 const viewabilityConfig = {
   waitForInteraction: true,
@@ -432,7 +433,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     lineHeight: 22,
-    fontSize: 16,
+    fontSize: SCREEN_WIDTH <= 375 ? 14 : 16,
   },
   emptyText: {
     textAlign: 'center',

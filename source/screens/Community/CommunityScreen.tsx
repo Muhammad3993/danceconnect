@@ -12,12 +12,19 @@ import socket from '../../api/sockets';
 import {apiUrl} from '../../api/serverRequests';
 import CommunityEvents from '../../components/communityEvents';
 import FastImage from 'react-native-fast-image';
-import {Animated} from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {useTranslation} from 'react-i18next';
 import {getDefaultImgUser} from '../../utils/images';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import Animated, {
+  Extrapolation,
+  interpolate,
+  runOnJS,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 interface Props {
   navigation: NativeStackNavigationProp<any>;
@@ -221,27 +228,34 @@ const CommunityScreen = ({route, navigation}: Props) => {
     .map(i => i.options)
     .flat(1);
 
-  const opacity = new RN.Animated.Value(0);
+  const scrollY = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler({
+    onBeginDrag: () => {
+      runOnJS(setUnFollowOpen)(false);
+    },
+    onScroll: e => {
+      scrollY.value = e.contentOffset.y;
+    },
+  });
 
-  const onScroll = (ev: RN.NativeSyntheticEvent<RN.NativeScrollEvent>) => {
-    const {y} = ev.nativeEvent.contentOffset;
-    Animated.timing(opacity, {
-      toValue: y / 100,
-      duration: 100,
-      useNativeDriver: false,
-    }).start();
-    setUnFollowOpen(false);
-  };
+  const animatedStyles = useAnimatedStyle(() => {
+    const opacity = interpolate(scrollY.value, [0, 80], [0, 1], {
+      extrapolateRight: Extrapolation.CLAMP,
+    });
+
+    return {opacity};
+  });
 
   const shouldJoinChat = !isAdmin && !isJoined && !isManager;
 
   const header = () => {
     return (
       <RN.View style={styles.headerContainer}>
-        <RN.Animated.View
+        <Animated.View
           style={[
             styles.headerAnimateContainer,
-            {backgroundColor: colors.white, opacity},
+            {backgroundColor: colors.white},
+            animatedStyles,
           ]}
         />
         <RN.TouchableOpacity
@@ -496,10 +510,10 @@ const CommunityScreen = ({route, navigation}: Props) => {
   return (
     <>
       {header()}
-      <RN.ScrollView
+      <Animated.ScrollView
         style={styles.container}
-        onScroll={onScroll}
-        scrollEventThrottle={1}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}>
         <Carousel items={communityData?.images} />
         {renderTitle()}
@@ -541,7 +555,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
             eventsIds={communityData?.eventsIds}
           />
         )}
-      </RN.ScrollView>
+      </Animated.ScrollView>
       <Portal>
         <Modalize
           withHandle={false}
