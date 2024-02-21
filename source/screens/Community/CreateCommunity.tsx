@@ -586,7 +586,11 @@ const CreateCommunity = ({navigation}) => {
               }}
               onPress={onChooseImage}>
               <RN.Image style={styles.uploadImg} source={{uri: 'upload'}} />
-              <RN.Text style={styles.uploadImgText}>
+              <RN.Text
+                style={[
+                  styles.uploadImgText,
+                  {fontSize: SCREEN_WIDTH <= 380 ? 11 : 14},
+                ]}>
                 {t('upload_img_small')}
               </RN.Text>
             </RN.TouchableOpacity>
