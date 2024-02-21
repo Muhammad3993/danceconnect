@@ -146,7 +146,7 @@ const EditCommunity = ({navigation}) => {
   const onChooseImage = async () => {
     ImageCropPicker.openPicker({
       mediaType: 'photo',
-      width: 550,
+      width: 600,
       height: 500,
       cropping: true,
       includeBase64: true,
@@ -712,9 +712,10 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 24,
     marginVertical: 4,
+    paddingTop: RN.Platform.OS === 'android' ? 15 : 0,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: SCREEN_WIDTH <= 375 ? 18 : 20,
     lineHeight: 20,
     fontWeight: '700',
     color: colors.textPrimary,

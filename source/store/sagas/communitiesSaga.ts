@@ -291,11 +291,7 @@ function* changeInformation(action: any) {
     // console.log('changeInformation', response);
     if (!response) {
       yield put(setNoticeVisible({isVisible: true}));
-      yield put(
-        setNoticeMessage({
-          errorMessage: 'Server error',
-        }),
-      );
+      yield put(setNoticeMessage({errorMessage: 'Server error'}));
     } else {
       navigationRef.current?.navigate('CommunityScreen', {data: response});
 

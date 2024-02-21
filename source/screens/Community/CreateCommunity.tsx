@@ -103,15 +103,6 @@ const CreateCommunity = ({navigation}) => {
     setImages(filter);
   };
 
-  useEffect(() => {
-    RN.DeviceEventEmitter.addListener('upload_finished', (data: any) => {
-      navigation.push('CommunityScreen', {data});
-    });
-  }, []);
-  useEffect(() => {
-    onClear();
-  }, []);
-
   const onClear = () => {
     setName('');
     setDescription('');
@@ -130,7 +121,7 @@ const CreateCommunity = ({navigation}) => {
     setLoadImg(true);
     ImageCropPicker.openPicker({
       mediaType: 'photo',
-      width: 550,
+      width: 600,
       height: 500,
       cropping: true,
       includeBase64: true,
@@ -145,17 +136,24 @@ const CreateCommunity = ({navigation}) => {
       });
   };
   useEffect(() => {
+    onClear();
+
     const subscribeShow = RN.Keyboard.addListener('keyboardDidShow', () =>
       setVisibleFooter(false),
     );
     const subscribeHide = RN.Keyboard.addListener('keyboardDidHide', () =>
       setVisibleFooter(true),
     );
+
+    RN.DeviceEventEmitter.addListener('upload_finished', (data: any) => {
+      navigation.push('CommunityScreen', {data});
+    });
     return () => {
       subscribeShow.remove();
       subscribeHide.remove();
+      RN.DeviceEventEmitter.removeAllListeners();
     };
-  }, []);
+  }, [navigation]);
 
   const onChangeValueName = (value: string) => {
     setName(value);
@@ -685,9 +683,10 @@ const styles = RN.StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 24,
     marginVertical: 4,
+    paddingTop: RN.Platform.OS === 'android' ? 15 : 0,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: SCREEN_WIDTH <= 375 ? 18 : 20,
     lineHeight: 20,
     fontWeight: '700',
     color: colors.textPrimary,
