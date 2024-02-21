@@ -67,24 +67,11 @@ const People = () => {
       setUsersList(users);
     }
   };
-  const renderFilters = () => {
-    return (
-      <Filters
-        onPressFilters={() => setOpeningFilters(true)}
-        title={t('people_found', {count: usersList.length ?? 0})}
-        filtersBorderColor={
-          addedStyles?.length > 0 ? colors.orange : colors.gray
-        }
-      />
-    );
-  };
+
   const renderHeader = () => {
     return (
       <>
-        <RN.View
-          style={{
-            marginTop: isAndroid ? 14 : 0,
-          }}>
+        <RN.View style={{marginTop: isAndroid ? 14 : 0}}>
           <RN.TouchableOpacity
             style={styles.userLocationWrapper}
             onPress={() => setOpenModal(true)}>
@@ -180,9 +167,14 @@ const People = () => {
     <RN.SafeAreaView style={styles.container}>
       <RN.View style={styles.root}>
         {renderHeader()}
-        <RN.View style={{marginTop: -16, paddingHorizontal: 6}}>
-          {renderFilters()}
-        </RN.View>
+        <Filters
+          containerStyle={{paddingTop: 0}}
+          onPressFilters={() => setOpeningFilters(true)}
+          title={t('people_found', {count: usersList.length ?? 0})}
+          filtersBorderColor={
+            addedStyles?.length > 0 ? colors.orange : colors.gray
+          }
+        />
         <FlatList
           showsVerticalScrollIndicator={false}
           data={usersList}

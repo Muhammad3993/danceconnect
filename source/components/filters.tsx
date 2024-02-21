@@ -7,11 +7,17 @@ type props = {
   title: string;
   onPressFilters: () => void;
   filtersBorderColor?: string;
+  containerStyle?: RN.ViewStyle;
 };
-const Filters = ({title, onPressFilters, filtersBorderColor}: props) => {
+const Filters = ({
+  title,
+  onPressFilters,
+  filtersBorderColor,
+  containerStyle,
+}: props) => {
   const {t} = useTranslation();
   return (
-    <RN.View style={styles.filterWrapper}>
+    <RN.View style={[styles.filterWrapper, containerStyle]}>
       <RN.View style={styles.justCenter}>
         <RN.Text style={styles.count}>{title}</RN.Text>
       </RN.View>

@@ -2,7 +2,7 @@ import React, {Dispatch, SetStateAction, useEffect, useRef} from 'react';
 import * as RN from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import CategorySelector from './catregorySelector';
-import {dataDanceCategory} from '../utils/constants';
+import {SCREEN_WIDTH, dataDanceCategory} from '../utils/constants';
 import colors from '../utils/colors';
 import {Button} from './Button';
 import {Portal} from 'react-native-portalize';
@@ -268,13 +268,14 @@ const styles = RN.StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.purple,
     color: colors.purple,
-    paddingHorizontal: 44,
     marginVertical: 14,
-    // width: '40%',
+    width: SCREEN_WIDTH / 2 - 24,
+    paddingHorizontal: 0,
   },
   createBtn: {
     marginVertical: 14,
-    paddingHorizontal: 44,
+    paddingHorizontal: 0,
+    width: SCREEN_WIDTH / 2 - 24,
   },
   footerWrapper: {
     flexDirection: 'row',
