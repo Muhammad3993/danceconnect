@@ -560,8 +560,27 @@ function* getEventsByUserId(action: {payload: {user_id: string}}) {
     const uniqueArray = events.filter((item, index, array) => {
       return array.map(mapItem => mapItem.id).indexOf(item.id) === index;
     });
-    console.log('events', uniqueArray);
-    yield put(getEventsByUserIdSuccessAction(uniqueArray));
+    const data: string[] = yield all(
+      uniqueArray.map((event: any) =>
+        (function* () {
+          try {
+            const tickets: string[] = yield call(getTickets, event.id);
+            const prices = tickets?.map((ticket: any) => ticket?.price);
+            const minPriceTickets = Math.min(...prices);
+            // const maxPriceTickets = Math.max(...prices);
+            const eventData = {
+              ...event,
+              minPriceTickets:
+                minPriceTickets === Infinity ? null : minPriceTickets,
+            };
+            return eventData;
+          } catch (e) {
+            return console.log('error', e);
+          }
+        })(),
+      ),
+    );
+    yield put(getEventsByUserIdSuccessAction(data));
   } catch (error) {
     yield put(getEventsByUserIdFailAction());
   }
