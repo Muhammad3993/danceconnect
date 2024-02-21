@@ -2,7 +2,12 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useRef, useState} from 'react';
 import * as RN from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {genders, isAndroid, statusBarHeight} from '../../utils/constants';
+import {
+  SCREEN_WIDTH,
+  genders,
+  isAndroid,
+  statusBarHeight,
+} from '../../utils/constants';
 import colors from '../../utils/colors';
 import {useProfile} from '../../hooks/useProfile';
 import {Input} from '../../components/input';
@@ -267,7 +272,6 @@ const styles = RN.StyleSheet.create({
     paddingHorizontal: 14,
   },
   selectedText: {
-    paddingVertical: 16,
     fontSize: 16,
     lineHeight: 22.4,
     letterSpacing: 0.2,

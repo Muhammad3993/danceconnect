@@ -20,7 +20,7 @@ import {deleteUser} from '../../../api/serverRequests';
 import {removeAccount} from '../../../api/authSocial';
 import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../../store/actions/authorizationActions';
-import { choosedCityAction } from '../../../store/actions/appStateActions';
+import {choosedCityAction} from '../../../store/actions/appStateActions';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -649,7 +649,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   listItemText: {
-    fontSize: 18,
+    fontSize: SCREEN_WIDTH <= 375 ? 15 : 18,
     lineHeight: 25.2,
     paddingLeft: 20,
     color: colors.textPrimary,

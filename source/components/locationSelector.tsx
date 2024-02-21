@@ -6,7 +6,7 @@ import colors from '../utils/colors';
 import useAppStateHook from '../hooks/useAppState';
 import useRegistration from '../hooks/useRegistration';
 import {Portal} from 'react-native-portalize';
-import {statusBarHeight} from '../utils/constants';
+import {SCREEN_WIDTH, statusBarHeight} from '../utils/constants';
 import Search from './search';
 import {searchCity} from '../api/cities';
 import {Button} from './Button';
@@ -196,7 +196,32 @@ const LocationSelector = ({
   };
   return (
     <>
-      {!isProfileScreen && (
+      {isProfileScreen ? (
+        <RN.TouchableOpacity style={styles.listItemWrapper} onPress={onOpen}>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.Image source={{uri: 'locateoutline'}} style={styles.icon} />
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text
+                style={[
+                  styles.listItemText,
+                  SCREEN_WIDTH <= 375 && {fontSize: 15},
+                ]}>
+                {t('location')}
+              </RN.Text>
+            </RN.View>
+          </RN.View>
+          <RN.View style={{flexDirection: 'row'}}>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Text style={styles.locationText}>
+                {currentUser?.userCountry}
+              </RN.Text>
+            </RN.View>
+            <RN.View style={{justifyContent: 'center'}}>
+              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
+            </RN.View>
+          </RN.View>
+        </RN.TouchableOpacity>
+      ) : (
         <>
           <RN.Text style={styles.placeholderTitle}>{t('location')}</RN.Text>
           <RN.TouchableOpacity
@@ -217,26 +242,6 @@ const LocationSelector = ({
             </RN.View>
           </RN.TouchableOpacity>
         </>
-      )}
-      {isProfileScreen && (
-        <RN.TouchableOpacity style={styles.listItemWrapper} onPress={onOpen}>
-          <RN.View style={{flexDirection: 'row'}}>
-            <RN.Image source={{uri: 'locateoutline'}} style={styles.icon} />
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Text style={styles.listItemText}>{t('location')}</RN.Text>
-            </RN.View>
-          </RN.View>
-          <RN.View style={{flexDirection: 'row'}}>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Text style={styles.locationText}>
-                {currentUser?.userCountry}
-              </RN.Text>
-            </RN.View>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
-            </RN.View>
-          </RN.View>
-        </RN.TouchableOpacity>
       )}
       <Portal>
         <Modalize
