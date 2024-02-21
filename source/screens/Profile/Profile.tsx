@@ -84,7 +84,9 @@ const ProfileScreen = ({navigation, isUserScreen = false}) => {
   }
 
   return (
-    <SafeAreaView edges={isUserScreen ? [] : ['top']} style={styles.container}>
+    <SafeAreaView
+      edges={isUserScreen ? ['bottom'] : ['top']}
+      style={styles.container}>
       <ProfileList
         loadingMore={loadingMore}
         isCurrentUser
