@@ -81,9 +81,9 @@ const EventScreen = () => {
   useEffect(() => {
     getEvent();
 
-    return () => {
-      onClearEventDataById();
-    };
+    // return () => {
+    //   onClearEventDataById();
+    // };
   }, [linkId]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {

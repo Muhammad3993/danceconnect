@@ -47,9 +47,9 @@ const CommunityScreen = ({route, navigation}: Props) => {
   useEffect(() => {
     getCommunity();
 
-    return () => {
-      onClearCommunityDataById();
-    };
+    // return () => {
+    //   onClearCommunityDataById();
+    // };
   }, []);
 
   useEffect(() => {
