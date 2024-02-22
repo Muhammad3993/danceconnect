@@ -1,22 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useMemo, useState} from 'react';
-import * as RN from 'react-native';
-import colors from '../../utils/colors';
-import Carousel from '../../components/carousel';
 import moment from 'moment';
-import {Button} from '../../components/Button';
-import useEvents from '../../hooks/useEvents';
-import useRegistration from '../../hooks/useRegistration';
-import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
-import SkeletonEventScreen from '../../components/skeleton/EventScreen-Skeleton';
-import {useEventById} from '../../hooks/useEventById';
-import {apiUrl, getTicketByEventUid} from '../../api/serverRequests';
-import socket from '../../api/sockets';
-import useTickets from '../../hooks/useTickets';
-import FastImage from 'react-native-fast-image';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {defaultProfile, getDefaultImgUser} from '../../utils/images';
+import * as RN from 'react-native';
+import FastImage from 'react-native-fast-image';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -25,6 +13,18 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
+import {apiUrl, getTicketByEventUid} from '../../api/serverRequests';
+import socket from '../../api/sockets';
+import {Button} from '../../components/Button';
+import Carousel from '../../components/carousel';
+import SkeletonEventScreen from '../../components/skeleton/EventScreen-Skeleton';
+import {useEventById} from '../../hooks/useEventById';
+import useEvents from '../../hooks/useEvents';
+import useRegistration from '../../hooks/useRegistration';
+import useTickets from '../../hooks/useTickets';
+import colors from '../../utils/colors';
+import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
+import {getDefaultImgUser} from '../../utils/images';
 
 const EventScreen = () => {
   const routeProps = useRoute();

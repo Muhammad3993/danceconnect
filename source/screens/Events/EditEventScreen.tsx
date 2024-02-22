@@ -5,7 +5,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {apiUrl} from '../../api/serverRequests';
 import {Button} from '../../components/Button';
@@ -20,6 +20,7 @@ import useTickets from '../../hooks/useTickets';
 import colors from '../../utils/colors';
 import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
 import {isValidUrl} from '../../utils/helpers';
+import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
 
 const EditEventScreen = () => {
   const navigation = useNavigation();
@@ -76,7 +77,7 @@ const EditEventScreen = () => {
   const [startDate, setStartDate] = useState(eventDate?.startDate);
   const [endDate, setEndDate] = useState(eventDate?.endDate);
 
-  const [imgs, setImages] = useState(images);
+  const [imgs, setImages] = useState<(Image | string)[]>(images);
   const [selectedPlace, setSelectedPlace] = useState<string>(place ?? '');
   const [selectedLocation, setSelectedLocation] = useState(location);
   const [currentCountry, setCurrentCountry] = useState();
@@ -254,7 +255,14 @@ const EditEventScreen = () => {
         // country: countryEdit,
         location: locationEdt,
         categories: addedStyles,
-        images: imgs,
+        images: imgs.map(el =>
+          typeof el === 'object'
+            ? {
+                base64: el?.data,
+                uri: el.path,
+              }
+            : el,
+        ) as (Asset | string)[],
         eventDate: eventDateEd,
         place: selectedPlace,
         eventUid: routeParams?.params?._id,
@@ -327,22 +335,19 @@ const EditEventScreen = () => {
     setImages(filter);
   };
   const onChooseImage = async () => {
-    let options = {
+    ImageCropPicker.openPicker({
       mediaType: 'photo',
-      quality: 1,
+      width: 375,
+      height: 480,
+      cropping: true,
       includeBase64: true,
-    };
-    launchImageLibrary(options, response => {
-      if (response.assets) {
-        if (imgs?.length > 0) {
-          setImages([...imgs, response?.assets[0]]);
-        } else {
-          setImages([response.assets[0]]);
-        }
-      } else {
+    })
+      .then(res => {
+        setImages([...imgs, res]);
+      })
+      .catch(() => {
         console.log('cancel');
-      }
-    });
+      });
   };
   const onPressTicketType = (type: {
     idx: number;
@@ -658,11 +663,7 @@ const EditEventScreen = () => {
           <RN.ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{
-              flex: 1,
-              paddingHorizontal: 20,
-              marginVertical: 12,
-            }}>
+            style={{flex: 1, paddingHorizontal: 20, marginVertical: 12}}>
             {imgs?.map((img, index) => {
               return (
                 <>
@@ -677,7 +678,7 @@ const EditEventScreen = () => {
                     onLoadStart={() => setLoadImg(true)}
                     onLoadEnd={() => setLoadImg(false)}
                     source={{
-                      uri: img?.base64?.length > 0 ? img?.uri : apiUrl + img,
+                      uri: typeof img === 'object' ? img?.path : apiUrl + img,
                     }}
                   />
                   <RN.TouchableOpacity

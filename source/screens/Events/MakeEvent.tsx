@@ -12,7 +12,7 @@ import useAppStateHook from '../../hooks/useAppState';
 import CategorySelector from '../../components/catregorySelector';
 import moment from 'moment';
 import BottomCalendar from '../../components/bottomCalendar';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import FindCity from '../../components/findCity';
 import FindPlace from '../../components/findPlace';
 import useEvents from '../../hooks/useEvents';
@@ -20,6 +20,7 @@ import useTickets from '../../hooks/useTickets';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import {isValidUrl} from '../../utils/helpers';
+import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
 
 const MakeEvent = () => {
   const {t} = useTranslation();
@@ -72,7 +73,7 @@ const MakeEvent = () => {
   const [time, setTime] = useState();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [images, setImages] = useState(new Array(0).fill(''));
+  const [images, setImages] = useState<Image[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<string>('');
   const [selectedLocation, setSelectedLocation] = useState(
     communityData?.location ?? currentCity,
@@ -257,7 +258,10 @@ const MakeEvent = () => {
       // country: country,
       location: locationEdt,
       categories: addedStyles,
-      images: images,
+      images: images.map(el => ({
+        base64: el?.data,
+        uri: el.path,
+      })) as Asset[],
       // place: 'selectedPlace',
       place: selectedPlace,
       communityUid: communityData ? communityData?._id : '',
@@ -332,18 +336,19 @@ const MakeEvent = () => {
     setImages(filter);
   };
   const onChooseImage = async () => {
-    let options = {
+    ImageCropPicker.openPicker({
       mediaType: 'photo',
-      quality: 1,
+      width: 375,
+      height: 480,
+      cropping: true,
       includeBase64: true,
-    };
-    launchImageLibrary(options, response => {
-      if (response.assets) {
-        setImages([...images, response?.assets[0]]);
-      } else {
+    })
+      .then(res => {
+        setImages([...images, res]);
+      })
+      .catch(() => {
         console.log('cancel');
-      }
-    });
+      });
   };
   const onPressTicketType = (type: {
     idx: number;
@@ -673,7 +678,7 @@ const MakeEvent = () => {
                     }}
                     onLoadStart={() => setLoadImg(true)}
                     onLoadEnd={() => setLoadImg(false)}
-                    source={{uri: img?.uri}}
+                    source={{uri: img?.path}}
                   />
                   <RN.TouchableOpacity
                     onPress={() => onPressDeleteImg(img)}
