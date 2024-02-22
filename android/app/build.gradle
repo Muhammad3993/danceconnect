@@ -139,8 +139,8 @@ android {
         applicationId "com.danceconnect"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
-        versionName "5.3"
+        versionCode 16
+        versionName "5.4"
 //        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         // if (isNewArchitectureEnabled()) {
@@ -264,7 +264,6 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.facebook.soloader:soloader:0.9.0+'
     implementation project(':react-native-splash-screen')
-    
     implementation project(path: ":@react-native-firebase_messaging")
     implementation project(':react-native-push-notification')
     //noinspection GradleDynamicVersion
