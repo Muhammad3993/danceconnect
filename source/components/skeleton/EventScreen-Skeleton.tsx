@@ -2,6 +2,7 @@ import React from 'react';
 import * as RN from 'react-native';
 
 import {SkeletonContainer, Skeleton} from 'react-native-skeleton-component';
+import {getAdaptiveWidth} from '../../utils/constants';
 
 const SkeletonEventScreen = () => {
   return (
@@ -81,7 +82,7 @@ const styles = RN.StyleSheet.create({
     borderRadius: 8,
   },
   img: {
-    height: 350,
+    height: getAdaptiveWidth(480),
   },
   title: {
     height: 30,
