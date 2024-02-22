@@ -128,10 +128,7 @@ const CommunitiesScreen = ({navigation}) => {
 
   const renderHeader = () => {
     return (
-      <RN.View
-        style={{
-          marginTop: isAndroid ? 14 : 0,
-        }}>
+      <RN.View style={{marginTop: isAndroid ? 14 : 0}}>
         <RN.TouchableOpacity
           style={styles.userLocationWrapper}
           onPress={() => setOpenModal(true)}>

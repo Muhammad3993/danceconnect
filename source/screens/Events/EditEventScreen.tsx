@@ -1,25 +1,24 @@
 /* eslint-disable react-native/no-inline-styles */
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useMemo, useState, useTransition} from 'react';
-import * as RN from 'react-native';
-import {useProfile} from '../../hooks/useProfile';
-import colors from '../../utils/colors';
-import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
-import {Button} from '../../components/Button';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Input} from '../../components/input';
-import useAppStateHook from '../../hooks/useAppState';
-import CategorySelector from '../../components/catregorySelector';
 import moment from 'moment';
-import BottomCalendar from '../../components/bottomCalendar';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import * as RN from 'react-native';
+import FastImage from 'react-native-fast-image';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {apiUrl} from '../../api/serverRequests';
+import {Button} from '../../components/Button';
+import BottomCalendar from '../../components/bottomCalendar';
+import CategorySelector from '../../components/catregorySelector';
 import FindCity from '../../components/findCity';
 import FindPlace from '../../components/findPlace';
+import {Input} from '../../components/input';
+import useAppStateHook from '../../hooks/useAppState';
 import useEvents from '../../hooks/useEvents';
 import useTickets from '../../hooks/useTickets';
-import {apiUrl} from '../../api/serverRequests';
-import FastImage from 'react-native-fast-image';
-import {useTranslation} from 'react-i18next';
+import colors from '../../utils/colors';
+import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
 import {isValidUrl} from '../../utils/helpers';
 
 const EditEventScreen = () => {

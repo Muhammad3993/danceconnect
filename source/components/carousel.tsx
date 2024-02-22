@@ -3,7 +3,7 @@ import {FlatList, Image, LayoutAnimation, StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {apiUrl} from '../api/serverRequests';
 import colors from '../utils/colors';
-import {SCREEN_WIDTH} from '../utils/constants';
+import {SCREEN_WIDTH, getAdaptiveWidth} from '../utils/constants';
 
 type paginationProp = {
   index: number;
@@ -115,12 +115,12 @@ const Carousel = ({items}: {items: string[]}) => {
 
 const styles = StyleSheet.create({
   slide: {
-    height: 340,
+    height: getAdaptiveWidth(480),
     // width: SCREEN_WIDTH,
   },
   slideImage: {
     width: SCREEN_WIDTH,
-    height: 340,
+    height: getAdaptiveWidth(480),
   },
   pagination: {
     justifyContent: 'flex-end',

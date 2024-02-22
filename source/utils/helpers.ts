@@ -1,6 +1,4 @@
 import moment from 'moment';
-import {Platform, Share} from 'react-native';
-import i18n from '../i18n/i118n';
 export const validateEmail = (email: string) => {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))?/;
