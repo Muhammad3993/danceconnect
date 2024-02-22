@@ -121,8 +121,8 @@ const CreateCommunity = ({navigation}) => {
     setLoadImg(true);
     ImageCropPicker.openPicker({
       mediaType: 'photo',
-      width: 600,
-      height: 500,
+      width: 390,
+      height: 505,
       cropping: true,
       includeBase64: true,
     })
