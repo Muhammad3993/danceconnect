@@ -147,10 +147,13 @@ const HomeScreen = () => {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 marginBottom: 8,
+                paddingRight: 30,
               }}>
-              <RN.Text style={styles.interestedText}>
-                You might be interested
-              </RN.Text>
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Text style={styles.interestedText}>
+                  You might be interested
+                </RN.Text>
+              </RN.View>
               <RN.TouchableOpacity
                 style={styles.ellipse}
                 onPress={() => navigation.navigate('Communities')}>
@@ -180,6 +183,7 @@ const HomeScreen = () => {
             justifyContent: 'space-between',
             paddingBottom: 18,
             paddingTop: 20,
+            paddingRight: 30,
             backgroundColor: colors.white,
           }}>
           <RN.Text style={styles.upcomingEventsTitle}>
@@ -244,7 +248,7 @@ const styles = RN.StyleSheet.create({
     height: 28,
     width: 28,
     justifyContent: 'center',
-    marginRight: 30,
+    // marginRight: 30,
   },
   interestedText: {
     fontSize: 20,
@@ -313,7 +317,7 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: colors.gray,
-    paddingTop: 20,
+    // paddingTop: 20,
     paddingHorizontal: 20,
     backgroundColor: colors.white,
   },

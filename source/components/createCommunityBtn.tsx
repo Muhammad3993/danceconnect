@@ -73,8 +73,8 @@ const styles = RN.StyleSheet.create({
     margin: 10,
   },
   rightArrowIcon: {
-    height: 18,
-    width: 18,
+    height: 16,
+    width: 16,
   },
   description: {
     fontSize: SCREEN_WIDTH <= 375 ? 11 : 12,

@@ -384,11 +384,17 @@ function* getCommunitiesByUserId(action: {payload: {user_id: string}}) {
 
 function* getMainCommunities() {
   try {
-    const communities: string[] = yield call(
-      getCommunitiesWithMongoByArray,
-      [],
+    const location = yield select(selectCurrentCity);
+    const regions = yield select(selectRegions);
+
+    const isRegionCountries = regions.find(
+      (i: {name: string}) => i.name === location,
     );
 
+    const communities = yield call(
+      getCommunitiesWithMongoByArray,
+      isRegionCountries ? isRegionCountries?.countries : [location],
+    );
     if (communities.length >= 3) {
       yield put(getMainCommunitiesSuccessAction(communities.slice(0, 3)));
     } else {

@@ -114,7 +114,7 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
   const renderCount = () => {
     return (
       <RN.View style={{flexDirection: 'row', paddingVertical: 8}}>
-        {attendedImgs?.slice(0, 3)?.map((img, idx) => {
+        {attendedImgs?.slice(0, 5)?.map((img, idx) => {
           const imgUri =
             img?.userImage?.length > 0
               ? {uri: apiUrl + img?.userImage}
@@ -139,8 +139,8 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
               color: colors.darkGray,
             }}>
             {countFollowers > 0
-              ? countFollowers > 3
-                ? '+' + t('followers', {count: countFollowers - 3})
+              ? countFollowers > 5
+                ? '+' + t('followers', {count: countFollowers - 5})
                 : t('followed')
               : 'no subscribers yet'}
           </RN.Text>

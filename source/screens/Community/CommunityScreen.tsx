@@ -373,8 +373,8 @@ const CommunityScreen = ({route, navigation}: Props) => {
   };
   const renderAttendedImgs = () => {
     const countPeople =
-      attendedImgs?.length > 6
-        ? `+${t('followers', {count: attendedImgs?.length - 6})}`
+      attendedImgs?.length > 5
+        ? `+${t('followers', {count: attendedImgs?.length - 5})}`
         : t('followed');
     const onPressAttended = () => {
       navigation.push('AttendedPeople', {
@@ -391,7 +391,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
           marginHorizontal: 24,
           paddingVertical: 10,
         }}>
-        {attendedImgs?.slice(0, 6)?.map((img, idx) => {
+        {attendedImgs?.slice(0, 5)?.map((img, idx) => {
           return (
             <RN.View
               key={idx}

@@ -589,7 +589,17 @@ function* getEventsByUserId(action: {payload: {user_id: string}}) {
 
 function* getMainEvents() {
   try {
-    const mainEvents = yield call(getEventsWithMongoByArray, []);
+    const location = yield select(selectCurrentCity);
+    const regions = yield select(selectRegions);
+
+    const isRegionCountries = regions.find(
+      (i: {name: string}) => i.name === location,
+    );
+
+    const mainEvents = yield call(
+      getEventsWithMongoByArray,
+      isRegionCountries ? isRegionCountries?.countries : [location],
+    );
 
     if (mainEvents.length >= 3) {
       yield put(

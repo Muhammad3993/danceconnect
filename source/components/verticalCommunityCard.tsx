@@ -16,7 +16,7 @@ const VerticalCommunityCard = (community: CommunityT) => {
   const navigation = useNavigation();
   const {userUid} = useRegistration();
   const {t} = useTranslation();
-  const {startFollowed} = useCommunities();
+  const {startFollowed, mainCommunities} = useCommunities();
   const [isFollowed, setIsFollowed] = useState<boolean | undefined>(false);
   const countFollowers = community?.followers?.length;
   const isMyCommunity = community?.creator?.uid === userUid;
@@ -73,7 +73,13 @@ const VerticalCommunityCard = (community: CommunityT) => {
   };
   return (
     <RN.TouchableOpacity
-      style={styles.container}
+      style={[
+        styles.container,
+        {
+          minWidth:
+            mainCommunities?.length > 1 ? SCREEN_WIDTH - 60 : SCREEN_WIDTH - 40,
+        },
+      ]}
       activeOpacity={0.7}
       onPress={onPress}>
       <RN.ImageBackground
@@ -149,7 +155,7 @@ const styles = RN.StyleSheet.create({
   image: {
     justifyContent: 'flex-end',
     minHeight: 360,
-    width: SCREEN_WIDTH - 60,
+    // width: SCREEN_WIDTH - 60,
     marginTop: -14,
     marginHorizontal: -12,
   },
