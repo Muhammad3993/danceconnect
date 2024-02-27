@@ -244,7 +244,7 @@ const styles = RN.StyleSheet.create({
     height: 28,
     width: 28,
     justifyContent: 'center',
-    marginRight: 20,
+    marginRight: 30,
   },
   interestedText: {
     fontSize: 20,
