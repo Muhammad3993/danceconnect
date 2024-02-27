@@ -32,6 +32,8 @@ export type eventParams = {
   personalEvents?: string[];
   inAppTickets?: boolean;
   externalLink?: string;
+
+  mainEvents?: string[];
 };
 
 export type followingParams = {
@@ -297,4 +299,17 @@ export const getEventsByUserIdSuccessAction = (
 
 export const getEventsByUserIdFailAction = () => ({
   type: EVENT.GET_EVENTS_BY_USER_ID_FAIL,
+});
+
+export const getMainEventsRequestAction = () => ({
+  type: EVENT.GET_MAIN_EVENTS_REQUEST,
+});
+export const getMainEventsSuccessAction = (mainEvents: string[]) => ({
+  type: EVENT.GET_MAIN_EVENTS_SUCCESS,
+  payload: {
+    mainEvents: mainEvents,
+  },
+});
+export const getMainEventsFailAction = () => ({
+  type: EVENT.GET_MAIN_EVENTS_FAIL,
 });

@@ -30,6 +30,7 @@ export type communititesAction = {
     communities_by_user_id?: string[];
     type: string;
     channelId: string;
+    mainCommunities?: string[];
   };
 };
 
@@ -221,6 +222,24 @@ export default (
       return {
         ...state,
         communities_by_user_id: [],
+      };
+
+    case COMMUNITIES.GET_MAIN_COMMUNITIES_REQUEST:
+      return {
+        ...state,
+        // mainCommunities: [],
+      };
+
+    case COMMUNITIES.GET_MAIN_COMMUNITIES_SUCCESS:
+      return {
+        ...state,
+        mainCommunities: action?.payload?.mainCommunities,
+      };
+
+    case COMMUNITIES.GET_MAIN_COMMUNITIES_FAIL:
+      return {
+        ...state,
+        mainCommunities: [],
       };
     default:
       return state;

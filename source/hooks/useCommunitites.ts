@@ -7,6 +7,7 @@ import {
   selectJoinedCommunities,
   selectLoadingInCreateCommunity,
   selectLoadingManagingCommunities,
+  selectMainCommunities,
   selectManagingCommunities,
 } from '../store/selectors/communitiesSelector';
 import {
@@ -16,6 +17,7 @@ import {
   getCommunitiesRequestAction,
   getCommunitiesSuccessAction,
   getCommunityByIdClearAction,
+  getMainCommunitiesRequestAction,
   getManagingCommunitiesRequestAction,
   startFollowedCommunityRequestAction,
 } from '../store/actions/communityActions';
@@ -43,6 +45,8 @@ export const useCommunities = () => {
   //   return filter;
   // });
   const joinedCommunities = useSelector(selectJoinedCommunities);
+
+  const mainCommunities = useSelector(selectMainCommunities);
 
   const getManagingCommunities = () => {
     dispatch(getManagingCommunitiesRequestAction());
@@ -95,6 +99,11 @@ export const useCommunities = () => {
   const onClearCommunityDataById = () => {
     dispatch(getCommunityByIdClearAction());
   };
+
+  const getMainCommunities = () => {
+    dispatch(getMainCommunitiesRequestAction());
+  };
+
   return {
     communitiesData,
     isLoading,
@@ -112,5 +121,7 @@ export const useCommunities = () => {
     getManagingCommunities,
     setSocketCommunities,
     onClearCommunityDataById,
+    mainCommunities,
+    getMainCommunities,
   };
 };

@@ -26,4 +26,5 @@ export default {
   inAppTickets: true,
   externalLink: '',
   events_by_user_id: [],
+  mainEvents: [],
 };

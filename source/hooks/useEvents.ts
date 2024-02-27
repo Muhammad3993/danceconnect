@@ -9,6 +9,7 @@ import {
   getEventByIdCommunityRequestAction,
   getEventsRequestAction,
   getEventsSuccessAction,
+  getMainEventsRequestAction,
   getManagingEventsRequestAction,
   getPersonalEventsRequestAction,
   setLimit,
@@ -26,6 +27,7 @@ import {
   selectLoadingEvents,
   selectLoadingManagingEvents,
   selectLoadingattendEvent,
+  selectMainEvents,
   selectManagingEvents,
   selectManagingEventsAndPassed,
   selectPassedEvents,
@@ -198,6 +200,11 @@ const useEvents = () => {
     dispatch(createEventChangeValue());
   };
 
+  const mainEvents = useSelector(selectMainEvents);
+  const getMainEvents = () => {
+    dispatch(getMainEventsRequestAction());
+  };
+
   return {
     createEvent,
     eventList,
@@ -231,6 +238,8 @@ const useEvents = () => {
     isCreatedEvent,
     changeCreatedValue,
     managingEventsAndPassed,
+    getMainEvents,
+    mainEvents,
   };
 };
 export default useEvents;

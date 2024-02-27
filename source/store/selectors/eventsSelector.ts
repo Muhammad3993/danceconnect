@@ -118,3 +118,12 @@ export const selectIsCreatedEvent = (state: IRootState) =>
 
 export const selectEventByUserId = (state: IRootState) =>
   state?.events?.events_by_user_id ?? [];
+
+export const selectMainEvents = (state: IRootState) =>
+  state?.events?.mainEvents?.filter((ev: any) =>
+    ev?.eventDate?.endDate !== null
+      ? moment(ev?.eventDate?.endDate).format('YYYY-MM-DD') >=
+        moment(new Date()).format('YYYY-MM-DD')
+      : moment(ev?.eventDate?.startDate).format('YYYY-MM-DD') >=
+        moment(new Date()).format('YYYY-MM-DD'),
+  ) ?? [];

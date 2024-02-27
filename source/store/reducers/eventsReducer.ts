@@ -39,6 +39,8 @@ export type eventAction = {
     personalEvents?: string[];
     user_id?: string;
     events_by_user_id?: string[];
+
+    mainEvents?: string[];
   };
 };
 
@@ -264,6 +266,24 @@ export default (state = eventsInitialState, action: eventAction) => {
       return {
         ...state,
         events_by_user_id: [],
+      };
+
+    case EVENT.GET_MAIN_EVENTS_REQUEST:
+      return {
+        ...state,
+        // mainEvents: [],
+      };
+
+    case EVENT.GET_MAIN_EVENTS_SUCCESS:
+      return {
+        ...state,
+        mainEvents: action?.payload?.mainEvents,
+      };
+
+    case EVENT.GET_MAIN_EVENTS_FAIL:
+      return {
+        ...state,
+        mainEvents: [],
       };
     default:
       return state;

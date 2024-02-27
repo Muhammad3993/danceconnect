@@ -21,6 +21,8 @@ export type communityParams = {
   screen?: string;
   type?: string;
   channelId?: string;
+
+  mainCommunities?: string[];
 };
 export type followingParams = {
   isLoadingFollow?: boolean;
@@ -222,4 +224,17 @@ export const getCommunitiesByUserIdSuccessAction = (
 
 export const getCommunitiesByUserIdFailAction = () => ({
   type: COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_FAIL,
+});
+
+export const getMainCommunitiesRequestAction = () => ({
+  type: COMMUNITIES.GET_MAIN_COMMUNITIES_REQUEST,
+});
+export const getMainCommunitiesSuccessAction = (mainCommunities: string[]) => ({
+  type: COMMUNITIES.GET_MAIN_COMMUNITIES_SUCCESS,
+  payload: {
+    mainCommunities: mainCommunities,
+  },
+});
+export const getMainCommunitiesFailAction = () => ({
+  type: COMMUNITIES.GET_MAIN_COMMUNITIES_FAIL,
 });

@@ -11,6 +11,9 @@ import {
   getCommunitiesSuccessAction,
   getCommunityByIdFailAction,
   getCommunityByIdSuccessAction,
+  getMainCommunitiesFailAction,
+  getMainCommunitiesRequestAction,
+  getMainCommunitiesSuccessAction,
   getManagingCommunitiesFailAction,
   getManagingCommunitiesRequestAction,
   getManagingCommunitiesSuccessAction,
@@ -129,6 +132,7 @@ function* startFollowingCommunity(action: any) {
     // socket.connect();
     socket.emit('follow_community', communityUid, userUid);
     yield put(startFollowedCommunitySuccessAction());
+    yield put(getMainCommunitiesRequestAction());
   } catch (error) {
     console.log('startFollowingCommunity', error);
     yield put(startFollowedCommunityFailAction());
@@ -377,6 +381,24 @@ function* getCommunitiesByUserId(action: {payload: {user_id: string}}) {
     yield put(getCommunitiesByUserIdFailAction());
   }
 }
+
+function* getMainCommunities() {
+  try {
+    const communities: string[] = yield call(
+      getCommunitiesWithMongoByArray,
+      [],
+    );
+
+    if (communities.length >= 3) {
+      yield put(getMainCommunitiesSuccessAction(communities.slice(0, 3)));
+    } else {
+      yield put(getMainCommunitiesSuccessAction(communities));
+    }
+  } catch (error) {
+    console.log('getMainCommunities', error);
+    yield put(getMainCommunitiesFailAction());
+  }
+}
 function* communititesSaga() {
   yield takeLatest(
     COMMUNITIES.GET_COMMUNITY_BY_ID_REQUEST,
@@ -420,6 +442,10 @@ function* communititesSaga() {
   yield takeLatest(
     COMMUNITIES.GET_COMMUNITIES_BY_USER_ID_REQUEST,
     getCommunitiesByUserId,
+  );
+  yield takeLatest(
+    COMMUNITIES.GET_MAIN_COMMUNITIES_REQUEST,
+    getMainCommunities,
   );
 }
 

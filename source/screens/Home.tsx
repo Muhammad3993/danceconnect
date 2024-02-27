@@ -16,7 +16,10 @@ import messaging from '@react-native-firebase/messaging';
 import {useProfile} from '../hooks/useProfile';
 import PushController from '../utils/pushController';
 import {Tab} from '../components/tab';
-import usePeople from '../hooks/usePeople';
+import {useCommunities} from '../hooks/useCommunitites';
+import VerticalCommunityCard from '../components/verticalCommunityCard';
+import {CommunityT} from '../utils/interfaces';
+import useEvents from '../hooks/useEvents';
 
 const HomeScreen = () => {
   const routeProps = useRoute();
@@ -27,23 +30,20 @@ const HomeScreen = () => {
     useAppStateHook();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-  const {getEventsByUserId, eventsByUser} = usePeople();
-  const {currentUser} = useRegistration();
 
   const [events, setEvents] = useState<string[]>([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const {getPurchasedTickets} = useTickets();
-  const {setToken, userFcmToken} = useProfile();
+  const {setToken} = useProfile();
+  const {getMainCommunities, mainCommunities} = useCommunities();
+  const {getMainEvents, mainEvents} = useEvents();
 
   const {t} = useTranslation();
   const getFcmToken = async () => {
     try {
-      // if (!userFcmToken) {
       const fcmToken = await messaging().getToken();
-      console.log('getFcmToken', fcmToken);
       setToken(fcmToken);
       return fcmToken;
-      // }
     } catch (error) {
       console.error(error);
       return null;
@@ -63,9 +63,11 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (isFocused) {
-      getEventsByUserId(currentUser?.id);
+      getMainCommunities();
+      getMainEvents();
+      setEvents(mainEvents);
     }
-  }, [isFocused, currentUser?.id]);
+  }, [isFocused]);
 
   useEffect(() => {
     getFcmToken();
@@ -73,29 +75,23 @@ const HomeScreen = () => {
     getPurchasedTickets();
   }, []);
 
-  useEffect(() => {
-    if (eventsByUser?.length > 0) {
-      setEvents(eventsByUser);
-    }
-  }, [eventsByUser, eventsByUser?.length]);
-
   const onPressTab = useCallback(
     (value: string) => {
-      // RN.LayoutAnimation.configureNext(
-      // RN.LayoutAnimation.Presets.easeInEaseOut,
-      // );
+      RN.LayoutAnimation.configureNext(
+        RN.LayoutAnimation.Presets.easeInEaseOut,
+      );
       setCurrentTab(value);
       if (value === 'All') {
-        setEvents(eventsByUser);
+        setEvents(mainEvents);
       } else {
         setEvents(
-          eventsByUser?.filter(
+          mainEvents?.filter(
             (event: {typeEvent: string}) => event?.typeEvent === value,
           ),
         );
       }
     },
-    [eventsByUser],
+    [mainEvents],
   );
 
   useEffect(() => {
@@ -144,24 +140,60 @@ const HomeScreen = () => {
             <RN.Image source={{uri: 'chat'}} style={{height: 28, width: 28}} />
           </RN.TouchableOpacity>
         </RN.View>
-        {/* {maybeEvents?.length > 0 && (
+        {mainCommunities?.length > 0 && (
           <RN.View style={styles.interestedWrapper}>
-            <RN.Text style={styles.interestedText}>
-              You might be interested
-            </RN.Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {maybeEvents?.map(i => (
-                <VerticalCard data={i} eventsLength={maybeEvents?.length} />
+            <RN.View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: 8,
+              }}>
+              <RN.Text style={styles.interestedText}>
+                You might be interested
+              </RN.Text>
+              <RN.TouchableOpacity
+                style={styles.ellipse}
+                onPress={() => navigation.navigate('Communities')}>
+                <RN.Image
+                  source={{uri: 'arrowright'}}
+                  style={{height: 16, width: 16, margin: 6}}
+                />
+              </RN.TouchableOpacity>
+            </RN.View>
+            <ScrollView
+              style={{paddingHorizontal: 8}}
+              horizontal
+              showsHorizontalScrollIndicator={false}>
+              {mainCommunities?.map((community: CommunityT) => (
+                <VerticalCommunityCard {...community} />
               ))}
+              <RN.View style={{marginRight: 16}} />
             </ScrollView>
           </RN.View>
-        )} */}
+        )}
         <RN.View style={{padding: 16, backgroundColor: colors.white}}>
           <CreateCommunityButton />
         </RN.View>
-        <RN.Text style={styles.upcomingEventsTitle}>
-          {t('your_upcoming')}
-        </RN.Text>
+        <RN.View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingBottom: 18,
+            paddingTop: 20,
+            backgroundColor: colors.white,
+          }}>
+          <RN.Text style={styles.upcomingEventsTitle}>
+            {t('upcoming') + ' ' + t('events_tab')}
+          </RN.Text>
+          <RN.TouchableOpacity
+            style={[styles.ellipse, {justifyContent: 'center'}]}
+            onPress={() => navigation.navigate('Events')}>
+            <RN.Image
+              source={{uri: 'arrowright'}}
+              style={{height: 16, width: 16, margin: 6}}
+            />
+          </RN.TouchableOpacity>
+        </RN.View>
         <RN.View style={styles.tabsWrapper}>
           <Tab
             textStyle={styles.itemTabText}
@@ -206,12 +238,21 @@ const styles = RN.StyleSheet.create({
     backgroundColor: colors.white,
     paddingTop: 32,
   },
+  ellipse: {
+    backgroundColor: colors.transparentPurple,
+    borderRadius: 100,
+    height: 28,
+    width: 28,
+    justifyContent: 'center',
+    marginRight: 20,
+  },
   interestedText: {
-    fontSize: 24,
-    lineHeight: 28.8,
+    fontSize: 20,
+    letterSpacing: 0.2,
+    lineHeight: 24,
     color: colors.textPrimary,
-    fontWeight: '700',
-    paddingBottom: 20,
+    fontWeight: '600',
+    // paddingBottom: 20,
     paddingHorizontal: 20,
   },
   upcomingEventsTitle: {
@@ -219,10 +260,10 @@ const styles = RN.StyleSheet.create({
     lineHeight: 24,
     fontWeight: '600',
     letterSpacing: 0.2,
-    paddingTop: 28,
+    // paddingTop: 28,
     paddingHorizontal: 20,
     color: colors.textPrimary,
-    backgroundColor: colors.white,
+    // backgroundColor: colors.white,
   },
   nameContainer: {
     flexDirection: 'row',

@@ -30,6 +30,7 @@ import {
   getEventsFailAction,
   getEventsRequestAction,
   getEventsSuccessAction,
+  getMainEventsSuccessAction,
   getManagingEventsFailAction,
   getManagingEventsRequestAction,
   getManagingEventsSuccessAction,
@@ -585,6 +586,22 @@ function* getEventsByUserId(action: {payload: {user_id: string}}) {
     yield put(getEventsByUserIdFailAction());
   }
 }
+
+function* getMainEvents() {
+  try {
+    const mainEvents = yield call(getEventsWithMongoByArray, []);
+
+    if (mainEvents.length >= 3) {
+      yield put(
+        getMainEventsSuccessAction(mainEvents?.eventsList?.slice(0, 3)),
+      );
+    } else {
+      yield put(getMainEventsSuccessAction(mainEvents?.eventsList));
+    }
+  } catch (error) {
+    console.log('er', error);
+  }
+}
 function* eventSaga() {
   yield takeLatest(EVENT.EVENT_CREATE_REQUEST, createEventRequest);
   yield takeLatest(EVENT.GET_EVENTS_REQUEST, getEventsRequest);
@@ -602,6 +619,7 @@ function* eventSaga() {
   yield takeLatest(EVENT.SET_LIMIT, getEventsRequest);
   yield takeLatest(EVENT.GET_PERSONAL_EVENTS_REQUEST, getPersonalEvents);
   yield takeLatest(EVENT.GET_EVENTS_BY_USER_ID_REQUEST, getEventsByUserId);
+  yield takeLatest(EVENT.GET_MAIN_EVENTS_REQUEST, getMainEvents);
   // yield debounce(1000, AUTHORIZATION_WITH_EMAIL.REQUEST, getEvents);
   // yield debounce(1000, AUTHORIZATION_WITH_GOOGLE.REQUEST, getEvents);
 }
