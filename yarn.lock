@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@amityco/ts-sdk@^6.16.0":
-  version "6.17.3"
-  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-6.17.3.tgz#bfb43558d4f602d4a4c36fa724e29f364fd8a359"
-  integrity sha512-htACVQHYyGNEsybNeXXMxq07PVtIHFpP36b9OulWyaAJMDzDtHyC8g/kXeDkxqNBWZI0bYZHWt1lAOSkpp3r/A==
+"@amityco/ts-sdk@^6.18.0":
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-6.18.0.tgz#15487a947ba315696d08adbef600465a400d4832"
+  integrity sha512-dI1kzeCj8EkMmLZA0sSyOcm67b5Lsq0UVUCnBE4cehkeLQyd+SgmfQpJHpgAkCDkFDRNazu2Yg2yExh2HgQPhQ==
   dependencies:
     agentkeepalive "^4.2.1"
     axios "^1.2.3"

@@ -33,6 +33,7 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
       types: ['community', 'conversation'],
       membership: 'member',
       limit: 30,
+      isDeleted: false,
     };
 
     const sub = ChannelRepository.getChannels(
@@ -68,9 +69,7 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
   };
 
   const filtered = useMemo(() => {
-    return channels.filter(el => {
-      return Boolean(el?.messagePreview);
-    });
+    return channels.filter(el => Boolean(el?.messagePreview));
   }, [channels]);
 
   if (error) {
@@ -107,7 +106,7 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
             onEndReachedThreshold={0.2}
             onEndReached={() => {
               if (
-                channels.length % 20 === 0 &&
+                channels.length % 30 === 0 &&
                 !loadingMore &&
                 hasNextPage &&
                 onNextPage.current

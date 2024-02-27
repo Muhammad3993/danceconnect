@@ -48,12 +48,15 @@ export function ChatItem({channel, currentUser}: Props) {
         style={styles.avatar}
       />
       <View style={styles.content}>
-        <Text style={styles.name}>{title}</Text>
+        <View style={styles.contentHeader}>
+          <Text style={styles.name}>{title}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={styles.date}>{localTime}</Text>
+            {unreadCount > 0 && <View style={styles.dot} />}
+          </View>
+        </View>
+
         <Text style={styles.message}>{messagePreview}</Text>
-      </View>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Text style={styles.date}>{localTime}</Text>
-        {unreadCount > 0 && <View style={styles.dot} />}
       </View>
     </View>
   );
@@ -75,10 +78,15 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     flex: 1,
   },
+  contentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
   name: {
     fontFamily: 'Lato-Bold',
     fontSize: 18,
-    marginBottom: 6,
     color: colors.textPrimary,
   },
   message: {
