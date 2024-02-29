@@ -8,6 +8,7 @@ import {
 import {
   getEventByIdRequestAction,
   removeEventRequestAction,
+  removeRecurrentEventRequestAction,
 } from '../store/actions/eventActions';
 
 export const useEventById = (id: string) => {
@@ -30,11 +31,20 @@ export const useEventById = (id: string) => {
     );
   };
 
+  const removeRecurrent = (recurrentId: string) => {
+    // console.log('attendEvent', eventUid);
+    dispatch(
+      removeRecurrentEventRequestAction({
+        eventUid: recurrentId,
+      }),
+    );
+  };
   return {
     getEvent,
     eventData,
     loadingById,
     remove,
     isFollowed,
+    removeRecurrent,
   };
 };

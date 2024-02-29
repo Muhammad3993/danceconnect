@@ -34,6 +34,10 @@ export type eventParams = {
   externalLink?: string;
 
   mainEvents?: string[];
+
+  isRecurrent?: number;
+  recurrentTemplate?: string[];
+  recurrentEndDate?: string;
 };
 
 export type followingParams = {
@@ -58,6 +62,9 @@ export const createEventRequestAction = ({
   type,
   inAppTickets,
   externalLink,
+  isRecurrent,
+  recurrentTemplate,
+  recurrentEndDate,
 }: eventParams) => ({
   type: EVENT.EVENT_CREATE_REQUEST,
   payload: {
@@ -76,6 +83,9 @@ export const createEventRequestAction = ({
     type: type,
     inAppTickets: inAppTickets,
     externalLink: externalLink,
+    isRecurrent: isRecurrent,
+    recurrentTemplate: recurrentTemplate,
+    recurrentEndDate: recurrentEndDate,
   },
 });
 export const createEventSuccessAction = (event: any) => ({
@@ -173,6 +183,9 @@ export const changeInformationEventRequestAction = ({
   type,
   inAppTickets,
   externalLink,
+  isRecurrent,
+  recurrentTemplate,
+  recurrentEndDate,
 }: eventParams) => ({
   type: EVENT.CHANGE_INFORMATION_EVENT_REQUEST,
   payload: {
@@ -190,6 +203,9 @@ export const changeInformationEventRequestAction = ({
     type: type,
     inAppTickets: inAppTickets,
     externalLink: externalLink,
+    isRecurrent: isRecurrent,
+    recurrentTemplate: recurrentTemplate,
+    recurrentEndDate: recurrentEndDate,
   },
 });
 export const changeInformationEventSuccessAction = () => ({
@@ -312,4 +328,18 @@ export const getMainEventsSuccessAction = (mainEvents: string[]) => ({
 });
 export const getMainEventsFailAction = () => ({
   type: EVENT.GET_MAIN_EVENTS_FAIL,
+});
+
+
+export const removeRecurrentEventSuccessAction = () => ({
+  type: EVENT.REMOVE_RECURRENT_EVENT_SUCCESS,
+});
+export const removeRecurrentEventFailAction = () => ({
+  type: EVENT.REMOVE_RECURRENT_EVENTY_FAIL,
+});
+export const removeRecurrentEventRequestAction = ({eventUid}: eventParams) => ({
+  type: EVENT.REMOVE_RECURRENT_EVENT_REQUEST,
+  payload: {
+    uid: eventUid,
+  },
 });

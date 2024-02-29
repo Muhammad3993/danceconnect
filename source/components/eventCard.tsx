@@ -29,10 +29,10 @@ const EventCard = ({item, containerStyle}: Props) => {
   const isAdmin = data?.creator?.uid === userUid;
   const isManager =
     data?.managers?.length > 0 && data?.managers?.find(i => i === userUid);
-
+// console.log('data?.eventDate?.time?.date ??', moment(data?.eventDate?.time?.date).local().format('MM DD'));
   const dateEvent = `${String(
     minWeekDay.weekdaysMin(moment(data?.eventDate?.startDate)),
-  ).toUpperCase()}, ${String(
+  ).toUpperCase()}, ${data?.eventDate?.time?.date ? String( moment(data?.eventDate?.time?.date).local().format('DD-MM')) : String(
     moment(data?.eventDate?.startDate).format('MMM Do'),
   ).toUpperCase()} • ${moment(data?.eventDate?.time).format('HH:mm')}`;
 

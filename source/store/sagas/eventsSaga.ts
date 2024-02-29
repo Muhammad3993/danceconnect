@@ -49,12 +49,13 @@ import {
   getEventsWithMongo,
   getManagingEventsRequest,
   getTickets,
-  getTicketByEventUid,
   unSubscribeEvent,
   updateEventById,
-  subscribeEvent,
   getEventsWithMongoByArray,
   getEventForUserId,
+  deleteReccurentEventsById,
+  updateReccurentEventsById,
+  getRecurrentEventById,
 } from '../../api/serverRequests';
 import {
   setLoadingAction,
@@ -287,6 +288,9 @@ function* createEventRequest(action: any) {
     type,
     inAppTickets,
     externalLink,
+    isRecurrent,
+    recurrentTemplate,
+    recurrentEndDate,
   } = action?.payload;
   try {
     const data = {
@@ -305,10 +309,13 @@ function* createEventRequest(action: any) {
       type: type,
       inAppTickets: inAppTickets,
       link: externalLink,
+      isRecurrent: isRecurrent,
+      recurrentTemplate: recurrentTemplate,
+      recurrentEndDate: recurrentEndDate,
     };
     yield put(setLoadingAction({onLoading: true}));
     const response = yield call(createEventWithMongo, data);
-    console.log('createEventRequest', response, data);
+    // console.log('createEventRequest', response, data);
     if (!response) {
       yield put(setNoticeVisible({isVisible: true}));
       yield put(
@@ -317,7 +324,11 @@ function* createEventRequest(action: any) {
         }),
       );
     } else {
-      yield put(createEventSuccessAction({...response}));
+      if (data?.isRecurrent === 1) {
+        yield put(createEventSuccessAction(response[0]));
+      } else {
+        yield put(createEventSuccessAction({...response}));
+      }
       yield put(getEventsRequestAction({limit: 1, offset: 0}));
       // navigationRef.current?.dispatch(
       //   CommonActions.navigate({
@@ -357,6 +368,9 @@ function* changeInformation(action: any) {
     type,
     inAppTickets,
     externalLink,
+    isRecurrent,
+    recurrentTemplate,
+    recurrentEndDate,
   } = action.payload;
   try {
     const data = {
@@ -372,13 +386,11 @@ function* changeInformation(action: any) {
       type: type,
       inAppTickets: inAppTickets,
       link: externalLink,
+      isRecurrent: isRecurrent,
+      recurrentTemplate: recurrentTemplate,
+      recurrentEndDate: recurrentEndDate,
     };
-    // console.log('updateEventById', eventUid);
-    yield put(setLoadingAction({onLoading: true}));
     yield call(updateEventById, eventUid, data);
-    yield put(changeInformationEventSuccessAction());
-    yield put(changeInformationValueAction());
-    yield put(getEventsRequestAction({limit: 1, offset: 0}));
     const response = yield call(getEventById, eventUid);
     // socket.emit('updated_events');
     if (!response) {
@@ -400,6 +412,58 @@ function* changeInformation(action: any) {
         data: response,
       });
     }
+    // if (isRecurrent === 1) {
+    //   yield call(updateReccurentEventsById, eventUid, data);
+    //   const response = yield call(getRecurrentEventById, eventUid);
+    //   // socket.emit('updated_events');
+    //   if (!response.length) {
+    //     yield put(setNoticeVisible({isVisible: true}));
+    //     yield put(
+    //       setNoticeMessage({
+    //         errorMessage: 'Server error',
+    //       }),
+    //     );
+    //   } else {
+    //     yield put(
+    //       getEventByIdSuccessAction({
+    //         eventById: response[0],
+    //       }),
+    //     );
+    //     yield put(setLoadingAction({onLoading: false}));
+
+    //     navigationRef.current?.navigate('EventScreen', {
+    //       data: response[0],
+    //     });
+    //   }
+    // } else {
+    //   yield call(updateEventById, eventUid, data);
+    //   const response = yield call(getEventById, eventUid);
+    //   // socket.emit('updated_events');
+    //   if (!response) {
+    //     yield put(setNoticeVisible({isVisible: true}));
+    //     yield put(
+    //       setNoticeMessage({
+    //         errorMessage: 'Server error',
+    //       }),
+    //     );
+    //   } else {
+    //     yield put(
+    //       getEventByIdSuccessAction({
+    //         eventById: response,
+    //       }),
+    //     );
+    //     yield put(setLoadingAction({onLoading: false}));
+
+    //     navigationRef.current?.navigate('EventScreen', {
+    //       data: response,
+    //     });
+    //   }
+    // }
+    // console.log('updateEventById', eventUid);
+    // yield put(setLoadingAction({onLoading: true}));
+    yield put(changeInformationEventSuccessAction());
+    yield put(changeInformationValueAction());
+    yield put(getEventsRequestAction({limit: 1, offset: 0}));
   } catch (er) {
     yield put(changeInformationEventFailAction());
   }
@@ -612,6 +676,28 @@ function* getMainEvents() {
     console.log('er', error);
   }
 }
+
+function* removeRecurrentEventRequest(action: any) {
+  try {
+    yield put(setLoadingAction({onLoading: true}));
+    yield call(deleteReccurentEventsById, action?.payload?.uid);
+    // socket.emit('updated_events');
+    yield put(getEventsRequestAction({limit: 1, offset: 0}));
+    yield put(getManagingEventsRequestAction());
+    yield put(removeEventSuccessAction());
+
+    navigationRef.current?.navigate('Events', {
+      createdEvent: true,
+    });
+
+    yield put(setLoadingAction({onLoading: false}));
+    yield put(getPersonalEventsRequestAction());
+  } catch (error) {
+    yield put(setLoadingAction({onLoading: false}));
+    yield put(removeEventFailAction());
+  }
+}
+
 function* eventSaga() {
   yield takeLatest(EVENT.EVENT_CREATE_REQUEST, createEventRequest);
   yield takeLatest(EVENT.GET_EVENTS_REQUEST, getEventsRequest);
@@ -630,6 +716,10 @@ function* eventSaga() {
   yield takeLatest(EVENT.GET_PERSONAL_EVENTS_REQUEST, getPersonalEvents);
   yield takeLatest(EVENT.GET_EVENTS_BY_USER_ID_REQUEST, getEventsByUserId);
   yield takeLatest(EVENT.GET_MAIN_EVENTS_REQUEST, getMainEvents);
+  yield takeLatest(
+    EVENT.REMOVE_RECURRENT_EVENT_REQUEST,
+    removeRecurrentEventRequest,
+  );
   // yield debounce(1000, AUTHORIZATION_WITH_EMAIL.REQUEST, getEvents);
   // yield debounce(1000, AUTHORIZATION_WITH_GOOGLE.REQUEST, getEvents);
 }

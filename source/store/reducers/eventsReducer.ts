@@ -41,6 +41,9 @@ export type eventAction = {
     events_by_user_id?: string[];
 
     mainEvents?: string[];
+    isRecurrent?: number;
+    recurrentTemplate?: string[];
+    recurrentEndDate?: null;
   };
 };
 
@@ -168,6 +171,9 @@ export default (state = eventsInitialState, action: eventAction) => {
         place: action?.payload?.place,
         typeEvent: action?.payload?.typeEvent,
         price: action?.payload?.price,
+        isRecurrent: action?.payload?.isRecurrent,
+        recurrentTemplate: action?.payload?.recurrentTemplate,
+        recurrentEndDate: action?.payload?.recurrentEndDate,
         saveChanges: false,
       };
     case EVENT.CHANGE_INFORMATION_EVENT_SUCCESS:
