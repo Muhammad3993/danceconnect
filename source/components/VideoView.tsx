@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Image,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -31,6 +32,7 @@ export const VideoView = memo(
     isCreating = false,
   }: Props) => {
     const [localPause, setLocalPause] = useState(false);
+    const [buffering, setBuffering] = useState(true);
     const [isMute, setIsMute] = useState(true);
     const [scalableWidth, setScalableWidth] = useState(width);
     const [scalableHeight, setScalableHeight] = useState(height ?? width);
@@ -68,7 +70,7 @@ export const VideoView = memo(
           styles.mediaContainer,
           {width: scalableWidth, height: scalableHeight},
         ]}>
-        {sizing && (
+        {(sizing || buffering) && (
           <View
             style={[
               styles.sizingOverlay,
@@ -87,8 +89,17 @@ export const VideoView = memo(
           resizeMode="cover"
           source={{uri: videoUrl}}
           ignoreSilentSwitch="ignore"
+          onBuffer={data => {
+            if (buffering && !data.isBuffering) {
+              setBuffering(false);
+            }
+          }}
           onLoad={({naturalSize}) => {
-            if (isCreating && naturalSize.orientation === 'portrait') {
+            if (
+              isCreating &&
+              Platform.OS !== 'android' &&
+              naturalSize.orientation === 'portrait'
+            ) {
               adjustSize(naturalSize.height, naturalSize.width);
             } else {
               adjustSize(naturalSize.width, naturalSize.height);

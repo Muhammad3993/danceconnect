@@ -63,6 +63,15 @@ function* registrationEmail(action: any) {
     } else if (response && response?.status === 201) {
       const auth = yield call(loginBySocial, email, password);
 
+      // yield call(
+      //   Client.login,
+      //   {
+      //     userId: auth?.data?.user?._id,
+      //     displayName: auth?.data?.user?.userName,
+      //   },
+      //   amitySessionHandler,
+      // );
+
       // console.log('loginBySocial', auth);
       yield put(
         registrationWithEmailSuccess({
@@ -219,10 +228,7 @@ function* authWthGoogle() {
 
       yield call(
         Client.login,
-        {
-          userId: auth?.data?.user?._id,
-          displayName: auth?.data?.user?.userName,
-        },
+        {userId: user?._id, displayName: user?.userName},
         amitySessionHandler,
       );
 
@@ -267,22 +273,17 @@ function* authWthApple() {
     }
     if (auth?.status === 200) {
       // console.log(QBSession);
+      const user = auth?.data?.user;
+
       yield call(
         Client.login,
-        {
-          userId: auth?.data?.user?._id,
-          displayName: auth?.data?.user?.userName,
-        },
+        {userId: user?._id, displayName: user?.userName},
         amitySessionHandler,
       );
 
       yield put(
         authWithGoogleSuccess({
-          currentUser: {
-            ...auth?.data?.user,
-            _id: auth?.data?.user?._id,
-            id: auth?.data?.user?._id,
-          },
+          currentUser: {...user, _id: user?._id, id: user?._id},
           isUserExists: true,
           token: auth?.data?.accessToken,
           authProvider: 'apple',
