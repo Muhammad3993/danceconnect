@@ -7,13 +7,11 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {genders, isAndroid, roles} from '../../utils/constants';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
-import FindCity from '../../components/findCity';
 import CategorySelector from '../../components/catregorySelector';
 import useAppStateHook from '../../hooks/useAppState';
 import {removeAccount} from '../../api/authSocial';
 import {logoutSuccess} from '../../store/actions/authorizationActions';
 import {useDispatch} from 'react-redux';
-import {Portal} from 'react-native-portalize';
 import LocationSelector from '../../components/locationSelector.tsx';
 import {useTranslation} from 'react-i18next';
 // import { createUser } from '../../api/serverRequests';
@@ -184,7 +182,7 @@ const Board = () => {
         </RN.ScrollView>
         <LocationSelector
           isProfileScreen={false}
-          setSelectedLocation={(value) => {
+          setSelectedLocation={value => {
             onChoosedCity(selectedLocation);
             setSelectedLocation(value);
           }}
