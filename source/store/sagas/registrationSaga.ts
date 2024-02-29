@@ -63,14 +63,14 @@ function* registrationEmail(action: any) {
     } else if (response && response?.status === 201) {
       const auth = yield call(loginBySocial, email, password);
 
-      yield call(
-        Client.login,
-        {
-          userId: auth?.data?.user?._id,
-          displayName: auth?.data?.user?.userName,
-        },
-        amitySessionHandler,
-      );
+      // yield call(
+      //   Client.login,
+      //   {
+      //     userId: auth?.data?.user?._id,
+      //     displayName: auth?.data?.user?.userName,
+      //   },
+      //   amitySessionHandler,
+      // );
 
       // console.log('loginBySocial', auth);
       yield put(

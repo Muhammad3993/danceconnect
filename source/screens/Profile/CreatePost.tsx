@@ -145,7 +145,7 @@ export function CreatePostScreen({navigation, route}) {
       dispatch(setNoticeMessage({errorMessage: err?.message}));
       dispatch(setNoticeVisible({isVisible: true}));
       setCreatingPost(false);
-      console.log(err);
+      // console.log(err);
     }
   };
 
