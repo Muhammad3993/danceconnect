@@ -6,7 +6,7 @@ import {
 } from '../store/actionTypes/authorizationActionTypes';
 // import {navigationRef} from '../navigation/types';
 // import {CommonActions} from '@react-navigation/native';
-// import {isAndroid} from '../utils/constants';
+import {isAndroid} from '../utils/constants';
 // import {DeviceEventEmitter} from 'react-native';
 // import socketIoClient from 'socket.io-client';
 // const socket = socketIoClient('http://localhost:3000', {autoConnect: false});
@@ -584,4 +584,35 @@ export const getEventForUserId = async (user_id: string) => {
 export const getCommunitiesForUserId = async (user_id: string) => {
   const response = await axios.get(`${apiUrl}communities/${user_id}`);
   return response.data;
+};
+
+export const deleteReccurentEventsById = async (id: string) => {
+  try {
+    const response = await axios.delete(`${apiUrl}recurrentEvent/${id}`);
+    return response.data;
+  } catch (error) {
+    return console.log('deleteEventById er', error);
+  }
+};
+export const updateReccurentEventsById = async (id: string, data: object) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl}recurrentEvent/${id}/update`,
+      data,
+    );
+    console.log('updateReccurentEventsById', response);
+    return response.data;
+  } catch (error) {
+    return console.log('updateEventById er', error);
+  }
+};
+
+export const getRecurrentEventById = async (id: string) => {
+  try {
+    const response = await axios.get(`${apiUrl}recurrentEvent/${id}`);
+    return response.data;
+  } catch (error) {
+    // console.log('getEventById er', error);
+    return null;
+  }
 };

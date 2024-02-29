@@ -62,6 +62,10 @@ const EditEventScreen = () => {
     isEditTicket,
     inAppTickets,
     link,
+    isRecurrent,
+    recurrentTemplate,
+    recurrentEndDate,
+    recurrentId,
   } = routeParams?.params;
   const {removeTicket, ticketsList, getTickets} = useTickets();
 
@@ -266,10 +270,14 @@ const EditEventScreen = () => {
         eventDate: eventDateEd,
         place: selectedPlace,
         eventUid: routeParams?.params?._id,
+        // eventUid: isRecurrent === 1 ? recurrentId : routeParams?.params?._id,
         typeEvent: typeEventEdit,
         price: price,
         inAppTickets: inAppTicketsEdit,
         externalLink: !inAppTicketsEdit ? externalLink : '',
+        isRecurrent: isRecurrent,
+        recurrentTemplate: recurrentTemplate,
+        recurrentEndDate: recurrentEndDate,
       });
     }
   };

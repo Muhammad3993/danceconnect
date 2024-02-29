@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import * as RN from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import colors from '../utils/colors';
@@ -25,6 +25,7 @@ type props = {
   setTime?: any;
   setStart?: any;
   setEnd?: any;
+  isRecurring?: boolean;
 };
 type DateData = {
   year: number;
@@ -58,6 +59,7 @@ const BottomCalendar = ({
   setStart,
   time = new Date().getTime(),
   setTime,
+  isRecurring,
 }: props) => {
   const modalizeRef = useRef<Modalize>(null);
   const {t} = useTranslation();
@@ -153,9 +155,24 @@ const BottomCalendar = ({
 
   useEffect(() => {
     setStart({start: startDate !== null ? moment(startDate).toDate() : null});
-    setEnd({end: endDate !== null ? moment(endDate).toDate() : null});
-  }, [setEnd, setStart, endDate, startDate]);
-
+    setEnd({
+      end: isRecurring
+        ? null
+        : endDate !== null
+        ? moment(endDate).toDate()
+        : null,
+    });
+  }, [setEnd, setStart, endDate, startDate, isRecurring]);
+  const marked = useMemo(() => {
+    return {
+      [startDate]: {
+        selected: true,
+        disableTouchEvent: true,
+        selectedColor: colors.orange,
+        selectedTextColor: colors.white,
+      },
+    };
+  }, [startDate]);
   const setDateRange = () => {
     if (!endDate) {
       return {
@@ -181,27 +198,33 @@ const BottomCalendar = ({
   };
 
   const onSelectDay = (day: DateData) => {
-    if (day?.dateString === startDate || day?.dateString === endDate) {
+    if (isRecurring) {
       setStartDate(day?.dateString);
       setStart(day?.dateString);
       setEndDate(null);
       return;
-    }
-    if (moment(day?.dateString).isAfter(startDate)) {
-      setEndDate(day?.dateString);
-      setEnd(day?.dateString);
     } else {
-      if (!endDate) {
-        setEndDate(startDate);
-        setEnd(startDate);
+      if (day?.dateString === startDate || day?.dateString === endDate) {
         setStartDate(day?.dateString);
         setStart(day?.dateString);
+        setEndDate(null);
         return;
       }
-      setStartDate(day?.dateString);
-      setStart(day?.dateString);
+      if (moment(day?.dateString).isAfter(startDate)) {
+        setEndDate(day?.dateString);
+        setEnd(day?.dateString);
+      } else {
+        if (!endDate) {
+          setEndDate(startDate);
+          setEnd(startDate);
+          setStartDate(day?.dateString);
+          setStart(day?.dateString);
+          return;
+        }
+        setStartDate(day?.dateString);
+        setStart(day?.dateString);
+      }
     }
-
     // console.log(day);
   };
 
@@ -319,7 +342,7 @@ const BottomCalendar = ({
               // current={currentDate.dateString}
               hideExtraDays
               // markedDates={markedDate}
-              markingType={'period'}
+              markingType={!isRecurring ? 'period' : 'dot'}
               theme={{
                 selectedDayBackgroundColor: colors.purple,
                 selectedDayTextColor: colors.white,
@@ -330,7 +353,7 @@ const BottomCalendar = ({
               }}
               minDate={minDate}
               onDayPress={onSelectDay}
-              markedDates={setDateRange()}
+              markedDates={isRecurring ? marked : setDateRange()}
             />
           )}
           {!openingTime && (

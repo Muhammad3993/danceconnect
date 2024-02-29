@@ -34,13 +34,21 @@ const EventScreen = () => {
   const navigation: any = useNavigation();
   const {ticketsList, getTickets, onLoading} = useTickets();
 
-  const {getEvent, loadingById, eventData, remove, isFollowed} =
-    useEventById(linkId);
+  const {
+    getEvent,
+    loadingById,
+    eventData,
+    remove,
+    isFollowed,
+    removeRecurrent,
+  } = useEventById(linkId);
   const [openingDescription, setOpeningDescription] = useState(false);
   const {userUid, saveEmail} = useRegistration();
   const {attendEvent, onClearEventDataById} = useEvents();
   const [unFolloweOpen, setUnFollowOpen] = useState(false);
   const [shareOptions, setShareOptions] = useState(false);
+  const [editOptions, setEditOptions] = useState(false);
+  const [removeOptions, setRemoveOptions] = useState(false);
   // const [displayedData, setDisplayedData] = useState(eventData);
   const isPassedEvent =
     eventData?.eventDate?.endDate !== null
@@ -59,6 +67,8 @@ const EventScreen = () => {
   const closeActions = () => {
     setUnFollowOpen(false);
     setShareOptions(false);
+    setEditOptions(false);
+    setRemoveOptions(false);
   };
 
   const scrollY = useSharedValue(0);
@@ -130,25 +140,6 @@ const EventScreen = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
     setOpeningDescription(v => !v);
   };
-
-  // useEffect(() => {
-  //   setAttendedImgs(eventData?.userImages);
-  // }, [eventData?.userImages]);
-
-  // useEffect(() => {
-  //   socket.on('subscribed_event', socket_data => {
-  //     // console.log('currentEvent data', socket_data);
-  //     // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.linear);
-  //     setAttendedImgs(socket_data?.userImages);
-  //     if (socket_data?.currentEvent) {
-  //       const follow = socket_data?.currentEvent?.attendedPeople?.findIndex(
-  //         (i: {userUid: string}) => i.userUid === userUid,
-  //       );
-  //       getEventSuccess(socket_data.currentEvent, follow);
-  //       setLoading(false);
-  //     }
-  //   });
-  // }, []);
 
   useEffect(() => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
@@ -249,9 +240,19 @@ const EventScreen = () => {
     }
   };
   const onPressMoreBtn = () => {
-    setUnFollowOpen(v => !v);
+    if (eventData.isRecurrent === 1) {
+      setRemoveOptions(v => !v);
+    } else {
+      setUnFollowOpen(v => !v);
+    }
+    if (!isAdmin && eventData.isRecurrent === 1) {
+      setUnFollowOpen(v => !v);
+    }
     if (shareOptions) {
       setShareOptions(v => !v);
+    }
+    if (editOptions) {
+      setEditOptions(v => !v);
     }
   };
 
@@ -260,8 +261,25 @@ const EventScreen = () => {
     if (unFolloweOpen) {
       setUnFollowOpen(v => !v);
     }
+    if (editOptions) {
+      setEditOptions(v => !v);
+    }
+    if (removeOptions) {
+      setRemoveOptions(v => !v);
+    }
   };
-
+  const onPressEditBtn = () => {
+    setEditOptions(v => !v);
+    if (unFolloweOpen) {
+      setUnFollowOpen(v => !v);
+    }
+    if (shareOptions) {
+      setShareOptions(v => !v);
+    }
+    if (removeOptions) {
+      setRemoveOptions(v => !v);
+    }
+  };
   const onPressOrganizer = () => {
     navigation.push('User', {id: eventData?.creator.uid});
   };
@@ -274,7 +292,22 @@ const EventScreen = () => {
       key: 'edit',
       icon: 'edit',
       isEnabled: !isPassedEvent && (isAdmin || isManager),
-      onPress: onPressEditEvent,
+      onPress:
+        eventData?.isRecurrent === 1
+          ? () => onPressEditBtn()
+          : () => onPressEditEvent(),
+      options: [
+        {
+          key: 'current-event',
+          label: 'Edit current event',
+          onPress: onPressEditEvent,
+        },
+        {
+          key: 'all-events',
+          label: 'Edit all recurrent events',
+          onPress: null,
+        },
+      ],
     },
     {
       key: 'more',
@@ -291,6 +324,18 @@ const EventScreen = () => {
           : true
         : false,
       onPress: () => onPressMoreBtn(),
+      options: [
+        {
+          key: 'current-event',
+          label: 'Remove current event',
+          onPress: () => remove(),
+        },
+        {
+          key: 'all-events',
+          label: 'Remove all recurrent events',
+          onPress: () => removeRecurrent(eventData?.recurrentId),
+        },
+      ],
     },
     {
       key: 'share',
@@ -314,7 +359,17 @@ const EventScreen = () => {
   ];
 
   const shareActions = headerOptionButtons
-    .filter(i => i?.options)
+    .filter(i => i?.options && i.key === 'share')
+    .map(i => i.options)
+    .flat(1);
+
+  const editActions = headerOptionButtons
+    .filter(i => i?.options && i.key === 'edit')
+    .map(i => i.options)
+    .flat(1);
+
+  const removeActions = headerOptionButtons
+    .filter(i => i?.options && i.key === 'more')
     .map(i => i.options)
     .flat(1);
 
@@ -401,7 +456,60 @@ const EventScreen = () => {
             })}
           </RN.View>
         )}
-        {/* </RN.Animated.View> */}
+        {eventData?.isRecurrent === 1 && editOptions && (
+          <RN.View style={{position: 'absolute', right: 40}}>
+            {editActions.map(item => {
+              const isLast = editActions[editActions.length - 1]?.key;
+              return (
+                <RN.TouchableOpacity
+                  key={item?.key}
+                  onPress={item?.onPress}
+                  style={[
+                    styles.unFollowContainer,
+                    {
+                      borderBottomLeftRadius: isLast === item?.key ? 8 : 0,
+                      borderBottomRightRadius: isLast === item?.key ? 8 : 0,
+                      borderTopLeftRadius:
+                        isLast === item?.key ? (isAdmin ? 0 : 8) : 8,
+                      borderTopRightRadius: 0,
+                      borderBottomWidth: isLast === item?.key ? 0 : 0.5,
+                    },
+                  ]}>
+                  <RN.View style={{justifyContent: 'center'}}>
+                    <RN.Text style={styles.unFollowText}>{item?.label}</RN.Text>
+                  </RN.View>
+                </RN.TouchableOpacity>
+              );
+            })}
+          </RN.View>
+        )}
+        {isAdmin && eventData?.isRecurrent === 1 && removeOptions && (
+          <RN.View style={{position: 'absolute', right: 0}}>
+            {removeActions.map(item => {
+              const isLast = removeActions[removeActions.length - 1]?.key;
+              return (
+                <RN.TouchableOpacity
+                  key={item?.key}
+                  onPress={item?.onPress}
+                  style={[
+                    styles.unFollowContainer,
+                    {
+                      borderBottomLeftRadius: isLast === item?.key ? 8 : 0,
+                      borderBottomRightRadius: isLast === item?.key ? 8 : 0,
+                      borderTopLeftRadius:
+                        isLast === item?.key ? (isAdmin ? 0 : 8) : 8,
+                      borderTopRightRadius: 0,
+                      borderBottomWidth: isLast === item?.key ? 0 : 0.5,
+                    },
+                  ]}>
+                  <RN.View style={{justifyContent: 'center'}}>
+                    <RN.Text style={styles.unFollowText}>{item?.label}</RN.Text>
+                  </RN.View>
+                </RN.TouchableOpacity>
+              );
+            })}
+          </RN.View>
+        )}
       </RN.View>
     );
   };

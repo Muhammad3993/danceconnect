@@ -115,6 +115,9 @@ const useEvents = () => {
     type,
     inAppTickets,
     externalLink,
+    isRecurrent,
+    recurrentTemplate,
+    recurrentEndDate,
   }: eventParams) => {
     dispatch(
       createEventRequestAction({
@@ -133,6 +136,9 @@ const useEvents = () => {
         type: type,
         inAppTickets: inAppTickets,
         externalLink: externalLink,
+        isRecurrent: isRecurrent,
+        recurrentTemplate: recurrentTemplate,
+        recurrentEndDate: recurrentEndDate,
       }),
     );
   };
@@ -173,6 +179,9 @@ const useEvents = () => {
     price,
     inAppTickets,
     externalLink,
+    isRecurrent,
+    recurrentTemplate,
+    recurrentEndDate,
   }: eventParams) => {
     dispatch(
       changeInformationEventRequestAction({
@@ -189,6 +198,9 @@ const useEvents = () => {
         price: price,
         inAppTickets: inAppTickets,
         externalLink: externalLink,
+        isRecurrent: isRecurrent,
+        recurrentTemplate: recurrentTemplate,
+        recurrentEndDate: recurrentEndDate,
       }),
     );
   };
