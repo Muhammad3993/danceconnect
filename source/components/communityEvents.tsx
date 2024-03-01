@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import EventCard from './eventCard';
 import useEvents from '../hooks/useEvents';
@@ -6,6 +6,7 @@ import moment from 'moment';
 import useRegistration from '../hooks/useRegistration';
 import colors from '../utils/colors';
 import {useTranslation} from 'react-i18next';
+import sortBy from 'lodash.sortby';
 
 type props = {
   isAdmin: boolean;
@@ -15,7 +16,9 @@ const CommunityEvents = ({isAdmin, eventsIds}: props) => {
   const {eventsDataByCommunityId, loadingEvents, getEventByIdCommunity} =
     useEvents();
   const {t} = useTranslation();
-  const TABS = [t('upcoming'), t('attending'), t('passed')];
+
+  const TABS = useMemo(() => [t('upcoming'), t('attending'), t('passed')], [t]);
+
   const [currentTab, setCurrentTab] = useState<string>(TABS[0]);
   const {userUid} = useRegistration();
   const onPressTab = (value: string) => {
@@ -29,10 +32,12 @@ const CommunityEvents = ({isAdmin, eventsIds}: props) => {
       getEventByIdCommunity([]);
     }
   }, [eventsIds]);
-  const events = () => {
+
+  const events = useMemo(() => {
+    let list = [];
     switch (currentTab) {
       case TABS[0]:
-        return (
+        list =
           eventsDataByCommunityId?.filter(
             (item: {eventDate: {startDate: Date; endDate: Date}}) =>
               item?.eventDate?.endDate !== null
@@ -40,36 +45,42 @@ const CommunityEvents = ({isAdmin, eventsIds}: props) => {
                   moment(new Date()).format('YYYY-MM-DD')
                 : moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >=
                   moment(new Date()).format('YYYY-MM-DD'),
-          ) ?? []
-        );
+          ) ?? [];
+        break;
+
       case TABS[1]:
-        return (
+        list =
           eventsDataByCommunityId?.filter((event: {attendedPeople: []}) =>
             event?.attendedPeople?.find(
               (u: {userUid: string}) => u?.userUid === userUid,
             ),
-          ) ?? []
-        );
+          ) ?? [];
+        break;
+
       case TABS[2]:
-        return (
+        list =
           eventsDataByCommunityId?.filter((item: any) =>
             item?.eventDate?.endDate !== null
               ? moment(item?.eventDate?.endDate).format('YYYY-MM-DD') <
                 moment(new Date()).format('YYYY-MM-DD')
               : moment(item?.eventDate?.startDate).format('YYYY-MM-DD') <
                 moment(new Date()).format('YYYY-MM-DD'),
-          ) ?? []
-        );
+          ) ?? [];
+        break;
+
       default:
-        return (
+        list =
           eventsDataByCommunityId?.filter(
             (item: {eventDate: {startDate: Date}}) =>
               moment(item?.eventDate?.startDate).format('YYYY-MM-DD') >=
               moment(new Date()).format('YYYY-MM-DD'),
-          ) ?? []
-        );
+          ) ?? [];
+        break;
     }
-  };
+
+    return sortBy(list, 'eventDate.startDate');
+  }, [TABS, currentTab, eventsDataByCommunityId, userUid]);
+
   const renderEmpty = () => {
     return (
       <RN.View style={styles.emptyEventsContainer}>
@@ -140,8 +151,7 @@ const CommunityEvents = ({isAdmin, eventsIds}: props) => {
       {/* </RN.ScrollView> */}
       {eventsDataByCommunityId?.length > 0 &&
         !loadingEvents &&
-        events()?.length > 0 &&
-        events()?.map((item: any) => {
+        events?.map((item: any) => {
           if (item && item.id) {
             return (
               <EventCard
@@ -153,7 +163,7 @@ const CommunityEvents = ({isAdmin, eventsIds}: props) => {
           }
         })}
       {loadingEvents && renderLoading()}
-      {!events()?.length && renderEmpty()}
+      {!events.length && renderEmpty()}
       <RN.View style={styles.footer} />
     </>
   );

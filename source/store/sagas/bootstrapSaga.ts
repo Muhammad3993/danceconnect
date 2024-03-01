@@ -39,6 +39,9 @@ function* init() {
         {userId: user?.id, displayName: user?.userName},
         amitySessionHandler,
       );
+
+      console.log('ActiveUser');
+      console.log(Client.getActiveUser());
     }
 
     yield put(appInitSuccessAction());
