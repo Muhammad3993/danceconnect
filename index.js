@@ -7,6 +7,7 @@ import App from './App';
 import {name as appName} from './app.json';
 import './source/i18n/i118n';
 import messaging from '@react-native-firebase/messaging';
+
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   return remoteMessage;
 });

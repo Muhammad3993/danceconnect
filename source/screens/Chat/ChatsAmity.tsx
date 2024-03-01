@@ -25,14 +25,12 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
   const [error, setError] = useState<string | null>(null);
   const onNextPage = useRef<() => void>();
 
-  // const {nextPage, error} = options ?? {};
-
   useEffect(() => {
     const queryData: Amity.ChannelLiveCollection = {
       sortBy: 'lastActivity',
       types: ['community', 'conversation'],
       membership: 'member',
-      limit: 30,
+      limit: 50,
       isDeleted: false,
     };
 
@@ -106,7 +104,7 @@ export function ChatsScreen({navigation}: NativeStackScreenProps<any>) {
             onEndReachedThreshold={0.2}
             onEndReached={() => {
               if (
-                channels.length % 30 === 0 &&
+                channels.length % 50 === 0 &&
                 !loadingMore &&
                 hasNextPage &&
                 onNextPage.current
