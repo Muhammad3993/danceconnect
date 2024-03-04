@@ -19,6 +19,9 @@ export type appStateAction = {
     ticket_percent?: number;
     ticket_fix_price?: number;
     data?: any;
+
+    isChangeLanguage?: boolean;
+    typeCommunity?: string | string[];
   };
 };
 
@@ -92,6 +95,17 @@ export default (state = appStateInitialState, action: appStateAction) => {
       return {
         ...state,
         data: action.payload.data,
+      };
+
+    case APP_STATE.SET_IS_CHANGE_LANGUAGE:
+      return {
+        ...state,
+        isChangeLanguage: action.payload.isChangeLanguage,
+      };
+    case APP_STATE.SET_TYPE_COMMUNITY:
+      return {
+        ...state,
+        typeCommunity: action.payload.typeCommunity,
       };
     default:
       return state;

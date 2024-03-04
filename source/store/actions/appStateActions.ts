@@ -17,6 +17,9 @@ type appStateParams = {
 
   ticket_percent?: number;
   ticket_fix_price?: number;
+
+  isChangeLanguage?: boolean;
+  typeCommunity?: string | string[];
 };
 
 export const setLoadingAction = ({onLoading}: appStateParams) => ({
@@ -114,5 +117,26 @@ export const sendNotificationRequestAction = (data: any) => ({
   type: APP_STATE.SEND_NOTIFICATION,
   payload: {
     data: data,
+  },
+});
+
+export const getChangeLanguageAction = () => ({
+  type: APP_STATE.GET_IS_CHANGE_LANGUAGE,
+});
+export const setChangeLanguageAction = ({
+  isChangeLanguage,
+}: appStateParams) => ({
+  type: APP_STATE.SET_IS_CHANGE_LANGUAGE,
+  payload: {
+    isChangeLanguage: isChangeLanguage,
+  },
+});
+export const getTypeCommunityAction = () => ({
+  type: APP_STATE.GET_TYPE_COMMUNITY,
+});
+export const setTypeCommunityAction = ({typeCommunity}: appStateParams) => ({
+  type: APP_STATE.SET_TYPE_COMMUNITY,
+  payload: {
+    typeCommunity: typeCommunity,
   },
 });

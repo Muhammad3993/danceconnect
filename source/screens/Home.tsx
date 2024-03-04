@@ -26,8 +26,13 @@ const HomeScreen = () => {
   const isFocused = useIsFocused();
   const {logout} = useRegistration();
   const navigation = useNavigation();
-  const {eventTypes, getDanceStyles, setMessageNotice, setVisibleNotice} =
-    useAppStateHook();
+  const {
+    eventTypes,
+    getDanceStyles,
+    setMessageNotice,
+    setVisibleNotice,
+    getCommunityType,
+  } = useAppStateHook();
   const [tabs, setTabs] = useState(['All', ...eventTypes]);
   const [currentTab, setCurrentTab] = useState(tabs[0]);
 
@@ -66,6 +71,7 @@ const HomeScreen = () => {
       getMainCommunities();
       getMainEvents();
       setEvents(mainEvents);
+      getCommunityType();
     }
   }, [isFocused]);
 
@@ -73,6 +79,7 @@ const HomeScreen = () => {
     getFcmToken();
     getDanceStyles();
     getPurchasedTickets();
+    getCommunityType();
   }, []);
 
   const onPressTab = useCallback(
@@ -207,13 +214,15 @@ const HomeScreen = () => {
             wrapperStyle={{borderBottomWidth: 0}}
           />
         </RN.View>
+        <RN.View style={{paddingTop: 12, backgroundColor: colors.white}} />
         {events.map((item: any) => {
           return (
             <RN.View
               style={{
-                paddingTop: 8,
+                // paddingTop: 8,
                 paddingHorizontal: 12,
-                minHeight: events.length > 1 ? 200 : 260,
+                // minHeight: events.length > 1 ? 200 : 260,
+                backgroundColor: colors.white,
               }}
               key={item?.id}>
               <EventCard item={item} />

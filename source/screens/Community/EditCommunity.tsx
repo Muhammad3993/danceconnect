@@ -19,6 +19,7 @@ import {apiUrl} from '../../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
+import useAppStateHook from '../../hooks/useAppState';
 
 interface city {
   structured_formatting: {
@@ -28,6 +29,8 @@ interface city {
 }
 const EditCommunity = ({navigation}) => {
   const routeParams = useRoute();
+  const {typeCommunity} = useAppStateHook();
+  const parseCommunityType = typeCommunity;
   const {t} = useTranslation();
   const {loadingWithChangeInformation, changeInformation} = useCommunityById(
     routeParams?.params?.id,
@@ -61,9 +64,16 @@ const EditCommunity = ({navigation}) => {
       description: t('ct_paid.description'),
     },
   ];
-  const [currentScreen, setCurrentScreen] = useState(0);
+  // const [communityType, setCommunityType] = useState(
+  //   COMMUNITY_TYPES.find((ctype: {type: string}) => ctype.type === type),
+  // );
+  const [currentScreen, setCurrentScreen] = useState(
+    parseCommunityType !== 'community' ? 0 : 1,
+  );
   const [communityType, setCommunityType] = useState(
-    COMMUNITY_TYPES.find((ctype: {type: string}) => ctype.type === type),
+    parseCommunityType !== 'community'
+      ? COMMUNITY_TYPES[0]
+      : COMMUNITY_TYPES[1],
   );
 
   const community_type = currentScreen === 0;
@@ -95,6 +105,9 @@ const EditCommunity = ({navigation}) => {
   };
   const backBtn = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    if (parseCommunityType === 'community') {
+      closeBtn();
+    }
     if (currentScreen !== 0) {
       setCurrentScreen(v => v - 1);
     }
@@ -178,52 +191,94 @@ const EditCommunity = ({navigation}) => {
   };
   const onPressNextBtn = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    switch (currentScreen) {
-      case 0:
-        setCurrentScreen(v => v + 1);
-        break;
-      case 1:
-        const locationEdt =
-          selectedLocation?.structured_formatting?.main_text?.length > 0
-            ? selectedLocation?.structured_formatting?.main_text +
-              ', ' +
-              (selectedLocation?.structured_formatting?.main_text?.length > 0
-                ? selectedLocation?.terms[1].value
-                : '')
-            : selectedLocation;
-        if (title?.length <= 0) {
-          setTitleError(true);
-        } else if (desc?.length <= 0) {
-          setDescriptionError(true);
-        } else if (!addedStyles.length) {
-          setCategoriesError(true);
-        } else {
-          changeInformation({
-            name: title,
-            description: desc,
-            channelId,
-            // country: countryEdit,
-            location: locationEdt,
-            categories: addedStyles,
-            followers: followers?.map(user => {
-              return {
-                ...user,
-                userUid: user?.id,
-              };
-            }),
-            images: imgs.map(el =>
-              typeof el === 'object'
-                ? {
-                    base64: el?.data,
-                    uri: el.path,
-                  }
-                : el,
-            ) as (Asset | string)[],
-            type: communityType.type,
-          });
-        }
-      default:
-        break;
+    if (parseCommunityType === 'community') {
+      const locationEdt =
+        selectedLocation?.structured_formatting?.main_text?.length > 0
+          ? selectedLocation?.structured_formatting?.main_text +
+            ', ' +
+            (selectedLocation?.structured_formatting?.main_text?.length > 0
+              ? selectedLocation?.terms[1].value
+              : '')
+          : selectedLocation;
+      if (title?.length <= 0) {
+        setTitleError(true);
+      } else if (desc?.length <= 0) {
+        setDescriptionError(true);
+      } else if (!addedStyles.length) {
+        setCategoriesError(true);
+      } else {
+        changeInformation({
+          name: title,
+          description: desc,
+          channelId,
+          // country: countryEdit,
+          location: locationEdt,
+          categories: addedStyles,
+          followers: followers?.map(user => {
+            return {
+              ...user,
+              userUid: user?.id,
+            };
+          }),
+          images: imgs.map(el =>
+            typeof el === 'object'
+              ? {
+                  base64: el?.data,
+                  uri: el.path,
+                }
+              : el,
+          ) as (Asset | string)[],
+          type: communityType.type,
+        });
+      }
+    } else {
+      switch (currentScreen) {
+        case 0:
+          setCurrentScreen(v => v + 1);
+          break;
+        case 1:
+          const locationEdt =
+            selectedLocation?.structured_formatting?.main_text?.length > 0
+              ? selectedLocation?.structured_formatting?.main_text +
+                ', ' +
+                (selectedLocation?.structured_formatting?.main_text?.length > 0
+                  ? selectedLocation?.terms[1].value
+                  : '')
+              : selectedLocation;
+          if (title?.length <= 0) {
+            setTitleError(true);
+          } else if (desc?.length <= 0) {
+            setDescriptionError(true);
+          } else if (!addedStyles.length) {
+            setCategoriesError(true);
+          } else {
+            changeInformation({
+              name: title,
+              description: desc,
+              channelId,
+              // country: countryEdit,
+              location: locationEdt,
+              categories: addedStyles,
+              followers: followers?.map(user => {
+                return {
+                  ...user,
+                  userUid: user?.id,
+                };
+              }),
+              images: imgs.map(el =>
+                typeof el === 'object'
+                  ? {
+                      base64: el?.data,
+                      uri: el.path,
+                    }
+                  : el,
+              ) as (Asset | string)[],
+              type: communityType.type,
+            });
+          }
+        default:
+          break;
+      }
     }
   };
 
@@ -264,7 +319,13 @@ const EditCommunity = ({navigation}) => {
   const renderHeader = () => {
     return (
       <>
-        <RN.View style={styles.headerContainer}>
+        <RN.View
+          style={[
+            styles.headerContainer,
+            {
+              marginVertical: parseCommunityType !== 'community' ? 4 : 14,
+            },
+          ]}>
           <RN.TouchableOpacity
             onPress={backBtn}
             style={{justifyContent: 'center'}}>
@@ -288,7 +349,7 @@ const EditCommunity = ({navigation}) => {
             <RN.Image source={{uri: 'close'}} style={styles.closeIcon} />
           </RN.TouchableOpacity>
         </RN.View>
-        {renderTabs()}
+        {parseCommunityType !== 'community' && renderTabs()}
       </>
     );
   };
@@ -346,11 +407,22 @@ const EditCommunity = ({navigation}) => {
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title={currentScreen === 0 ? t('next') : t('save_changes')}
+          title={
+            parseCommunityType === 'community'
+              ? t('save_changes')
+              : currentScreen === 0
+              ? t('next')
+              : t('save_changes')
+          }
           disabled
           buttonStyle={styles.createBtn}
-          onPress={onPressNextBtn}
           isLoading={loadingWithChangeInformation}
+          onPress={() => {
+            if (parseCommunityType === 'community') {
+              setVisibleFooter(false);
+            }
+            onPressNextBtn();
+          }}
         />
       </RN.View>
     );
@@ -596,7 +668,9 @@ const EditCommunity = ({navigation}) => {
               </RN.TouchableOpacity>
             </RN.ScrollView>
           )}
-          {community_type && renderTypeCommunity()}
+          {parseCommunityType !== 'community' &&
+            community_type &&
+            renderTypeCommunity()}
         </KeyboardAwareScrollView>
         {openLocation && (
           <FindCity

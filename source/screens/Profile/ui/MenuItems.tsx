@@ -21,6 +21,7 @@ import {removeAccount} from '../../../api/authSocial';
 import {useDispatch} from 'react-redux';
 import {logoutSuccess} from '../../../store/actions/authorizationActions';
 import {choosedCityAction} from '../../../store/actions/appStateActions';
+import useAppStateHook from '../../../hooks/useAppState';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -41,6 +42,7 @@ export function MenuItems({navigation, close}: Props) {
     onChangePassword,
     isSuccessChangePassword,
   } = useProfile();
+  const {isChangeLanguage} = useAppStateHook();
 
   const logoutRefModalize = useRef<Modalize>(null);
   const changePassRefModalize = useRef<Modalize>(null);
@@ -111,6 +113,10 @@ export function MenuItems({navigation, close}: Props) {
 
   const countTickets = purchasedTickets?.length ?? 0;
 
+  const onPressChangeLG = () => {
+    close();
+    navigation.navigate('LANGUAGE');
+  };
   return (
     <>
       <RN.View style={styles.listWrapper}>
@@ -227,24 +233,30 @@ export function MenuItems({navigation, close}: Props) {
             </RN.View>
           </RN.TouchableOpacity>
         )}
-        {/*
-          <RN.TouchableOpacity
-            style={styles.listItemWrapper}
-            onPress={onPressChangeLanguage}>
-            <RN.View style={{flexDirection: 'row'}}>
-              <RN.Image source={{uri: 'lg'}} style={styles.icon} />
-              <RN.View style={{justifyContent: 'center'}}>
-                <RN.Text style={styles.listItemText}>
-                  {t('select_language')}
-                </RN.Text>
+        {isChangeLanguage && (
+          <>
+            {<RN.View style={{marginTop: 10}} />}
+            <RN.TouchableOpacity
+              style={styles.listItemWrapper}
+              onPress={onPressChangeLG}>
+              <RN.View style={{flexDirection: 'row'}}>
+                <RN.Image source={{uri: 'lg'}} style={styles.icon} />
+                <RN.View style={{justifyContent: 'center'}}>
+                  <RN.Text style={styles.listItemText}>
+                    {t('select_language')}
+                  </RN.Text>
+                </RN.View>
               </RN.View>
-            </RN.View>
-            <RN.View style={{justifyContent: 'center'}}>
-              <RN.Image source={{uri: 'arrowright'}} style={styles.iconRight} />
-            </RN.View>
-          </RN.TouchableOpacity>
-          {isSocialAuth && <RN.View style={{marginTop: -12}} />} */}
-
+              <RN.View style={{justifyContent: 'center'}}>
+                <RN.Image
+                  source={{uri: 'arrowright'}}
+                  style={styles.iconRight}
+                />
+              </RN.View>
+            </RN.TouchableOpacity>
+            {isSocialAuth && <RN.View style={{marginTop: -12}} />}
+          </>
+        )}
         <RN.View style={styles.line} />
         <RN.TouchableOpacity
           style={styles.listItemWrapper}

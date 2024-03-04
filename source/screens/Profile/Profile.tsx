@@ -15,6 +15,7 @@ import {SCREEN_HEIGHT} from '../../utils/constants';
 import {MenuItems} from './ui/MenuItems';
 import usePeople from '../../hooks/usePeople';
 import {useIsFocused} from '@react-navigation/native';
+import useAppStateHook from '../../hooks/useAppState';
 
 const ProfileScreen = ({navigation, isUserScreen = false}) => {
   const {t} = useTranslation();
@@ -32,6 +33,7 @@ const ProfileScreen = ({navigation, isUserScreen = false}) => {
 
   const {getPurchasedTickets} = useTickets();
   const {currentUser} = useRegistration();
+  const {getIsChangeLanguage} = useAppStateHook();
 
   useEffect(() => {
     const sub = PostRepository.getPosts(
@@ -70,6 +72,7 @@ const ProfileScreen = ({navigation, isUserScreen = false}) => {
   useEffect(() => {
     getUser();
     getPurchasedTickets();
+    getIsChangeLanguage();
   }, []);
 
   useEffect(() => {

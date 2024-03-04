@@ -461,7 +461,23 @@ export const getPercentage = async () => {
     const response = await axios.get(`${apiUrl}priceConfig`);
     return response.data;
   } catch (error) {
-    console.log('error', error);
+    console.log('getPercentage error', error);
+  }
+};
+export const getLanguageSetting = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}changeLanguage`);
+    return response;
+  } catch (error) {
+    console.log('getLanguageSetting error', error);
+  }
+};
+export const getTypeCommunity = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}typeCommunity`);
+    return response;
+  } catch (error) {
+    console.log('getTypeCommunity error', error);
   }
 };
 export const payEvent = async (id: string, amount: string) => {

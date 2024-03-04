@@ -648,9 +648,10 @@ const EventScreen = () => {
     );
   };
   const onOpenMaps = () => {
-    const url = isAndroid
-      ? `geo:0,0?q=${eventData?.place},${eventData?.location}`
-      : `maps:0,0?q=${eventData?.place},${eventData?.location}`;
+    const url = `https://www.google.com/maps/search/?api=1&query=${eventData?.place},${eventData?.location}`;
+    // const url = isAndroid
+    //   ? `geo:0,0?q=${eventData?.place},${eventData?.location}`
+    //   : `maps:0,0?q=${eventData?.place},${eventData?.location}`;
     RN.Linking.openURL(url);
   };
   // console.log('ticketsList.filter(i => i.items.length > 0)', ticketsList.filter(i => i.items.length > 0));
@@ -734,6 +735,25 @@ const EventScreen = () => {
           </RN.View>
         </RN.TouchableOpacity>
         {renderPrice()}
+        {!isPassedEvent &&
+          (isAdmin || isManager) &&
+          eventData?.link?.length > 0 && (
+            <>
+              <RN.TouchableOpacity
+                onPress={() => {
+                  RN.Linking.openURL(eventData?.link);
+                }}>
+                <RN.Text
+                  style={{
+                    textAlign: 'center',
+                    color: colors.purple,
+                    fontSize: 18,
+                  }}>
+                  {'Show external tickets'}
+                </RN.Text>
+              </RN.TouchableOpacity>
+            </>
+          )}
         {!isPassedEvent &&
           (isAdmin || isManager) &&
           ticketsList?.length > 0 && (

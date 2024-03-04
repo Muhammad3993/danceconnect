@@ -33,3 +33,9 @@ export const selectTicketPricePercent = (state: IRootState) =>
 
 export const selectTicketPriceFix = (state: IRootState) =>
   state?.appState?.ticket_fix_price ?? 0;
+
+export const selectTypeCommunity = (state: IRootState) =>
+  state?.appState?.typeCommunity ?? 'community';
+
+export const selectIsChangeLanguage = (state: IRootState) =>
+  state?.appState?.isChangeLanguage ?? false;

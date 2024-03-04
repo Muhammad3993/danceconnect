@@ -180,7 +180,7 @@ const EventCard = ({item, containerStyle}: Props) => {
         <RN.View
           style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <RN.View style={{maxWidth: SCREEN_WIDTH / 1.57}}>
-            {data?.typeEvent && type()}
+            {data?.link?.length > 0 ? null : data?.typeEvent && type()}
             <RN.View style={styles.dateEventContainer}>
               <RN.Image
                 source={{uri: 'calendar'}}

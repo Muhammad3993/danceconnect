@@ -20,9 +20,13 @@ import CategorySelector from '../../components/catregorySelector';
 import {Input} from '../../components/input';
 import {ChannelRepository} from '@amityco/ts-sdk';
 import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
+import useAppStateHook from '../../hooks/useAppState';
 
 const CreateCommunity = ({navigation}) => {
   const {t} = useTranslation();
+  const {typeCommunity} = useAppStateHook();
+  const parseCommunityType = typeCommunity;
+
   const SCREENS = [
     {idx: 0, title: t('community_type')},
     {idx: 1, title: t('basic_info')},
@@ -41,8 +45,14 @@ const CreateCommunity = ({navigation}) => {
       description: t('ct_paid.description'),
     },
   ];
-  const [currentScreen, setCurrentScreen] = useState(0);
-  const [communityType, setCommunityType] = useState(COMMUNITY_TYPES[0]);
+  const [currentScreen, setCurrentScreen] = useState(
+    parseCommunityType !== 'community' ? 0 : 1,
+  );
+  const [communityType, setCommunityType] = useState(
+    parseCommunityType !== 'community'
+      ? COMMUNITY_TYPES[0]
+      : COMMUNITY_TYPES[1],
+  );
 
   const community_type = currentScreen === 0;
   const basicInfo = currentScreen === 1;
@@ -51,6 +61,9 @@ const CreateCommunity = ({navigation}) => {
   };
   const backBtn = () => {
     RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    if (parseCommunityType === 'community') {
+      closeBtn();
+    }
     if (currentScreen !== 0) {
       setCurrentScreen(v => v - 1);
     }
@@ -190,50 +203,96 @@ const CreateCommunity = ({navigation}) => {
       RN.LayoutAnimation.configureNext(
         RN.LayoutAnimation.Presets.easeInEaseOut,
       );
-      switch (currentScreen) {
-        case 0:
-          setCurrentScreen(v => v + 1);
-          break;
-        case 1:
-          // console.log('chan', channel);
-          const location =
-            selectedLocation?.structured_formatting?.main_text?.length > 0
-              ? selectedLocation?.structured_formatting?.main_text +
-                ', ' +
-                (selectedLocation?.structured_formatting?.main_text?.length > 0
-                  ? selectedLocation?.terms[1].value
-                  : '')
-              : selectedLocation;
-          if (name?.length <= 0) {
-            setIsErrorName(true);
-          } else if (description?.length <= 0) {
-            setIsDescriptionError(true);
-          } else if (!addedStyles.length) {
-            setCategoriesError(true);
-          } else {
-            const {data: channel} = await ChannelRepository.createChannel(
-              newChannel,
-            );
+      if (parseCommunityType === 'community') {
+        const location =
+          selectedLocation?.structured_formatting?.main_text?.length > 0
+            ? selectedLocation?.structured_formatting?.main_text +
+              ', ' +
+              (selectedLocation?.structured_formatting?.main_text?.length > 0
+                ? selectedLocation?.terms[1].value
+                : '')
+            : selectedLocation;
+        if (name?.length <= 0) {
+          setIsErrorName(true);
+          setVisibleFooter(true);
+        } else if (description?.length <= 0) {
+          setIsDescriptionError(true);
+          setVisibleFooter(true);
+        } else if (!addedStyles.length) {
+          setCategoriesError(true);
+          setVisibleFooter(true);
+        } else {
+          const {data: channel} = await ChannelRepository.createChannel(
+            newChannel,
+          );
 
-            create({
-              name: name,
-              description: description,
-              // country: country,
-              location: location,
-              categories: addedStyles,
-              images: images.map(el => ({
-                base64: el?.data,
-                uri: el.path,
-              })) as Asset[],
-              type: communityType.type,
-              channelId: channel?.channelId,
-            });
-          }
-          break;
-        default:
-          break;
+          create({
+            name: name,
+            description: description,
+            // country: country,
+            location: location,
+            categories: addedStyles,
+            images: images.map(el => ({
+              base64: el?.data,
+              uri: el.path,
+            })) as Asset[],
+            type: communityType.type,
+            channelId: channel?.channelId,
+          });
+        }
+        setVisibleFooter(true);
+      } else {
+        switch (currentScreen) {
+          case 0:
+            setCurrentScreen(v => v + 1);
+            break;
+          case 1:
+            const location =
+              selectedLocation?.structured_formatting?.main_text?.length > 0
+                ? selectedLocation?.structured_formatting?.main_text +
+                  ', ' +
+                  (selectedLocation?.structured_formatting?.main_text?.length >
+                  0
+                    ? selectedLocation?.terms[1].value
+                    : '')
+                : selectedLocation;
+            if (name?.length <= 0) {
+              setIsErrorName(true);
+              setVisibleFooter(true);
+            } else if (description?.length <= 0) {
+              setIsDescriptionError(true);
+              setVisibleFooter(true);
+            } else if (!addedStyles.length) {
+              setCategoriesError(true);
+              setVisibleFooter(true);
+            } else {
+              const {data: channel} = await ChannelRepository.createChannel(
+                newChannel,
+              );
+
+              create({
+                name: name,
+                description: description,
+                // country: country,
+                location: location,
+                categories: addedStyles,
+                images: images.map(el => ({
+                  base64: el?.data,
+                  uri: el.path,
+                })) as Asset[],
+                type: communityType.type,
+                channelId: channel?.channelId,
+              });
+            }
+            setVisibleFooter(true);
+            break;
+          default:
+            break;
+        }
       }
-    } catch (error) {}
+    } catch (error) {
+      setVisibleFooter(true);
+    }
   };
 
   const renderTabs = () => {
@@ -273,7 +332,13 @@ const CreateCommunity = ({navigation}) => {
   const renderHeader = () => {
     return (
       <>
-        <RN.View style={styles.headerContainer}>
+        <RN.View
+          style={[
+            styles.headerContainer,
+            {
+              marginVertical: parseCommunityType !== 'community' ? 4 : 14,
+            },
+          ]}>
           <RN.TouchableOpacity
             onPress={backBtn}
             style={{justifyContent: 'center'}}>
@@ -297,7 +362,7 @@ const CreateCommunity = ({navigation}) => {
             <RN.Image source={{uri: 'close'}} style={styles.closeIcon} />
           </RN.TouchableOpacity>
         </RN.View>
-        {renderTabs()}
+        {parseCommunityType !== 'community' && renderTabs()}
       </>
     );
   };
@@ -355,10 +420,21 @@ const CreateCommunity = ({navigation}) => {
     return (
       <RN.View style={styles.footerWrapper}>
         <Button
-          title={currentScreen === 0 ? t('next') : t('create_community')}
+          title={
+            parseCommunityType === 'community'
+              ? t('create_community')
+              : currentScreen === 0
+              ? t('next')
+              : t('create_community')
+          }
           disabled
           buttonStyle={styles.createBtn}
-          onPress={onPressNextBtn}
+          onPress={() => {
+            if (parseCommunityType === 'community') {
+              setVisibleFooter(false);
+            }
+            onPressNextBtn();
+          }}
         />
       </RN.View>
     );
@@ -657,7 +733,9 @@ const CreateCommunity = ({navigation}) => {
               </RN.TouchableOpacity>
             </RN.ScrollView>
           )}
-          {community_type && renderTypeCommunity()}
+          {parseCommunityType !== 'community' &&
+            community_type &&
+            renderTypeCommunity()}
         </RN.View>
       </KeyboardAwareScrollView>
       {openLocation && (
@@ -682,7 +760,6 @@ const styles = RN.StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 24,
-    marginVertical: 4,
     paddingTop: RN.Platform.OS === 'android' ? 15 : 0,
   },
   headerTitle: {

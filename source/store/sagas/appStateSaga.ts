@@ -1,13 +1,15 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
-import {getConstants, getPercentage, sendNotification} from '../../api/serverRequests';
+import {getConstants, getLanguageSetting, getPercentage, getTypeCommunity, sendNotification} from '../../api/serverRequests';
 import {APP_STATE} from '../actionTypes/appStateActionTypes';
 import {
+  setChangeLanguageAction,
   setCountriesAction,
   setDanceStylesAction,
   setEventTypesAction,
   setRegionsAction,
   setStripeKeyAction,
   setTicketPercentAction,
+  setTypeCommunityAction,
 } from '../actions/appStateActions';
 
 function* getDanceStylesRequest() {
@@ -78,11 +80,29 @@ function* sendNotificationRequest(action: {payload: {data: any}}) {
     console.log('error sendNotificationRequest', error);
   }
 }
+function* getTypeCommunityRequest() {
+  try {
+    const response = yield call(getTypeCommunity);
+    yield put(setTypeCommunityAction({typeCommunity: response.data}));
+  } catch (error) {
+    console.log('getTypeCommunity error', error);
+  }
+}
+function* getChangeLanguageRequest() {
+  try {
+    const response = yield call(getLanguageSetting);
+    yield put(setChangeLanguageAction({isChangeLanguage: response.data}));
+  } catch (error) {
+    console.log('getTypeCommunity error', error);
+  }
+}
 // getPercentage
 function* appStateSaga() {
   yield takeLatest(APP_STATE.GET_DANCE_STYLES, getDanceStylesRequest);
   yield takeLatest(APP_STATE.GET_STRIPE_KEY, getStripeKeyRequest);
   yield takeLatest(APP_STATE.GET_TICKET_PERCENT, getPricePercentRequest);
   yield takeLatest(APP_STATE.SEND_NOTIFICATION, sendNotificationRequest);
+  yield takeLatest(APP_STATE.GET_TYPE_COMMUNITY, getTypeCommunityRequest);
+  yield takeLatest(APP_STATE.GET_IS_CHANGE_LANGUAGE, getChangeLanguageRequest);
 }
 export default appStateSaga;

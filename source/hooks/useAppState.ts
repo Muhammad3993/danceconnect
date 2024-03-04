@@ -6,6 +6,7 @@ import {
   selectCurrentLanguageCode,
   selectDanceStyles,
   selectEventTypes,
+  selectIsChangeLanguage,
   selectIsVisibleNoticeError,
   selectLoading,
   selectNoticeErrorMessage,
@@ -13,12 +14,15 @@ import {
   selectStripeKey,
   selectTicketPriceFix,
   selectTicketPricePercent,
+  selectTypeCommunity,
 } from '../store/selectors/appStateSelector';
 import {
   choosedCityAction,
+  getChangeLanguageAction,
   getDanceStylesAction,
   getStripeKeyAction,
   getTicketPercentAction,
+  getTypeCommunityAction,
   sendNotificationRequestAction,
   setCurrentCountryAction,
   setLanguage,
@@ -52,6 +56,10 @@ const useAppStateHook = () => {
 
   const priceFix = useSelector(selectTicketPriceFix);
   const pricePercent = useSelector(selectTicketPricePercent);
+
+  const isChangeLanguage = useSelector(selectIsChangeLanguage);
+  const typeCommunity = useSelector(selectTypeCommunity);
+
   useEffect(() => {
     if (!currentCity?.length) {
       // const worldwide = regions.find(i => i.name === 'Worldwide');
@@ -64,6 +72,13 @@ const useAppStateHook = () => {
   };
   const getTicketPricePercent = () => {
     dispatch(getTicketPercentAction());
+  };
+
+  const getCommunityType = () => {
+    dispatch(getTypeCommunityAction());
+  };
+  const getIsChangeLanguage = () => {
+    dispatch(getChangeLanguageAction());
   };
 
   const onChoosedCity = (city: object) => {
@@ -129,6 +144,10 @@ const useAppStateHook = () => {
     getTicketPricePercent,
     regions,
     sendMessageAction,
+    getCommunityType,
+    getIsChangeLanguage,
+    isChangeLanguage,
+    typeCommunity,
   };
 };
 export default useAppStateHook;
