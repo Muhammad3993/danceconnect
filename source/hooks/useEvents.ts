@@ -165,44 +165,8 @@ const useEvents = () => {
   const onClearEventDataById = () => {
     dispatch(getEventByIdClearAction());
   };
-  const changeInformation = ({
-    name,
-    description,
-    // country,
-    location,
-    categories,
-    images,
-    eventDate,
-    place,
-    eventUid,
-    typeEvent,
-    price,
-    inAppTickets,
-    externalLink,
-    isRecurrent,
-    recurrentTemplate,
-    recurrentEndDate,
-  }: eventParams) => {
-    dispatch(
-      changeInformationEventRequestAction({
-        name: name,
-        description: description,
-        // country,
-        location: location,
-        categories: categories,
-        images: images,
-        eventDate: eventDate,
-        place: place,
-        eventUid: eventUid,
-        typeEvent: typeEvent,
-        price: price,
-        inAppTickets: inAppTickets,
-        externalLink: externalLink,
-        isRecurrent: isRecurrent,
-        recurrentTemplate: recurrentTemplate,
-        recurrentEndDate: recurrentEndDate,
-      }),
-    );
+  const changeInformation = (data: any) => {
+    dispatch(changeInformationEventRequestAction(data));
   };
 
   const getPersonalEvents = () => {

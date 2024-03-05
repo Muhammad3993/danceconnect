@@ -182,6 +182,9 @@ const EventScreen = () => {
   const onPressEditEvent = () => {
     navigation.push('EditEvent', eventData);
   };
+  const onPressEditRecurrentEvents = () => {
+    navigation.push('EditEvent', {...eventData, recurrent: true});
+  };
   const onPressRemove = async () => {
     setUnFollowOpen(v => !v);
     remove();
@@ -305,7 +308,7 @@ const EventScreen = () => {
         {
           key: 'all-events',
           label: 'Edit all recurrent events',
-          onPress: null,
+          onPress: onPressEditRecurrentEvents,
         },
       ],
     },

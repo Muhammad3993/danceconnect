@@ -38,6 +38,7 @@ export type eventParams = {
   isRecurrent?: number;
   recurrentTemplate?: string[];
   recurrentEndDate?: string;
+  recurrentId?: string;
 };
 
 export type followingParams = {
@@ -168,45 +169,9 @@ export const endAttendEventSuccessAction = () => ({
 export const endAttendEventFailAction = () => ({
   type: EVENT.END_ATTEND_EVENT_FAIL,
 });
-export const changeInformationEventRequestAction = ({
-  name,
-  description,
-  // country,
-  location,
-  categories,
-  images,
-  eventDate,
-  place,
-  typeEvent,
-  eventUid,
-  price,
-  type,
-  inAppTickets,
-  externalLink,
-  isRecurrent,
-  recurrentTemplate,
-  recurrentEndDate,
-}: eventParams) => ({
+export const changeInformationEventRequestAction = (data: any) => ({
   type: EVENT.CHANGE_INFORMATION_EVENT_REQUEST,
-  payload: {
-    name: name,
-    description: description,
-    // country: country,
-    location: location,
-    categories: categories,
-    images: images,
-    eventDate: eventDate,
-    place: place,
-    typeEvent: typeEvent,
-    eventUid: eventUid,
-    price: price,
-    type: type,
-    inAppTickets: inAppTickets,
-    externalLink: externalLink,
-    isRecurrent: isRecurrent,
-    recurrentTemplate: recurrentTemplate,
-    recurrentEndDate: recurrentEndDate,
-  },
+  payload: data,
 });
 export const changeInformationEventSuccessAction = () => ({
   type: EVENT.CHANGE_INFORMATION_EVENT_SUCCESS,

@@ -182,10 +182,10 @@ function* getCommunitiesAndEventsAfterSubscribe() {
       .map((item: any) => item) ?? [];
   const events: string[] = yield all(requests);
   const data: string[] = yield all(
-    events.map((event: any) =>
+    events?.map((event: any) =>
       (function* () {
         try {
-          const tickets: string[] = yield call(getTickets, event.id);
+          const tickets: string[] = yield call(getTickets, event?.id);
           const prices = tickets?.map((ticket: any) => ticket?.price);
           const minPriceTickets = Math.min(...prices);
           // const maxPriceTickets = Math.max(...prices)
@@ -201,7 +201,7 @@ function* getCommunitiesAndEventsAfterSubscribe() {
       })(),
     ),
   );
-  const ids = data.concat(attendPersonalEvents).map(({id}) => id);
+  const ids = data.concat(attendPersonalEvents).map(id => id);
   const filtered = data
     .concat(attendPersonalEvents)
     .filter(({id}, index) => !ids.includes(id, index + 1));

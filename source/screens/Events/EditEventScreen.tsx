@@ -278,6 +278,7 @@ const EditEventScreen = () => {
         isRecurrent: isRecurrent,
         recurrentTemplate: recurrentTemplate,
         recurrentEndDate: recurrentEndDate,
+        recurrentId: routeParams?.params?.recurrent ? recurrentId : '',
       });
     }
   };

@@ -80,7 +80,9 @@ const MakeEvent = () => {
   const [addedStyles, setAddedStyles] = useState<string[]>(individualStyles);
   const [price, setPrice] = useState(0);
   const [time, setTime] = useState();
-  const [startDate, setStartDate] = useState(moment(new Date()).format('YYYY-MM-DD'));
+  const [startDate, setStartDate] = useState(
+    moment(new Date()).format('YYYY-MM-DD'),
+  );
   const [endDate, setEndDate] = useState(null);
   const [images, setImages] = useState<Image[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<string>('');
@@ -232,14 +234,13 @@ const MakeEvent = () => {
             if (!isValidUrl(externalLink)) {
               setValidUrl(true);
             } else {
+              console.log('preCreatedEvent', preCreatedEvent);
               const data = {
                 ...preCreatedEvent,
-                eventUid: preCreatedEvent.id,
-                name: preCreatedEvent.title,
-                price: preCreatedEvent.price,
-                type: preCreatedEvent.type,
                 inAppTickets: inAppTickets,
                 externalLink: externalLink,
+                recurrentId: preCreatedEvent?.recurrentId,
+                // eventDate: preCreatedEvent?.eventDate,
               };
               changeInformation(data);
             }

@@ -6,6 +6,7 @@ import {
   put,
   race,
   select,
+  take,
   takeLatest,
 } from 'redux-saga/effects';
 
@@ -352,114 +353,85 @@ function* createEventRequest(action: any) {
     yield put(createEventFailAction());
   }
 }
-
 function* changeInformation(action: any) {
-  const {
-    name,
-    description,
-    // country,
-    location,
-    categories,
-    images,
-    eventDate,
-    place,
-    typeEvent,
-    eventUid,
-    type,
-    inAppTickets,
-    externalLink,
-    isRecurrent,
-    recurrentTemplate,
-    recurrentEndDate,
-  } = action.payload;
+  const {eventUid, isRecurrent, recurrentId} = action.payload;
   try {
-    const data = {
-      title: name,
-      description: description,
-      // country,
-      location: location,
-      categories: categories,
-      images: images,
-      eventDate: eventDate,
-      place: place,
-      typeEvent: typeEvent,
-      type: type,
-      inAppTickets: inAppTickets,
-      link: externalLink,
-      isRecurrent: isRecurrent,
-      recurrentTemplate: recurrentTemplate,
-      recurrentEndDate: recurrentEndDate,
-    };
-    yield call(updateEventById, eventUid, data);
-    const response = yield call(getEventById, eventUid);
-    // socket.emit('updated_events');
-    if (!response) {
-      yield put(setNoticeVisible({isVisible: true}));
-      yield put(
-        setNoticeMessage({
-          errorMessage: 'Server error',
-        }),
-      );
-    } else {
-      yield put(
-        getEventByIdSuccessAction({
-          eventById: response,
-        }),
-      );
-      yield put(setLoadingAction({onLoading: false}));
-
-      navigationRef.current?.navigate('EventScreen', {
-        data: response,
-      });
-    }
-    // if (isRecurrent === 1) {
-    //   yield call(updateReccurentEventsById, eventUid, data);
-    //   const response = yield call(getRecurrentEventById, eventUid);
-    //   // socket.emit('updated_events');
-    //   if (!response.length) {
-    //     yield put(setNoticeVisible({isVisible: true}));
-    //     yield put(
-    //       setNoticeMessage({
-    //         errorMessage: 'Server error',
-    //       }),
-    //     );
-    //   } else {
-    //     yield put(
-    //       getEventByIdSuccessAction({
-    //         eventById: response[0],
-    //       }),
-    //     );
-    //     yield put(setLoadingAction({onLoading: false}));
-
-    //     navigationRef.current?.navigate('EventScreen', {
-    //       data: response[0],
-    //     });
-    //   }
+    // yield call(updateEventById, eventUid, data);
+    // const response = yield call(getEventById, eventUid);
+    // // socket.emit('updated_events');
+    // if (!response) {
+    //   yield put(setNoticeVisible({isVisible: true}));
+    //   yield put(
+    //     setNoticeMessage({
+    //       errorMessage: 'Server error',
+    //     }),
+    //   );
     // } else {
-    //   yield call(updateEventById, eventUid, data);
-    //   const response = yield call(getEventById, eventUid);
-    //   // socket.emit('updated_events');
-    //   if (!response) {
-    //     yield put(setNoticeVisible({isVisible: true}));
-    //     yield put(
-    //       setNoticeMessage({
-    //         errorMessage: 'Server error',
-    //       }),
-    //     );
-    //   } else {
-    //     yield put(
-    //       getEventByIdSuccessAction({
-    //         eventById: response,
-    //       }),
-    //     );
-    //     yield put(setLoadingAction({onLoading: false}));
+    //   yield put(
+    //     getEventByIdSuccessAction({
+    //       eventById: response,
+    //     }),
+    //   );
+    //   yield put(setLoadingAction({onLoading: false}));
 
-    //     navigationRef.current?.navigate('EventScreen', {
-    //       data: response,
-    //     });
-    //   }
+    //   navigationRef.current?.navigate('EventScreen', {
+    //     data: response,
+    //   });
     // }
-    // console.log('updateEventById', eventUid);
+    const data = {
+      ...action.payload,
+      link: action.payload.externalLink,
+      title: action.payload.name,
+    };
+
+    if (recurrentId && isRecurrent === 1) {
+      const response = yield call(updateReccurentEventsById, recurrentId, data);
+      // socket.emit('updated_events');
+      if (!response.length) {
+        yield put(setNoticeVisible({isVisible: true}));
+        yield put(
+          setNoticeMessage({
+            errorMessage: 'Server error',
+          }),
+        );
+      } else {
+        yield put(
+          getEventByIdSuccessAction({
+            eventById: response[0],
+          }),
+        );
+        yield put(setLoadingAction({onLoading: false}));
+
+        navigationRef.current?.navigate('EventScreen', {
+          data: response[0],
+          createEvent: true,
+        });
+      }
+    } else {
+      yield call(updateEventById, eventUid, data);
+      const response = yield call(getEventById, eventUid);
+      // socket.emit('updated_events');
+      if (!response) {
+        yield put(setNoticeVisible({isVisible: true}));
+        yield put(
+          setNoticeMessage({
+            errorMessage: 'Server error',
+          }),
+        );
+      } else {
+        yield put(
+          getEventByIdSuccessAction({
+            eventById: response,
+          }),
+        );
+        yield put(setLoadingAction({onLoading: false}));
+
+        navigationRef.current?.navigate('EventScreen', {
+          data: response,
+          createEvent: true,
+        });
+      }
+    }
     // yield put(setLoadingAction({onLoading: true}));
     yield put(changeInformationEventSuccessAction());
     yield put(changeInformationValueAction());
@@ -480,7 +452,7 @@ function* getEventByIdRequest(action: any) {
     // };
     const userUid: string = yield select(selectUserUid);
 
-    const isFollowed = response.attendedPeople?.findIndex(
+    const isFollowed = response?.attendedPeople?.findIndex(
       (i: {userUid: string}) => i.userUid === userUid,
     );
     if (!response) {
