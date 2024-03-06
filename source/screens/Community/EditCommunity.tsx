@@ -5,7 +5,7 @@ import colors from '../../utils/colors';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import {useCommunityById} from '../../hooks/useCommunityById';
-import {Asset, launchImageLibrary} from 'react-native-image-picker';
+import {Asset} from 'react-native-image-picker';
 import CategorySelector from '../../components/catregorySelector';
 import {
   SCREEN_WIDTH,
@@ -159,8 +159,8 @@ const EditCommunity = ({navigation}) => {
   const onChooseImage = async () => {
     ImageCropPicker.openPicker({
       mediaType: 'photo',
-      width: 375,
-      height: 480,
+      width: 1000,
+      height: 1280,
       cropping: true,
       includeBase64: true,
       compressImageQuality: 1,

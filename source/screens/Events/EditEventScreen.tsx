@@ -346,8 +346,8 @@ const EditEventScreen = () => {
   const onChooseImage = async () => {
     ImageCropPicker.openPicker({
       mediaType: 'photo',
-      width: 375,
-      height: 480,
+      width: 1000,
+      height: 1280,
       cropping: true,
       includeBase64: true,
       compressImageQuality: 1,
