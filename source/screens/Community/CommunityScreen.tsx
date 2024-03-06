@@ -366,9 +366,11 @@ const CommunityScreen = ({route, navigation}: Props) => {
   };
 
   const onOpenMaps = () => {
-    const url = isAndroid
-      ? `geo:0,0?q=${communityData?.location}`
-      : `maps:0,0?q=${communityData?.location}`;
+    const url = `https://www.google.com/maps/search/?api=1&query=${communityData?.location}`;
+
+    // const url = isAndroid
+    //   ? `geo:0,0?q=${communityData?.location}`
+    //   : `maps:0,0?q=${communityData?.location}`;
     RN.Linking.openURL(url);
   };
   const renderAttendedImgs = () => {

@@ -55,9 +55,11 @@ const WeclomeScreen = (): JSX.Element => {
     authorizationWithApple,
     saveEmail,
   } = useRegistration();
-  const {setLoading, getDanceStyles} = useAppStateHook();
+  const {setLoading, getDanceStyles, getIsChangeLanguage, isChangeLanguage} =
+    useAppStateHook();
   useEffect(() => {
     getDanceStyles();
+    getIsChangeLanguage();
   }, []);
 
   const onPressLogin = () => {
@@ -133,14 +135,14 @@ const WeclomeScreen = (): JSX.Element => {
             <RN.Text style={styles.logInText}>{t('login')}</RN.Text>
           </RN.TouchableOpacity>
         </RN.View>
-        {/* 
-        <RN.View style={styles.bottomWrapperLg}>
-          <RN.Text style={styles.alreadyAccountText}>{t('language')}</RN.Text>
-          <RN.TouchableOpacity onPress={onPressChangeLG}>
-            <RN.Text style={styles.logInText}>{t('languageName')}</RN.Text>
-          </RN.TouchableOpacity>
-        </RN.View> */}
-
+        {isChangeLanguage && (
+          <RN.View style={styles.bottomWrapperLg}>
+            <RN.Text style={styles.alreadyAccountText}>{t('language')}</RN.Text>
+            <RN.TouchableOpacity onPress={onPressChangeLG}>
+              <RN.Text style={styles.logInText}>{t('languageName')}</RN.Text>
+            </RN.TouchableOpacity>
+          </RN.View>
+        )}
         <RN.View style={{paddingHorizontal: 20}}>
           <RN.Text style={styles.licenceText}>
             {t('terms_first')}
