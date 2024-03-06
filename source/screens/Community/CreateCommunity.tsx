@@ -138,9 +138,9 @@ const CreateCommunity = ({navigation}) => {
       height: 480,
       cropping: true,
       includeBase64: true,
+      compressImageQuality: 1,
     })
       .then(res => {
-        console.log(res);
         setImages([...images, res]);
       })
       .catch(() => {

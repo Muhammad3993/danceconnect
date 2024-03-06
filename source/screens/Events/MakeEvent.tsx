@@ -374,6 +374,7 @@ const MakeEvent = () => {
       height: 480,
       cropping: true,
       includeBase64: true,
+      compressImageQuality: 1,
     })
       .then(res => {
         setImages([...images, res]);
