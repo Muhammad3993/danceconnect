@@ -13,9 +13,9 @@ import {useProfile} from '../../hooks/useProfile';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import useRegistration from '../../hooks/useRegistration';
-import {apiUrl} from '../../api/serverRequests';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile, getDefaultImgUser} from '../../utils/images';
+import { axiosInstance } from '../../utils/helpers';
 
 const ChangeProfile = () => {
   const navigation = useNavigation();
@@ -84,7 +84,7 @@ const ChangeProfile = () => {
               ? {
                   uri: userImg?.base64
                     ? 'data:image/png;base64,' + userImg?.base64
-                    : apiUrl + userImg,
+                    : axiosInstance.getUri() + userImg,
                 }
               : getDefaultImgUser(currentUser.userGender)
           }
@@ -269,7 +269,7 @@ const styles = RN.StyleSheet.create({
     borderRadius: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 14,
+    padding: 14,
   },
   selectedText: {
     fontSize: 16,

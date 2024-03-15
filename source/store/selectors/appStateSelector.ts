@@ -39,3 +39,5 @@ export const selectTypeCommunity = (state: IRootState) =>
 
 export const selectIsChangeLanguage = (state: IRootState) =>
   state?.appState?.isChangeLanguage ?? false;
+export const selectIsDevMode = (state: IRootState) =>
+  state?.appState?.isDev ?? false;

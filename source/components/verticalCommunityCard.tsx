@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import {CommunityT} from '../utils/interfaces';
 import colors from '../utils/colors';
-import {apiUrl} from '../api/serverRequests';
 import {SCREEN_WIDTH} from '../utils/constants';
 import {useNavigation} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -11,6 +10,7 @@ import {useTranslation} from 'react-i18next';
 import {Button} from './Button';
 import useRegistration from '../hooks/useRegistration';
 import {useCommunities} from '../hooks/useCommunitites';
+import {axiosInstance} from '../utils/helpers';
 
 const VerticalCommunityCard = (community: CommunityT) => {
   const navigation = useNavigation();
@@ -34,7 +34,7 @@ const VerticalCommunityCard = (community: CommunityT) => {
         {community.userImages?.slice(0, 5)?.map((img, idx) => {
           const imgUri =
             img?.userImage?.length > 0
-              ? {uri: apiUrl + img?.userImage}
+              ? {uri: axiosInstance.getUri() + img?.userImage}
               : getDefaultImgUser(img.userGender);
           return (
             <RN.View
@@ -83,15 +83,15 @@ const VerticalCommunityCard = (community: CommunityT) => {
       activeOpacity={0.7}
       onPress={onPress}>
       <RN.ImageBackground
-        source={{uri: apiUrl + community.images[0]}}
+        source={{uri: axiosInstance.getUri() + community.images[0]}}
         style={styles.image}
         imageStyle={styles.imgStyle}
         defaultSource={require('../assets/images/default.jpeg')}>
         <RN.View style={styles.wrapper}>
           <ScrollView horizontal style={styles.categoiesWrapper}>
-            {community?.categories?.slice(0, 3).map(category => {
+            {community?.categories?.slice(0, 3).map((category, idx) => {
               return (
-                <RN.View style={styles.categoryContainer}>
+                <RN.View style={styles.categoryContainer} key={idx}>
                   <RN.Text style={styles.categoryText}>{category}</RN.Text>
                 </RN.View>
               );

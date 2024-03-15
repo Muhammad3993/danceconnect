@@ -173,3 +173,10 @@ export const AMITY_API_KEY = 'b0e9ba5b3a89a1304f368a4d070f45d9d05a84e6bc336c2f';
 // export const QB_AUTH_SECRET = 'as_6kn9HKEpW2yJG-9';
 // export const QB_ACCOUNT_KEY = 'ack_7Wnzbn3NKuyBDdpXG1gA';
 // export const QB_API_KEY = 'ne_FR1wa46l6PhU7hf_nvzELtsddnmy7AYAudruE20E';
+export const admins = [
+  'yanis.thomson1@gmail.com',
+  'denparf@gmail.com',
+  'jvxrnazarov97-test@mail.ru',
+  'julia.rakitina-test@incode-systems.com',
+  'gumirovareg@gmail.com',
+];

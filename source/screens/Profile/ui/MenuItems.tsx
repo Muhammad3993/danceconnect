@@ -11,7 +11,7 @@ import useRegistration from '../../../hooks/useRegistration';
 import useTickets from '../../../hooks/useTickets';
 import {useProfile} from '../../../hooks/useProfile';
 import LocationSelector from '../../../components/locationSelector';
-import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../../../utils/constants';
+import {SCREEN_HEIGHT, SCREEN_WIDTH, admins} from '../../../utils/constants';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {Input} from '../../../components/input';
@@ -42,7 +42,7 @@ export function MenuItems({navigation, close}: Props) {
     onChangePassword,
     isSuccessChangePassword,
   } = useProfile();
-  const {isChangeLanguage} = useAppStateHook();
+  const {isChangeLanguage, isDev, setDevMode} = useAppStateHook();
 
   const logoutRefModalize = useRef<Modalize>(null);
   const changePassRefModalize = useRef<Modalize>(null);
@@ -51,6 +51,8 @@ export function MenuItems({navigation, close}: Props) {
 
   const [newPassword, setNewPassword] = useState('');
   const [visibleError, setVisibleError] = useState(false);
+
+  const isAdminApp = admins.includes(currentUser?.email);
 
   const onPressCommunities = () => {
     close();
@@ -120,6 +122,23 @@ export function MenuItems({navigation, close}: Props) {
   return (
     <>
       <RN.View style={styles.listWrapper}>
+        {isAdminApp && (
+          <RN.View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: 14,
+            }}>
+            <RN.View style={{flexDirection: 'row'}}>
+              <RN.Image source={{uri: 'info'}} style={styles.icon} />
+              <RN.Text
+                style={
+                  styles.listItemText
+                }>{`Change dev mode (${isDev})`}</RN.Text>
+            </RN.View>
+            <RN.Switch value={isDev} onChange={() => setDevMode(isDev)} />
+          </RN.View>
+        )}
         <RN.TouchableOpacity
           style={styles.listItemWrapper}
           onPress={onPressCommunities}>

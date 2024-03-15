@@ -46,6 +46,7 @@ import useBootsrap from '../hooks/useBootsrap';
 import {CreatePostScreen} from '../screens/Profile/CreatePost';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {BackIcon} from './backIcon';
+import DevMark from '../components/devMark';
 
 const linking = {
   prefixes: ['https://danceconnect.online/', 'danceconnect://'],
@@ -218,6 +219,7 @@ const TabsNavigator = () => {
 const AppNavigator = () => {
   const {isUserExists} = useRegistration();
   const {init, isBootstraped} = useBootsrap();
+  const {isDev} = useAppStateHook();
 
   const routeNameRef = React.useRef();
   const {crntLgCode} = useAppStateHook();
@@ -258,6 +260,7 @@ const AppNavigator = () => {
         routeNameRef.current = currentRouteName;
       }}>
       <Host>
+        {isDev && <DevMark />}
         <MainStack.Navigator
           screenOptions={{headerShown: false, gestureEnabled: false}}>
           {isUserExists ? (

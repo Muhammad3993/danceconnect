@@ -4,10 +4,10 @@ import * as RN from 'react-native';
 import colors from '../utils/colors';
 import {statusBarHeight} from '../utils/constants';
 import {Input} from '../components/input';
-import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {defaultProfile, getDefaultImgUser} from '../utils/images';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
+import { axiosInstance } from '../utils/helpers';
 type user = {
   item: {
     userName: string;
@@ -59,7 +59,7 @@ const AttendedPeople = () => {
           source={
             item.userImage
               ? {
-                  uri: `${apiUrl}${item.userImage}`,
+                  uri: `${axiosInstance.getUri()}${item.userImage}`,
                   cache: FastImage.cacheControl.immutable,
                   priority: FastImage.priority.high,
                 }

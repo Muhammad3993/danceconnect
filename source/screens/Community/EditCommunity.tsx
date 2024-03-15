@@ -15,11 +15,11 @@ import {
 } from '../../utils/constants';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import FindCity from '../../components/findCity';
-import {apiUrl} from '../../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
 import useAppStateHook from '../../hooks/useAppState';
+import { axiosInstance } from '../../utils/helpers';
 
 interface city {
   structured_formatting: {
@@ -521,7 +521,7 @@ const EditCommunity = ({navigation}) => {
                     onLoadStart={() => setLoadImg(true)}
                     onLoadEnd={() => setLoadImg(false)}
                     source={{
-                      uri: typeof img === 'object' ? img?.path : apiUrl + img,
+                      uri: typeof img === 'object' ? img?.path : axiosInstance.getUri() + img,
                     }}
                     resizeMode={FastImage.resizeMode.contain}
                   />

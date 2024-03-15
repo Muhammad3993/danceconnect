@@ -20,6 +20,7 @@ type appStateParams = {
 
   isChangeLanguage?: boolean;
   typeCommunity?: string | string[];
+  isDev?: boolean;
 };
 
 export const setLoadingAction = ({onLoading}: appStateParams) => ({
@@ -138,5 +139,11 @@ export const setTypeCommunityAction = ({typeCommunity}: appStateParams) => ({
   type: APP_STATE.SET_TYPE_COMMUNITY,
   payload: {
     typeCommunity: typeCommunity,
+  },
+});
+export const setDevelopmentModeAction = ({isDev}: appStateParams) => ({
+  type: APP_STATE.SET_DEV_MODE,
+  payload: {
+    isDev: isDev,
   },
 });

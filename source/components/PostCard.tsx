@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {apiUrl} from '../api/serverRequests';
 import colors from '../utils/colors';
 import {SCREEN_WIDTH} from '../utils/constants';
 import {getDefaultImgUser} from '../utils/images';
@@ -20,6 +19,7 @@ import Share, {Social} from 'react-native-share';
 import useAppStateHook from '../hooks/useAppState';
 import RNFetchBlob from 'rn-fetch-blob';
 import CameraRoll from '@react-native-community/cameraroll';
+import { axiosInstance } from '../utils/helpers';
 
 interface Props {
   post: Amity.Post;
@@ -168,7 +168,7 @@ export function PostCard({
           source={
             Boolean(user.userImage)
               ? {
-                  uri: apiUrl + user.userImage,
+                  uri: axiosInstance.getUri() + user.userImage,
                   cache: FastImage.cacheControl.immutable,
                   priority: FastImage.priority.high,
                 }

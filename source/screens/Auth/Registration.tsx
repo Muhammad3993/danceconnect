@@ -31,12 +31,12 @@ const RegistraionScreen = (): JSX.Element => {
 
   const {
     registration,
-    isLoading,
     userUid,
     authorizationWithGoogle,
     isUserExists,
     authorizationWithApple,
   } = useRegistration();
+  const {onLoading} = useAppStateHook();
   const onPressLogin = () => {
     navigation.navigate('AUTH');
   };
@@ -159,7 +159,7 @@ const RegistraionScreen = (): JSX.Element => {
               title={t('sign_up')}
               disabled={email.length > 0 && password.length > 0}
               onPress={onPressSignUp}
-              isLoading={isLoading}
+              isLoading={onLoading}
             />
             <RN.View style={styles.linesWrapper}>
               <RN.View style={styles.line} />

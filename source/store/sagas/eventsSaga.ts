@@ -150,7 +150,7 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
 function* getEventForCommunity(action: any) {
   const {eventUid} = action.payload;
 
-  const requests = eventUid.map((eventId: string) =>
+  const requests = eventUid?.map((eventId: string) =>
     call(getEventById, eventId),
   );
   try {
@@ -161,13 +161,13 @@ function* getEventForCommunity(action: any) {
           events.map((event: any) =>
             (function* () {
               try {
-                const tickets: string[] = yield call(getTickets, event.id);
+                const tickets: string[] = yield call(getTickets, event?.id);
                 const prices = tickets?.map((ticket: any) => ticket?.price);
                 const minPriceTickets = Math.min(...prices);
                 // const maxPriceTickets = Math.max(...prices)
                 const eventData = {
                   ...event,
-                  attendedPeople: event.userImages,
+                  attendedPeople: event?.userImages,
                   minPriceTickets:
                     minPriceTickets === Infinity ? null : minPriceTickets,
                 };
@@ -355,6 +355,7 @@ function* createEventRequest(action: any) {
 }
 function* changeInformation(action: any) {
   const {eventUid, isRecurrent, recurrentId} = action.payload;
+  console.log('changeInformation', action.payload);
   try {
     // yield call(updateEventById, eventUid, data);
     // const response = yield call(getEventById, eventUid);
@@ -380,12 +381,19 @@ function* changeInformation(action: any) {
     // }
     const data = {
       ...action.payload,
+      inAppTickets: action.payload.inAppTickets,
       link: action.payload.externalLink,
       title: action.payload.name,
     };
 
     if (recurrentId && isRecurrent === 1) {
-      const response = yield call(updateReccurentEventsById, recurrentId, data);
+      yield call(
+        updateReccurentEventsById,
+        action.payload.eventUid ?? action.payload.id,
+        data,
+      );
+      const response = yield call(getRecurrentEventById, recurrentId);
+      console.log('getRecurrentEventById', response);
       // socket.emit('updated_events');
       if (!response.length) {
         yield put(setNoticeVisible({isVisible: true}));
@@ -624,6 +632,7 @@ function* getEventsByUserId(action: {payload: {user_id: string}}) {
 }
 
 function* getMainEvents() {
+  const maxCount = 13;
   try {
     const location = yield select(selectCurrentCity);
     const regions = yield select(selectRegions);
@@ -637,9 +646,15 @@ function* getMainEvents() {
       isRegionCountries ? isRegionCountries?.countries : [location],
     );
 
-    if (mainEvents.length >= 3) {
+    if (mainEvents?.eventsList?.length > maxCount) {
+      const filteredNewEvents = mainEvents.eventsList.filter((event: any) => {
+        return (
+          moment(event.eventDate.startDate).format('YYYY-MM-DD') >=
+          moment(new Date()).format('YYYY-MM-DD')
+        );
+      });
       yield put(
-        getMainEventsSuccessAction(mainEvents?.eventsList?.slice(0, 3)),
+        getMainEventsSuccessAction(filteredNewEvents?.slice(0, maxCount)),
       );
     } else {
       yield put(getMainEventsSuccessAction(mainEvents?.eventsList));

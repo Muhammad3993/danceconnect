@@ -22,6 +22,7 @@ export type appStateAction = {
 
     isChangeLanguage?: boolean;
     typeCommunity?: string | string[];
+    isDev?: boolean;
   };
 };
 
@@ -106,6 +107,11 @@ export default (state = appStateInitialState, action: appStateAction) => {
       return {
         ...state,
         typeCommunity: action.payload.typeCommunity,
+      };
+    case APP_STATE.SET_DEV_MODE:
+      return {
+        ...state,
+        isDev: action.payload.isDev,
       };
     default:
       return state;

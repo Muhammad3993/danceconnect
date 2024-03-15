@@ -7,6 +7,7 @@ import {
   selectDanceStyles,
   selectEventTypes,
   selectIsChangeLanguage,
+  selectIsDevMode,
   selectIsVisibleNoticeError,
   selectLoading,
   selectNoticeErrorMessage,
@@ -25,6 +26,7 @@ import {
   getTypeCommunityAction,
   sendNotificationRequestAction,
   setCurrentCountryAction,
+  setDevelopmentModeAction,
   setLanguage,
   setLoadingAction,
   setNoticeMessage,
@@ -59,6 +61,8 @@ const useAppStateHook = () => {
 
   const isChangeLanguage = useSelector(selectIsChangeLanguage);
   const typeCommunity = useSelector(selectTypeCommunity);
+
+  const isDev = useSelector(selectIsDevMode);
 
   useEffect(() => {
     if (!currentCity?.length) {
@@ -119,6 +123,9 @@ const useAppStateHook = () => {
     dispatch(sendNotificationRequestAction(data));
   };
 
+  const setDevMode = (isDevCheck: boolean) => {
+    dispatch(setDevelopmentModeAction({isDev: !isDevCheck}));
+  };
   return {
     onLoading,
     setLoading,
@@ -148,6 +155,8 @@ const useAppStateHook = () => {
     getIsChangeLanguage,
     isChangeLanguage,
     typeCommunity,
+    isDev,
+    setDevMode,
   };
 };
 export default useAppStateHook;

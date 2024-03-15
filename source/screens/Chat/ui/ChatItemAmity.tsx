@@ -1,10 +1,9 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import colors from '../../../utils/colors';
-// import {apiUrl} from '../../../api/serverRequests';
 import {defaultProfile} from '../../../utils/images';
 import FastImage from 'react-native-fast-image';
-import {apiUrl} from '../../../api/serverRequests';
+import { axiosInstance } from '../../../utils/helpers';
 
 interface Props {
   channel: Amity.Channel;
@@ -43,7 +42,7 @@ export function ChatItem({channel, currentUser}: Props) {
   return (
     <View style={styles.item}>
       <FastImage
-        source={Boolean(image) ? {uri: apiUrl + image} : defaultProfile}
+        source={Boolean(image) ? {uri: axiosInstance.getUri() + image} : defaultProfile}
         defaultSource={defaultProfile}
         style={styles.avatar}
       />

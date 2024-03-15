@@ -4,7 +4,6 @@ import {
   createEventChangeValue,
   endAttendEventRequestAction,
   eventParams,
-  followingParams,
   getEventByIdClearAction,
   getEventByIdCommunityRequestAction,
   getEventsRequestAction,
@@ -39,7 +38,6 @@ import {
   selectWithManagingEvents,
 } from '../store/selectors/eventsSelector';
 import {selectUserUid} from '../store/selectors/registrationSelector';
-import {useProfile} from './useProfile';
 
 const useEvents = () => {
   const dispatch = useDispatch();
@@ -63,17 +61,9 @@ const useEvents = () => {
   };
   const attentingsEvents = selectAttentingEvents(userId);
   const attendEventWithUserUid = selectUpcomingEventsWithUserUid(userId);
-  const upcomingEvents = selectUpcomingEvents();
+  const upcomingEvents = useSelector(selectUpcomingEvents);
   const passingEvents = selectPassedEvents();
   const managingEventsWithPassed = selectWithManagingEvents(userId);
-  const {individualStyles} = useProfile();
-  const maybeEvents = upcomingEvents?.filter(
-    i =>
-      i?.creatorUid !== userId &&
-      i?.attendedPeople?.find((user: any) => user.userUid !== userId) &&
-      i?.categories?.some(st => individualStyles?.includes(st)),
-  );
-
   const attendingEventsForCommunity =
     eventsDataByCommunityId?.filter(
       (item: any) =>
@@ -200,7 +190,6 @@ const useEvents = () => {
     upcomingEvents,
     passingEvents,
     attendEventWithUserUid,
-    maybeEvents,
     managingEventsWithPassed,
     isLoadManaging,
     getManagingEvents,

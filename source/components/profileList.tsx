@@ -13,11 +13,10 @@ import {
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import FastImage from 'react-native-fast-image';
-import {apiUrl} from '../api/serverRequests';
 import {defaultProfile, getDefaultImgUser} from '../utils/images';
 
 import colors from '../utils/colors';
-import {getUserRole} from '../utils/helpers';
+import {axiosInstance, getUserRole} from '../utils/helpers';
 import {Tab} from './tab';
 // import {PostCard} from '../screens/Profile/ui/PostCard';
 import {useTranslation} from 'react-i18next';
@@ -222,7 +221,7 @@ export function ProfileList({
               source={
                 user?.userImage
                   ? {
-                      uri: apiUrl + user?.userImage,
+                      uri: axiosInstance.getUri() + user?.userImage,
                       cache: FastImage.cacheControl.immutable,
                       priority: FastImage.priority.high,
                     }

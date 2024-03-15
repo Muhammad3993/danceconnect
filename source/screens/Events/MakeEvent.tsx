@@ -21,7 +21,15 @@ import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import {isValidUrl} from '../../utils/helpers';
 import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
-
+export const recurrentTemplateArray = [
+  {key: 'mon', value: 'Mo'},
+  {key: 'tue', value: 'Tu'},
+  {key: 'wed', value: 'We'},
+  {key: 'thu', value: 'Th'},
+  {key: 'fri', value: 'Fr'},
+  {key: 'sat', value: 'Sa'},
+  {key: 'sun', value: 'Su'},
+];
 const MakeEvent = () => {
   const {t} = useTranslation();
   const SCREENS = [
@@ -42,15 +50,6 @@ const MakeEvent = () => {
       title: t('tt_paid_title'),
       description: t('tt_paid_desc'),
     },
-  ];
-  const recurrentTemplateArray = [
-    {key: 'mon', value: 'Mo'},
-    {key: 'tue', value: 'Tu'},
-    {key: 'wed', value: 'We'},
-    {key: 'thu', value: 'Th'},
-    {key: 'fri', value: 'Fr'},
-    {key: 'sat', value: 'Sa'},
-    {key: 'sun', value: 'Su'},
   ];
   const navigation = useNavigation();
   const routeParams = useRoute();
@@ -240,6 +239,7 @@ const MakeEvent = () => {
                 inAppTickets: inAppTickets,
                 externalLink: externalLink,
                 recurrentId: preCreatedEvent?.recurrentId,
+                link: externalLink ?? '',
                 // eventDate: preCreatedEvent?.eventDate,
               };
               changeInformation(data);

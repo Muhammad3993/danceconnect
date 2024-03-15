@@ -7,10 +7,10 @@ import {useNavigation} from '@react-navigation/native';
 import {SCREEN_WIDTH} from '../utils/constants';
 import SkeletonCommunityCard from './skeleton/communityCard-Skeleton';
 import socket from '../api/sockets';
-import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile, getDefaultImgUser} from '../utils/images';
+import {axiosInstance} from '../utils/helpers';
 
 interface Props {
   item: any;
@@ -117,7 +117,7 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
         {attendedImgs?.slice(0, 5)?.map((img, idx) => {
           const imgUri =
             img?.userImage?.length > 0
-              ? {uri: apiUrl + img?.userImage}
+              ? {uri: axiosInstance.defaults.baseURL + img?.userImage}
               : getDefaultImgUser(img.userGender);
           return (
             <RN.View
@@ -226,7 +226,7 @@ const CommunityCard = ({item, isProfileScreen, containerStyle}: Props) => {
           source={
             data?.images[0]
               ? {
-                  uri: apiUrl + data?.images[0],
+                  uri: axiosInstance.getUri() + data?.images[0],
                   cache: FastImage.cacheControl.immutable,
                   priority: FastImage.priority.high,
                 }

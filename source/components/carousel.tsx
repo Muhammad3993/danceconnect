@@ -1,9 +1,9 @@
 import React, {useCallback, useRef, useState} from 'react';
 import {FlatList, Image, LayoutAnimation, StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {apiUrl} from '../api/serverRequests';
 import colors from '../utils/colors';
 import {SCREEN_WIDTH, getAdaptiveWidth} from '../utils/constants';
+import {axiosInstance} from '../utils/helpers';
 
 type paginationProp = {
   index: number;
@@ -71,7 +71,7 @@ const Carousel = ({items}: {items: string[]}) => {
       <View style={styles.slide}>
         <FastImage
           source={{
-            uri: apiUrl + item,
+            uri: axiosInstance.getUri() + item,
             cache: FastImage.cacheControl.immutable,
             priority: FastImage.priority.high,
           }}

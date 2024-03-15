@@ -6,9 +6,8 @@ import {SCREEN_WIDTH, isAndroid} from '../utils/constants';
 import useEvents from '../hooks/useEvents';
 import useRegistration from '../hooks/useRegistration';
 import {useNavigation} from '@react-navigation/native';
-import {minWeekDay} from '../utils/helpers';
+import {axiosInstance, minWeekDay} from '../utils/helpers';
 import SkeletonEventCard from './skeleton/eventCard-Skeleton';
-import {apiUrl} from '../api/serverRequests';
 import FastImage from 'react-native-fast-image';
 import {useTranslation} from 'react-i18next';
 import {defaultProfile, getDefaultImgUser} from '../utils/images';
@@ -29,17 +28,19 @@ const EventCard = ({item, containerStyle}: Props) => {
   const isAdmin = data?.creator?.uid === userUid;
   const isManager =
     data?.managers?.length > 0 && data?.managers?.find(i => i === userUid);
-// console.log('data?.eventDate?.time?.date ??', moment(data?.eventDate?.time?.date).local().format('MM DD'));
   const dateEvent = `${String(
     minWeekDay.weekdaysMin(moment(data?.eventDate?.startDate)),
-  ).toUpperCase()}, ${data?.eventDate?.time?.date ? String( moment(data?.eventDate?.time?.date).local().format('DD-MM')) : String(
-    moment(data?.eventDate?.startDate).format('MMM Do'),
-  ).toUpperCase()} • ${moment(data?.eventDate?.time).format('HH:mm')}`;
+  ).toUpperCase()}, ${
+    data?.eventDate?.time?.date
+      ? String(moment(data?.eventDate?.time?.date).local().format('DD-MM'))
+      : String(
+          moment(data?.eventDate?.startDate).format('MMM Do'),
+        ).toUpperCase()
+  } • ${moment(data?.eventDate?.time).format('HH:mm')}`;
 
   const [attendedImgs, setAttendedImgs] = useState([]);
   const displayedPlaceText =
     data?.place?.length > 16 ? data?.place?.slice(0, 16) + '...' : data?.place;
-
   const goToEvent = () => {
     navigation.push('EventScreen', {data});
   };
@@ -106,8 +107,8 @@ const EventCard = ({item, containerStyle}: Props) => {
           ?.map((img: {userImage: string} | any, idx) => {
             let imgUri =
               typeof img === 'object'
-                ? {uri: apiUrl + img?.userImage}
-                : {uri: apiUrl + img};
+                ? {uri: axiosInstance.getUri() + img?.userImage}
+                : {uri: axiosInstance.getUri() + img};
 
             if (img?.userImage === null || img === null) {
               // console.log(imgUri);
@@ -202,7 +203,7 @@ const EventCard = ({item, containerStyle}: Props) => {
               source={
                 data?.images?.length > 0
                   ? {
-                      uri: apiUrl + data?.images[0],
+                      uri: axiosInstance.defaults.baseURL + data?.images[0],
                       cache: FastImage.cacheControl.immutable,
                       priority: FastImage.priority.high,
                     }

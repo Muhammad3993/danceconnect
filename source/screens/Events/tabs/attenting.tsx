@@ -9,7 +9,7 @@ import Moment from 'moment';
 import {extendMoment} from 'moment-range';
 import useAppStateHook from '../../../hooks/useAppState';
 import SkeletonEventCard from '../../../components/skeleton/eventCard-Skeleton';
-import {RefreshControl, ScrollView} from 'react-native-gesture-handler';
+import {FlatList, RefreshControl, ScrollView} from 'react-native-gesture-handler';
 import {useTranslation} from 'react-i18next';
 import Filters from '../../../components/filters';
 const moment = extendMoment(Moment);
@@ -25,7 +25,7 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
   const {currentCity} = useAppStateHook();
   const lastSymUserCountry = currentCity?.substr(currentCity?.length - 2);
 
-  const [events, setEvents] = useState(personalEvents);
+  const [events, setEvents] = useState(personalEvents.slice(0, 10));
   const [openingFilters, setOpeningFilters] = useState(false);
   const [eventType, setEventType] = useState('All');
   const [eventDate, setEventDate] = useState();
@@ -110,7 +110,7 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
       setEvents(personalEvents);
     }
   };
-  const renderItem = (item: any) => {
+  const renderItem = ({item}: any) => {
     return <EventCard item={item} key={item?.id} />;
   };
   const renderFilters = () => {
@@ -138,10 +138,17 @@ const AttentingTab = ({searchValue, eventsSearch}: props) => {
         refreshControl={refreshControl()}
         showsVerticalScrollIndicator={false}>
         {renderFilters()}
-        {events?.length > 0 &&
-          sortBy(events, 'eventDate.startDate')?.map((item: any) => {
-            return <RN.View>{renderItem(item)}</RN.View>;
-          })}
+        <FlatList
+          data={sortBy(events, 'eventDate.startDate')}
+          renderItem={renderItem}
+          keyExtractor={(_, index) => `key${index}`}
+          onEndReachedThreshold={4}
+          onEndReached={() => {
+            if (events.length < personalEvents.length) {
+              setEvents([...events, ...personalEvents.slice(events.length)]);
+            }
+          }}
+        />
         {!events?.length && renderEmpty()}
         <RN.View style={{paddingBottom: 24}} />
       </ScrollView>

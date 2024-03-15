@@ -7,7 +7,6 @@ import * as RN from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {apiUrl} from '../../api/serverRequests';
 import {Button} from '../../components/Button';
 import BottomCalendar from '../../components/bottomCalendar';
 import CategorySelector from '../../components/catregorySelector';
@@ -19,8 +18,9 @@ import useEvents from '../../hooks/useEvents';
 import useTickets from '../../hooks/useTickets';
 import colors from '../../utils/colors';
 import {SCREEN_WIDTH, isAndroid} from '../../utils/constants';
-import {isValidUrl} from '../../utils/helpers';
+import {axiosInstance, isValidUrl} from '../../utils/helpers';
 import ImageCropPicker, {Image} from 'react-native-image-crop-picker';
+import {recurrentTemplateArray} from './MakeEvent';
 
 const EditEventScreen = () => {
   const navigation = useNavigation();
@@ -66,9 +66,11 @@ const EditEventScreen = () => {
     recurrentTemplate,
     recurrentEndDate,
     recurrentId,
+    recurrentRange,
   } = routeParams?.params;
   const {removeTicket, ticketsList, getTickets} = useTickets();
 
+  // console.log(routeParams);
   const {eventTypes, countries, getTicketPricePercent, priceFix, pricePercent} =
     useAppStateHook();
   const [title, setName] = useState(routeParams?.params?.title ?? '');
@@ -107,6 +109,15 @@ const EditEventScreen = () => {
   const [externalLink, setExternalLink] = useState(link);
   const [validUrl, setValidUrl] = useState(false);
 
+  const [isRecurringEdit, setIsRecurring] = useState<boolean>(
+    Boolean(isRecurrent),
+  );
+  const [recurrentTemplateEdit, setRecurrentTemplate] =
+    useState<Array<string>>(recurrentTemplate);
+  const [recurrentRangeEdit, setRecurrentRange] = useState(
+    moment(recurrentEndDate).week() - moment(eventDate?.startDate).week(),
+  );
+  // console.log(moment(recurrentEndDate).week() - moment(eventDate?.startDate).week());
   const basicInfo = currentScreen === 0;
   const details = currentScreen === 1;
   const ticketsInfo = currentScreen === 2;
@@ -122,15 +133,27 @@ const EditEventScreen = () => {
     ticket => ticket?.items?.length > 0,
   );
 
+  const onChooseRepeatDay = (day: {key: string; value: string}) => {
+    const isAvailable = recurrentTemplateEdit?.includes(day.key);
+    if (isAvailable) {
+      const filter = recurrentTemplateEdit.filter(item => item !== day.key);
+      setRecurrentTemplate(filter);
+    } else {
+      setRecurrentTemplate([...recurrentTemplateEdit, day.key]);
+    }
+  };
+
   useEffect(() => {
     getTicketPricePercent();
   }, []);
 
   useEffect(() => {
-    if (endDate === null) {
+    if (isRecurrent) {
+      setEndDate(null);
+    } else if (endDate === null) {
       setEndDate(startDate);
     }
-  }, [endDate, startDate]);
+  }, [endDate, startDate, isRecurrent]);
   useEffect(() => {
     const c = countries.find(
       (c: {country: string}) => c.country === selectedLocation?.split(', ')[0],
@@ -232,11 +255,152 @@ const EditEventScreen = () => {
       }
     }
   };
+  const renderRepeatDays = () => {
+    return (
+      <RN.View style={{paddingHorizontal: 20}}>
+        <RN.Text
+          style={{
+            fontSize: 16,
+            fontWeight: '700',
+            color: colors.textPrimary,
+            paddingBottom: 14,
+            paddingTop: 10,
+          }}>
+          Repeat every
+        </RN.Text>
+        <RN.View
+          style={{
+            flexDirection: 'row',
+            flex: 1,
+            justifyContent: 'space-between',
+            paddingBottom: 12,
+          }}>
+          {recurrentTemplateArray.map((day: {key: string; value: string}) => {
+            const isAvailable = recurrentTemplateEdit?.includes(day.key);
+            return (
+              <RN.TouchableOpacity
+                onPress={() => onChooseRepeatDay(day)}
+                style={{
+                  backgroundColor: isAvailable ? colors.orange : colors.gray200,
+                  borderRadius: 100,
+                  height: 45,
+                  width: 45,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <RN.Text
+                  style={{
+                    fontSize: 16,
+                    color: colors.textPrimary,
+                    fontWeight: '700',
+                    // paddingVertical: 11,
+                    // padding: 12,
+                  }}>
+                  {day.value}
+                </RN.Text>
+              </RN.TouchableOpacity>
+            );
+          })}
+        </RN.View>
+        <RN.View
+          style={{
+            paddingVertical: 12,
+            marginBottom: -10,
+          }}>
+          <RN.Text
+            style={{
+              fontSize: 16,
+              color: colors.textPrimary,
+              fontWeight: '700',
+            }}>
+            How many weeks to repeat
+            <RN.Text
+              style={{
+                fontSize: 14,
+                color: colors.darkGray,
+              }}>
+              {' (12 max)'}
+            </RN.Text>
+          </RN.Text>
+          <RN.View style={{flexDirection: 'row', paddingTop: 12}}>
+            <RN.TouchableOpacity
+              disabled={recurrentRangeEdit === 0}
+              style={{
+                padding: 12,
+                borderWidth: 1,
+                borderColor: colors.gray,
+                borderRadius: 8,
+              }}
+              onPress={() => {
+                if (recurrentRangeEdit === 0) {
+                  setRecurrentRange(0);
+                  return;
+                } else {
+                  setRecurrentRange(recurrentRangeEdit - 1);
+                }
+              }}>
+              <RN.Image
+                source={{uri: 'minus'}}
+                style={{
+                  height: 16,
+                  width: 16,
+                  tintColor:
+                    recurrentRangeEdit === 0 ? colors.gray : colors.orange,
+                }}
+              />
+            </RN.TouchableOpacity>
+            <RN.View
+              style={{
+                justifyContent: 'center',
+                marginHorizontal: 12,
+                width: 22,
+              }}>
+              <RN.Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  color: colors.textPrimary,
+                  textAlign: 'center',
+                }}>
+                {recurrentRangeEdit}
+              </RN.Text>
+            </RN.View>
+            <RN.TouchableOpacity
+              style={{
+                padding: 12,
+                borderWidth: 1,
+                borderColor: colors.gray,
+                borderRadius: 8,
+              }}
+              disabled={recurrentRangeEdit === 12}
+              onPress={() => {
+                if (recurrentRangeEdit >= 12) {
+                  setRecurrentRange(12);
+                } else {
+                  setRecurrentRange(recurrentRangeEdit + 1);
+                }
+              }}>
+              <RN.Image
+                source={{uri: 'plus'}}
+                style={{
+                  height: 16,
+                  width: 16,
+                  tintColor:
+                    recurrentRangeEdit >= 12 ? colors.gray : colors.orange,
+                }}
+              />
+            </RN.TouchableOpacity>
+          </RN.View>
+        </RN.View>
+      </RN.View>
+    );
+  };
+
   const onPressSaveChange = () => {
     const eventDateEd = {
       time: time,
       startDate: startDate ?? moment(new Date()).format('YYYY-MM-DD'),
-      endDate: endDate ?? null,
+      endDate: isRecurringEdit ? startDate : endDate ?? null,
     };
     const locationEdt =
       selectedLocation?.structured_formatting?.main_text?.length > 0
@@ -274,10 +438,12 @@ const EditEventScreen = () => {
         typeEvent: typeEventEdit,
         price: price,
         inAppTickets: inAppTicketsEdit,
-        externalLink: !inAppTicketsEdit ? externalLink : '',
-        isRecurrent: isRecurrent,
-        recurrentTemplate: recurrentTemplate,
-        recurrentEndDate: recurrentEndDate,
+        link: !inAppTicketsEdit ? externalLink : '',
+        isRecurrent: Number(isRecurringEdit),
+        recurrentTemplate: recurrentTemplateEdit,
+        recurrentEndDate: moment(startDate)
+          .add(recurrentRangeEdit, 'week')
+          .format('YYYY-MM-DD'),
         recurrentId: routeParams?.params?.recurrent ? recurrentId : '',
       });
     }
@@ -622,6 +788,33 @@ const EditEventScreen = () => {
         <RN.Text style={[styles.definition, {paddingBottom: 16}]}>
           {t('select_event_date')}
         </RN.Text>
+        <RN.View
+          style={{
+            flexDirection: 'row',
+            paddingHorizontal: 12,
+            paddingBottom: 14,
+          }}>
+          <RN.Switch
+            trackColor={{false: colors.gray, true: colors.orange}}
+            thumbColor={isRecurringEdit ? colors.white : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            style={{transform: [{scaleX: 0.7}, {scaleY: 0.7}]}}
+            value={isRecurringEdit}
+            onValueChange={() => setIsRecurring(v => !v)}
+          />
+          <RN.View style={{justifyContent: 'center'}}>
+            <RN.Text
+              style={{
+                fontWeight: '700',
+                fontSize: 16,
+                color: colors.textPrimary,
+                paddingLeft: 8,
+              }}>
+              Weekly recurring event
+            </RN.Text>
+          </RN.View>
+        </RN.View>
+
         <RN.TouchableOpacity
           style={styles.dateEventContainer}
           onPress={() => setOpenCalendar(true)}>
@@ -654,6 +847,7 @@ const EditEventScreen = () => {
             style={{height: 24, width: 24}}
           />
         </RN.TouchableOpacity>
+        {isRecurringEdit && renderRepeatDays()}
       </RN.View>
     );
   };
@@ -688,7 +882,10 @@ const EditEventScreen = () => {
                     onLoadStart={() => setLoadImg(true)}
                     onLoadEnd={() => setLoadImg(false)}
                     source={{
-                      uri: typeof img === 'object' ? img?.path : apiUrl + img,
+                      uri:
+                        typeof img === 'object'
+                          ? img?.path
+                          : axiosInstance.getUri() + img,
                     }}
                   />
                   <RN.TouchableOpacity
@@ -1112,6 +1309,7 @@ const EditEventScreen = () => {
       </RN.SafeAreaView>
       {openCalendar && (
         <BottomCalendar
+          isRecurring={isRecurringEdit}
           onClose={() => setOpenCalendar(false)}
           end={endDate}
           start={startDate}

@@ -1,8 +1,7 @@
 import io from 'socket.io-client';
-import {apiUrl} from './serverRequests';
-// import {eventChannel} from 'redux-saga';
+import {axiosInstance} from '../utils/helpers';
 
-const socket = io(apiUrl, {
+const socket = io(axiosInstance.getUri(), {
   transports: ['websocket'],
   autoConnect: true,
 }).connect();

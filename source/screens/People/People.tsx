@@ -11,11 +11,11 @@ import colors from '../../utils/colors';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import FiltersBottom from '../../components/bottomFilters';
 import FastImage from 'react-native-fast-image';
-import {apiUrl} from '../../api/serverRequests';
 import {useNavigation} from '@react-navigation/native';
 import {defaultProfile, getDefaultImgUser} from '../../utils/images';
 import Filters from '../../components/filters';
 import SkeletonUserCard from '../../components/skeleton/userCard-Skeleton';
+import { axiosInstance } from '../../utils/helpers';
 type user = {
   item: {
     userName: string;
@@ -102,7 +102,7 @@ const People = () => {
   const renderItem = ({item}: user) => {
     const imgUri = Boolean(item.userImage)
       ? {
-          uri: `${apiUrl}${item.userImage}`,
+          uri: `${axiosInstance.getUri()}${item.userImage}`,
           cache: FastImage.cacheControl.immutable,
           priority: FastImage.priority.high,
         }

@@ -22,9 +22,9 @@ import colors from '../../utils/colors';
 import {defaultProfile} from '../../utils/images';
 import {Header} from './ui/Header';
 import useRegistration from '../../hooks/useRegistration';
-import {apiUrl} from '../../api/serverRequests';
 import useAppStateHook from '../../hooks/useAppState';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {axiosInstance} from '../../utils/helpers';
 
 export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
   const {channel} = route.params;
@@ -167,7 +167,9 @@ export function ChatScreen({route, navigation}: NativeStackScreenProps<any>) {
             onBackPress={goBack}
             rightIcon={
               <FastImage
-                source={image ? {uri: apiUrl + image} : defaultProfile}
+                source={
+                  image ? {uri: axiosInstance.getUri() + image} : defaultProfile
+                }
                 defaultSource={defaultProfile}
                 style={styles.avatar}
               />

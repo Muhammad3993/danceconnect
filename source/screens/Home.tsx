@@ -105,7 +105,7 @@ const HomeScreen = () => {
     let unreadSub: Amity.Unsubscriber | undefined;
     Client.startUnreadSync().then(() => {
       unreadSub = Client.getUserUnread(({data}) => {
-        setUnreadMessages(data.unreadCount);
+        setUnreadMessages(data?.unreadCount);
       });
     });
 
@@ -131,7 +131,7 @@ const HomeScreen = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      style={{flex: 1, backgroundColor: '#FAFAFA'}}>
+      style={{flex: 1, backgroundColor: '#ffffff'}}>
       <RN.View style={styles.container}>
         <RN.View style={styles.headerContainer}>
           <RN.Image
@@ -175,7 +175,7 @@ const HomeScreen = () => {
               horizontal
               showsHorizontalScrollIndicator={false}>
               {mainCommunities?.map((community: CommunityT) => (
-                <VerticalCommunityCard {...community} />
+                <VerticalCommunityCard {...community} key={community.id} />
               ))}
               <RN.View style={{marginRight: 16}} />
             </ScrollView>
@@ -225,16 +225,17 @@ const HomeScreen = () => {
                 backgroundColor: colors.white,
               }}
               key={item?.id}>
-              <EventCard item={item} />
+              <EventCard item={item} key={item?.id} />
             </RN.View>
           );
         })}
         {events?.length <= 0 && (
-          <EmptyContainer onPressButton={goToCommunities} />
+          <RN.View style={{backgroundColor: colors.white}}>
+            <EmptyContainer onPressButton={goToCommunities} />
+          </RN.View>
         )}
-        {/* </ScrollView> */}
       </RN.View>
-      <RN.View style={{paddingBottom: 24, backgroundColor: '#FAFAFA'}} />
+      <RN.View style={{paddingBottom: 24, backgroundColor: colors.white}} />
       <PushController />
     </ScrollView>
   );

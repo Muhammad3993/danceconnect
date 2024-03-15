@@ -2,13 +2,12 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import * as RN from 'react-native';
 import colors from '../../utils/colors';
-import {validateEmail} from '../../utils/helpers';
+import {axiosInstance, validateEmail} from '../../utils/helpers';
 import {Input} from '../../components/input';
 import {Button} from '../../components/Button';
 import {isAndroid, statusBarHeight} from '../../utils/constants';
 import {
   addManagerToCommunity,
-  apiUrl,
   deleteManagerToCommunity,
   getManagersForCommunityUid,
 } from '../../api/serverRequests';
@@ -131,7 +130,8 @@ const Managers = () => {
                       source={
                         i?.userImage
                           ? {
-                              uri: apiUrl + i?.userImage,
+                              uri:
+                                axiosInstance.defaults.baseURL + i?.userImage,
                               cache: FastImage.cacheControl.immutable,
                               priority: FastImage.priority.high,
                             }

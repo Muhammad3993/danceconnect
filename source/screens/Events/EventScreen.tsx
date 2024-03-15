@@ -13,7 +13,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import {apiUrl, getTicketByEventUid} from '../../api/serverRequests';
+import {getTicketByEventUid} from '../../api/serverRequests';
 import socket from '../../api/sockets';
 import {Button} from '../../components/Button';
 import Carousel from '../../components/carousel';
@@ -25,6 +25,7 @@ import useTickets from '../../hooks/useTickets';
 import colors from '../../utils/colors';
 import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
 import {getDefaultImgUser} from '../../utils/images';
+import {axiosInstance} from '../../utils/helpers';
 
 const EventScreen = () => {
   const routeProps = useRoute();
@@ -547,7 +548,7 @@ const EventScreen = () => {
                 source={
                   img?.userImage
                     ? {
-                        uri: apiUrl + img?.userImage,
+                        uri: axiosInstance.defaults.baseURL + img?.userImage,
                         cache: FastImage.cacheControl.immutable,
                         priority: FastImage.priority.high,
                       }
@@ -670,7 +671,9 @@ const EventScreen = () => {
                 source={
                   eventData?.creator?.userImage
                     ? {
-                        uri: apiUrl + eventData?.creator?.userImage,
+                        uri:
+                          axiosInstance.defaults.baseURL +
+                          eventData?.creator?.userImage,
                         cache: FastImage.cacheControl.immutable,
                         priority: FastImage.priority.high,
                       }

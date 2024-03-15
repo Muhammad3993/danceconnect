@@ -9,7 +9,6 @@ import Carousel from '../../components/carousel';
 import SkeletonCommunityScreen from '../../components/skeleton/CommunityScreen-Skeleton';
 import {SCREEN_WIDTH, isAndroid, statusBarHeight} from '../../utils/constants';
 import socket from '../../api/sockets';
-import {apiUrl} from '../../api/serverRequests';
 import CommunityEvents from '../../components/communityEvents';
 import FastImage from 'react-native-fast-image';
 import {Modalize} from 'react-native-modalize';
@@ -25,6 +24,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
+import { axiosInstance } from '../../utils/helpers';
 
 interface Props {
   navigation: NativeStackNavigationProp<any>;
@@ -405,7 +405,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
                 source={
                   img?.userImage
                     ? {
-                        uri: apiUrl + img?.userImage,
+                        uri: axiosInstance.getUri() + img?.userImage,
                         cache: FastImage.cacheControl.immutable,
                         priority: FastImage.priority.high,
                       }
@@ -474,7 +474,7 @@ const CommunityScreen = ({route, navigation}: Props) => {
                 source={
                   communityData?.creator?.image
                     ? {
-                        uri: apiUrl + communityData?.creator?.image,
+                        uri: axiosInstance.getUri() + communityData?.creator?.image,
                         cache: FastImage.cacheControl.immutable,
                         priority: FastImage.priority.high,
                       }

@@ -1,4 +1,9 @@
 import moment from 'moment';
+import axios from 'axios';
+
+export const axiosInstance = axios.create();
+import store from '../store';
+
 export const validateEmail = (email: string) => {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))?/;
@@ -129,3 +134,20 @@ export const isValidUrl = (url: string) => {
     /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
   return urlPattern.test(url);
 };
+
+export const getApiUrl = () => {
+  const isDev = store.getState().appState.isDev ?? false;
+  if (isDev) {
+    return Promise.resolve('https://stage.danceconnect.online/');
+  }
+  return Promise.resolve('https://api.danceconnect.online/');
+};
+
+axiosInstance.interceptors.request.use(
+  async config => {
+    config.baseURL = await getApiUrl();
+    axiosInstance.defaults.baseURL = await getApiUrl();
+    return config;
+  },
+  error => Promise.reject(error),
+);

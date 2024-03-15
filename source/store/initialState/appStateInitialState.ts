@@ -15,4 +15,5 @@ export default {
 
   isChangeLanguage: false,
   typeCommunity: '',
+  isDev: false,
 };

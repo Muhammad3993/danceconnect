@@ -1,16 +1,18 @@
-import {call, put, takeLatest} from 'redux-saga/effects';
+import {call, put, take, takeLatest} from 'redux-saga/effects';
 import {getConstants, getLanguageSetting, getPercentage, getTypeCommunity, sendNotification} from '../../api/serverRequests';
 import {APP_STATE} from '../actionTypes/appStateActionTypes';
 import {
   setChangeLanguageAction,
   setCountriesAction,
   setDanceStylesAction,
+  setDevelopmentModeAction,
   setEventTypesAction,
   setRegionsAction,
   setStripeKeyAction,
   setTicketPercentAction,
   setTypeCommunityAction,
 } from '../actions/appStateActions';
+import { logoutRequest } from '../actions/authorizationActions';
 
 function* getDanceStylesRequest() {
   try {
@@ -96,6 +98,13 @@ function* getChangeLanguageRequest() {
     console.log('getTypeCommunity error', error);
   }
 }
+function* changeDevMode() {
+  try {
+    yield put(logoutRequest());
+  } catch (error) {
+    console.log(error);
+  }
+}
 // getPercentage
 function* appStateSaga() {
   yield takeLatest(APP_STATE.GET_DANCE_STYLES, getDanceStylesRequest);
@@ -104,5 +113,6 @@ function* appStateSaga() {
   yield takeLatest(APP_STATE.SEND_NOTIFICATION, sendNotificationRequest);
   yield takeLatest(APP_STATE.GET_TYPE_COMMUNITY, getTypeCommunityRequest);
   yield takeLatest(APP_STATE.GET_IS_CHANGE_LANGUAGE, getChangeLanguageRequest);
+  yield takeLatest(APP_STATE.SET_DEV_MODE, changeDevMode);
 }
 export default appStateSaga;

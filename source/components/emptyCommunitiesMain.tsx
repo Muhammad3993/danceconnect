@@ -9,24 +9,26 @@ type props = {
 const EmptyContainer = ({onPressButton}: props) => {
   const {t} = useTranslation();
   return (
-    <RN.View style={styles.container}>
-      <RN.View style={styles.imageCircle}>
-        <RN.Image source={{uri: 'comfull'}} style={styles.image} />
-      </RN.View>
-      <RN.Text style={styles.joinText}>
-        {t('join_community_card_first')}
-      </RN.Text>
-      <RN.Text style={styles.joinDesc}>
-        {t('join_community_card_second')}
-      </RN.Text>
-      <RN.TouchableOpacity
-        style={styles.joinBtn}
-        activeOpacity={0.8}
-        onPress={onPressButton}>
-        <RN.Text style={styles.joinBtnText}>
-          {t('join_community_card_btn')}
+    <RN.View style={styles.wrapper}>
+      <RN.View style={styles.container}>
+        <RN.View style={styles.imageCircle}>
+          <RN.Image source={{uri: 'comfull'}} style={styles.image} />
+        </RN.View>
+        <RN.Text style={styles.joinText}>
+          {t('join_community_card_first')}
         </RN.Text>
-      </RN.TouchableOpacity>
+        <RN.Text style={styles.joinDesc}>
+          {t('join_community_card_second')}
+        </RN.Text>
+        <RN.TouchableOpacity
+          style={styles.joinBtn}
+          activeOpacity={0.8}
+          onPress={onPressButton}>
+          <RN.Text style={styles.joinBtnText}>
+            {t('join_community_card_btn')}
+          </RN.Text>
+        </RN.TouchableOpacity>
+      </RN.View>
     </RN.View>
   );
 };

@@ -60,6 +60,7 @@ function* registrationEmail(action: any) {
       yield put(
         registrationWithEmailFail(setErrors('auth/network-request-failed')),
       );
+      yield put(setLoadingAction({onLoading: false}));
     } else if (response && response?.status === 201) {
       const auth = yield call(loginBySocial, email, password);
 
@@ -81,10 +82,12 @@ function* registrationEmail(action: any) {
           authProvider: 'email',
         }),
       );
+      yield put(setLoadingAction({onLoading: false}));
     } else if (response && response?.status === 401) {
       yield put(
         registrationWithEmailFail(setErrors('auth/email-already-in-use')),
       );
+      yield put(setLoadingAction({onLoading: false}));
     }
 
     // const userCredentials = yield call(sinUpWithEmail, email, password);
@@ -207,7 +210,6 @@ function* authWthGoogle() {
       response?._user?.email,
       response?._user?.uid,
     );
-    console.log('authWthGoogle auth', auth);
 
     if (auth?.response?.status === 401) {
       yield put(
@@ -222,6 +224,7 @@ function* authWthGoogle() {
           authProvider: 'google',
         }),
       );
+      yield put(setLoadingAction({onLoading: false}));
     }
     if (auth?.status === 200) {
       const user = auth?.data?.user;
@@ -242,6 +245,7 @@ function* authWthGoogle() {
       );
       yield put(getEventsRequestAction({limit: 1, offset: 0}));
       yield put(getPersonalEventsRequestAction());
+      yield put(setLoadingAction({onLoading: false}));
     }
   } catch (error: string | undefined | unknown) {
     console.log('authWthGoogle error', error);
@@ -270,6 +274,7 @@ function* authWthApple() {
           authProvider: 'apple',
         }),
       );
+      yield put(setLoadingAction({onLoading: false}));
     }
     if (auth?.status === 200) {
       // console.log(QBSession);
@@ -291,6 +296,7 @@ function* authWthApple() {
       );
       // yield put(getEventsRequestAction({limit: 1, offset: 0}));
       yield put(getPersonalEventsRequestAction());
+      yield put(setLoadingAction({onLoading: false}));
     }
 
     // yield put(getEventsRequestAction({limit: 1, offset: 0}));
