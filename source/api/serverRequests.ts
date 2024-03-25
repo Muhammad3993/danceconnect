@@ -581,3 +581,27 @@ export const getRecurrentEventById = async (id: string) => {
     return null;
   }
 };
+
+export const getEventsWithMongoByArrayPgn = async (
+  locations: string[],
+  page: number,
+  pageSize: number,
+) => {
+  try {
+    const response = await axiosInstance.post(
+      `eventsByLocationPaginated?page=${Number(page)}&pageSize=${pageSize}`,
+      {
+        locations: locations,
+      },
+    );
+    console.log('eventsByLocationPaginated', response, page, pageSize);
+    return {
+      eventsList: response.data?.data,
+      page: Number(response.data?.meta?.page),
+      pageSize: Number(response.data?.meta?.pageSize),
+      totalCount: Number(response.data?.meta?.total),
+    };
+  } catch (er) {
+    return console.log('getEventsWithMongoByArray er', er);
+  }
+};

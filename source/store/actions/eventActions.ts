@@ -39,6 +39,8 @@ export type eventParams = {
   recurrentTemplate?: string[];
   recurrentEndDate?: string;
   recurrentId?: string;
+
+  totalCount?: number;
 };
 
 export type followingParams = {
@@ -114,12 +116,14 @@ export const getEventsSuccessAction = ({
   eventsList,
   prevOffset,
   prevLimit,
+  totalCount,
 }: eventParams) => ({
   type: EVENT.GET_EVENTS_SUCCESS,
   payload: {
     eventsList: eventsList,
     prevOffset: prevOffset,
     prevLimit: prevLimit,
+    totalCount: totalCount,
   },
 });
 export const getEventsFailAction = () => ({

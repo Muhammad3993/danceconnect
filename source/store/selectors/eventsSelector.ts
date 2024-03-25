@@ -8,6 +8,8 @@ export const selectEventByIdCommunity = (state: IRootState) =>
   state.events?.eventsByIdCommunity ?? [];
 export const selectLoadingEvents = (state: IRootState) =>
   state?.events?.loadingEvents ?? false;
+  export const selectLoadingEventsPgn = (state: IRootState) =>
+    state?.events?.loadingEventsPagination ?? false;
 export const selectLoadingattendEvent = (state: IRootState) =>
   state?.events?.loadingAttend ?? false;
 export const selectLoadingChangeInformationEvent = (state: IRootState) =>
@@ -99,9 +101,11 @@ export const selectLoadingManagingEvents = (state: IRootState) =>
   state.events?.loadingManaging ?? false;
 
 export const selectPrevLimit = (state: IRootState) =>
-  state.events?.prevLimit ?? 4;
+  state.events?.prevLimit ?? 25;
 export const selectPrevOffset = (state: IRootState) =>
   state.events?.prevOffset ?? 0;
+export const selectTotalCount = (state: IRootState) =>
+  state.events?.totalCount ?? 0;
 export const getEventsList = (state: IRootState) =>
   state.events?.eventsList ?? [];
 

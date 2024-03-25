@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as RN from 'react-native';
 import colors from '../utils/colors';
@@ -16,6 +16,9 @@ const Filters = ({
   containerStyle,
 }: props) => {
   const {t} = useTranslation();
+  useEffect(() => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+  }, []);
   return (
     <RN.View style={[styles.filterWrapper, containerStyle]}>
       <RN.View style={styles.justCenter}>

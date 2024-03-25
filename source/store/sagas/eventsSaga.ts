@@ -57,6 +57,7 @@ import {
   deleteReccurentEventsById,
   updateReccurentEventsById,
   getRecurrentEventById,
+  getEventsWithMongoByArrayPgn,
 } from '../../api/serverRequests';
 import {
   setLoadingAction,
@@ -79,12 +80,14 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
       (i: {name: string}) => i.name === location,
     );
     if (isRegionCountries) {
-      const {eventsList} = yield call(
-        getEventsWithMongoByArray,
+      const response = yield call(
+        getEventsWithMongoByArrayPgn,
         isRegionCountries?.countries,
+        offset,
+        limit,
       );
       const data: string[] = yield all(
-        eventsList.map((event: any) =>
+        response.eventsList.map((event: any) =>
           (function* () {
             const tickets: string[] = yield call(getTickets, event.id);
             try {
@@ -107,11 +110,23 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
           })(),
         ),
       );
-      yield put(getEventsSuccessAction({eventsList: data}));
+      yield put(
+        getEventsSuccessAction({
+          eventsList: Object.values(data),
+          prevOffset: response.page,
+          prevLimit: response.pageSize,
+          totalCount: response.totalCount,
+        }),
+      );
     } else {
-      const {eventsList} = yield call(getEventsWithMongoByArray, [location]);
+      const response = yield call(
+        getEventsWithMongoByArrayPgn,
+        [location],
+        offset,
+        limit,
+      );
       const data: string[] = yield all(
-        eventsList.map((event: any) =>
+        response.eventsList.map((event: any) =>
           (function* () {
             const tickets: string[] = yield call(getTickets, event.id);
             try {
@@ -134,7 +149,14 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
           })(),
         ),
       );
-      yield put(getEventsSuccessAction({eventsList: data}));
+      yield put(
+        getEventsSuccessAction({
+          eventsList: data,
+          prevOffset: response.page,
+          prevLimit: response.pageSize,
+          totalCount: response.totalCount,
+        }),
+      );
     }
 
     // console.log('userImages', data);

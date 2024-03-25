@@ -179,4 +179,5 @@ export const admins = [
   'jvxrnazarov97-test@mail.ru',
   'julia.rakitina-test@incode-systems.com',
   'gumirovareg@gmail.com',
+  'testdev@incode-systems.com',
 ];

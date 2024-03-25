@@ -32,9 +32,11 @@ export type eventAction = {
     managingEvents?: string[];
     price?: string;
     offset: number;
+    totalCount?: number;
     limit: number;
     prevLimit: number;
     prevOffset: number;
+    loadingEventsPagination?: boolean;
     event: any;
     isFollowed: boolean;
     personalEvents?: string[];
@@ -84,6 +86,7 @@ export default (state = eventsInitialState, action: eventAction) => {
         loadingEvents: true,
         limit: action.payload?.limit,
         offset: action.payload?.offset,
+        totalCount: action?.payload?.totalCount,
         location: action.payload?.location,
       };
     case EVENT.GET_EVENTS_SUCCESS:
@@ -93,6 +96,8 @@ export default (state = eventsInitialState, action: eventAction) => {
         loadingEvents: false,
         prevLimit: action.payload?.prevLimit,
         prevOffset: action.payload?.prevOffset,
+        totalCount: action?.payload?.totalCount,
+        loadingEventsPagination: false,
       };
     case EVENT.GET_EVENTS_FAIL:
       return {
@@ -105,6 +110,7 @@ export default (state = eventsInitialState, action: eventAction) => {
         ...state,
         limit: action?.payload?.limit,
         offset: action.payload?.offset,
+        loadingEventsPagination: true,
       };
     case EVENT.GET_EVENT_BY_COMMUNITY_REQUEST:
       return {

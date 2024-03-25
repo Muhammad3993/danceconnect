@@ -21,6 +21,11 @@ const VerticalCommunityCard = (community: CommunityT) => {
   const countFollowers = community?.followers?.length;
   const isMyCommunity = community?.creator?.uid === userUid;
   const isManager = community?.managers?.find(i => i === userUid);
+
+  const backImg =
+    community.images[0]?.length > 0
+      ? {uri: axiosInstance.defaults.baseURL + community.images[0]}
+      : require('../assets/images/default.jpeg');
   useEffect(() => {
     setIsFollowed(
       community?.followers?.find(
@@ -30,12 +35,13 @@ const VerticalCommunityCard = (community: CommunityT) => {
   }, [community?.followers, userUid]);
   const renderCount = () => {
     return (
-      <RN.View style={{flexDirection: 'row', paddingVertical: 8}}>
+      <RN.View
+        style={{flexDirection: 'row', paddingVertical: 8}}
+        key={community.id}>
         {community.userImages?.slice(0, 5)?.map((img, idx) => {
-          const imgUri =
-            img?.userImage?.length > 0
-              ? {uri: axiosInstance.getUri() + img?.userImage}
-              : getDefaultImgUser(img.userGender);
+          const imgUri = img?.userImage
+            ? {uri: axiosInstance.getUri() + img?.userImage}
+            : getDefaultImgUser(img.userGender);
           return (
             <RN.View
               style={{
@@ -83,7 +89,7 @@ const VerticalCommunityCard = (community: CommunityT) => {
       activeOpacity={0.7}
       onPress={onPress}>
       <RN.ImageBackground
-        source={{uri: axiosInstance.getUri() + community.images[0]}}
+        source={backImg}
         style={styles.image}
         imageStyle={styles.imgStyle}
         defaultSource={require('../assets/images/default.jpeg')}>

@@ -24,6 +24,7 @@ import {
   selectIsSaveChanges,
   selectLoadingChangeInformationEvent,
   selectLoadingEvents,
+  selectLoadingEventsPgn,
   selectLoadingManagingEvents,
   selectLoadingattendEvent,
   selectMainEvents,
@@ -33,6 +34,7 @@ import {
   selectPersonalEvents,
   selectPrevLimit,
   selectPrevOffset,
+  selectTotalCount,
   selectUpcomingEvents,
   selectUpcomingEventsWithUserUid,
   selectWithManagingEvents,
@@ -45,6 +47,7 @@ const useEvents = () => {
   const eventList = useSelector(selectEventList) ?? [];
   const eventsDataByCommunityId = useSelector(selectEventByIdCommunity);
   const loadingEvents = useSelector(selectLoadingEvents);
+  const loadingEventsPagination = useSelector(selectLoadingEventsPgn);
   const loadingAttend = useSelector(selectLoadingattendEvent);
   const userId = useSelector(selectUserUid);
   const loadingWithChangeInformation = useSelector(
@@ -73,16 +76,25 @@ const useEvents = () => {
 
   const prevLimit = useSelector(selectPrevLimit);
   const prevOffset = useSelector(selectPrevOffset);
+  const totalCount = useSelector(selectTotalCount);
+
   const getEvents = () => {
     dispatch(getEventsRequestAction({limit: prevLimit, offset: prevOffset}));
   };
   const setEventLimit = () => {
-    dispatch(
-      setLimit({limit: prevLimit + prevLimit, offset: prevOffset + prevLimit}),
-    );
+    if (totalCount <= prevLimit) {
+      return;
+    } else {
+      dispatch(
+        setLimit({
+          limit: prevLimit + prevLimit,
+          offset: 1,
+        }),
+      );
+    }
   };
   const setDefaultEventLimit = () => {
-    dispatch(setLimit({limit: 2, offset: 0}));
+    dispatch(setLimit({limit: 20, offset: 1}));
   };
   const getEventByIdCommunity = (uid: string) => {
     dispatch(getEventByIdCommunityRequestAction({eventUid: uid}));
@@ -205,6 +217,8 @@ const useEvents = () => {
     managingEventsAndPassed,
     getMainEvents,
     mainEvents,
+    prevLimit,
+    loadingEventsPagination,
   };
 };
 export default useEvents;

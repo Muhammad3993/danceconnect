@@ -28,10 +28,13 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   const {
     upcomingEvents,
     loadingEvents,
+    loadingEventsPagination,
     getEvents,
     setSocketEvents,
     eventList,
-    // setDefaultEventLimit,
+    setEventLimit,
+    setDefaultEventLimit,
+    prevLimit,
   } = useEvents();
   const {t} = useTranslation();
   const lengthEmptyEvents = new Array(3).fill('');
@@ -47,7 +50,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     });
     // console.log('eventData.attendedPeople.length', eventData.attendedPeople.length);
   }, []);
-  const [events, setEvents] = useState(upcomingEvents.slice(0, 10));
+  const [events, setEvents] = useState(upcomingEvents);
   const [openingFilters, setOpeningFilters] = useState(false);
   const [eventType, setEventType] = useState('All');
   const [eventDate, setEventDate] = useState({start: null, end: null});
@@ -72,7 +75,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
               </>
             );
           })}
-        {!loadingEvents && (
+        {!loadingEvents && !upcomingEvents.length && (
           <RN.Text style={styles.emptyText}>{t('no_events')}</RN.Text>
         )}
       </RN.View>
@@ -159,32 +162,46 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
       <RefreshControl
         onRefresh={() => {
           onClear();
-          getEvents();
+          // getEvents();
+          setDefaultEventLimit();
         }}
         refreshing={loadingEvents}
       />
     );
   };
+  const renderFooter = () => {
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    if (loadingEventsPagination) {
+      return (
+        <RN.View style={{marginBottom: 24}}>
+          <RN.ActivityIndicator
+            animating={loadingEventsPagination}
+            color={colors.orange}
+            size={'small'}
+          />
+        </RN.View>
+      );
+    }
+    return <RN.View style={{paddingBottom: 24}} />;
+  };
   return (
     <>
-      <ScrollView
+      <FlatList
+        scrollEventThrottle={100}
+        showsVerticalScrollIndicator={false}
         refreshControl={refreshControl()}
-        showsVerticalScrollIndicator={false}>
-        {renderFilters()}
-        <FlatList
-          data={sortBy(events, 'eventDate.startDate')}
-          renderItem={renderItem}
-          keyExtractor={(_, index) => `key${index}`}
-          onEndReachedThreshold={4}
-          onEndReached={() => {
-            if (events.length < upcomingEvents.length) {
-              setEvents([...events, ...upcomingEvents.slice(events.length)]);
-            }
-          }}
-        />
-        {!events?.length && renderEmpty()}
-        <RN.View style={{paddingBottom: 24}} />
-      </ScrollView>
+        ListHeaderComponent={renderFilters}
+        data={sortBy(events, 'eventDate.startDate')}
+        renderItem={renderItem}
+        ListEmptyComponent={renderEmpty}
+        keyExtractor={(_, index) => `key${index}`}
+        onEndReachedThreshold={0.5}
+        onEndReached={() => {
+          setEventLimit();
+          // loadMore();
+        }}
+        ListFooterComponent={renderFooter}
+      />
       <FiltersBottomForEvents
         onOpening={openingFilters}
         onClose={() => setOpeningFilters(false)}
