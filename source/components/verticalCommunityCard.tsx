@@ -172,6 +172,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 20,
     paddingVertical: 10,
     fontWeight: '700',
+    color: colors.textPrimary,
   },
   categoiesWrapper: {
     marginTop: -24,
@@ -205,6 +206,7 @@ const styles = RN.StyleSheet.create({
     fontSize: 16,
     paddingVertical: 10,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   joinBtn: {
     backgroundColor: colors.orange,

@@ -11,7 +11,7 @@ import useRegistration from '../../../hooks/useRegistration';
 import useTickets from '../../../hooks/useTickets';
 import {useProfile} from '../../../hooks/useProfile';
 import LocationSelector from '../../../components/locationSelector';
-import {SCREEN_HEIGHT, SCREEN_WIDTH, admins} from '../../../utils/constants';
+import {SCREEN_HEIGHT, SCREEN_WIDTH, admins, statusBarHeight} from '../../../utils/constants';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {Input} from '../../../components/input';
@@ -238,7 +238,7 @@ export function MenuItems({navigation, close}: Props) {
         {!isSocialAuth && (
           <RN.TouchableOpacity
             style={styles.listItemWrapper}
-            onPress={() => changePassRefModalize?.current?.open()}>
+            onPress={() => changePassRefModalize?.current?.open('top')}>
             <RN.View style={{flexDirection: 'row'}}>
               <RN.Image source={{uri: 'shield'}} style={styles.icon} />
               <RN.View style={{justifyContent: 'center'}}>
@@ -396,7 +396,7 @@ export function MenuItems({navigation, close}: Props) {
         <Modalize
           handlePosition="inside"
           ref={changePassRefModalize}
-          modalStyle={{marginTop: SCREEN_HEIGHT * 0.8}}>
+          modalStyle={{marginTop: statusBarHeight}}>
           <RN.TouchableOpacity
             style={styles.closeIconWrapper}
             onPress={() => {

@@ -13,7 +13,7 @@ import {AuthStackNavigationParamList} from '../../navigation/types';
 import {authButtons} from '../../utils/btnsConstans';
 import colors from '../../utils/colors';
 const AuthorizationScreen = (): JSX.Element => {
-  const navigation = useNavigation<AuthStackNavigationParamList>();
+  const navigation = useNavigation();
   const {t} = useTranslation();
   // const btns = authButtons[0];
   // const lastBtn = authButtons[authButtons.length - 1];
@@ -70,6 +70,7 @@ const AuthorizationScreen = (): JSX.Element => {
   }, [clearErrors, errorViewHeight, isErrors]);
 
   const goSignUp = () => {
+    // console.log('press')
     navigation.navigate('REGISTRATION');
   };
   const goBack = () => {
@@ -196,7 +197,14 @@ const AuthorizationScreen = (): JSX.Element => {
             <RN.Text style={styles.alreadyAccountText}>
               {t('dont_account')}
             </RN.Text>
-            <RN.TouchableOpacity onPress={goSignUp}>
+            <RN.TouchableOpacity
+              onPress={goSignUp}
+              hitSlop={{
+                top: 30,
+                right: 40,
+                bottom: 30,
+                left: 40,
+              }}>
               <RN.Text style={styles.logInText}>{t('sign_up')}</RN.Text>
             </RN.TouchableOpacity>
           </RN.View>

@@ -227,6 +227,7 @@ const styles = RN.StyleSheet.create({
     paddingTop: 14,
     lineHeight: 22.4,
     fontSize: 16,
+    color: colors.textPrimary,
   },
   backIcon: {
     height: 16,

@@ -140,7 +140,7 @@ export const getApiUrl = () => {
   if (isDev) {
     return Promise.resolve('https://stage.danceconnect.online/');
   }
-  // return Promise.resolve('http://localhost:4000');
+  // return Promise.resolve('http://192.168.1.105:4400/'); // android
   return Promise.resolve('https://api.danceconnect.online/');
 };
 

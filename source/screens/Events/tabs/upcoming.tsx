@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import * as RN from 'react-native';
 import useEvents from '../../../hooks/useEvents';
 import sortBy from 'lodash.sortby';
@@ -34,7 +34,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     eventList,
     setEventLimit,
     setDefaultEventLimit,
-    prevLimit,
+    totalCount,
   } = useEvents();
   const {t} = useTranslation();
   const lengthEmptyEvents = new Array(3).fill('');
@@ -55,6 +55,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   const [eventType, setEventType] = useState('All');
   const [eventDate, setEventDate] = useState({start: null, end: null});
   const [filtersBorderColor, setFiltersBorderColor] = useState(colors.gray);
+  const [totalEvents, setTotalEvents] = useState<number>(totalCount);
 
   const [addedStyles, setAddedStyles] = useState<string[]>(
     new Array(0).fill(''),
@@ -91,7 +92,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
   }, [eventsSearch, searchValue]);
   useEffect(() => {
     setEvents(upcomingEvents);
-  }, [upcomingEvents.length]);
+  }, [upcomingEvents, upcomingEvents.length]);
 
   useEffect(() => {
     onClear();
@@ -111,9 +112,11 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
         item?.categories?.some((ai: any) => addedStyles.includes(ai)),
       );
       setEvents(data);
+      // setTotalEvents(data.length);
       setFiltersBorderColor(colors.orange);
     } else if (eventType !== 'All') {
       const evData = upcomingEvents?.filter(i => i?.typeEvent === eventType);
+      // setTotalEvents(evData.length);
       setEvents(evData);
       setFiltersBorderColor(colors.orange);
     } else if (
@@ -128,6 +131,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
           (it: any) => it?.eventDate?.startDate === day,
         );
         setEvents(findDate);
+        // setTotalEvents(findDate.length);
       } else {
         const days = Array.from(range.by('days'));
         const dayEntries = days.map((d, index) => {
@@ -138,11 +142,12 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
           dayEntries?.includes(it?.eventDate?.startDate),
         );
         setEvents(findDate);
+        // setTotalEvents(findDate.length);
       }
-
       setFiltersBorderColor(colors.orange);
     } else {
       setEvents(upcomingEvents);
+      // setTotalEvents(upcomingEvents.length);
       setFiltersBorderColor(colors.gray);
     }
   };
@@ -153,7 +158,7 @@ const UpcommingTab = ({searchValue, eventsSearch}: props) => {
     return (
       <Filters
         onPressFilters={onPressFilters}
-        title={t('events_found', {count: events.length})}
+        title={t('events_found', {count: totalEvents})}
       />
     );
   };

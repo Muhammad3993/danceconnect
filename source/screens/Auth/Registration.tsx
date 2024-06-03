@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import * as RN from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import {AuthStackNavigationParamList} from '../../navigation/types';
+// import {AuthStackNavigationParamList} from '../../navigation/types';
 import AuthButton from '../../components/authBtn';
 import {authButtons} from '../../utils/btnsConstans';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -13,12 +13,14 @@ import useRegistration from '../../hooks/useRegistration';
 import useAppStateHook from '../../hooks/useAppState';
 import {userExists} from '../../api/serverRequests';
 import {useTranslation} from 'react-i18next';
+import {setErrors, validateEmail} from '../../utils/helpers';
 const RegistraionScreen = (): JSX.Element => {
-  const navigation = useNavigation<AuthStackNavigationParamList>();
+  const navigation = useNavigation();
   const btns = authButtons.slice(0, 2);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const {isErrors, saveEmail} = useRegistration();
+  const [emailError, setEmailError] = useState(false);
   const [errorExist, setErrorExist] = useState('');
   const errorViewHeight = new RN.Animated.Value(0);
   const {setLoading} = useAppStateHook();
@@ -46,35 +48,32 @@ const RegistraionScreen = (): JSX.Element => {
   };
 
   useEffect(() => {
-    // RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
-    // if (isErrors?.message?.length > 0) {
-    //   RN.Animated.timing(errorViewHeight, {
-    //     duration: 1000,
-    //     toValue: 1,
-    //     easing: RN.Easing.ease,
-    //     useNativeDriver: false,
-    //   }).start();
-    // }
+    RN.LayoutAnimation.configureNext(RN.LayoutAnimation.Presets.easeInEaseOut);
+    if (isErrors?.message?.length > 0) {
+      RN.Animated.timing(errorViewHeight, {
+        duration: 1000,
+        toValue: 1,
+        easing: RN.Easing.ease,
+        useNativeDriver: false,
+      }).start();
+    }
     setTimeout(() => {
       setErrorExist('');
     }, 3000);
-  }, [errorExist]);
+  }, [errorExist, errorViewHeight, isErrors?.message?.length]);
 
-  // useEffect(() => {
-  //   if (isErrors?.message?.length > 0) {
-  //     setTimeout(() => {
-  //       RN.Animated.timing(errorViewHeight, {
-  //         duration: 1000,
-  //         toValue: 0,
-  //         useNativeDriver: false,
-  //         easing: RN.Easing.ease,
-  //       }).start();
-  //     }, 4000);
-  //     setTimeout(() => {
-  //       clearErrors();
-  //     }, 5000);
-  //   }
-  // }, [clearErrors, errorViewHeight, isErrors]);
+  useEffect(() => {
+    if (isErrors?.message?.length > 0) {
+      setTimeout(() => {
+        RN.Animated.timing(errorViewHeight, {
+          duration: 1000,
+          toValue: 0,
+          useNativeDriver: false,
+          easing: RN.Easing.ease,
+        }).start();
+      }, 4000);
+    }
+  }, [errorViewHeight, isErrors]);
 
   const onPressSocial = (iconName: string) => {
     // console.log('on press', iconName);
@@ -98,16 +97,22 @@ const RegistraionScreen = (): JSX.Element => {
 
   const onPressSignUp = () => {
     // setLoading(true);
-    userExists(email)
-      .then(res => {
-        // console.log('res', res);
-        if (!res) {
-          navigation.navigate('ONBOARDING', {email, password});
-        } else {
-          setErrorExist('User already exist');
-        }
-      })
-      .catch(er => console.log(er));
+    if (validateEmail(email)) {
+      userExists(email)
+        .then(res => {
+          // console.log('res', res);
+          if (!res) {
+            navigation.navigate('ONBOARDING', {email, password});
+          } else {
+            setErrorExist('User already exist');
+          }
+        })
+        .catch(er => console.log(er));
+    } else {
+      // setEmailError(true);
+      setErrorExist('Invalid email format');
+    }
+
     // if (isExist) {
     //   console.log('isExist', isExist)
     // }
@@ -136,10 +141,11 @@ const RegistraionScreen = (): JSX.Element => {
             <Input
               value={email.toLowerCase()}
               onChange={setEmail}
-              isErrorBorder={isErrors?.type?.includes('email')}
+              isErrorBorder={errorExist?.length > 0}
               placeholder={t('email')}
               keyboardType="email-address"
               iconName="inbox"
+              onFocusInput={() => setErrorExist('')}
             />
             {errorExist?.length > 0 && (
               <RN.View style={styles.errorMessage}>
@@ -193,7 +199,14 @@ const RegistraionScreen = (): JSX.Element => {
 
           <RN.View style={styles.bottomWrapper}>
             <RN.Text style={styles.alreadyAccountText}>{t('already')}</RN.Text>
-            <RN.TouchableOpacity onPress={onPressLogin}>
+            <RN.TouchableOpacity
+              onPress={onPressLogin}
+              hitSlop={{
+                top: 30,
+                right: 40,
+                bottom: 30,
+                left: 40,
+              }}>
               <RN.Text style={styles.logInText}>{t('login')}</RN.Text>
             </RN.TouchableOpacity>
           </RN.View>

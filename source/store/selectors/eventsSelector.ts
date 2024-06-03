@@ -103,7 +103,7 @@ export const selectLoadingManagingEvents = (state: IRootState) =>
 export const selectPrevLimit = (state: IRootState) =>
   state.events?.prevLimit ?? 25;
 export const selectPrevOffset = (state: IRootState) =>
-  state.events?.prevOffset ?? 0;
+  state.events?.prevOffset ?? 1;
 export const selectTotalCount = (state: IRootState) =>
   state.events?.totalCount ?? 0;
 export const getEventsList = (state: IRootState) =>

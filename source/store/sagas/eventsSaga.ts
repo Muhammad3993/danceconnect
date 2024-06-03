@@ -151,7 +151,7 @@ function* getEventsRequest(action: {payload: {limit: number; offset: number}}) {
       );
       yield put(
         getEventsSuccessAction({
-          eventsList: data,
+          eventsList: Object.values(data),
           prevOffset: response.page,
           prevLimit: response.pageSize,
           totalCount: response.totalCount,
@@ -352,7 +352,7 @@ function* createEventRequest(action: any) {
       } else {
         yield put(createEventSuccessAction({...response}));
       }
-      yield put(getEventsRequestAction({limit: 1, offset: 0}));
+      yield put(getEventsRequestAction({limit: 25, offset: 1}));
       // navigationRef.current?.dispatch(
       //   CommonActions.navigate({
       //   name: 'EventScreen',
@@ -376,8 +376,8 @@ function* createEventRequest(action: any) {
   }
 }
 function* changeInformation(action: any) {
-  const {eventUid, isRecurrent, recurrentId} = action.payload;
-  console.log('changeInformation', action.payload);
+  const {isRecurrent, recurrentId} = action.payload;
+  // console.log('changeInformation', action.payload);
   try {
     // yield call(updateEventById, eventUid, data);
     // const response = yield call(getEventById, eventUid);
@@ -415,7 +415,7 @@ function* changeInformation(action: any) {
         data,
       );
       const response = yield call(getRecurrentEventById, recurrentId);
-      console.log('getRecurrentEventById', response);
+      // console.log('getRecurrentEventById', response);
       // socket.emit('updated_events');
       if (!response.length) {
         yield put(setNoticeVisible({isVisible: true}));
@@ -438,8 +438,15 @@ function* changeInformation(action: any) {
         });
       }
     } else {
-      yield call(updateEventById, eventUid, data);
-      const response = yield call(getEventById, eventUid);
+      yield call(
+        updateEventById,
+        action.payload.eventUid ?? action.payload.id,
+        data,
+      );
+      const response = yield call(
+        getEventById,
+        action.payload.eventUid ?? action.payload.id,
+      );
       // socket.emit('updated_events');
       if (!response) {
         yield put(setNoticeVisible({isVisible: true}));
@@ -465,7 +472,7 @@ function* changeInformation(action: any) {
     // yield put(setLoadingAction({onLoading: true}));
     yield put(changeInformationEventSuccessAction());
     yield put(changeInformationValueAction());
-    yield put(getEventsRequestAction({limit: 1, offset: 0}));
+    yield put(getEventsRequestAction({limit: 25, offset: 1}));
   } catch (er) {
     yield put(changeInformationEventFailAction());
   }
@@ -552,7 +559,7 @@ function* removeEventRquest(action: any) {
     yield put(setLoadingAction({onLoading: true}));
     yield call(deleteEventById, action?.payload?.uid);
     // socket.emit('updated_events');
-    yield put(getEventsRequestAction({limit: 1, offset: 0}));
+    yield put(getEventsRequestAction({limit: 25, offset: 1}));
     yield put(getManagingEventsRequestAction());
     yield put(removeEventSuccessAction());
 
@@ -691,7 +698,7 @@ function* removeRecurrentEventRequest(action: any) {
     yield put(setLoadingAction({onLoading: true}));
     yield call(deleteReccurentEventsById, action?.payload?.uid);
     // socket.emit('updated_events');
-    yield put(getEventsRequestAction({limit: 1, offset: 0}));
+    yield put(getEventsRequestAction({limit: 25, offset: 1}));
     yield put(getManagingEventsRequestAction());
     yield put(removeEventSuccessAction());
 

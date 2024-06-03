@@ -73,6 +73,9 @@ function* getUserByIdRequest() {
     const token = yield select(selectorToken);
     const authProvider = yield select(selectorSocialProvider);
     const user = yield call(getUserById, userUid);
+    if (!user) {
+      return;
+    }
     yield put(
       registrationWithEmailSuccess({
         currentUser: user,

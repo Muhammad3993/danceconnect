@@ -123,7 +123,7 @@ function* authorizationEmail(action: any) {
           token: auth?.data?.accessToken,
         }),
       );
-      yield put(getEventsRequestAction({limit: 1, offset: 0}));
+      yield put(getEventsRequestAction({limit: 25, offset: 1}));
       yield put(getPersonalEventsRequestAction());
     }
     if (auth?.response?.status === 401) {
@@ -243,7 +243,7 @@ function* authWthGoogle() {
           authProvider: 'google',
         }),
       );
-      yield put(getEventsRequestAction({limit: 1, offset: 0}));
+      yield put(getEventsRequestAction({limit: 25, offset: 1}));
       yield put(getPersonalEventsRequestAction());
       yield put(setLoadingAction({onLoading: false}));
     }

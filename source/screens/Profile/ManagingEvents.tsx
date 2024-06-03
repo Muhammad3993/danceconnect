@@ -40,7 +40,7 @@ const ManagingEvents = () => {
           lengthEmptyEvents.map(() => {
             return (
               <>
-                <RN.View style={{marginVertical: 8}}>
+                <RN.View style={{marginVertical: 8, marginHorizontal: 14}}>
                   <SkeletonEventCard />
                 </RN.View>
               </>
@@ -81,8 +81,7 @@ const styles = RN.StyleSheet.create({
   },
   flatList: {
     flex: 1,
-    // paddingVertical: 24,
-    marginHorizontal: isAndroid ? 14 : 0,
+    marginHorizontal: 14,
   },
   backIcon: {
     height: 16,

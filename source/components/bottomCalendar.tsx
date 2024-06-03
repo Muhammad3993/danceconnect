@@ -137,8 +137,16 @@ const BottomCalendar = ({
       </>
     );
   };
-  const [startDate, setStartDate] = useState(start);
-  const [endDate, setEndDate] = useState(end);
+  const [startDate, setStartDate] = useState(
+    moment().format('YYYY-MM-DD') === moment(start).format('YYYY-MM-DD')
+      ? null
+      : start,
+  );
+  const [endDate, setEndDate] = useState(
+    moment().format('YYYY-MM-DD') === moment(end).format('YYYY-MM-DD')
+      ? null
+      : end,
+  );
 
   const dateEvent = `${String(
     minWeekDay.weekdaysMin(moment(startDate)),
@@ -174,6 +182,9 @@ const BottomCalendar = ({
     };
   }, [startDate]);
   const setDateRange = () => {
+    // if (startDate === moment(new Date().toDateString()).format('YYYY-MM-DD')) {
+    //   return;
+    // }
     if (!endDate) {
       return {
         [startDate]: {

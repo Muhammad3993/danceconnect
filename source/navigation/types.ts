@@ -1,5 +1,7 @@
-import {createNavigationContainerRef} from '@react-navigation/native';
-import {StackScreenProps} from '@react-navigation/stack';
+import {
+  RouteProp,
+  createNavigationContainerRef,
+} from '@react-navigation/native';
 import React from 'react';
 
 export const navigationRef = createNavigationContainerRef();
@@ -28,10 +30,7 @@ export type MainStackNavigationParamList = {
   };
 };
 
-export type MainNavigationPop = StackScreenProps<
-  MainStackNavigationParamList,
-  'MAIN'
->;
+export type MainNavigationPop = RouteProp<MainStackNavigationParamList, 'MAIN'>;
 
 export type RootStackNavigationParamList = {
   AUTH_STACK: React.ReactElement;

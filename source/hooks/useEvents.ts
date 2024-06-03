@@ -219,6 +219,7 @@ const useEvents = () => {
     mainEvents,
     prevLimit,
     loadingEventsPagination,
+    totalCount,
   };
 };
 export default useEvents;
