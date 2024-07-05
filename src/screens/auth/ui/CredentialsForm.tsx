@@ -1,0 +1,198 @@
+import {
+  Image,
+  KeyboardAvoidingView,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import React, { ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DCInput } from 'components/shared/input';
+import { DCButton } from 'components/shared/button';
+import { theming } from 'common/constants/theming';
+import { useSocialBtns } from 'data/hooks/user';
+import { images } from 'common/resources/images';
+
+interface Props {
+  footerComponent: ReactNode;
+  submitTitle: string;
+  isLoading: boolean;
+  onSubmit: (email: string, password: string) => void;
+}
+
+export function CredentialsForm({
+  footerComponent,
+  submitTitle,
+  isLoading,
+  onSubmit,
+}: Props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { socialButtons } = useSocialBtns();
+
+  const { t } = useTranslation();
+
+  const openTerms = () => {
+    Linking.openURL('https://danceconnect.online/terms.html');
+  };
+
+  return (
+    <KeyboardAvoidingView style={styles.container} behavior="height">
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        <View>
+          <Image source={images.authLogo} style={styles.logo} />
+          <Text style={styles.welcome}>{t('create_account')}</Text>
+          <DCInput
+            value={email.toLowerCase()}
+            onChangeText={setEmail}
+            placeholder={t('email')}
+            keyboardType="email-address"
+            containerStyle={{ marginBottom: theming.spacing.MD }}
+          />
+
+          <DCInput
+            value={password}
+            onChangeText={setPassword}
+            placeholder={t('password')}
+            keyboardType="default"
+            secureTextEntry
+            containerStyle={{ marginBottom: theming.spacing.MD }}
+          />
+          <DCButton
+            isLoading={isLoading}
+            title={submitTitle}
+            onPress={() => onSubmit(email, password)}
+          />
+          <View style={styles.linesWrapper}>
+            <View style={styles.line} />
+            <Text style={styles.or}>{t('or_continue')}</Text>
+            <View style={styles.line} />
+          </View>
+
+          <View style={styles.btnsWrapper}>
+            {socialButtons?.map(btn => {
+              if (!btn.isAvailable) {
+                return null;
+              }
+
+              return (
+                <DCButton
+                  key={btn.title}
+                  onPress={btn.onPress}
+                  isLoading={btn.isLoading}
+                  leftIcon={
+                    <Image
+                      style={{ width: 30, height: 30 }}
+                      source={btn.icon}
+                    />
+                  }
+                />
+              );
+            })}
+          </View>
+        </View>
+
+        {footerComponent}
+
+        <View style={{ paddingHorizontal: 20 }}>
+          <Text style={styles.licenceText}>
+            {t('terms_first')}
+            <Text style={styles.licenceTextOrange} onPress={openTerms}>
+              {' '}
+              {t('terms_second')}
+            </Text>
+          </Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theming.colors.white,
+    padding: 16,
+    justifyContent: 'space-between',
+  },
+
+  icon: {
+    height: 20,
+    width: 24,
+    marginHorizontal: 30,
+  },
+  errorMessage: {
+    marginTop: -16,
+    paddingBottom: 6,
+    alignItems: 'center',
+  },
+  errorMessageText: {
+    color: theming.colors.redError,
+    fontSize: 13,
+  },
+
+  welcome: {
+    fontSize: 32,
+    textAlign: 'center',
+    paddingTop: 41,
+    paddingBottom: 36,
+    fontFamily: theming.fonts.latoRegular,
+    color: theming.colors.textPrimary,
+  },
+  logo: {
+    height: 55,
+    width: 200,
+    marginTop: 84,
+    marginBottom: 20,
+    alignSelf: 'center',
+  },
+  linesWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 65,
+    marginHorizontal: 12,
+  },
+  line: {
+    height: 1,
+    width: '30%',
+    backgroundColor: theming.colors.gray,
+  },
+  or: {
+    fontSize: 16,
+    lineHeight: 25.2,
+    fontWeight: '400',
+    paddingHorizontal: 16,
+    color: theming.colors.darkGray,
+    fontFamily: theming.fonts.latoRegular,
+  },
+  bottomWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 60,
+    paddingBottom: 40,
+  },
+
+  btnsWrapper: {
+    paddingTop: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginHorizontal: 30,
+  },
+  licenceText: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '400',
+    color: theming.colors.darkGray,
+    fontFamily: theming.fonts.latoRegular,
+    textAlign: 'center',
+    marginHorizontal: 40,
+  },
+  licenceTextOrange: {
+    color: theming.colors.orange,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+});

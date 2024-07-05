@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-pager-view/lib/typescript/PagerView.d.ts b/node_modules/react-native-pager-view/lib/typescript/PagerView.d.ts
+index f800118..9a47106 100644
+--- a/node_modules/react-native-pager-view/lib/typescript/PagerView.d.ts
++++ b/node_modules/react-native-pager-view/lib/typescript/PagerView.d.ts
+@@ -41,7 +41,7 @@ import PagerViewNativeComponent, { NativeProps } from './specs/PagerViewNativeCo
+  * }
+  * ```
+  */
+-declare class PagerViewInternal extends React.Component<NativeProps> {
++export declare class PagerViewInternal extends React.Component<NativeProps> {
+     private isScrolling;
+     pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null;
+     private get nativeCommandsWrapper();

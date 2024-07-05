@@ -1,0 +1,54 @@
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { useDCStore } from 'store';
+import { theming } from 'common/constants/theming';
+import { UserImage } from 'components/user_image';
+import { useTranslation } from 'react-i18next';
+
+export function HomeScreen() {
+  const user = useDCStore.use.user();
+  const logOut = useDCStore.use.clearDCStoreAction();
+  const { t } = useTranslation();
+
+  return (
+    <View style={styles.root}>
+      <View style={styles.profileView}>
+        <UserImage style={styles.img} />
+        <View>
+          <Text style={styles.name}>{user?.userName}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
+        </View>
+      </View>
+      <Text onPress={logOut} style={{ color: theming.colors.redError }}>
+        {t('logout')}
+      </Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    padding: theming.spacing.LG,
+    backgroundColor: theming.colors.white,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  profileView: {
+    flexDirection: 'row',
+    gap: 20,
+  },
+  img: { width: 60, height: 60, backgroundColor: 'red', borderRadius: 50 },
+  name: {
+    color: theming.colors.textPrimary,
+    fontSize: 20,
+    fontFamily: theming.fonts.latoRegular,
+    fontWeight: '700',
+    marginBottom: theming.spacing.SM,
+  },
+  email: {
+    color: theming.colors.textSecondary,
+    fontSize: 16,
+    fontFamily: theming.fonts.latoRegular,
+  },
+});
