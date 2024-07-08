@@ -42,6 +42,7 @@ export const DCInput = ({
   onChangeText,
   errorText,
   forBottomSheet = false,
+  onBlur,
 }: DCInputProps) => {
   const ref = useRef<TextInput>();
   const [backgroundColor, setBackgroundColor] = useState(
@@ -56,9 +57,12 @@ export const DCInput = ({
       onFocus(e);
     }
   };
-  const onBlur = () => {
+  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setBorderColor(theming.colors.gray);
     setBackgroundColor(theming.colors.lightGray);
+    if (onBlur) {
+      onBlur(e);
+    }
   };
 
   const Input = useMemo(
@@ -85,7 +89,7 @@ export const DCInput = ({
           keyboardType={keyboardType}
           onFocus={handleFocus}
           placeholderTextColor={theming.colors.grayScale}
-          onBlur={onBlur}
+          onBlur={handleBlur}
           autoComplete={autoComplete}
           autoFocus={autoFocus}
           numberOfLines={numberOfLines}
@@ -96,7 +100,9 @@ export const DCInput = ({
         {rightIcon}
       </View>
       {errorText && (
-        <Text style={{ color: theming.colors.redError }}>{errorText}</Text>
+        <Text style={{ color: theming.colors.redError, marginTop: 4 }}>
+          {errorText}
+        </Text>
       )}
     </Pressable>
   );

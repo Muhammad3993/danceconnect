@@ -1,5 +1,5 @@
+import { EditUserRequest, UserLocation } from 'data/api/user/inerfaces';
 import * as yup from 'yup';
-import { EditUserRequest, UserLocation } from './inerfaces';
 
 const locationSchema = yup.object<UserLocation>({
   country: yup.string().required('location is required'),

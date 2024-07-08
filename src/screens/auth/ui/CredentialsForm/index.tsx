@@ -7,13 +7,17 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
 import { theming } from 'common/constants/theming';
 import { useSocialBtns } from 'data/hooks/user';
 import { images } from 'common/resources/images';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { AuthSchema, authSchema } from './schema';
+import { isEmptyObj } from 'common/utils/object';
 
 interface Props {
   footerComponent: ReactNode;
@@ -28,14 +32,19 @@ export function CredentialsForm({
   isLoading,
   onSubmit,
 }: Props) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { control, handleSubmit, formState } = useForm({
+    resolver: yupResolver(authSchema),
+  });
+  const { dirtyFields } = formState;
   const { socialButtons } = useSocialBtns();
 
   const { t } = useTranslation();
 
   const openTerms = () => {
     Linking.openURL('https://danceconnect.online/terms.html');
+  };
+  const onPressSubmit = ({ email, password }: AuthSchema) => {
+    onSubmit(email, password);
   };
 
   return (
@@ -44,26 +53,49 @@ export function CredentialsForm({
         <View>
           <Image source={images.authLogo} style={styles.logo} />
           <Text style={styles.welcome}>{t('create_account')}</Text>
-          <DCInput
-            value={email.toLowerCase()}
-            onChangeText={setEmail}
-            placeholder={t('email')}
-            keyboardType="email-address"
-            containerStyle={{ marginBottom: theming.spacing.MD }}
+
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { value, onChange, onBlur }, fieldState }) => {
+              return (
+                <DCInput
+                  value={value}
+                  onChangeText={onChange}
+                  placeholder={t('email')}
+                  keyboardType="email-address"
+                  containerStyle={{ marginBottom: theming.spacing.MD }}
+                  errorText={fieldState.error?.message}
+                  onBlur={onBlur}
+                />
+              );
+            }}
           />
 
-          <DCInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder={t('password')}
-            keyboardType="default"
-            secureTextEntry
-            containerStyle={{ marginBottom: theming.spacing.MD }}
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { value, onChange, onBlur }, fieldState }) => {
+              return (
+                <DCInput
+                  value={value}
+                  onChangeText={onChange}
+                  placeholder={t('password')}
+                  keyboardType="default"
+                  secureTextEntry
+                  containerStyle={{ marginBottom: theming.spacing.MD }}
+                  errorText={fieldState.error?.message}
+                  onBlur={onBlur}
+                />
+              );
+            }}
           />
+
           <DCButton
             isLoading={isLoading}
             title={submitTitle}
-            onPress={() => onSubmit(email, password)}
+            onPress={handleSubmit(onPressSubmit)}
+            disabled={isEmptyObj(dirtyFields)}
           />
           <View style={styles.linesWrapper}>
             <View style={styles.line} />

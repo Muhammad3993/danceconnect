@@ -37,8 +37,9 @@ const styles = StyleSheet.create({
   profileView: {
     flexDirection: 'row',
     gap: 20,
+    width: '100%',
   },
-  img: { width: 60, height: 60, backgroundColor: 'red', borderRadius: 50 },
+  img: { width: 60, height: 60, borderRadius: 50 },
   name: {
     color: theming.colors.textPrimary,
     fontSize: 20,

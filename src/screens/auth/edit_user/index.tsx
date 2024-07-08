@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDCStore } from 'store';
-import { userEditSchema } from 'data/api/user/schema';
+import { userEditSchema } from './schema';
 import { EditUserRequest } from 'data/api/user/inerfaces';
 import { isEmptyObj } from 'common/utils/object';
 import { PagerViewInternal } from 'react-native-pager-view/lib/typescript/PagerView';
@@ -68,10 +68,11 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
           ref={refPagerView}
           style={styles.root}
           initialPage={0}
-          useNext>
+          useNext={false}>
           <BasicInfo key={'1'} />
           <DanceStyles key={'2'} />
         </PagerView>
+
         <View style={{ paddingHorizontal: theming.spacing.LG }}>
           <DCButton
             isLoading={isLoading}
