@@ -16,6 +16,7 @@ import { isEmptyObj } from 'common/utils/object';
 import { PagerViewInternal } from 'react-native-pager-view/lib/typescript/PagerView';
 import { useEditUser } from 'data/hooks/user';
 import { showErrorToast } from 'common/libs/toast';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const { t } = useTranslation();
@@ -61,7 +62,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   };
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <FormProvider {...methods}>
         <PagerView
           scrollEnabled={false}
@@ -82,7 +83,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
           />
         </View>
       </FormProvider>
-    </View>
+    </SafeAreaView>
   );
 }
 

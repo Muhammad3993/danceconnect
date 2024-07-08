@@ -5,11 +5,11 @@ import { RootStackRoutes } from './interfaces';
 import { RegisterScreen } from './auth/registration';
 import { LoginScreen } from './auth/login';
 import { AuthScreen } from './auth';
-import { HomeScreen } from './home';
 import { useDCStore } from 'store';
 import { isEmptyArray } from 'common/utils/array';
 import { EditUserScreen } from './auth/edit_user';
 import { Platform, UIManager } from 'react-native';
+import { HomeTabs } from './home_tabs';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -43,7 +43,7 @@ export function Navigation() {
           <Stack.Screen name="editUser" component={EditUserScreen} />
         ) : (
           <>
-            <Stack.Screen name="homeTabs" component={HomeScreen} />
+            <Stack.Screen name="homeTabs" component={HomeTabs} />
           </>
         )}
       </Stack.Navigator>

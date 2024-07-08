@@ -5,7 +5,7 @@ import { theming } from 'common/constants/theming';
 import { UserImage } from 'components/user_image';
 import { useTranslation } from 'react-i18next';
 
-export function HomeScreen() {
+export function ProfileScreen() {
   const user = useDCStore.use.user();
   const logOut = useDCStore.use.clearDCStoreAction();
   const { t } = useTranslation();
@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
     padding: theming.spacing.LG,
     backgroundColor: theming.colors.white,
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   profileView: {
     flexDirection: 'row',

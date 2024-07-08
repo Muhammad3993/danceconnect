@@ -22,7 +22,13 @@ export type RootStackRoutes = {
   homeTabs: undefined;
 };
 
-export type TabRoutes = {};
+export type TabRoutes = {
+  home: undefined;
+  communities: undefined;
+  events: undefined;
+  people: undefined;
+  profile: undefined;
+};
 
 export type StackScreenProps<Route extends keyof RootStackRoutes> =
   NativeStackScreenProps<RootStackRoutes, Route>;

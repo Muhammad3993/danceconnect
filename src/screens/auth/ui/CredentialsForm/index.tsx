@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theming.colors.white,
-    padding: 16,
+    padding: theming.spacing.LG,
     justifyContent: 'space-between',
   },
 

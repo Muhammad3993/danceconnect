@@ -19,12 +19,10 @@ function App(): React.JSX.Element {
       <SafeAreaProvider>
         <GestureHandlerRootView style={styles.root}>
           <BottomSheetModalProvider>
-            <SafeAreaView style={styles.root}>
-              <StatusBar barStyle="dark-content" />
-              <I18nextProvider i18n={i18n} defaultNS={'translation'}>
-                <Navigation />
-              </I18nextProvider>
-            </SafeAreaView>
+            <StatusBar barStyle="dark-content" />
+            <I18nextProvider i18n={i18n} defaultNS={'translation'}>
+              <Navigation />
+            </I18nextProvider>
           </BottomSheetModalProvider>
           <Toasts />
         </GestureHandlerRootView>
