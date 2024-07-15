@@ -52,14 +52,14 @@ export const DCInput = ({
 
   const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setBorderColor(theming.colors.orange);
-    setBackgroundColor(theming.colors.tranparentOrange);
+    // setBackgroundColor(theming.colors.tranparentOrange);
     if (onFocus) {
       onFocus(e);
     }
   };
   const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setBorderColor(theming.colors.gray);
-    setBackgroundColor(theming.colors.lightGray);
+    // setBackgroundColor(theming.colors.lightGray);
     if (onBlur) {
       onBlur(e);
     }
@@ -88,7 +88,7 @@ export const DCInput = ({
           placeholder={placeholder}
           keyboardType={keyboardType}
           onFocus={handleFocus}
-          placeholderTextColor={theming.colors.grayScale}
+          placeholderTextColor={theming.colors.gray}
           onBlur={handleBlur}
           autoComplete={autoComplete}
           autoFocus={autoFocus}
@@ -117,11 +117,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     gap: 16,
     padding: 16,
+    flexDirection: 'row',
   },
   input: {
     color: theming.colors.textPrimary,
     fontSize: 16,
     fontWeight: '400',
     letterSpacing: 0.2,
+    flex: 1,
   },
 });

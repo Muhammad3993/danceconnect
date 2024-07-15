@@ -20,6 +20,7 @@ export type RootStackRoutes = {
 
   // home
   homeTabs: undefined;
+  editProfile: undefined;
 };
 
 export type TabRoutes = {

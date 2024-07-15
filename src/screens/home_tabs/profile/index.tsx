@@ -4,21 +4,26 @@ import { useDCStore } from 'store';
 import { theming } from 'common/constants/theming';
 import { UserImage } from 'components/user_image';
 import { useTranslation } from 'react-i18next';
+import { TabScreenProps } from 'screens/interfaces';
 
-export function ProfileScreen() {
+export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const user = useDCStore.use.user();
   const logOut = useDCStore.use.clearDCStoreAction();
   const { t } = useTranslation();
 
   return (
     <View style={styles.root}>
-      <View style={styles.profileView}>
-        <UserImage style={styles.img} />
-        <View>
-          <Text style={styles.name}>{user?.userName}</Text>
-          <Text style={styles.email}>{user?.email}</Text>
+      <View>
+        <View style={styles.profileView}>
+          <UserImage style={styles.img} />
+          <View>
+            <Text style={styles.name}>{user?.userName}</Text>
+            <Text style={styles.email}>{user?.email}</Text>
+          </View>
         </View>
+        <Text onPress={() => navigation.push('editProfile')}>Edit Profile</Text>
       </View>
+
       <Text onPress={logOut} style={{ color: theming.colors.redError }}>
         {t('logout')}
       </Text>

@@ -3422,6 +3422,7 @@ __metadata:
     react-native-blob-util: ^0.19.9
     react-native-calendars: ^1.1305.0
     react-native-config: ^1.5.2
+    react-native-dropdown-picker: ^5.4.6
     react-native-fast-image: ^8.6.3
     react-native-gesture-handler: ^2.17.1
     react-native-gifted-chat: ^2.4.0
@@ -9438,6 +9439,16 @@ __metadata:
     react-native-windows:
       optional: true
   checksum: fc777546557704629f7aabdd2cf24decdea666ba90975602523103ed0a26a358f2f23241cae2aed646b82784e657cc01ecf7b6df2d5524d6b0ea3edfa9054d7f
+  languageName: node
+  linkType: hard
+
+"react-native-dropdown-picker@npm:^5.4.6":
+  version: 5.4.6
+  resolution: "react-native-dropdown-picker@npm:5.4.6"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: d81ee3d68c17107a4d21dbdf9c2fe2ffe4bf4398973d10113139aadc0674221ce5038b945299fba2abc796930ec5e6d5f84291945bf903344493a15b8e2fca43
   languageName: node
   linkType: hard
 

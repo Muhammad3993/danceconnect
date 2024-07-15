@@ -10,6 +10,7 @@ import { isEmptyArray } from 'common/utils/array';
 import { EditUserScreen } from './auth/edit_user';
 import { Platform, UIManager } from 'react-native';
 import { HomeTabs } from './home_tabs';
+import { EditProfileScreen } from './edit_profile';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -44,6 +45,7 @@ export function Navigation() {
         ) : (
           <>
             <Stack.Screen name="homeTabs" component={HomeTabs} />
+            <Stack.Screen name="editProfile" component={EditProfileScreen} />
           </>
         )}
       </Stack.Navigator>

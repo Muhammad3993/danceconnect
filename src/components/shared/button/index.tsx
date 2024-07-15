@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   ViewStyle,
+  TextStyle,
 } from 'react-native';
 
 interface DCButtonProps {
@@ -16,6 +17,7 @@ interface DCButtonProps {
   disabled?: boolean;
   isLoading?: boolean;
   containerStyle?: ViewStyle;
+  textStyle?: TextStyle;
 }
 export const DCButton = ({
   title,
@@ -25,6 +27,7 @@ export const DCButton = ({
   disabled = false,
   isLoading = false,
   containerStyle,
+  textStyle,
 }: DCButtonProps) => {
   return (
     <TouchableOpacity
@@ -37,7 +40,7 @@ export const DCButton = ({
       ) : (
         <>
           {leftIcon}
-          {title && <Text style={styles.title}>{title}</Text>}
+          {title && <Text style={[styles.title, textStyle]}>{title}</Text>}
           {rigthIcon}
         </>
       )}
