@@ -32,7 +32,7 @@ export function EditProfileScreen() {
         <View style={styles.editTop}>
 
           <View style={styles.editBack}>
-            <ArrowLeft />
+            <ArrowLeft fill={theming.colors.textPrimary} />
             <Text style={styles.backTitle}>Edit profile</Text>
           </View>
 

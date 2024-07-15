@@ -11,6 +11,7 @@ import { EditUserScreen } from './auth/edit_user';
 import { Platform, UIManager } from 'react-native';
 import { HomeTabs } from './home_tabs';
 import { EditProfileScreen } from './edit_profile';
+import { EventScreen } from './event';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -34,6 +35,7 @@ export function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='eventScreen' component={EventScreen} />
         {user == null ? (
           <>
             <Stack.Screen name="auth" component={AuthScreen} />

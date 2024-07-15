@@ -14,6 +14,7 @@ export const theming = {
     baseShade: '#EBECEF',
     lightGray: '#FAFAFA',
     darkGray: '#757575',
+    gray800: '#424242',
     gray700: '#616161',
     gray500: '#9E9E9E',
     gray300: '#D9D9D9',
