@@ -35,7 +35,6 @@ export function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name='eventScreen' component={EventScreen} />
         {user == null ? (
           <>
             <Stack.Screen name="auth" component={AuthScreen} />
@@ -48,6 +47,7 @@ export function Navigation() {
           <>
             <Stack.Screen name="homeTabs" component={HomeTabs} />
             <Stack.Screen name="editProfile" component={EditProfileScreen} />
+            <Stack.Screen name="event" component={EventScreen} />
           </>
         )}
       </Stack.Navigator>

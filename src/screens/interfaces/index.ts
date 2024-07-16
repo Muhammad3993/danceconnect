@@ -21,6 +21,7 @@ export type RootStackRoutes = {
   // home
   homeTabs: undefined;
   editProfile: undefined;
+  event: undefined;
 };
 
 export type TabRoutes = {
