@@ -35,12 +35,12 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
         }
         return (
           <DCButton
-            title={btn.title}
             isLoading={btn.isLoading}
             key={btn.title}
             onPress={btn.onPress}
-            containerStyle={{ marginBottom: theming.spacing.MD }}
-          />
+            containerStyle={{ marginBottom: theming.spacing.MD }}>
+            {btn.title}
+          </DCButton>
         );
       })}
       <View style={styles.linesWrapper}>
@@ -50,9 +50,9 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
       </View>
       <DCButton
         containerStyle={{ marginTop: theming.spacing.MD }}
-        title={t('auth_btn_email')}
-        onPress={() => navigation.push('register')}
-      />
+        onPress={() => navigation.push('register')}>
+        {t('auth_btn_email')}
+      </DCButton>
       <Text
         style={styles.privacyP}
         onPress={() =>

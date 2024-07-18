@@ -186,9 +186,9 @@ export function LocationSelector({ value = '', onChange, inputStyle }: Props) {
           <DCButton
             onPress={handleSelectLocation}
             disabled={selectedCountry == null && selectedCity == null}
-            containerStyle={{ marginTop: 'auto' }}
-            title={t('confirm')}
-          />
+            containerStyle={{ marginTop: 'auto' }}>
+            {t('confirm')}
+          </DCButton>
         </BottomSheetView>
       </DCBottomSheet>
     </>

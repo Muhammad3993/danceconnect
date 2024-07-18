@@ -78,9 +78,9 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
           <DCButton
             isLoading={isLoading}
             disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
-            title={t('next')}
-            onPress={goNext}
-          />
+            onPress={goNext}>
+            {t('next')}
+          </DCButton>
         </View>
       </FormProvider>
     </SafeAreaView>

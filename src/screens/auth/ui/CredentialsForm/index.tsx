@@ -93,10 +93,10 @@ export function CredentialsForm({
 
           <DCButton
             isLoading={isLoading}
-            title={submitTitle}
             onPress={handleSubmit(onPressSubmit)}
-            disabled={isEmptyObj(dirtyFields)}
-          />
+            disabled={isEmptyObj(dirtyFields)}>
+            {submitTitle}
+          </DCButton>
           <View style={styles.linesWrapper}>
             <View style={styles.line} />
             <Text style={styles.or}>{t('or_continue')}</Text>
@@ -113,14 +113,9 @@ export function CredentialsForm({
                 <DCButton
                   key={btn.title}
                   onPress={btn.onPress}
-                  isLoading={btn.isLoading}
-                  leftIcon={
-                    <Image
-                      style={{ width: 30, height: 30 }}
-                      source={btn.icon}
-                    />
-                  }
-                />
+                  isLoading={btn.isLoading}>
+                  <Image style={{ width: 30, height: 30 }} source={btn.icon} />
+                </DCButton>
               );
             })}
           </View>

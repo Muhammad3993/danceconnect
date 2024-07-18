@@ -20,8 +20,10 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 export function EventScreen() {
+  const { t } = useTranslation();
   const [isActiveBox, setIsActiveBox] = useState(1);
   return (
     <SafeAreaView style={styles.container}>
@@ -186,17 +188,18 @@ export function EventScreen() {
           </View>
 
           <DCButton
-            title="Manage Tickets"
-            containerStyle={{
-              borderColor: theming.colors.purple,
-              borderRadius: 100,
-            }}
-            textStyle={{
-              color: theming.colors.purple,
-              fontWeight: '700',
-              fontFamily: theming.fonts.latoRegular,
-            }}
-          />
+          // containerStyle={{
+          //   borderColor: theming.colors.purple,
+          //   borderRadius: 100,
+          // }}
+          // textStyle={{
+          //   color: theming.colors.purple,
+          //   fontWeight: '700',
+          //   fontFamily: theming.fonts.latoRegular,
+          // }}
+          >
+            {t('manage_tickets')}
+          </DCButton>
 
           <View style={{ marginTop: 25 }}>
             <Text style={styles.eventSubtitle}>About this event</Text>

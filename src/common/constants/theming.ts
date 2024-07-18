@@ -20,7 +20,7 @@ export const theming = {
     gray300: '#D9D9D9',
     gray200: '#EAECF0',
     gray100: '#F0F0F0',
-    grayM: '#EEEEEE',
+    gray50: '#EEEEEE',
     gray: '#9E9E9E',
     orange: '#F5A80C',
     tranparentOrange: 'rgba(245, 168, 12, 0.06)',

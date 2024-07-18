@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
 // import react-native
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 // import component
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
 // import theming
 import { theming } from 'common/constants/theming';
 // import images
-import { images } from 'common/resources/images';
 // import icons
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { EditIcon } from 'components/icons/edit';
 import { MailIcon } from 'components/icons/mail';
 // dropdown
 import DropDownPicker from 'react-native-dropdown-picker';
-import { FillArrow } from 'components/icons/fillArrow';
+import { FillArrowIcon } from 'components/icons/fillArrow';
+import { genders } from 'common/constants';
+import { useDCStore } from 'store';
+import { useTranslation } from 'react-i18next';
+import { UserImage } from 'components/user_image';
 
 export function EditProfileScreen() {
+  const user = useDCStore.use.user();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(0);
-  const [items, setItems] = useState([
-    { label: 'male', value: 0 },
-    { label: 'female', value: 1 },
-    { label: 'nonbinary', value: 2 },
-  ]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -35,31 +34,24 @@ export function EditProfileScreen() {
           </View>
 
           <View style={styles.editAvatar}>
-            <View style={styles.editAvatarView}>
-              <Image style={styles.editImage} source={images.editProfile} />
-              <EditIcon style={styles.editIcon} />
-            </View>
+            <UserImage style={styles.editImage} />
+            <EditIcon style={styles.editIcon} />
           </View>
 
           <View style={styles.editForm}>
             <DCInput
               inputStyle={{
-                height: 56,
                 backgroundColor: theming.colors.lightGray,
-                padding: 0,
-                paddingHorizontal: theming.spacing.MD,
-                borderColor: theming.colors.grayM,
               }}
               value="Andrew Ainsley"
             />
             <DropDownPicker
               open={open}
-              value={value}
-              items={items}
+              value={user?.userGender ?? 'male'}
+              items={genders.map(el => ({ label: el.title, value: el.title }))}
               setOpen={setOpen}
-              setValue={setValue}
-              setItems={setItems}
-              placeholder=""
+              setValue={() => {}}
+              placeholder="Gender"
               style={styles.dropdown}
               dropDownContainerStyle={styles.dropDownContainer}
               showArrowIcon={true}
@@ -72,18 +64,14 @@ export function EditProfileScreen() {
                 textTransform: 'capitalize',
                 fontSize: 16,
               }}
-              ArrowDownIconComponent={() => <FillArrow />}
+              ArrowDownIconComponent={() => <FillArrowIcon />}
               ArrowUpIconComponent={() => (
-                <FillArrow style={{ transform: [{ rotate: '180deg' }] }} />
+                <FillArrowIcon style={{ transform: [{ rotate: '180deg' }] }} />
               )}
             />
             <DCInput
               inputStyle={{
-                height: 56,
                 backgroundColor: theming.colors.lightGray,
-                padding: 0,
-                paddingHorizontal: theming.spacing.MD,
-                borderColor: theming.colors.grayM,
               }}
               value="andrew_ainsley@yourdomain.com"
               rightIcon={<MailIcon style={{ margin: 'auto' }} />}
@@ -91,19 +79,9 @@ export function EditProfileScreen() {
           </View>
         </View>
 
-        <DCButton
-          title="Save"
-          containerStyle={{
-            backgroundColor: theming.colors.orange,
-            borderWidth: 0,
-            width: '100%',
-          }}
-          textStyle={{
-            color: theming.colors.white,
-            fontWeight: '700',
-            fontFamily: theming.fonts.latoRegular,
-          }}
-        />
+        <DCButton textStyle={{ fontWeight: '700' }}>
+          {t('save_changes')}
+        </DCButton>
       </View>
     </SafeAreaView>
   );
@@ -125,7 +103,6 @@ const styles = StyleSheet.create({
   },
   editBack: {
     width: '100%',
-    // height: 48,
     flexDirection: 'row',
     gap: 12,
     alignItems: 'center',
@@ -137,20 +114,17 @@ const styles = StyleSheet.create({
     fontFamily: theming.fonts.latoRegular,
   },
   editAvatar: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-    paddingVertical: theming.spacing.LG,
-  },
-  editAvatarView: {
-    width: '41%',
+    width: 140,
     height: 140,
+    position: 'relative',
+    marginVertical: theming.spacing.LG,
   },
+
   editImage: {
-    width: '100%',
-    height: '100%',
+    width: 140,
+    height: 140,
     resizeMode: 'contain',
+    borderRadius: 70,
   },
   editIcon: {
     position: 'absolute',
@@ -168,11 +142,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: theming.spacing.MD,
     borderWidth: 1,
-    borderColor: theming.colors.grayM,
+    borderColor: theming.colors.gray50,
   },
   dropDownContainer: {
     backgroundColor: theming.colors.lightGray,
     borderWidth: 1,
-    borderColor: theming.colors.grayM,
+    borderColor: theming.colors.gray50,
   },
 });
