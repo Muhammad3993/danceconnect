@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackRoutes } from './interfaces';
@@ -8,7 +8,7 @@ import { AuthScreen } from './auth';
 import { useDCStore } from 'store';
 import { isEmptyArray } from 'common/utils/array';
 import { EditUserScreen } from './auth/edit_user';
-import { Platform, UIManager } from 'react-native';
+import { ActivityIndicator, Platform, UIManager, View } from 'react-native';
 import { HomeTabs } from './home_tabs';
 import { EditProfileScreen } from './edit_profile';
 import { EventScreen } from './event';
@@ -16,21 +16,34 @@ import { EventScreen } from './event';
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
 export function Navigation() {
+  const initApp = useDCStore.use.initAppAction();
   const user = useDCStore.use.user();
-  // const initAppAction = useDCStore.use.initAppAction();
+  const [initing, setIniting] = useState(true);
+
+  useEffect(() => {
+    initApp().finally(() => setIniting(false));
+  }, [initApp]);
 
   useLayoutEffect(() => {
-    // initAppAction();
     if (Platform.OS === 'android') {
       if (UIManager.setLayoutAnimationEnabledExperimental) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
       }
     }
   }, []);
+
   const isEmptyUser =
     user !== null &&
     isEmptyArray(user.individualStyles) &&
     isEmptyArray(user.userRole);
+
+  if (initing) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>

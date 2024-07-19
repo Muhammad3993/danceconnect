@@ -92,6 +92,7 @@ export function CredentialsForm({
           />
 
           <DCButton
+            size="large"
             isLoading={isLoading}
             onPress={handleSubmit(onPressSubmit)}
             disabled={isEmptyObj(dirtyFields)}>
@@ -111,10 +112,13 @@ export function CredentialsForm({
 
               return (
                 <DCButton
+                  size="large"
+                  variant="outlined"
                   key={btn.title}
                   onPress={btn.onPress}
-                  isLoading={btn.isLoading}>
-                  <Image style={{ width: 30, height: 30 }} source={btn.icon} />
+                  isLoading={btn.isLoading}
+                  containerStyle={{ paddingHorizontal: theming.spacing.LG }}>
+                  <Image style={{ width: 24, height: 24 }} source={btn.icon} />
                 </DCButton>
               );
             })}

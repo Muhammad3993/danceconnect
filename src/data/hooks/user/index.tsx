@@ -6,7 +6,7 @@ import Config from 'react-native-config';
 import auth from '@react-native-firebase/auth';
 import { Platform } from 'react-native';
 import { useMutation } from 'react-query';
-import { localstorage } from 'common/libs/mmkv';
+import { localStorage } from 'common/libs/local_storage';
 import { userApi } from 'data/api/user';
 import { useDCStore } from 'store';
 import { showErrorToast } from 'common/libs/toast';
@@ -30,8 +30,8 @@ export function useSocialBtns() {
         isLoading: isGoogleLoading,
         onPress: () => {
           handleGoogleLogin(undefined, {
-            onSuccess(data) {
-              localstorage.setItem('token', data.access_token);
+            async onSuccess(data) {
+              await localStorage.setItem('token', data.access_token);
               getUser();
             },
             onError(err) {
@@ -48,7 +48,7 @@ export function useSocialBtns() {
         onPress: () => {
           handleAppleLogin(undefined, {
             onSuccess(data) {
-              localstorage.setItem('token', data.access_token);
+              localStorage.setItem('token', data.access_token);
               getUser();
             },
             onError(err) {

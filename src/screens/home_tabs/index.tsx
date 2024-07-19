@@ -72,6 +72,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       />
       <Tab.Screen
         options={{
+          headerShown: false,
           tabBarIcon({ focused }) {
             return <CommunitiesIcon active={focused} />;
           },
@@ -81,8 +82,9 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       />
       <Tab.Screen
         options={{
+          headerShown: false,
           tabBarIcon(props) {
-            return <TicketIcon />;
+            return <TicketIcon active={props.focused} />;
           },
         }}
         name="events"
@@ -90,6 +92,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       />
       <Tab.Screen
         options={{
+          headerShown: false,
           tabBarIcon(props) {
             return <PeopleIcon />;
           },
@@ -99,6 +102,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       />
       <Tab.Screen
         options={{
+          headerShown: false,
           tabBarIcon(props) {
             return <ProfileIcon />;
           },

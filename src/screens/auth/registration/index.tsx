@@ -3,7 +3,7 @@ import React from 'react';
 import { CredentialsForm } from '../ui/CredentialsForm';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { localstorage } from 'common/libs/mmkv';
+import { localStorage } from 'common/libs/local_storage';
 import { useRegisterUser } from 'data/hooks/user';
 import { StackScreenProps } from 'screens/interfaces';
 import { useDCStore } from 'store';
@@ -19,8 +19,8 @@ export function RegisterScreen({ navigation }: StackScreenProps<'register'>) {
     mutate(
       { email, password },
       {
-        onSuccess(data) {
-          localstorage.setItem('token', data.access_token);
+        async onSuccess(data) {
+          await localStorage.setItem('token', data.access_token);
           getUser();
         },
         onError(err) {

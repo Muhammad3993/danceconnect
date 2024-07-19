@@ -4,7 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetModalProps,
 } from '@gorhom/bottom-sheet';
-import React, { PropsWithChildren, forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return (
@@ -14,7 +14,7 @@ function Backdrop(props: BottomSheetBackdropProps) {
 
 export const DCBottomSheet = forwardRef<
   BottomSheetModal,
-  PropsWithChildren<BottomSheetModalProps>
+  BottomSheetModalProps
 >((props, ref) => {
   return (
     <BottomSheetModal

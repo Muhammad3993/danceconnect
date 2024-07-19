@@ -1,3 +1,5 @@
+import { Community } from '../community/interfaces';
+
 export interface AuthResponse {
   access_token: string;
 }
@@ -18,17 +20,20 @@ export interface EditUserRequest {
   userImage?: string;
 }
 
-export interface User {
+export interface UserShort {
   id: string;
-  myCommunities: string[];
-  joinedCommunities: string[];
-  userRole: string[];
   individualStyles: string[];
   email: string;
   userName?: string;
   location?: UserLocation;
   userGender?: Gender;
   userImage?: string;
+}
+
+export interface User extends UserShort {
+  myCommunities: Community[];
+  joinedCommunities: Community[];
+  userRole: string[];
   fcmToken?: string;
   about?: string;
 }

@@ -35,6 +35,8 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
         }
         return (
           <DCButton
+            size="large"
+            variant="outlined"
             isLoading={btn.isLoading}
             key={btn.title}
             onPress={btn.onPress}
@@ -49,6 +51,8 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
         <View style={styles.line} />
       </View>
       <DCButton
+        size="large"
+        variant="outlined"
         containerStyle={{ marginTop: theming.spacing.MD }}
         onPress={() => navigation.push('register')}>
         {t('auth_btn_email')}

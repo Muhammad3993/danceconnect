@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   btnLg: { height: 58 },
   btnOutlined: {
     borderWidth: 1,
-    borderColor: theming.colors.darkGray,
+    borderColor: theming.colors.gray300,
     borderRadius: 16,
   },
   btnPrimary: {
