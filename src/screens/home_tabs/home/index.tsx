@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theming.colors.white,
     padding: theming.spacing.LG,
+    padding: theming.spacing.LG,
   },
   homeTop: {
     width: "100%",
