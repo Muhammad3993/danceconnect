@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
         elevation: 5,
         marginRight: 20,
         padding: 10,
+        marginVertical: 20,
     },
     homeBoxImage: {
         width: "100%",

@@ -28,7 +28,7 @@ export const theming = {
     tranparentOrange: 'rgba(245, 168, 12, 0.06)',
     purple: '#5C33D7',
     transparentPurple: '#584CF414',
-    purpleTransparent: 'rgba(88, 76, 244, 0.15)',
+    purpleTransparent: 'rgba(88, 76, 244, 1)',
     lightPurple: '#F6F5FF',
     redError: '#F75555',
     grayTransparent: 'rgba(238, 238, 238, 1)',
