@@ -7,4 +7,5 @@ export const images = {
   eventAvatar: require('../../../assets/images/eventavatar.png'),
   homeImg: require('../../../assets/images/rectangle.png'),
   homeImg1: require('../../../assets/images/rectangle1.png'),
+  itemImg: require('../../../assets/images/item_img.png'),
 };
