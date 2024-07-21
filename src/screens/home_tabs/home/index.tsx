@@ -1,19 +1,13 @@
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { theming } from 'common/constants/theming';
 import { DCRoundIcon } from 'components/shared/round_icon';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { HomeItem } from 'components/shared/home_item';
 import { StartCommunity } from 'components/shared/start_community';
-import { CommunitiesIcon } from 'components/icons/communities';
-import { DCButton } from 'components/shared/button';
 import { HomeEvent } from 'components/home_event';
 import { DCAmity } from 'common/libs/amity';
 import { useDCStore } from 'store';
-import { images } from 'common/resources/images';
-import { SetCalendarIcon } from 'components/icons/setCalendar';
-import { DCLine } from 'components/shared/line';
-import { LocationIcon } from 'components/icons/location';
 
 export function HomeScreen() {
 
@@ -74,79 +68,6 @@ export function HomeScreen() {
 
         <HomeEvent all={all} communities={[]} events={[]} user={user} />
 
-
-        {/* <View style={styles.item}>
-          <View style={styles.itemBody}>
-            <View style={styles.itemBodyText}>
-              <View style={styles.itemCategories}>
-                <View style={styles.itemCategory}>
-                  <Text style={styles.itemCategoryTitle}>Festival</Text>
-                </View>
-                <View style={[styles.itemCategory, {backgroundColor: theming.colors.green}]}>
-                  <Text style={styles.itemCategoryTitle}>$25.00</Text>
-                </View>
-              </View>
-              <View style={styles.itemDate}>
-                <SetCalendarIcon />
-                <Text style={styles.itemDateTitle}>Mon, Dec 24  •  21:00</Text>
-              </View>
-              <Text style={styles.itemTitle}>"Sensual" Bachata Festival</Text>
-              <Text style={styles.itemSubtitle}>
-                Experience the Magic of Bachata at the Los Angeles Bachata Festival!... 
-                <Text style={{color: theming.colors.purple}}>Details</Text>
-              </Text>
-            </View>
-
-            <View style={styles.itemImage}>
-              <Image 
-                source={images.itemImg}
-                style={styles.itemImg}
-              />
-            </View>
-          </View>
-
-          <View style={styles.itemSpot}>
-            <LocationIcon width={16} height={16} />
-            <View style={styles.itemSpotRight}>
-              <Text style={styles.itemSpotTitle}>Moderno Dance Academy</Text>
-              <View style={styles.itemSpotImages}>
-                <Image 
-                  source={images.eventAvatar}
-                  style={styles.itemSpotImg}
-                />
-                <Image 
-                  source={images.defaultUser}
-                  style={[styles.itemSpotImg, {marginLeft: -8, zIndex: -1}]}
-                />
-              </View>
-              <Text style={styles.itemSpotTitle}>+ 109 going</Text>
-            </View>
-          </View>
-
-          <DCLine />
-
-          <View style={styles.itemBottom}>
-            <View style={styles.itemTags}>
-              <View style={styles.itemTag}>
-                <Text style={styles.itemTagTitle}>Salsa</Text>
-              </View>
-              <View style={styles.itemTag}>
-                <Text style={styles.itemTagTitle}>Bachata</Text>
-              </View>
-              <View style={styles.itemTag}>
-                <Text style={styles.itemTagTitle}>Kizomba</Text>
-              </View>
-              <View style={styles.itemAnotherTag}>
-                <Text style={styles.itemAnotherTagTitle}>+3</Text>
-              </View>
-            </View>
-            <View style={styles.itemBtn}>
-              <Text style={styles.itemBtnTitle}>Attend</Text>
-            </View>
-          </View>
-
-        </View> */}
-
       </View>
 
     </ScrollView>
@@ -157,7 +78,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: theming.colors.white,
-    padding: theming.spacing.LG,
     padding: theming.spacing.LG,
   },
   homeTop: {
