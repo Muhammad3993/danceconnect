@@ -1,9 +1,11 @@
 import { theming } from 'common/constants/theming';
 import { CommunitiesIcon } from 'components/icons/communities';
 import { DCButton } from 'components/shared/button';
+import { CommunityItem } from 'components/shared/community_item';
 import { EventItem } from 'components/shared/event_item';
 import { JoinCommunity } from 'components/shared/join_community';
 import { DCRoundIcon } from 'components/shared/round_icon';
+import { StartCommunity } from 'components/shared/start_community';
 import { DCTabs } from 'components/shared/tabs';
 import { Community } from 'data/api/community/interfaces';
 import { Event } from 'data/api/event/interfaces';
@@ -29,7 +31,7 @@ interface Props {
   loadingMore?: boolean;
 }
 
-export function HomeEvent({
+export function CommunitiesEvent({
   onEndReached,
   isLoading,
   events,
@@ -40,19 +42,11 @@ export function HomeEvent({
   const { t } = useTranslation();
 
   const TABS = [
-    { text: t('all'), containerStyle: { flex: .7 } },
-    { text: t('festival'), containerStyle: { flex: 1 } },
+    { text: t('all'), containerStyle: { flex: 1 } },
+    { text: t('joined'), containerStyle: { flex: 1 } },
     {
-        text: t('competitions'),
-        containerStyle: { flex: 1.6 },
-    },    
-    {
-        text: t('class'),
-        containerStyle: { flex: .8, },
-    },
-    {
-        text: t('party'),
-        containerStyle: { flex: .8, borderBottomWidth: 3 },
+        text: t('managing'),
+        containerStyle: { flex: 1 },
     },
   ];
 
@@ -62,41 +56,35 @@ export function HomeEvent({
     if (currentTab === t('all')) {
         return all;
     }
-    if (currentTab === t('competitions')) {
+    if (currentTab === t('joined')) {
         return events;
     }
-    if (currentTab === t('festival')) {
-        return communities;
-    }    
-    if (currentTab === t('class')) {
-        return communities;
-    }
-    if (currentTab === t('party')) {
+    if (currentTab === t('managing')) {
         return communities;
     }
 
     return [];
   }, [events, currentTab, communities, all, t]);
 
-  const emptyTitle = useMemo(() => {
-    if (currentTab === t('all')) {
-      return t('no all');
-    }
-    if (currentTab === t('competitions')) {
-      return t('no competitions');
-    }
-    if (currentTab === t('festival')) {
-      return t('no festival');
-    }    
-    if (currentTab === t('class')) {
-      return t('no class');
-    }
-    if (currentTab === t('party')) {
-        return t('no party');
-    }
+//   const emptyTitle = useMemo(() => {
+//     if (currentTab === t('all')) {
+//       return t('no all');
+//     }
+//     if (currentTab === t('joined')) {
+//       return t('no competitions');
+//     }
+//     if (currentTab === t('festival')) {
+//       return t('no festival');
+//     }    
+//     if (currentTab === t('class')) {
+//       return t('no class');
+//     }
+//     if (currentTab === t('party')) {
+//         return t('no party');
+//     }
 
-    return '';
-  }, [t, currentTab]);
+//     return '';
+//   }, [t, currentTab]);
 
   return (
     <FlatList
@@ -123,14 +111,22 @@ export function HomeEvent({
           {isLoading ? (
             <ActivityIndicator size={'large'} />
           ) : (
-            false ? (
+            currentTab === t("all") && (
             <>
-              <JoinCommunity  />
-            </>) : (
-              <>
-                <EventItem />
-                <EventItem />
-              </>
+                <CommunityItem />
+                <CommunityItem />
+                <CommunityItem />
+                <CommunityItem />
+            </>) ||
+            currentTab === t("joined") && (
+            <>
+                <JoinCommunity />
+            </> 
+            ) || 
+            currentTab === t("managing") && (
+            <View style={{marginTop: 20}}>
+                <StartCommunity />   
+            </View>
             )
           )}
         </View>

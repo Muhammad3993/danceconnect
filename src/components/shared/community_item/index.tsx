@@ -1,32 +1,18 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { SetCalendarIcon } from 'components/icons/setCalendar'
 import { theming } from 'common/constants/theming'
 import { images } from 'common/resources/images'
-import { LocationIcon } from 'components/icons/location'
 import { DCLine } from '../line'
 
-export function EventItem() {
+export function CommunityItem() {
   return (
     <View style={styles.item}>
         <View style={styles.itemBody}>
             <View style={styles.itemBodyText}>
-                <View style={styles.itemCategories}>
-                <View style={styles.itemCategory}>
-                    <Text style={styles.itemCategoryTitle}>Festival</Text>
-                </View>
-                <View style={[styles.itemCategory, {backgroundColor: theming.colors.green}]}>
-                    <Text style={styles.itemCategoryTitle}>$25.00</Text>
-                </View>
-                </View>
-                <View style={styles.itemDate}>
-                <SetCalendarIcon />
-                <Text style={styles.itemDateTitle}>Mon, Dec 24  •  21:00</Text>
-                </View>
-                <Text style={styles.itemTitle}>"Sensual" Bachata Festival</Text>
+                <Text style={styles.itemTitle}>Ballroom Dance Community</Text>
                 <Text style={styles.itemSubtitle} numberOfLines={3}>
-                Experience the Magic of Bachata at the Los Angeles Bachata Festival!... 
-                <Text style={{color: theming.colors.purple}}>Details</Text>
+                    Embrace the beauty of ballroom dance and become part of a community that will inspire, challenge, and uplift you. Enroll today and let the magic of ballro... 
+                    <Text style={{color: theming.colors.purple}}>Details</Text>
                 </Text>
             </View>
         
@@ -39,11 +25,9 @@ export function EventItem() {
         </View>
     
         <View style={styles.itemSpot}>
-            <LocationIcon width={16} height={16} />
             <View style={styles.itemSpotRight}>
-                <Text style={styles.itemSpotTitle}>Moderno Dance Academy</Text>
                 <View style={styles.itemSpotImages}>
-                <Image 
+                <Image
                     source={images.eventAvatar}
                     style={styles.itemSpotImg}
                 />
@@ -52,7 +36,7 @@ export function EventItem() {
                     style={[styles.itemSpotImg, {marginLeft: -8, zIndex: -1}]}
                 />
                 </View>
-                <Text style={styles.itemSpotTitle}>+ 109 going</Text>
+                <Text style={styles.itemSpotTitle}>+ 11203 followers</Text>
             </View>
         </View>
     
@@ -61,20 +45,20 @@ export function EventItem() {
         <View style={styles.itemBottom}>
             <View style={styles.itemTags}>
                 <View style={styles.itemTag}>
-                <Text style={styles.itemTagTitle}>Salsa</Text>
+                <Text style={styles.itemTagTitle}>Waltz</Text>
                 </View>
                 <View style={styles.itemTag}>
-                <Text style={styles.itemTagTitle}>Bachata</Text>
+                <Text style={styles.itemTagTitle}>Tango</Text>
                 </View>
                 <View style={styles.itemTag}>
-                <Text style={styles.itemTagTitle}>Kizomba</Text>
+                <Text style={styles.itemTagTitle}>Cha-Cha</Text>
                 </View>
                 <View style={styles.itemAnotherTag}>
-                <Text style={styles.itemAnotherTagTitle}>+3</Text>
+                <Text style={styles.itemAnotherTagTitle}>+8</Text>
                 </View>
             </View>
             <View style={styles.itemBtn}>
-                <Text style={styles.itemBtnTitle}>Attend</Text>
+                <Text style={styles.itemBtnTitle}>Join</Text>
             </View>
         </View>
     
@@ -95,54 +79,26 @@ const styles = StyleSheet.create({
     itemBody: {
         width: "100%",
         flexDirection: "row",
-        // justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "flex-start",
     },
     itemBodyText: {
-        width: "74.7%",
-    },
-    itemCategories: {
-        flexDirection: "row",
-        gap: 4,
-    },
-    itemCategory: {
-        backgroundColor: theming.colors.purple,
-        paddingHorizontal: 10,
-        paddingVertical: 3,
-        borderRadius: 4,
-    },
-    itemCategoryTitle: {
-        color: theming.colors.white,
-        fontWeight: "700",
-        fontSize: 12,
-        fontFamily: theming.fonts.latoRegular,
-    },
-    itemDate: {
-        flexDirection: "row",
-        gap: theming.spacing.SM,
-        marginTop: 13
-    },
-    itemDateTitle: {
-        fontSize: 12,
-        fontWeight: "800",
-        color: theming.colors.textPrimary,
-        fontFamily: theming.fonts.latoRegular,
+        width: "74%",
     },
     itemTitle:{
         fontSize: 18,
         fontWeight: "700",
         color: theming.colors.textPrimary,
         fontFamily: theming.fonts.latoRegular,
-        marginTop: 6
     },
     itemSubtitle: {
         fontWeight: "400",
         fontSize: 14,
         color: theming.colors.gray700,
         fontFamily: theming.fonts.latoRegular,
-        marginTop: 6
+        marginTop: 6,
     },
-      itemImage: {
+    itemImage: {
         width: 80,
         height: 105,
         borderRadius: 6,
@@ -222,7 +178,7 @@ const styles = StyleSheet.create({
     },
     itemBtn: {
         backgroundColor: theming.colors.orange,
-        paddingHorizontal: 12,
+        paddingHorizontal: 26,
         paddingVertical: theming.spacing.SM,
         borderRadius: 100,
     },
