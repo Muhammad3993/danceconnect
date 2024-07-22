@@ -5,6 +5,21 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavigationProp } from '@react-navigation/native';
 import { theming } from 'common/constants/theming';
+import { ListItem } from 'components/list_item';
+import { CommunitiesIcon } from 'components/icons/communities';
+import { RightArrowIcon } from 'components/icons/rightArrow';
+import { CategoryIcon } from 'components/icons/category';
+import { TicketIcon } from 'components/icons/ticket';
+import { DCLine } from 'components/shared/line';
+import { LocationIcon } from 'components/icons/location';
+import { SecurityIcon } from 'components/icons/security';
+import { NotificationIcon } from 'components/icons/notification';
+import { PaymentIcon } from 'components/icons/payment';
+import { SwapIcon } from 'components/icons/swap';
+import { InfoIcon } from 'components/icons/info';
+import { StarIcon } from 'components/icons/star';
+import { LogoutIcon } from 'components/icons/logout';
+import { TrashIcon } from 'components/icons/trash';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -30,47 +45,134 @@ export function ProfileSettings({ navigation, close }: Props) {
     close();
   };
 
-  const onPressDeleteAccount = () => {};
+  const onPressDeleteAccount = () => { };
 
   const handleLogout = () => {
     close();
   };
 
-  const onPressChangePassword = () => {};
+  const onPressChangePassword = () => { };
 
   const onPressChangeLG = () => {
     close();
   };
   return (
     <View style={styles.listWrapper}>
-      <TouchableOpacity
-        style={styles.listItemWrapper}
-        onPress={onPressCommunities}>
-        <Text style={styles.listItemText}>
-          {t('manage_communties')}
-          {1}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.listItemWrapper} onPress={onPressEvents}>
-        <Text style={styles.listItemText}>
-          {t('manage_events')}
-          {1}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.listItemWrapper}
-        onPress={onPressDanceStyles}>
-        <Text style={styles.listItemText}>
-          {t('manage_dc')}
-          {1}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.listItemWrapper} onPress={onPressTickets}>
-        <Text style={styles.listItemText}>
-          {t('my_tickets')}
-          {1}
-        </Text>
-      </TouchableOpacity>
+      <ListItem
+        leftIcon={<CommunitiesIcon
+          fill={theming.colors.textPrimary}
+          width={28}
+          height={28}
+        />}
+        click={onPressCommunities}
+        title={t('manage_communties')}
+        count={"(1)"}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <ListItem
+        leftIcon={<CategoryIcon />}
+        click={onPressDanceStyles}
+        title={t('manage_dc')}
+        count={"(3)"}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <ListItem
+        leftIcon={<TicketIcon
+          fill={theming.colors.textPrimary}
+          width={28}
+          height={28}
+        />}
+        click={onPressTickets}
+        title={t('my_tickets')}
+        count={"(3)"}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <DCLine />
+
+      <ListItem
+        leftIcon={<LocationIcon active />}
+        click={onPressTickets}
+        title={t('location')}
+        location={"San Francisco, California"}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <ListItem
+        leftIcon={<SecurityIcon />}
+        click={onPressTickets}
+        title={t('Security')}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <ListItem
+        leftIcon={<NotificationIcon />}
+        click={onPressTickets}
+        title={t('Notification')}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <ListItem
+        leftIcon={<PaymentIcon />}
+        click={onPressTickets}
+        title={t('Payments')}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <ListItem
+        leftIcon={<SwapIcon />}
+        click={onPressTickets}
+        title={t('Linked Accounts')}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <ListItem
+        leftIcon={<InfoIcon />}
+        click={onPressTickets}
+        title={t('Help Center')}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <DCLine />
+
       {/* <View style={styles.line} /> */}
       {/* {isSocialAuth && <View style={{ marginTop: -12 }} />}
       <LocationSelector isProfileScreen />
@@ -110,43 +212,46 @@ export function ProfileSettings({ navigation, close }: Props) {
         </>
       )} */}
       {/* <View style={styles.line} /> */}
-      <TouchableOpacity
-        style={styles.listItemWrapper}
-        onPress={() => {
+
+      <ListItem
+        leftIcon={<StarIcon />}
+        click={onPressTickets}
+        title={t('Rate us')}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
+
+      <ListItem
+        leftIcon={<InfoIcon />}
+        click={() => {
           Linking.openURL('https://danceconnect.online/terms.html');
-        }}>
-        <Text style={styles.listItemText}>{t('terms_condition')}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.listItemWrapper}
-        onPress={() => {
-          Linking.openURL('https://danceconnect.online/privacy.html');
-        }}>
-        <Text style={styles.listItemText}>{t('privacy')}</Text>
-      </TouchableOpacity>
+        }}
+        title={t('Terms & Privacy')}
+        rightIcon={<RightArrowIcon
+          stroke={theming.colors.textPrimary}
+          width={20}
+          height={20}
+        />}
+      />
 
-      <TouchableOpacity
-        style={styles.listItemWrapper}
-        onPress={() => {
-          Linking.openURL('https://danceconnect.online/payouts.html');
-        }}>
-        <Text style={styles.listItemText}>{t('payouts')}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.listItemWrapper}
-        onPress={() => {
-          Linking.openURL('mailto:dance.connect@incode-systems.com');
-        }}>
-        <Text style={styles.listItemText}>{t('contact')}</Text>
-      </TouchableOpacity>
+      <ListItem
+        leftIcon={<LogoutIcon />}
+        title={t('Logout')}
+        titleStyle={{
+          color: theming.colors.redError
+        }}
+      />
 
-      <TouchableOpacity style={styles.listItemWrapper} onPress={() => {}}>
-        <Text style={styles.listItemTextLogout}>{t('logout')}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.listItemWrapper} onPress={() => {}}>
-        <Text style={styles.listItemTextLogout}>{t('del_acc')}</Text>
-      </TouchableOpacity>
+      <ListItem
+        leftIcon={<TrashIcon />}
+        title={t('del_acc')}
+        titleStyle={{
+          color: theming.colors.redError
+        }}
+      />
     </View>
   );
 }
@@ -155,6 +260,7 @@ const styles = StyleSheet.create({
   listWrapper: {
     paddingVertical: 14,
     paddingHorizontal: 24,
+    gap: 15
   },
   listItemWrapper: {
     flexDirection: 'row',
@@ -167,16 +273,5 @@ const styles = StyleSheet.create({
     color: theming.colors.textPrimary,
     fontWeight: '500',
   },
-  listItemTextLogout: {
-    fontSize: 18,
-    lineHeight: 25.2,
-    paddingLeft: 20,
-    color: theming.colors.redError,
-  },
-  locationText: {
-    fontSize: 16,
-    lineHeight: 22.4,
-    paddingRight: 20,
-    color: theming.colors.darkGray,
-  },
+
 });
