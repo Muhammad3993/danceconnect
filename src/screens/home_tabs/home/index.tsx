@@ -10,7 +10,6 @@ import { DCAmity } from 'common/libs/amity';
 import { useDCStore } from 'store';
 
 export function HomeScreen() {
-
   const user = useDCStore.use.user();
   const [all, setAll] = useState<Amity.Post[]>([]);
 
@@ -36,29 +35,27 @@ export function HomeScreen() {
     };
   }, [user]);
 
-
   if (!user) {
     return null;
   }
 
   return (
     <ScrollView style={styles.root}>
-
       <View style={styles.homeTop}>
         <Text style={styles.homeTitle}>You might be interested</Text>
         <DCRoundIcon
-          icon={<RightArrowIcon />} 
+          icon={<RightArrowIcon />}
           iconBoxStyle={{
             width: 28,
             height: 28,
             backgroundColor: theming.colors.lightPurple,
-          }} 
+          }}
         />
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <HomeItem />
-          <HomeItem />
+        <HomeItem />
+        <HomeItem />
       </ScrollView>
 
       <StartCommunity />
@@ -67,9 +64,7 @@ export function HomeScreen() {
         <Text style={styles.homeEventsTitle}>Your upcoming events</Text>
 
         <HomeEvent all={all} communities={[]} events={[]} user={user} />
-
       </View>
-
     </ScrollView>
   );
 }
@@ -81,14 +76,14 @@ const styles = StyleSheet.create({
     padding: theming.spacing.LG,
   },
   homeTop: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   homeTitle: {
     fontSize: theming.spacing.LG,
-    fontWeight: "700",
+    fontWeight: '700',
     color: theming.colors.textPrimary,
   },
   homeEvents: {
@@ -97,11 +92,11 @@ const styles = StyleSheet.create({
   homeEventsTitle: {
     color: theming.colors.textPrimary,
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
   },
   item: {
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
     borderColor: theming.colors.gray250,
     borderRadius: theming.spacing.SM,
@@ -109,16 +104,16 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   itemBody: {
-    width: "100%",
-    flexDirection: "row",
+    width: '100%',
+    flexDirection: 'row',
     // justifyContent: "center",
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
   },
   itemBodyText: {
-    width: "74.7%",
+    width: '74.7%',
   },
   itemCategories: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 4,
   },
   itemCategory: {
@@ -129,84 +124,84 @@ const styles = StyleSheet.create({
   },
   itemCategoryTitle: {
     color: theming.colors.white,
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 12,
     fontFamily: theming.fonts.latoRegular,
   },
   itemDate: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: theming.spacing.SM,
-    marginTop: 13
+    marginTop: 13,
   },
   itemDateTitle: {
     fontSize: 12,
-    fontWeight: "800",
+    fontWeight: '800',
     color: theming.colors.textPrimary,
     fontFamily: theming.fonts.latoRegular,
   },
-  itemTitle:{
+  itemTitle: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     color: theming.colors.textPrimary,
     fontFamily: theming.fonts.latoRegular,
-    marginTop: 6
+    marginTop: 6,
   },
   itemSubtitle: {
-    fontWeight: "400",
+    fontWeight: '400',
     fontSize: 14,
     color: theming.colors.gray700,
     fontFamily: theming.fonts.latoRegular,
-    marginTop: 6
+    marginTop: 6,
   },
   itemImage: {
     width: 80,
     height: 105,
     borderRadius: 6,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   itemImg: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 6,
-    resizeMode: "cover",
+    resizeMode: 'cover',
   },
   itemSpot: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: theming.spacing.SM,
     marginTop: 10,
     marginBottom: 15,
   },
   itemSpotRight: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 2,
   },
   itemSpotTitle: {
     fontSize: 14,
-    fontWeight: "400",
+    fontWeight: '400',
     color: theming.colors.gray700,
     fontFamily: theming.fonts.latoRegular,
   },
   itemSpotImages: {
-    flexDirection: "row",
-    position: "relative",
+    flexDirection: 'row',
+    position: 'relative',
   },
   itemSpotImg: {
     width: 24,
     height: 24,
     borderRadius: 50,
-    position: "relative",
+    position: 'relative',
   },
   itemBottom: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 10
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 10,
   },
   itemTags: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   itemTag: {
@@ -218,7 +213,7 @@ const styles = StyleSheet.create({
   },
   itemTagTitle: {
     color: theming.colors.purple,
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 12,
     fontFamily: theming.fonts.latoRegular,
   },
@@ -226,11 +221,11 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 10,
     paddingVertical: 3,
-    backgroundColor: theming.colors.gray75
+    backgroundColor: theming.colors.gray75,
   },
   itemAnotherTagTitle: {
     color: theming.colors.darkGray,
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 12,
     fontFamily: theming.fonts.latoRegular,
   },
@@ -241,9 +236,9 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   itemBtnTitle: {
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 14,
     color: theming.colors.white,
     fontFamily: theming.fonts.latoRegular,
-  }
+  },
 });

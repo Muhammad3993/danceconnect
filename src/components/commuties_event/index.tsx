@@ -45,8 +45,8 @@ export function CommunitiesEvent({
     { text: t('all'), containerStyle: { flex: 1 } },
     { text: t('joined'), containerStyle: { flex: 1 } },
     {
-        text: t('managing'),
-        containerStyle: { flex: 1 },
+      text: t('managing'),
+      containerStyle: { flex: 1 },
     },
   ];
 
@@ -54,37 +54,37 @@ export function CommunitiesEvent({
 
   const flatData = useMemo(() => {
     if (currentTab === t('all')) {
-        return all;
+      return all;
     }
     if (currentTab === t('joined')) {
-        return events;
+      return events;
     }
     if (currentTab === t('managing')) {
-        return communities;
+      return communities;
     }
 
     return [];
   }, [events, currentTab, communities, all, t]);
 
-//   const emptyTitle = useMemo(() => {
-//     if (currentTab === t('all')) {
-//       return t('no all');
-//     }
-//     if (currentTab === t('joined')) {
-//       return t('no competitions');
-//     }
-//     if (currentTab === t('festival')) {
-//       return t('no festival');
-//     }    
-//     if (currentTab === t('class')) {
-//       return t('no class');
-//     }
-//     if (currentTab === t('party')) {
-//         return t('no party');
-//     }
+  //   const emptyTitle = useMemo(() => {
+  //     if (currentTab === t('all')) {
+  //       return t('no all');
+  //     }
+  //     if (currentTab === t('joined')) {
+  //       return t('no competitions');
+  //     }
+  //     if (currentTab === t('festival')) {
+  //       return t('no festival');
+  //     }
+  //     if (currentTab === t('class')) {
+  //       return t('no class');
+  //     }
+  //     if (currentTab === t('party')) {
+  //         return t('no party');
+  //     }
 
-//     return '';
-//   }, [t, currentTab]);
+  //     return '';
+  //   }, [t, currentTab]);
 
   return (
     <FlatList
@@ -111,23 +111,24 @@ export function CommunitiesEvent({
           {isLoading ? (
             <ActivityIndicator size={'large'} />
           ) : (
-            currentTab === t("all") && (
-            <>
+            (currentTab === t('all') && (
+              <>
                 <CommunityItem />
                 <CommunityItem />
                 <CommunityItem />
                 <CommunityItem />
-            </>) ||
-            currentTab === t("joined") && (
-            <>
+              </>
+            )) ||
+            (currentTab === t('joined') && (
+              <>
                 <JoinCommunity />
-            </> 
-            ) || 
-            currentTab === t("managing") && (
-            <View style={{marginTop: 20}}>
-                <StartCommunity />   
-            </View>
-            )
+              </>
+            )) ||
+            (currentTab === t('managing') && (
+              <View style={{ marginTop: 20 }}>
+                <StartCommunity />
+              </View>
+            ))
           )}
         </View>
       }
@@ -145,7 +146,7 @@ export function CommunitiesEvent({
 const styles = StyleSheet.create({
   infoHeader: {
     backgroundColor: theming.colors.white,
-    marginTop: 15
+    marginTop: 15,
     // paddingHorizontal: theming.spacing.MD,
   },
   actions: {
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
 
   tabText: {
     lineHeight: 22,
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   emptyText: {
     textAlign: 'center',
