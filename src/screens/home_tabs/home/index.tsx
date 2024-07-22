@@ -1,71 +1,21 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { theming } from 'common/constants/theming';
 import { DCRoundIcon } from 'components/shared/round_icon';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { HomeItem } from 'components/shared/home_item';
 import { StartCommunity } from 'components/shared/start_community';
 import { HomeEvent } from 'components/home_event';
-import { DCAmity } from 'common/libs/amity';
 import { useDCStore } from 'store';
 
 export function HomeScreen() {
   const user = useDCStore.use.user();
   const [all, setAll] = useState<Amity.Post[]>([]);
 
-  // const logOut = useDCStore.use.clearDCStoreAction();
-  // const { t } = useTranslation();
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-    const unsubscribe = DCAmity.queryUserPosts({
-      userId: user?.id,
-      onGetPosts: ({ data, onNextPage, hasNextPage, loading, error }) => {
-        if (!loading) {
-          setAll(data ?? []);
-          console.log(data, onNextPage, hasNextPage, loading, error);
-        }
-      },
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [user]);
-
-  if (!user) {
-    return null;
-  }
-
   return (
-    <ScrollView style={styles.root}>
-      <View style={styles.homeTop}>
-        <Text style={styles.homeTitle}>You might be interested</Text>
-        <DCRoundIcon
-          icon={<RightArrowIcon />}
-          iconBoxStyle={{
-            width: 28,
-            height: 28,
-            backgroundColor: theming.colors.lightPurple,
-          }}
-        />
-      </View>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <HomeItem />
-        <HomeItem />
-      </ScrollView>
-
-      <StartCommunity />
-
-      <View style={styles.homeEvents}>
-        <Text style={styles.homeEventsTitle}>Your upcoming events</Text>
-
-        <HomeEvent all={all} communities={[]} events={[]} user={user} />
-      </View>
-    </ScrollView>
+    <View style={styles.root}>
+      <HomeEvent all={all} communities={[]} events={[]} user={user} />
+    </View>
   );
 }
 
@@ -73,27 +23,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: theming.colors.white,
-    padding: theming.spacing.LG,
-  },
-  homeTop: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  homeTitle: {
-    fontSize: theming.spacing.LG,
-    fontWeight: '700',
-    color: theming.colors.textPrimary,
-  },
-  homeEvents: {
-    marginVertical: 30,
-  },
-  homeEventsTitle: {
-    color: theming.colors.textPrimary,
-    fontSize: 20,
-    fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
+    paddingHorizontal: theming.spacing.LG,
   },
   item: {
     width: '100%',
@@ -106,7 +36,6 @@ const styles = StyleSheet.create({
   itemBody: {
     width: '100%',
     flexDirection: 'row',
-    // justifyContent: "center",
     alignItems: 'flex-start',
   },
   itemBodyText: {

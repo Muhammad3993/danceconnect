@@ -1,9 +1,10 @@
 import { theming } from 'common/constants/theming';
-import { CommunitiesIcon } from 'components/icons/communities';
-import { DCButton } from 'components/shared/button';
+import { RightArrowIcon } from 'components/icons/rightArrow';
 import { EventItem } from 'components/shared/event_item';
+import { HomeItem } from 'components/shared/home_item';
 import { JoinCommunity } from 'components/shared/join_community';
 import { DCRoundIcon } from 'components/shared/round_icon';
+import { StartCommunity } from 'components/shared/start_community';
 import { DCTabs } from 'components/shared/tabs';
 import { Community } from 'data/api/community/interfaces';
 import { Event } from 'data/api/event/interfaces';
@@ -17,6 +18,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface Props {
   all: Amity.InternalPost[];
@@ -106,16 +108,39 @@ export function HomeEvent({
       style={{ flex: 1 }}
       data={flatData}
       ListHeaderComponent={
-        <View style={styles.infoHeader}>
-          <DCTabs
-            textStyle={styles.tabText}
-            itemStyle={{ alignItems: 'center' }}
-            scrollEnabled={false}
-            data={TABS}
-            currentTab={currentTab}
-            onPressTab={setCurrentTab}
-          />
-        </View>
+        <>
+          <View style={styles.homeTop}>
+            <Text style={styles.homeTitle}>You might be interested</Text>
+            <DCRoundIcon
+              icon={<RightArrowIcon />}
+              iconBoxStyle={{
+                width: 28,
+                height: 28,
+                backgroundColor: theming.colors.lightPurple,
+              }}
+            />
+          </View>
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <HomeItem />
+            <HomeItem />
+          </ScrollView>
+
+          <StartCommunity />
+
+          <Text style={styles.homeEventsTitle}>Your upcoming events</Text>
+
+          <View style={styles.infoHeader}>
+            <DCTabs
+              textStyle={styles.tabText}
+              itemStyle={{ alignItems: 'center' }}
+              scrollEnabled={false}
+              data={TABS}
+              currentTab={currentTab}
+              onPressTab={setCurrentTab}
+            />
+          </View>
+        </>
       }
       renderItem={() => null}
       ListEmptyComponent={
@@ -128,6 +153,8 @@ export function HomeEvent({
               <JoinCommunity  />
             </>) : (
               <>
+                <EventItem />
+                <EventItem />
                 <EventItem />
                 <EventItem />
               </>
@@ -149,7 +176,7 @@ export function HomeEvent({
 const styles = StyleSheet.create({
   infoHeader: {
     backgroundColor: theming.colors.white,
-    marginTop: 15
+    marginTop: 15,
     // paddingHorizontal: theming.spacing.MD,
   },
   actions: {
@@ -167,5 +194,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
 
     color: theming.colors.gray500,
+  },
+  homeTop: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  homeTitle: {
+    fontSize: theming.spacing.LG,
+    fontWeight: '700',
+    color: theming.colors.textPrimary,
+  },
+  homeEventsTitle: {
+    color: theming.colors.textPrimary,
+    fontSize: 20,
+    fontWeight: '700',
+    fontFamily: theming.fonts.latoRegular,
+    marginTop: 30
   },
 });
