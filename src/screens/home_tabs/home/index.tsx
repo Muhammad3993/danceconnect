@@ -38,14 +38,13 @@ export function HomeScreen() {
 
   return (
     <View style={styles.root}>
-      {isLoading ? (
+      {false ? (
         <ActivityIndicator size={'large'} />
       ) : (
         <FlatList
           bounces={false}
           showsVerticalScrollIndicator={false}
           style={{ flex: 1 }}
-          data={flatData}
           ListHeaderComponent={
             <>
               <View style={styles.homeTop}>
@@ -84,7 +83,7 @@ export function HomeScreen() {
           renderItem={() => null}
           ListEmptyComponent={<JoinCommunity />}
           ListFooterComponent={
-            loadingMore ? <ActivityIndicator size={'large'} /> : undefined
+            false ? <ActivityIndicator size={'large'} /> : undefined
           }
           keyExtractor={(item, index) =>
             item?.postId ?? item?.id ?? index.toString()
@@ -102,149 +101,31 @@ const styles = StyleSheet.create({
     backgroundColor: theming.colors.white,
     paddingHorizontal: theming.spacing.LG,
   },
-  item: {
+  homeTop: {
     width: '100%',
-    borderWidth: 1,
-    borderColor: theming.colors.gray250,
-    borderRadius: theming.spacing.SM,
-    marginTop: 20,
-    padding: 12,
-  },
-  itemBody: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  itemBodyText: {
-    width: '74.7%',
-  },
-  itemCategories: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  itemCategory: {
-    backgroundColor: theming.colors.purple,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 4,
-  },
-  itemCategoryTitle: {
-    color: theming.colors.white,
-    fontWeight: '700',
-    fontSize: 12,
-    fontFamily: theming.fonts.latoRegular,
-  },
-  itemDate: {
-    flexDirection: 'row',
-    gap: theming.spacing.SM,
-    marginTop: 13,
-  },
-  itemDateTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: theming.colors.textPrimary,
-    fontFamily: theming.fonts.latoRegular,
-  },
-  itemTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theming.colors.textPrimary,
-    fontFamily: theming.fonts.latoRegular,
-    marginTop: 6,
-  },
-  itemSubtitle: {
-    fontWeight: '400',
-    fontSize: 14,
-    color: theming.colors.gray700,
-    fontFamily: theming.fonts.latoRegular,
-    marginTop: 6,
-  },
-  itemImage: {
-    width: 80,
-    height: 105,
-    borderRadius: 6,
-    overflow: 'hidden',
-  },
-  itemImg: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 6,
-    resizeMode: 'cover',
-  },
-  itemSpot: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theming.spacing.SM,
-    marginTop: 10,
-    marginBottom: 15,
-  },
-  itemSpotRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-  },
-  itemSpotTitle: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: theming.colors.gray700,
-    fontFamily: theming.fonts.latoRegular,
-  },
-  itemSpotImages: {
-    flexDirection: 'row',
-    position: 'relative',
-  },
-  itemSpotImg: {
-    width: 24,
-    height: 24,
-    borderRadius: 50,
-    position: 'relative',
-  },
-  itemBottom: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginTop: 20,
   },
-  itemTags: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  itemTag: {
-    borderWidth: 1,
-    borderColor: theming.colors.gray250,
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-  },
-  itemTagTitle: {
-    color: theming.colors.purple,
+  homeTitle: {
+    fontSize: theming.spacing.LG,
     fontWeight: '700',
-    fontSize: 12,
-    fontFamily: theming.fonts.latoRegular,
+    color: theming.colors.textPrimary,
   },
-  itemAnotherTag: {
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    backgroundColor: theming.colors.gray75,
-  },
-  itemAnotherTagTitle: {
-    color: theming.colors.darkGray,
+  homeEventsTitle: {
+    color: theming.colors.textPrimary,
+    fontSize: 20,
     fontWeight: '700',
-    fontSize: 12,
     fontFamily: theming.fonts.latoRegular,
+    marginTop: 30,
   },
-  itemBtn: {
-    backgroundColor: theming.colors.orange,
-    paddingHorizontal: 12,
-    paddingVertical: theming.spacing.SM,
-    borderRadius: 100,
+  infoHeader: {
+    backgroundColor: theming.colors.white,
+    marginTop: 15
   },
-  itemBtnTitle: {
-    fontWeight: '600',
-    fontSize: 14,
-    color: theming.colors.white,
-    fontFamily: theming.fonts.latoRegular,
+  tabText: {
+    lineHeight: 22,
+    textTransform: "capitalize"
   },
 });

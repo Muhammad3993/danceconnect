@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 15,
   },
-  communitiesInput: {
+  communitiesInputContainer: {
     width: '82%',
   },
   communitiesInput: {
