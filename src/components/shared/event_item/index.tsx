@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: theming.colors.gray250,
         borderRadius: theming.spacing.SM,
-        marginTop: 20,
         padding: 12,
         backgroundColor: theming.colors.white
     },

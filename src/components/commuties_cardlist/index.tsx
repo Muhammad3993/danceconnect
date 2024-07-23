@@ -1,5 +1,6 @@
 import { theming } from 'common/constants/theming';
 import { CommunityItem } from 'components/shared/community_item';
+import { FilterComponent } from 'components/shared/filter';
 import { JoinCommunity } from 'components/shared/join_community';
 import { StartCommunity } from 'components/shared/start_community';
 import { DCTabs } from 'components/shared/tabs';
@@ -62,7 +63,7 @@ export function CommunitiesCardList({
   }, [events, currentTab, communities, all, t]);
 
   return (
-    <View style={{position: "relative", flex: 1,}}>
+    <View style={{ position: "relative", flex: 1, }}>
       <FlatList
         bounces={false}
         onEndReached={onEndReached}
@@ -70,16 +71,19 @@ export function CommunitiesCardList({
         style={{ flex: 1 }}
         data={flatData}
         ListHeaderComponent={
-          <View style={styles.infoHeader}>
-            <DCTabs
-              textStyle={styles.tabText}
-              itemStyle={{ alignItems: 'center' }}
-              scrollEnabled={false}
-              data={TABS}
-              currentTab={currentTab}
-              onPressTab={setCurrentTab}
-            />
-          </View>
+          <>
+            <View style={styles.infoHeader}>
+              <DCTabs
+                textStyle={styles.tabText}
+                itemStyle={{ alignItems: 'center' }}
+                scrollEnabled={false}
+                data={TABS}
+                currentTab={currentTab}
+                onPressTab={setCurrentTab}
+              />
+            </View>
+            <FilterComponent />
+          </>
         }
         renderItem={() => null}
         ListEmptyComponent={
@@ -88,12 +92,12 @@ export function CommunitiesCardList({
               <ActivityIndicator size={'large'} />
             ) : (
               (currentTab === t('all') && (
-                <>
+                <View style={styles.eventWrapper}>
                   <CommunityItem />
                   <CommunityItem />
                   <CommunityItem />
                   <CommunityItem />
-                </>
+                </View>
               )) ||
               (currentTab === t('joined') && (
                 <>
@@ -123,7 +127,6 @@ export function CommunitiesCardList({
 const styles = StyleSheet.create({
   infoHeader: {
     backgroundColor: theming.colors.white,
-    marginTop: 15,
   },
   actions: {
     flexDirection: 'row',
@@ -141,4 +144,8 @@ const styles = StyleSheet.create({
 
     color: theming.colors.gray500,
   },
+  eventWrapper: {
+    marginTop: 15,
+    gap: 15,
+  }
 });
