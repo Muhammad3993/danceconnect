@@ -5,6 +5,7 @@ import { createSelectors } from './types';
 import { DCConstants } from 'data/api/collections/interfaces';
 import { collectionsApi } from 'data/api/collections';
 import { DCAmity } from 'common/libs/amity';
+import auth from '@react-native-firebase/auth';
 
 type State = {
   user: User | null;
@@ -13,7 +14,7 @@ type State = {
 
 type Action = {
   initAppAction: () => Promise<void>;
-  clearDCStoreAction: () => void;
+  clearDCStoreAction: () => Promise<void>;
   setUser: (user: User) => void;
 };
 
@@ -30,7 +31,11 @@ export const DCStore = create<State & Action>(set => ({
   },
 
   setUser: (user: User) => set({ user }),
-  clearDCStoreAction: () => set({ user: null, constants: null }),
+  clearDCStoreAction: async () => {
+    await DCAmity.logoutUser();
+    await auth().signOut();
+    set({ user: null, constants: null });
+  },
 }));
 
 export const useDCStore = createSelectors(DCStore);

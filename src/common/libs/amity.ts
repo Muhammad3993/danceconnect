@@ -24,6 +24,11 @@ export const DCAmity = {
     return Client.login({ userId, displayName }, amitySessionHandler);
   },
 
+  logoutUser() {
+    console.log('user logout from Amity');
+    return Client.logout();
+  },
+
   queryUserPosts({
     userId,
     limit = 5,
