@@ -33,7 +33,6 @@ apiClient.interceptors.response.use(
   async function (error: AxiosError) {
     if (error.response?.status === 401 || error.status === 401) {
       DCStore.getState().clearDCStoreAction();
-      await localStorage.clearAll();
     }
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error

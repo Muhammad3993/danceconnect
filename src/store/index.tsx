@@ -6,6 +6,7 @@ import { DCConstants } from 'data/api/collections/interfaces';
 import { collectionsApi } from 'data/api/collections';
 import { DCAmity } from 'common/libs/amity';
 import auth from '@react-native-firebase/auth';
+import { localStorage } from 'common/libs/local_storage';
 
 type State = {
   user: User | null;
@@ -34,6 +35,7 @@ export const DCStore = create<State & Action>(set => ({
   clearDCStoreAction: async () => {
     await DCAmity.logoutUser();
     await auth().signOut();
+    await localStorage.clearAll();
     set({ user: null, constants: null });
   },
 }));
