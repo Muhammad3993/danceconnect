@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 15,
+    marginVertical: 15,
   },
   communitiesInputContainer: {
     width: '82%',

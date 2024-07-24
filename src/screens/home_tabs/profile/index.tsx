@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     // padding: theming.spacing.LG,
-    backgroundColor: theming.colors.orange,
+    backgroundColor: theming.colors.white,
     // justifyContent: 'space-between',
   },
   // profileView: {
