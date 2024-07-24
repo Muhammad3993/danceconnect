@@ -9,12 +9,7 @@ import { Event } from 'data/api/event/interfaces';
 import { User } from 'data/api/user/inerfaces';
 import React, { ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 
 interface Props {
   all: Amity.InternalPost[];
@@ -63,7 +58,7 @@ export function CommunitiesCardList({
   }, [events, currentTab, communities, all, t]);
 
   return (
-    <View style={{ position: "relative", flex: 1, }}>
+    <View style={{ position: 'relative', flex: 1 }}>
       <FlatList
         bounces={false}
         onEndReached={onEndReached}
@@ -147,5 +142,5 @@ const styles = StyleSheet.create({
   eventWrapper: {
     marginTop: 15,
     gap: 15,
-  }
+  },
 });

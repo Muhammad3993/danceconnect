@@ -1,7 +1,7 @@
 import { Linking, StyleSheet } from 'react-native';
-import { TouchableOpacity, View, Text } from 'react-native';
+import { View } from 'react-native';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavigationProp } from '@react-navigation/native';
 import { theming } from 'common/constants/theming';
@@ -20,6 +20,7 @@ import { InfoIcon } from 'components/icons/info';
 import { StarIcon } from 'components/icons/star';
 import { LogoutIcon } from 'components/icons/logout';
 import { TrashIcon } from 'components/icons/trash';
+import { useDCStore } from 'store';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -28,6 +29,7 @@ interface Props {
 
 export function ProfileSettings({ navigation, close }: Props) {
   const { t } = useTranslation();
+  const logOutAction = useDCStore.use.clearDCStoreAction();
 
   const onPressCommunities = () => {
     close();
@@ -45,13 +47,14 @@ export function ProfileSettings({ navigation, close }: Props) {
     close();
   };
 
-  const onPressDeleteAccount = () => { };
+  const onPressDeleteAccount = () => {};
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logOutAction();
     close();
   };
 
-  const onPressChangePassword = () => { };
+  const onPressChangePassword = () => {};
 
   const onPressChangeLG = () => {
     close();
@@ -59,47 +62,57 @@ export function ProfileSettings({ navigation, close }: Props) {
   return (
     <View style={styles.listWrapper}>
       <ListItem
-        leftIcon={<CommunitiesIcon
-          fill={theming.colors.textPrimary}
-          width={28}
-          height={28}
-        />}
+        leftIcon={
+          <CommunitiesIcon
+            fill={theming.colors.textPrimary}
+            width={28}
+            height={28}
+          />
+        }
         click={onPressCommunities}
         title={t('manage_communties')}
-        count={"(1)"}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        count={'(1)'}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
         leftIcon={<CategoryIcon />}
         click={onPressDanceStyles}
         title={t('manage_dc')}
-        count={"(3)"}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        count={'(3)'}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
-        leftIcon={<TicketIcon
-          fill={theming.colors.textPrimary}
-          width={28}
-          height={28}
-        />}
+        leftIcon={
+          <TicketIcon
+            fill={theming.colors.textPrimary}
+            width={28}
+            height={28}
+          />
+        }
         click={onPressTickets}
         title={t('my_tickets')}
-        count={"(3)"}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        count={'(3)'}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <DCLine />
@@ -108,67 +121,79 @@ export function ProfileSettings({ navigation, close }: Props) {
         leftIcon={<LocationIcon active />}
         click={onPressTickets}
         title={t('location')}
-        location={"San Francisco, California"}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        location={'San Francisco, California'}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
         leftIcon={<SecurityIcon />}
         click={onPressTickets}
         title={t('Security')}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
         leftIcon={<NotificationIcon />}
         click={onPressTickets}
         title={t('Notification')}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
         leftIcon={<PaymentIcon />}
         click={onPressTickets}
         title={t('Payments')}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
         leftIcon={<SwapIcon />}
         click={onPressTickets}
         title={t('Linked Accounts')}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
         leftIcon={<InfoIcon />}
         click={onPressTickets}
         title={t('Help Center')}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <DCLine />
@@ -217,11 +242,13 @@ export function ProfileSettings({ navigation, close }: Props) {
         leftIcon={<StarIcon />}
         click={onPressTickets}
         title={t('Rate us')}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
@@ -230,18 +257,21 @@ export function ProfileSettings({ navigation, close }: Props) {
           Linking.openURL('https://danceconnect.online/terms.html');
         }}
         title={t('Terms & Privacy')}
-        rightIcon={<RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          width={20}
-          height={20}
-        />}
+        rightIcon={
+          <RightArrowIcon
+            stroke={theming.colors.textPrimary}
+            width={20}
+            height={20}
+          />
+        }
       />
 
       <ListItem
+        click={handleLogout}
         leftIcon={<LogoutIcon />}
         title={t('Logout')}
         titleStyle={{
-          color: theming.colors.redError
+          color: theming.colors.redError,
         }}
       />
 
@@ -249,7 +279,7 @@ export function ProfileSettings({ navigation, close }: Props) {
         leftIcon={<TrashIcon />}
         title={t('del_acc')}
         titleStyle={{
-          color: theming.colors.redError
+          color: theming.colors.redError,
         }}
       />
     </View>
@@ -260,7 +290,7 @@ const styles = StyleSheet.create({
   listWrapper: {
     paddingVertical: 14,
     paddingHorizontal: 24,
-    gap: 15
+    gap: 15,
   },
   listItemWrapper: {
     flexDirection: 'row',
@@ -273,5 +303,4 @@ const styles = StyleSheet.create({
     color: theming.colors.textPrimary,
     fontWeight: '500',
   },
-
 });
