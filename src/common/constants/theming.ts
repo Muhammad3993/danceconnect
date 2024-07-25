@@ -35,6 +35,7 @@ export const theming = {
     grayTransparent: 'rgba(238, 238, 238, 1)',
     green: '#07BD74',
     secondary200: "#B2A4DB",
+    secondary300: "#9C86DC",
     brown: "#6E4826",
   },
   fonts: {

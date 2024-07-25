@@ -165,7 +165,7 @@ export function StylesGroup({ group, value, onSelectItem }: StylesGroupProps) {
     <View style={styles.itemContainer}>
       <TouchableOpacity
         style={styles.titleWrapper}
-        onPress={() => {}}
+        onPress={() => { }}
         activeOpacity={0.7}>
         <View style={{ justifyContent: 'center' }}>
           <Text style={styles.itemTitle}>{group.title}</Text>

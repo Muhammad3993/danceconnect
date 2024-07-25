@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDCStore } from 'store';
 import { theming } from 'common/constants/theming';
@@ -10,6 +10,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { ProfileSettings } from './ui/settings';
+import { SettingIcon } from 'components/icons/settingIcon';
+import { ShareIcon } from 'components/icons/shareIcon';
+import { DCRoundIcon } from 'components/shared/round_icon';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const user = useDCStore.use.user();
@@ -52,7 +55,20 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.root}>
-      <Text onPress={presentModal}>settings</Text>
+      <View style={styles.profileTop}>
+        <TouchableOpacity onPress={presentModal}>
+          <DCRoundIcon
+            icon={<SettingIcon />}
+            iconBoxStyle={styles.profileTopIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <DCRoundIcon
+            icon={<ShareIcon />}
+            iconBoxStyle={styles.profileTopIcon}  
+          />
+        </TouchableOpacity>
+      </View>
       <PrifleView posts={posts} communities={[]} events={[]} user={user} />
       <DCBottomSheet snapPoints={['80%']} ref={settingsSheet}>
         <BottomSheetView>
@@ -70,6 +86,18 @@ const styles = StyleSheet.create({
     backgroundColor: theming.colors.white,
     // justifyContent: 'space-between',
   },
+  profileTop: {
+    flexDirection: "row-reverse",
+    alignContent: "center",
+    gap: 10,
+    paddingHorizontal: theming.spacing.MD,
+    marginTop: 10,
+  },
+  profileTopIcon: {
+    width: 44,
+    height: 44,
+    backgroundColor: theming.colors.purpleTransparent,
+  }
   // profileView: {
   //   flexDirection: 'row',
   //   gap: 20,

@@ -117,8 +117,12 @@ export function PrifleView({
               </ScrollView>
             </View>
           </View>
-          <View style={{ marginBottom: theming.spacing.LG }}>
+          <View style={styles.profileBottom}>
             <Text style={styles.roles}>{user.userRole}</Text>
+
+            <TouchableOpacity style={styles.editBtn}>
+              <Text style={styles.editBtnTitle}>Edit profile</Text>
+            </TouchableOpacity>
 
             {aboutText.length > 0 && (
               <>
@@ -281,4 +285,23 @@ const styles = StyleSheet.create({
 
     color: theming.colors.gray500,
   },
+  profileBottom: {
+    marginBottom: theming.spacing.LG,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+  },
+  editBtn: {
+    paddingHorizontal: theming.spacing.MD,
+    paddingVertical: theming.spacing.SM,
+    borderWidth: 1,
+    borderRadius: 100,
+    borderColor: theming.colors.secondary300
+  },
+  editBtnTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: theming.colors.purple,
+    fontFamily: theming.fonts.latoRegular,
+  }
 });
