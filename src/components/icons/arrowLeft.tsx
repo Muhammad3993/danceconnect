@@ -2,7 +2,13 @@ import * as React from 'react';
 import Svg, { Path, SvgProps } from 'react-native-svg';
 import { memo } from 'react';
 const SvgComponent = (props: SvgProps) => (
-  <Svg {...props} width={28} height={28} fill="none">
+  <Svg 
+    {...props} 
+    width={props.width || 28} 
+    height={props.height || 28}
+    viewBox="0 0 28 28" 
+    fill="none"
+  >
     <Path
       fill={props.fill}
       d="M23.332 14.32c0 .443-.33.809-.756.867l-.119.008h-17.5a.875.875 0 0 1-.119-1.742l.119-.008h17.5c.483 0 .875.392.875.875Z"

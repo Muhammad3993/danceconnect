@@ -12,6 +12,7 @@ import { ActivityIndicator, Platform, UIManager, View } from 'react-native';
 import { HomeTabs } from './home_tabs';
 import { EditProfileScreen } from './edit_profile';
 import { EventScreen } from './event';
+import { CreateCommunity } from './create_community';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -61,6 +62,7 @@ export function Navigation() {
             <Stack.Screen name="homeTabs" component={HomeTabs} />
             <Stack.Screen name="editProfile" component={EditProfileScreen} />
             <Stack.Screen name="event" component={EventScreen} />
+            <Stack.Screen name="createCommunity" component={CreateCommunity} />
           </>
         )}
       </Stack.Navigator>

@@ -5,11 +5,12 @@ const SvgComponent = (props: SvgProps) => (
   <Svg
     width={18}
     height={18}
+    viewBox="0 0 18 18"
     fill="none"
     {...props}
   >
     <Path
-      stroke="#fff"
+      stroke={props.stroke || "#fff"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

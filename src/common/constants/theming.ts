@@ -30,9 +30,12 @@ export const theming = {
     transparentPurple: '#584CF414',
     purpleTransparent: 'rgba(88, 76, 244, 1)',
     lightPurple: '#F6F5FF',
+    lightPurple1: '#5C33D726',
     redError: '#F75555',
     grayTransparent: 'rgba(238, 238, 238, 1)',
     green: '#07BD74',
+    secondary200: "#B2A4DB",
+    brown: "#6E4826",
   },
   fonts: {
     latoRegular: 'Lato-Regular',

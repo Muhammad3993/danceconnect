@@ -23,7 +23,7 @@ export function EventsScreen() {
         </View>
 
         <View style={styles.communitiesSearch}>
-          <ArrowLeftIcon fill={theming.colors.textPrimary} width={20} height={20} />
+          <ArrowLeftIcon fill={theming.colors.textPrimary} />
           <DCInput
             leftIcon={<SearchIcon />}
             placeholder="Event name, dance style, plac."
