@@ -3,13 +3,14 @@ import Svg, { Path, SvgProps } from "react-native-svg"
 import { memo } from "react"
 const SvgComponent = (props: SvgProps) => (
   <Svg
-    width={28}
-    height={28}
+    width={props.width || 28}
+    height={props.height || 28}
+    viewBox="0 0 28 28"
     fill="none"
     {...props}
   >
     <Path
-      stroke="#212121"
+      stroke={props.stroke || "#212121"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
@@ -17,7 +18,7 @@ const SvgComponent = (props: SvgProps) => (
       clipRule="evenodd"
     />
     <Path
-      stroke="#212121"
+      stroke={props.stroke || "#212121"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}

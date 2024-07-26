@@ -15,6 +15,8 @@ import { Image, TouchableOpacity, View } from 'react-native';
 import { images } from 'common/resources/images';
 import { theming } from 'common/constants/theming';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DCRoundIcon } from 'components/shared/round_icon';
+import { MessageIcon } from 'components/icons/message';
 
 const Tab = createBottomTabNavigator<TabRoutes>();
 
@@ -53,16 +55,14 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           },
           headerRight(props) {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+              <TouchableOpacity onPress={() => navigation.navigate('messages')}>
                 <View
                   style={{
-                    height: 40,
-                    width: 40,
-                    backgroundColor: 'red',
-                    borderRadius: 20,
-                    marginRight: theming.spacing.LG,
+                    marginRight: 20,
                   }}
-                />
+                >
+                  <MessageIcon fill={theming.colors.orange} stroke={theming.colors.white} width={37} height={37}/>
+                </View>
               </TouchableOpacity>
             );
           },

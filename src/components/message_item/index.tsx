@@ -3,7 +3,11 @@ import React from 'react'
 import { images } from 'common/resources/images'
 import { theming } from 'common/constants/theming'
 
-export function MessageItem() {
+interface MessageItemProps {
+    active?: boolean;
+}
+
+export const MessageItem = ({ active }: MessageItemProps) => {
     return (
         <View style={styles.messageItem}>
             <View style={styles.messageItemImage}>
@@ -17,7 +21,11 @@ export function MessageItem() {
                     <Text style={styles.messageItemTitle}>Karen Castillo</Text>
                     <Text style={styles.messageItemSubtitle}>You: What’s man!</Text>
                 </View>
-                <Text style={styles.messageItemTime}>20:49 PM</Text>
+                {
+                    active ? (
+                        <Text style={styles.messageItemTime}>20:49 PM</Text>
+                    ) : ""
+                }
             </View>
         </View>
     )

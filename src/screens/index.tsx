@@ -13,6 +13,7 @@ import { HomeTabs } from './home_tabs';
 import { EditProfileScreen } from './edit_profile';
 import { EventScreen } from './event';
 import { CreateCommunity } from './create_community';
+import { Messages } from './messages';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -49,6 +50,7 @@ export function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {/* <Stack.Screen name="messages" component={Messages} /> */}
         {user == null ? (
           <>
             <Stack.Screen name="auth" component={AuthScreen} />
@@ -63,6 +65,7 @@ export function Navigation() {
             <Stack.Screen name="editProfile" component={EditProfileScreen} />
             <Stack.Screen name="event" component={EventScreen} />
             <Stack.Screen name="createCommunity" component={CreateCommunity} />
+            <Stack.Screen name="messages" component={Messages} />
           </>
         )}
       </Stack.Navigator>

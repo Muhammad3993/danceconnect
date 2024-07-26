@@ -1,13 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, ViewStyle } from 'react-native'
+import React, { ReactNode } from 'react'
 import { FilterIcon } from 'components/icons/filter'
 import { RightArrowIcon } from 'components/icons/rightArrow'
 import { theming } from 'common/constants/theming'
 
-export function FilterComponent() {
+interface FilterComponentProps {
+  containerStyle?: ViewStyle;
+  title?: ReactNode;
+}
+
+export const FilterComponent = ({ title, containerStyle }: FilterComponentProps) => {
   return (
-    <View style={styles.filter}>
-      <Text style={styles.filterTitle}>978 communities found</Text>
+    <View style={[styles.filter, containerStyle]}>
+      <Text style={styles.filterTitle}>{title}</Text>
       <View style={styles.filterBtn}>
         <FilterIcon />
         <Text style={styles.filterBtnTitle}>Filters</Text>

@@ -87,7 +87,9 @@ export function EventsCardList({
                                 onPressTab={setCurrentTab}
                             />
                         </View>
-                        <FilterComponent />
+                        <FilterComponent
+                            title="978 communities found"
+                        />
                     </>
                 }
                 renderItem={() => null}
