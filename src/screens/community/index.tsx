@@ -1,12 +1,10 @@
 import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { CalendarIcon } from 'components/icons/calendar';
 import { EditIconSvg } from 'components/icons/editIcon';
 import { LocationIcon } from 'components/icons/location';
 import { SettingIcon } from 'components/icons/settingIcon';
 import { ShareIcon } from 'components/icons/shareIcon';
-import { TicketIcon } from 'components/icons/ticket';
 import { DCButton } from 'components/shared/button';
 import { DCRoundIcon } from 'components/shared/round_icon';
 import { DCLine } from 'components/shared/line';
@@ -21,14 +19,18 @@ import {
   View,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { RightArrowIcon } from 'components/icons/rightArrow';
+import { CommunityCardList } from './ui';
 
-export function EventScreen() {
+export function CommunityScreen() {
   const { t } = useTranslation();
   const [isActiveBox, setIsActiveBox] = useState(1);
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.root}>
       <ScrollView>
-        <ImageBackground source={images.eventBg} style={styles.backgroundImage}>
+        <ImageBackground
+          source={images.homeImg1}
+          style={styles.backgroundImage}>
           <View style={styles.eventTop}>
             <DCRoundIcon icon={<ArrowLeftIcon fill={theming.colors.white} />} />
             <View style={styles.eventTopRight}>
@@ -50,7 +52,7 @@ export function EventScreen() {
                     : styles.eventBoxTitleActive
                 }
                 onPress={() => setIsActiveBox(1)}>
-                Festival
+                Salsa
               </Text>
             </View>
             <View
@@ -64,7 +66,7 @@ export function EventScreen() {
                     : styles.eventBoxTitleActive
                 }
                 onPress={() => setIsActiveBox(2)}>
-                Salsa
+                Bachata
               </Text>
             </View>
             <View
@@ -78,20 +80,6 @@ export function EventScreen() {
                     : styles.eventBoxTitleActive
                 }
                 onPress={() => setIsActiveBox(3)}>
-                Bachata
-              </Text>
-            </View>
-            <View
-              style={
-                isActiveBox !== 4 ? styles.eventBox : styles.eventBoxActive
-              }>
-              <Text
-                style={
-                  isActiveBox !== 4
-                    ? styles.eventBoxTitle
-                    : styles.eventBoxTitleActive
-                }
-                onPress={() => setIsActiveBox(4)}>
                 Kizomba
               </Text>
             </View>
@@ -99,38 +87,22 @@ export function EventScreen() {
         </ImageBackground>
 
         <View style={styles.eventBody}>
-          <Text style={styles.eventTitle}>New York Salsa Festival</Text>
+          <Text style={styles.eventTitle}>Latin Dance Community</Text>
+          <Text style={styles.eventDescription}>
+            Our community created for dancers who are passionate about salsa,
+            bachata, and kizomba. We bring together individuals from all walks
+            of life who share a deep love for Latin music and the exhilarating
+            art of dance.
+          </Text>
 
-          <View style={styles.eventPeople}>
-            <View style={styles.eventPeopleLeft}>
-              <Image source={images.eventAvatar} style={styles.eventAvatar} />
-              <Text style={styles.eventPeopleTitle}>+ 1 going</Text>
-            </View>
-            <View style={styles.eventPeopleRight}>
-              <Text style={styles.eventPeopleRightTitle}>$25.00</Text>
-            </View>
+          <View style={styles.eventBodyBtn}>
+            <Text style={styles.eventBodyBtnTitle}>Show More</Text>
+            <RightArrowIcon style={{ transform: [{ rotate: '90deg' }] }} />
           </View>
 
-          <DCLine />
+          <DCLine containerStyle={{ marginTop: 15 }} />
 
           <View style={styles.eventColumn}>
-            <View style={styles.eventRow}>
-              <DCRoundIcon
-                icon={<CalendarIcon />}
-                iconBoxStyle={{
-                  width: 44,
-                  height: 44,
-                  backgroundColor: theming.colors.transparentPurple,
-                }}
-              />
-              <View>
-                <Text style={styles.eventDate}>
-                  Mon, Dec 24 - Dec 29 • 21:00
-                </Text>
-                <Text style={styles.eventTime}>GMT +07:00</Text>
-              </View>
-            </View>
-
             <View style={styles.eventRow}>
               <DCRoundIcon
                 icon={<LocationIcon />}
@@ -141,7 +113,7 @@ export function EventScreen() {
                 }}
               />
               <View style={styles.eventRowBox}>
-                <Text style={styles.eventDate}>La Favela Night Club</Text>
+                <Text style={styles.eventDate}>New York, New York</Text>
                 <View style={styles.eventMaps}>
                   <Text style={styles.eventMapsTitle}>Maps</Text>
                   <ArrowLeftIcon
@@ -165,61 +137,17 @@ export function EventScreen() {
                 <Text style={styles.eventTime}>Organizer</Text>
               </View>
             </View>
-          </View>
-
-          <DCLine />
-
-          <View
-            style={[styles.eventRow, { marginVertical: 15, marginBottom: 30 }]}>
-            <DCRoundIcon
-              icon={<TicketIcon fill={theming.colors.purple} />}
-              iconBoxStyle={{
-                width: 44,
-                height: 44,
-                backgroundColor: theming.colors.transparentPurple,
-              }}
-            />
-            <View>
-              <Text style={styles.eventDate}>$25.00 - $100.00</Text>
-              <Text style={styles.eventTime}>
-                Ticket price depends on package
-              </Text>
+            <View style={styles.eventPeople}>
+              <View style={styles.eventPeopleLeft}>
+                <Image source={images.eventAvatar} style={styles.eventAvatar} />
+                <Text style={styles.eventPeopleTitle}>+ 1 going</Text>
+              </View>
             </View>
           </View>
-
-          <DCButton
-          // containerStyle={{
-          //   borderColor: theming.colors.purple,
-          //   borderRadius: 100,
-          // }}
-          // textStyle={{
-          //   color: theming.colors.purple,
-          //   fontWeight: '700',
-          //   fontFamily: theming.fonts.latoRegular,
-          // }}
-          >
-            {t('manage_tickets')}
-          </DCButton>
-
-          <View style={{ marginTop: 25 }}>
-            <Text style={styles.eventSubtitle}>About this event</Text>
-            <Text style={styles.eventDescription}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut Read moreLorem ipsum dolor sit amet, consectetur
-              adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut Read more.Lorem ipsum dolor
-              sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-              veniam, quis nostrud exercitation ullamco laboris nisi ut Read
-              moreLorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-              do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut Read more......
-            </Text>
-          </View>
+          <DCButton>{t('create_event')}</DCButton>
+        </View>
+        <View style={styles.container}>
+          <CommunityCardList all={[]} communities={[]} events={[]} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -227,7 +155,7 @@ export function EventScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
     backgroundColor: theming.colors.white,
   },
@@ -305,7 +233,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 15,
   },
   eventPeopleLeft: {
     height: '100%',
@@ -322,20 +249,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     fontFamily: theming.fonts.latoRegular,
-  },
-  eventPeopleRight: {
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theming.colors.green,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-  },
-  eventPeopleRightTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.white,
   },
   eventDate: {
     fontSize: 18,
@@ -380,18 +293,25 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     gap: 12,
   },
-  eventSubtitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.textPrimary,
-  },
   eventDescription: {
     fontSize: theming.spacing.MD,
     fontWeight: '500',
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.gray800,
-    marginVertical: theming.spacing.MD,
-    // marginBottom: theming.spacing.MD
+    marginVertical: theming.spacing.SM,
+  },
+  eventBodyBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  eventBodyBtnTitle: {
+    color: theming.colors.purple,
+    fontWeight: '700',
+  },
+  container: {
+    paddingHorizontal: theming.spacing.LG,
+    paddingBottom: 10,
+    marginTop: 20,
   },
 });

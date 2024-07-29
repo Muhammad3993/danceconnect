@@ -1,4 +1,6 @@
 import { theming } from 'common/constants/theming';
+import { EditFillIcon } from 'components/icons/editFIll';
+import { DCButton } from 'components/shared/button';
 import ExpandableText from 'components/shared/expandable_text';
 import { DCTabs } from 'components/shared/tabs';
 import { UserImage } from 'components/user_image';
@@ -16,6 +18,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
   posts: Amity.InternalPost[];
@@ -39,6 +43,8 @@ export function PrifleView({
   loadingMore,
 }: Props) {
   const { t } = useTranslation();
+
+  const navigation = useNavigation();
 
   const TABS = [
     { text: t('posts'), containerStyle: { flex: 1 } },
@@ -117,12 +123,8 @@ export function PrifleView({
               </ScrollView>
             </View>
           </View>
-          <View style={styles.profileBottom}>
+          <View>
             <Text style={styles.roles}>{user.userRole}</Text>
-
-            <TouchableOpacity style={styles.editBtn}>
-              <Text style={styles.editBtnTitle}>Edit profile</Text>
-            </TouchableOpacity>
 
             {aboutText.length > 0 && (
               <>
@@ -146,8 +148,25 @@ export function PrifleView({
                 )}
               </>
             )}
-
-            {actions && <View style={styles.actions}>{actions}</View>}
+            <View style={styles.profileBottom}>
+              {actions && <View style={styles.actions}>{actions}</View>}
+              <DCButton
+                children="Edit Profile"
+                leftIcon={<EditFillIcon />}
+                containerStyle={{
+                  width: '48.5%',
+                  height: 38,
+                  backgroundColor: theming.colors.white,
+                  borderWidth: 1,
+                  borderColor: theming.colors.gray250,
+                  gap: 8,
+                }}
+                textStyle={{
+                  color: theming.colors.purple,
+                }}
+                onPress={() => navigation.navigate('editProfile')}
+              />
+            </View>
           </View>
 
           <DCTabs
@@ -265,6 +284,7 @@ const styles = StyleSheet.create({
     tintColor: theming.colors.purple,
   },
   actions: {
+    width: '48.5%',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -286,22 +306,10 @@ const styles = StyleSheet.create({
     color: theming.colors.gray500,
   },
   profileBottom: {
+    marginTop: 12,
     marginBottom: theming.spacing.LG,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theming.spacing.SM,
   },
-  editBtn: {
-    paddingHorizontal: theming.spacing.MD,
-    paddingVertical: theming.spacing.SM,
-    borderWidth: 1,
-    borderRadius: 100,
-    borderColor: theming.colors.secondary300
-  },
-  editBtnTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: theming.colors.purple,
-    fontFamily: theming.fonts.latoRegular,
-  }
 });

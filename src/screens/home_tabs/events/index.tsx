@@ -14,7 +14,6 @@ export function EventsScreen() {
   return (
     <View style={styles.root}>
       <View style={styles.events}>
-
         <View style={styles.eventsLocation}>
           <LocationIcon width={16} height={16} />
           <Text style={styles.eventsLocationTitle}>
@@ -33,7 +32,6 @@ export function EventsScreen() {
         </View>
 
         <EventsCardList all={all} communities={[]} events={[]} user={user} />
-
       </View>
     </View>
   );

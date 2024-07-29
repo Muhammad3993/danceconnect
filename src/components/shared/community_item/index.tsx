@@ -1,63 +1,69 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
 import { DCLine } from '../line';
 
-export function CommunityItem() {
+interface CommunityItemProps {
+  click?: () => void;
+}
+
+export function CommunityItem({ click }: CommunityItemProps) {
   return (
-    <View style={styles.item}>
-      <View style={styles.itemBody}>
-        <View style={styles.itemBodyText}>
-          <Text style={styles.itemTitle}>Ballroom Dance Community</Text>
-          <Text style={styles.itemSubtitle} numberOfLines={3}>
-            Embrace the beauty of ballroom dance and become part of a community
-            that will inspire, challenge, and uplift you. Enroll today and let
-            the magic of ballro...
-            <Text style={{ color: theming.colors.purple }}>Details</Text>
-          </Text>
+    <TouchableOpacity onPress={click}>
+      <View style={styles.item}>
+        <View style={styles.itemBody}>
+          <View style={styles.itemBodyText}>
+            <Text style={styles.itemTitle}>Ballroom Dance Community</Text>
+            <Text style={styles.itemSubtitle} numberOfLines={3}>
+              Embrace the beauty of ballroom dance and become part of a
+              community that will inspire, challenge, and uplift you. Enroll
+              today and let the magic of ballro...
+              <Text style={{ color: theming.colors.purple }}>Details</Text>
+            </Text>
+          </View>
+
+          <View style={styles.itemImage}>
+            <Image source={images.itemImg} style={styles.itemImg} />
+          </View>
         </View>
 
-        <View style={styles.itemImage}>
-          <Image source={images.itemImg} style={styles.itemImg} />
+        <View style={styles.itemSpot}>
+          <View style={styles.itemSpotRight}>
+            <View style={styles.itemSpotImages}>
+              <Image source={images.eventAvatar} style={styles.itemSpotImg} />
+              <Image
+                source={images.defaultUser}
+                style={[styles.itemSpotImg, { marginLeft: -8, zIndex: -1 }]}
+              />
+            </View>
+            <Text style={styles.itemSpotTitle}>+ 11203 followers</Text>
+          </View>
+        </View>
+
+        <DCLine />
+
+        <View style={styles.itemBottom}>
+          <View style={styles.itemTags}>
+            <View style={styles.itemTag}>
+              <Text style={styles.itemTagTitle}>Waltz</Text>
+            </View>
+            <View style={styles.itemTag}>
+              <Text style={styles.itemTagTitle}>Tango</Text>
+            </View>
+            <View style={styles.itemTag}>
+              <Text style={styles.itemTagTitle}>Cha-Cha</Text>
+            </View>
+            <View style={styles.itemAnotherTag}>
+              <Text style={styles.itemAnotherTagTitle}>+8</Text>
+            </View>
+          </View>
+          <View style={styles.itemBtn}>
+            <Text style={styles.itemBtnTitle}>Join</Text>
+          </View>
         </View>
       </View>
-
-      <View style={styles.itemSpot}>
-        <View style={styles.itemSpotRight}>
-          <View style={styles.itemSpotImages}>
-            <Image source={images.eventAvatar} style={styles.itemSpotImg} />
-            <Image
-              source={images.defaultUser}
-              style={[styles.itemSpotImg, { marginLeft: -8, zIndex: -1 }]}
-            />
-          </View>
-          <Text style={styles.itemSpotTitle}>+ 11203 followers</Text>
-        </View>
-      </View>
-
-      <DCLine />
-
-      <View style={styles.itemBottom}>
-        <View style={styles.itemTags}>
-          <View style={styles.itemTag}>
-            <Text style={styles.itemTagTitle}>Waltz</Text>
-          </View>
-          <View style={styles.itemTag}>
-            <Text style={styles.itemTagTitle}>Tango</Text>
-          </View>
-          <View style={styles.itemTag}>
-            <Text style={styles.itemTagTitle}>Cha-Cha</Text>
-          </View>
-          <View style={styles.itemAnotherTag}>
-            <Text style={styles.itemAnotherTagTitle}>+8</Text>
-          </View>
-        </View>
-        <View style={styles.itemBtn}>
-          <Text style={styles.itemBtnTitle}>Join</Text>
-        </View>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

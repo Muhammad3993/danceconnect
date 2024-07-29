@@ -16,7 +16,9 @@ import { DCTabs } from 'components/shared/tabs';
 import { TabScreenProps } from 'screens/interfaces';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 
-export function CommunitiesScreen({ navigation }: TabScreenProps<'createCommunity'>) {
+export function CommunitiesScreen({
+  navigation,
+}: TabScreenProps<'createCommunity'>) {
   const { t } = useTranslation();
 
   const TABS = [
@@ -45,7 +47,9 @@ export function CommunitiesScreen({ navigation }: TabScreenProps<'createCommunit
             containerStyle={styles.communitiesInputContainer}
             inputStyle={styles.communitiesInput}
           />
-          <TouchableOpacity onPress={() => navigation.push("createCommunity")} style={styles.communitiesPlus}>
+          <TouchableOpacity
+            onPress={() => navigation.push('createCommunity')}
+            style={styles.communitiesPlus}>
             <PlusBigIcon />
           </TouchableOpacity>
         </View>
@@ -68,11 +72,13 @@ export function CommunitiesScreen({ navigation }: TabScreenProps<'createCommunit
                 />
               </View>
             }
-            renderItem={() => <CommunityItem />}
+            renderItem={() => (
+              <CommunityItem click={() => navigation.navigate('community')} />
+            )}
             ListEmptyComponent={
               <View>
-                <JoinCommunity />
-                <StartCommunity />
+                <JoinCommunity title="Join a community " />
+                <StartCommunity containerStyle={{ marginTop: 20 }} />
               </View>
             }
             ListFooterComponent={

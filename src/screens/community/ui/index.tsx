@@ -1,9 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { theming } from 'common/constants/theming';
 import { EventItem } from 'components/shared/event_item';
-import { FilterComponent } from 'components/shared/filter';
 import { JoinCommunity } from 'components/shared/join_community';
-import { StartCommunity } from 'components/shared/start_community';
 import { DCTabs } from 'components/shared/tabs';
 import { Community } from 'data/api/community/interfaces';
 import { Event } from 'data/api/event/interfaces';
@@ -23,11 +21,10 @@ interface Props {
   loadingMore?: boolean;
 }
 
-export function EventsCardList({
+export function CommunityCardList({
   onEndReached,
   isLoading,
   events,
-  communities,
   all,
   loadingMore,
 }: Props) {
@@ -36,33 +33,21 @@ export function EventsCardList({
   const navigation = useNavigation();
 
   const TABS = [
-    { text: t('upcoming'), containerStyle: { flex: 1 } },
-    { text: t('attending'), containerStyle: { flex: 1 } },
-    {
-      text: t('managing'),
-      containerStyle: { flex: 1 },
-    },
-    {
-      text: t('passed'),
-      containerStyle: { flex: 1 },
-    },
+    { text: t('upcoming events'), containerStyle: { flex: 1 } },
+    { text: t('passed'), containerStyle: { flex: 1 } },
   ];
 
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
 
   const flatData = useMemo(() => {
-    if (currentTab === t('upcoming')) {
+    if (currentTab === t('upcoming events')) {
       return all;
     }
-    if (currentTab === t('attending')) {
+    if (currentTab === t('passed')) {
       return events;
     }
-    if (currentTab === t('managing')) {
-      return communities;
-    }
-
     return [];
-  }, [events, currentTab, communities, all, t]);
+  }, []);
 
   return (
     <View style={{ position: 'relative', flex: 1 }}>
@@ -84,7 +69,6 @@ export function EventsCardList({
                 onPressTab={setCurrentTab}
               />
             </View>
-            <FilterComponent title="978 communities found" />
           </>
         }
         renderItem={() => null}
@@ -93,23 +77,15 @@ export function EventsCardList({
             {isLoading ? (
               <ActivityIndicator size={'large'} />
             ) : (
-              (currentTab === t('upcoming') && (
+              (currentTab === t('upcoming events') && (
                 <View style={styles.eventWrapper}>
                   <EventItem click={() => navigation.navigate('event')} />
-                  <EventItem click={() => navigation.navigate('event')} />
-                  <EventItem click={() => navigation.navigate('event')} />
-                  <EventItem click={() => navigation.navigate('event')} />
                 </View>
               )) ||
-              (currentTab === t('attending') && (
+              (currentTab === t('passed') && (
                 <>
-                  <JoinCommunity />
+                  <JoinCommunity title="Create Your First Event" />
                 </>
-              )) ||
-              (currentTab === t('managing') && (
-                <View style={{ marginTop: 20 }}>
-                  <StartCommunity />
-                </View>
               ))
             )}
           </View>

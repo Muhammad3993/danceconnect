@@ -1,13 +1,8 @@
-import * as React from "react"
-import Svg, { Path, SvgProps } from "react-native-svg"
-import { memo } from "react"
+import * as React from 'react';
+import Svg, { Path, SvgProps } from 'react-native-svg';
+import { memo } from 'react';
 const SvgComponent = (props: SvgProps) => (
-  <Svg
-    width={28}
-    height={28}
-    fill="none"
-    {...props}
-  >
+  <Svg width={28} height={28} fill="none" {...props}>
     <Path
       stroke="#fff"
       strokeLinecap="round"
@@ -31,5 +26,5 @@ const SvgComponent = (props: SvgProps) => (
       d="m12.86 7.001 6.36 4.885"
     />
   </Svg>
-)
-export const EditIconSvg = memo(SvgComponent)
+);
+export const EditIconSvg = memo(SvgComponent);

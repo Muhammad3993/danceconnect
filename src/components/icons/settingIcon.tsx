@@ -1,16 +1,15 @@
-import * as React from "react"
-import Svg, { Path, Circle, SvgProps } from "react-native-svg"
-import { memo } from "react"
+import * as React from 'react';
+import Svg, { Path, Circle, SvgProps } from 'react-native-svg';
+import { memo } from 'react';
 const SvgComponent = (props: SvgProps) => (
   <Svg
     width={props.width || 28}
     height={props.width || 28}
     viewBox="0 0 28 28"
     fill="none"
-    {...props}
-  >
+    {...props}>
     <Path
-      stroke="#fff"
+      stroke={props.stroke || '#fff'}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
@@ -21,11 +20,11 @@ const SvgComponent = (props: SvgProps) => (
       cx={14.204}
       cy={13.871}
       r={3.076}
-      stroke="#fff"
+      stroke={props.stroke || '#fff'}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
     />
   </Svg>
-)
-export const SettingIcon = memo(SvgComponent)
+);
+export const SettingIcon = memo(SvgComponent);

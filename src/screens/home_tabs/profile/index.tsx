@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDCStore } from 'store';
 import { theming } from 'common/constants/theming';
@@ -13,6 +13,8 @@ import { ProfileSettings } from './ui/settings';
 import { SettingIcon } from 'components/icons/settingIcon';
 import { ShareIcon } from 'components/icons/shareIcon';
 import { DCRoundIcon } from 'components/shared/round_icon';
+import { DCButton } from 'components/shared/button';
+import { PlusSquareIcon } from 'components/icons/plusSquare';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const user = useDCStore.use.user();
@@ -57,19 +59,29 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
     <SafeAreaView edges={['top']} style={styles.root}>
       <View style={styles.profileTop}>
         <TouchableOpacity onPress={presentModal}>
-          <DCRoundIcon
-            icon={<SettingIcon />}
-            iconBoxStyle={styles.profileTopIcon}
-          />
+          <SettingIcon stroke={theming.colors.textPrimary} />
         </TouchableOpacity>
         <TouchableOpacity>
-          <DCRoundIcon
-            icon={<ShareIcon />}
-            iconBoxStyle={styles.profileTopIcon}  
-          />
+          <ShareIcon stroke={theming.colors.textPrimary} />
         </TouchableOpacity>
       </View>
-      <PrifleView posts={posts} communities={[]} events={[]} user={user} />
+      <PrifleView
+        posts={posts}
+        communities={[]}
+        events={[]}
+        user={user}
+        actions={
+          <DCButton
+            children="Add Post"
+            leftIcon={<PlusSquareIcon />}
+            containerStyle={{
+              width: '100%',
+              height: 38,
+              gap: 8,
+            }}
+          />
+        }
+      />
       <DCBottomSheet snapPoints={['80%']} ref={settingsSheet}>
         <BottomSheetView>
           <ProfileSettings close={closeModal} navigation={navigation} />
@@ -87,8 +99,8 @@ const styles = StyleSheet.create({
     // justifyContent: 'space-between',
   },
   profileTop: {
-    flexDirection: "row-reverse",
-    alignContent: "center",
+    flexDirection: 'row-reverse',
+    alignContent: 'center',
     gap: 10,
     paddingHorizontal: theming.spacing.MD,
     marginTop: 10,
@@ -97,7 +109,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     backgroundColor: theming.colors.purpleTransparent,
-  }
+  },
   // profileView: {
   //   flexDirection: 'row',
   //   gap: 20,

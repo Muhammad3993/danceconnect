@@ -2,19 +2,16 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { theming } from 'common/constants/theming';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MessageIcon } from 'components/icons/message';
-import { MessageItem } from 'components/message_item';
 import { LocationIcon } from 'components/icons/location';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { DCInput } from 'components/shared/input';
 import { SearchIcon } from 'components/icons/search';
 import { t } from 'i18next';
 import { FilterComponent } from 'components/shared/filter';
+import { PeopleItem } from './ui';
 
 export function PeopleScreen() {
   return (
     <SafeAreaView style={styles.root}>
-
       <View style={styles.eventsLocation}>
         <LocationIcon width={16} height={16} />
         <Text style={styles.eventsLocationTitle}>
@@ -25,7 +22,7 @@ export function PeopleScreen() {
       <View style={styles.communitiesSearch}>
         <DCInput
           leftIcon={<SearchIcon />}
-          placeholder={t("name")}
+          placeholder={t('name')}
           containerStyle={styles.communitiesInputContainer}
           inputStyle={styles.communitiesInput}
         />
@@ -39,27 +36,23 @@ export function PeopleScreen() {
             marginBottom: 20,
           }}
         />
-
         <View style={styles.messageBody}>
-
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
+          <PeopleItem />
         </View>
       </ScrollView>
-
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -68,7 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: theming.colors.white,
   },
   container: {
-    paddingHorizontal: theming.spacing.LG
+    paddingHorizontal: theming.spacing.LG,
   },
   eventsLocation: {
     width: '100%',
@@ -105,5 +98,5 @@ const styles = StyleSheet.create({
   },
   messageBody: {
     gap: theming.spacing.SM,
-},
+  },
 });
