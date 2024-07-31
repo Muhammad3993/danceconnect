@@ -15,6 +15,7 @@ import { CommunityItem } from 'components/shared/community_item';
 import { DCTabs } from 'components/shared/tabs';
 import { TabScreenProps } from 'screens/interfaces';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import useGetCommunities from 'data/hooks/community';
 
 export function CommunitiesScreen({
   navigation,
@@ -28,6 +29,8 @@ export function CommunitiesScreen({
   ];
 
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
+
+  const { data } = useGetCommunities();
 
   return (
     <SafeAreaView style={styles.root}>
@@ -53,13 +56,14 @@ export function CommunitiesScreen({
             <PlusBigIcon />
           </TouchableOpacity>
         </View>
+        {/* <Text>{JSON.stringify(data, null, 2)}</Text> */}
 
         <View style={{ position: 'relative', flex: 1 }}>
           <FlatList
             bounces={false}
             showsVerticalScrollIndicator={false}
             style={{ flex: 1 }}
-            data={[]}
+            data={data}
             ListHeaderComponent={
               <View style={styles.infoHeader}>
                 <DCTabs
@@ -72,8 +76,12 @@ export function CommunitiesScreen({
                 />
               </View>
             }
-            renderItem={() => (
-              <CommunityItem click={() => navigation.navigate('community')} />
+            renderItem={({ item }) => (
+              <CommunityItem
+                key={item.id}
+                community={item}
+                click={() => navigation.navigate('community', { id: item.id })}
+              />
             )}
             ListEmptyComponent={
               <View>

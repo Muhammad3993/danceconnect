@@ -7,3 +7,10 @@ export default function useGetCommunities() {
     queryFn: communityApi.getCommunities,
   });
 }
+
+export const useGetCommunity = (id: number) => {
+  return useQuery({
+    queryKey: ['community', id],
+    queryFn: () => communityApi.getCommunity(id),
+  });
+}

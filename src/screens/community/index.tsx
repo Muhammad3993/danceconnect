@@ -16,15 +16,26 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { CommunityCardList } from './ui';
+import { useGetCommunity } from 'data/hooks/community';
 
-export function CommunityScreen() {
+export function CommunityScreen({ route }) {
   const { t } = useTranslation();
-  const [isActiveBox, setIsActiveBox] = useState(1);
+  const [isActiveBox, setIsActiveBox] = useState(0);
+  const [isShowDescriptions, setIsShowDescriptions] = useState();
+  const handleDescriptionToggle = () => {
+    setIsShowDescriptions(!isShowDescriptions);
+  };
+
+  const { id } = route.params;
+
+  const { data: community } = useGetCommunity(id);
+
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView>
@@ -41,64 +52,45 @@ export function CommunityScreen() {
           </View>
 
           <View style={styles.eventBoxes}>
-            <View
-              style={
-                isActiveBox !== 1 ? styles.eventBox : styles.eventBoxActive
-              }>
-              <Text
+            {community?.categories.map((category, i) => (
+              <View
                 style={
-                  isActiveBox !== 1
-                    ? styles.eventBoxTitle
-                    : styles.eventBoxTitleActive
-                }
-                onPress={() => setIsActiveBox(1)}>
-                Salsa
-              </Text>
-            </View>
-            <View
-              style={
-                isActiveBox !== 2 ? styles.eventBox : styles.eventBoxActive
-              }>
-              <Text
-                style={
-                  isActiveBox !== 2
-                    ? styles.eventBoxTitle
-                    : styles.eventBoxTitleActive
-                }
-                onPress={() => setIsActiveBox(2)}>
-                Bachata
-              </Text>
-            </View>
-            <View
-              style={
-                isActiveBox !== 3 ? styles.eventBox : styles.eventBoxActive
-              }>
-              <Text
-                style={
-                  isActiveBox !== 3
-                    ? styles.eventBoxTitle
-                    : styles.eventBoxTitleActive
-                }
-                onPress={() => setIsActiveBox(3)}>
-                Kizomba
-              </Text>
-            </View>
+                  isActiveBox !== i ? styles.eventBox : styles.eventBoxActive
+                }>
+                <Text
+                  style={
+                    isActiveBox !== i
+                      ? styles.eventBoxTitle
+                      : styles.eventBoxTitleActive
+                  }
+                  onPress={() => setIsActiveBox(i)}>
+                  {category}
+                </Text>
+              </View>
+            ))}
           </View>
         </ImageBackground>
 
         <View style={styles.eventBody}>
-          <Text style={styles.eventTitle}>Latin Dance Community</Text>
-          <Text style={styles.eventDescription}>
-            Our community created for dancers who are passionate about salsa,
-            bachata, and kizomba. We bring together individuals from all walks
-            of life who share a deep love for Latin music and the exhilarating
-            art of dance.
+          <Text style={styles.eventTitle}>{community?.title}</Text>
+          <Text
+            style={styles.eventDescription}
+            numberOfLines={isShowDescriptions ? null : 3}>
+            {community?.description}
           </Text>
 
-          <View style={styles.eventBodyBtn}>
+          <TouchableOpacity
+            style={styles.eventBodyBtn}
+            onPress={handleDescriptionToggle}>
             <Text style={styles.eventBodyBtnTitle}>Show More</Text>
-            <RightArrowIcon style={{ transform: [{ rotate: '90deg' }] }} />
-          </View>
+            <RightArrowIcon
+              style={
+                isShowDescriptions
+                  ? { transform: [{ rotate: '-90deg' }] }
+                  : { transform: [{ rotate: '90deg' }] }
+              }
+            />
+          </TouchableOpacity>
 
           <DCLine containerStyle={{ marginTop: 15 }} />
 
@@ -113,7 +105,7 @@ export function CommunityScreen() {
                 }}
               />
               <View style={styles.eventRowBox}>
-                <Text style={styles.eventDate}>New York, New York</Text>
+                <Text style={styles.eventDate}>{community?.creator.location.location}</Text>
                 <View style={styles.eventMaps}>
                   <Text style={styles.eventMapsTitle}>Maps</Text>
                   <ArrowLeftIcon
@@ -132,7 +124,7 @@ export function CommunityScreen() {
               <View>
                 <Text
                   style={[styles.eventDate, { fontSize: theming.spacing.MD }]}>
-                  World of Dance
+                  {community?.creator.userName}
                 </Text>
                 <Text style={styles.eventTime}>Organizer</Text>
               </View>
@@ -140,7 +132,7 @@ export function CommunityScreen() {
             <View style={styles.eventPeople}>
               <View style={styles.eventPeopleLeft}>
                 <Image source={images.eventAvatar} style={styles.eventAvatar} />
-                <Text style={styles.eventPeopleTitle}>+ 1 going</Text>
+                <Text style={styles.eventPeopleTitle}>+ {community?.followers.length} going</Text>
               </View>
             </View>
           </View>

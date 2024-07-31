@@ -5,20 +5,35 @@ import { images } from 'common/resources/images';
 import { DCLine } from '../line';
 
 interface CommunityItemProps {
+  community: {
+    id: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+    followers: [];
+    categories: [];
+    tags: string[];
+  };
   click?: () => void;
 }
 
-export function CommunityItem({ click }: CommunityItemProps) {
+export function CommunityItem({ community, click }: CommunityItemProps) {
+
+  // Only show elements
+  const slicedCategories = community.categories.slice(0, 2);
+  // Remaining elements
+  const remainingCategoriesCount =
+    community.categories.length - slicedCategories.length;
+
+
   return (
     <TouchableOpacity onPress={click}>
       <View style={styles.item}>
         <View style={styles.itemBody}>
           <View style={styles.itemBodyText}>
-            <Text style={styles.itemTitle}>Ballroom Dance Community</Text>
+            <Text style={styles.itemTitle}>{community.title}</Text>
             <Text style={styles.itemSubtitle} numberOfLines={3}>
-              Embrace the beauty of ballroom dance and become part of a
-              community that will inspire, challenge, and uplift you. Enroll
-              today and let the magic of ballro...
+              {community.description}
               <Text style={{ color: theming.colors.purple }}>Details</Text>
             </Text>
           </View>
@@ -31,13 +46,17 @@ export function CommunityItem({ click }: CommunityItemProps) {
         <View style={styles.itemSpot}>
           <View style={styles.itemSpotRight}>
             <View style={styles.itemSpotImages}>
-              <Image source={images.eventAvatar} style={styles.itemSpotImg} />
+              {community.followers.map(userUmg => (
+                <Image source={userUmg} style={styles.itemSpotImg} />
+              ))}
               <Image
                 source={images.defaultUser}
                 style={[styles.itemSpotImg, { marginLeft: -8, zIndex: -1 }]}
               />
             </View>
-            <Text style={styles.itemSpotTitle}>+ 11203 followers</Text>
+            <Text style={styles.itemSpotTitle}>
+              + {community.followers.length} followers
+            </Text>
           </View>
         </View>
 
@@ -45,18 +64,18 @@ export function CommunityItem({ click }: CommunityItemProps) {
 
         <View style={styles.itemBottom}>
           <View style={styles.itemTags}>
-            <View style={styles.itemTag}>
-              <Text style={styles.itemTagTitle}>Waltz</Text>
-            </View>
-            <View style={styles.itemTag}>
-              <Text style={styles.itemTagTitle}>Tango</Text>
-            </View>
-            <View style={styles.itemTag}>
-              <Text style={styles.itemTagTitle}>Cha-Cha</Text>
-            </View>
-            <View style={styles.itemAnotherTag}>
-              <Text style={styles.itemAnotherTagTitle}>+8</Text>
-            </View>
+            {slicedCategories.map((category, i) => (
+              <View style={styles.itemTag} key={i}>
+                <Text style={styles.itemTagTitle}>{category}</Text>
+              </View>
+            ))}
+            {remainingCategoriesCount > 0 && (
+              <View style={styles.itemAnotherTag}>
+                <Text style={styles.itemAnotherTagTitle}>
+                  +{remainingCategoriesCount}
+                </Text>
+              </View>
+            )}
           </View>
           <View style={styles.itemBtn}>
             <Text style={styles.itemBtnTitle}>Join</Text>
@@ -75,15 +94,17 @@ const styles = StyleSheet.create({
     borderRadius: theming.spacing.SM,
     padding: 12,
     backgroundColor: theming.colors.white,
+    marginTop: 15,
   },
   itemBody: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'flex-start',
+    gap: 20,
   },
   itemBodyText: {
-    width: '74%',
+    width: '70%',
+    flex: 1,
   },
   itemTitle: {
     fontSize: 18,
@@ -147,6 +168,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   itemTags: {
+    flex: 1,
+    flexWrap: 'wrap',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,

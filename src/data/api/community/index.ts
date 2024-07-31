@@ -7,4 +7,10 @@ export const communityApi = {
 
     return res.data;
   },
+
+  async getCommunity(id: number) {
+    const res = await apiClient.get<Community>(`/community/${id}`);
+
+    return res.data;
+  },
 };
