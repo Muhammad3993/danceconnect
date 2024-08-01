@@ -4341,7 +4341,6 @@ __metadata:
     react-native-gesture-handler: ^2.17.1
     react-native-gifted-chat: ^2.4.0
     react-native-image-crop-picker: ^0.41.2
-    react-native-image-picker: ^7.1.2
     react-native-keyboard-aware-scroll-view: ^0.9.5
     react-native-pager-view: ^6.3.3
     react-native-reanimated: latest
@@ -10592,16 +10591,6 @@ __metadata:
   peerDependencies:
     react-native: ">=0.40.0"
   checksum: c1333b3b761e948bd0bc856773f68dcc859c7ce39dda3e14d2c32c17d55927735bfc5cbbb7ac5e8bac21feda87c93399f2a596aca7d5b0611cc1e8203d97ad2e
-  languageName: node
-  linkType: hard
-
-"react-native-image-picker@npm:^7.1.2":
-  version: 7.1.2
-  resolution: "react-native-image-picker@npm:7.1.2"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: af52328b7cb06c28549442f0d923cfa92dde8d5a968a642336df4c882f81adbf0e5e606a14de27f96883a76fa1e03230061c4080011c9107942edebc8e09c478
   languageName: node
   linkType: hard
 

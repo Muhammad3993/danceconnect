@@ -12,7 +12,6 @@ import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { theming } from 'common/constants/theming';
 import { CommunitiesIcon } from 'components/icons/communities';
 import { DCInput } from 'components/shared/input';
-import { CloseIcon } from 'components/icons/close';
 import { UploadIcon } from 'components/icons/upload';
 import { images } from 'common/resources/images';
 import { TrashIcon } from 'components/icons/trash';
@@ -21,9 +20,41 @@ import CategorySelector from 'components/category_selector';
 import LocationSelector from 'components/location_selector';
 import { t } from 'i18next';
 
+import ImageCropPicker from 'react-native-image-crop-picker';
+import { useCreateCommunity } from 'data/hooks/community';
+
 export function CreateCommunity() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categoryError, setCategoryError] = useState('');
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [images, setImages] = useState([]);
+  const [location, setLocation] = useState('');
+  const [type, setType] = useState('');
+  const [channelId, setChannelId] = useState('');
+  
+  const {
+    mutate: createCommunity,
+    isLoading,
+    isError,
+    error,
+  } = useCreateCommunity();
+
+  const handleCreateCommunity = () => {
+    const communityData = {
+      title,
+      description,
+      images,
+      categories: selectedCategories,
+      location,
+      type,
+      channelId,
+    };
+    createCommunity(communityData);
+    console.log('Community Data: ', communityData);
+    // API call to create community can be placed here
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -50,9 +81,14 @@ export function CreateCommunity() {
         <View style={styles.inputName}>
           <View style={styles.inputNameTop}>
             <Text style={styles.inputNameTopTitle}>{t('create_name')}</Text>
-            <Text style={styles.inputNameTopLimit}>0/100</Text>
+            <Text style={styles.inputNameTopLimit}>{title.length}/100</Text>
           </View>
-          <DCInput placeholder={t('name')} inputStyle={styles.inputNameStyle} />
+          <DCInput
+            placeholder={t('name')}
+            inputStyle={styles.inputNameStyle}
+            value={title}
+            onChangeText={setTitle}
+          />
         </View>
 
         <View>
@@ -82,6 +118,8 @@ export function CreateCommunity() {
             <DCInput
               placeholder={t('description')}
               inputStyle={styles.inputNameStyle}
+              onChangeText={setDescription}
+              value={description}
             />
           ) : (
             <View style={styles.descriptionBox}>
@@ -119,7 +157,7 @@ export function CreateCommunity() {
         </View>
 
         <View style={[styles.container, { marginBottom: 15 }]}>
-          <LocationSelector />
+          <LocationSelector value={location} onChange={setLocation} />
         </View>
       </ScrollView>
 
@@ -128,10 +166,20 @@ export function CreateCommunity() {
           children={t('clear')}
           containerStyle={styles.bottomBtn}
           textStyle={styles.bottomTitle}
+          onPress={() => {
+            setTitle('');
+            setDescription('');
+            setImages([]);
+            setSelectedCategories([]);
+            setLocation('');
+            setType('');
+            setChannelId('');
+          }}
         />
         <DCButton
           children={t('create_community')}
           containerStyle={styles.bottomBtn1}
+          onPress={handleCreateCommunity}
         />
       </View>
     </SafeAreaView>

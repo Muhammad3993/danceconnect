@@ -13,4 +13,9 @@ export const communityApi = {
 
     return res.data;
   },
+
+  async createCommunity(communityData: Omit<Community, 'id'>) {
+    const res = await apiClient.post<Community>('/community', communityData);
+    return res.data;
+  },
 };
