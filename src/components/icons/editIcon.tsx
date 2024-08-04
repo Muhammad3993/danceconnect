@@ -2,16 +2,16 @@ import * as React from 'react';
 import Svg, { Path, SvgProps } from 'react-native-svg';
 import { memo } from 'react';
 const SvgComponent = (props: SvgProps) => (
-  <Svg width={28} height={28} fill="none" {...props}>
+  <Svg width={props.width || 28} height={props.height || 28} viewBox="0 0 28 28" fill="none" {...props}>
     <Path
-      stroke="#fff"
+      stroke={props.stroke || '#fff'}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
       d="M16.04 23.85h8.46"
     />
     <Path
-      stroke="#fff"
+      stroke={props.stroke || '#fff'}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
@@ -19,7 +19,7 @@ const SvgComponent = (props: SvgProps) => (
       clipRule="evenodd"
     />
     <Path
-      stroke="#fff"
+      stroke={props.stroke || '#fff'}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

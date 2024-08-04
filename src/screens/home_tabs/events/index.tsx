@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, Touchable, View } from 'react-native';
 import React, { useState } from 'react';
 import { theming } from 'common/constants/theming';
 import { LocationIcon } from 'components/icons/location';
@@ -7,10 +7,14 @@ import { SearchIcon } from 'components/icons/search';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { EventsCardList } from 'components/events_cardlist';
 import { useDCStore } from 'store';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 export function EventsScreen() {
   const user = useDCStore.use.user();
   const [all, setAll] = useState<Amity.Post[]>([]);
+
+  const navigation = useNavigation();
   return (
     <View style={styles.root}>
       <View style={styles.events}>
@@ -22,7 +26,9 @@ export function EventsScreen() {
         </View>
 
         <View style={styles.communitiesSearch}>
-          <ArrowLeftIcon fill={theming.colors.textPrimary} />
+          <TouchableOpacity onPress={() => navigation.navigate('createEvent')}>
+            <ArrowLeftIcon fill={theming.colors.textPrimary} />
+          </TouchableOpacity>
           <DCInput
             leftIcon={<SearchIcon />}
             placeholder="Event name, dance style, plac."

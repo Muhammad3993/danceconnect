@@ -15,6 +15,8 @@ import { EventScreen } from './event';
 import { CreateCommunity } from './create_community';
 import { Messages } from './messages';
 import { CommunityScreen } from './community';
+import { CreateEvent } from './create_event';
+import CreateTicket from './create_ticket';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -67,6 +69,8 @@ export function Navigation() {
             <Stack.Screen name="createCommunity" component={CreateCommunity} />
             <Stack.Screen name="messages" component={Messages} />
             <Stack.Screen name="community" component={CommunityScreen} />
+            <Stack.Screen name="createEvent" component={CreateEvent} />
+            <Stack.Screen name="createTicket" component={CreateTicket} />
           </>
         )}
       </Stack.Navigator>
