@@ -9,6 +9,7 @@ import { EventsCardList } from 'components/events_cardlist';
 import { useDCStore } from 'store';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { PlusBigIcon } from 'components/icons/plusBig';
 
 export function EventsScreen() {
   const user = useDCStore.use.user();
@@ -26,7 +27,7 @@ export function EventsScreen() {
         </View>
 
         <View style={styles.communitiesSearch}>
-          <TouchableOpacity onPress={() => navigation.navigate('createEvent')}>
+          <TouchableOpacity>
             <ArrowLeftIcon fill={theming.colors.textPrimary} />
           </TouchableOpacity>
           <DCInput
@@ -35,6 +36,11 @@ export function EventsScreen() {
             containerStyle={styles.communitiesInputContainer}
             inputStyle={styles.communitiesInput}
           />
+          <TouchableOpacity
+            onPress={() => navigation.navigate('createEvent')}
+            style={styles.communitiesPlus}>
+            <PlusBigIcon />
+          </TouchableOpacity>
         </View>
 
         <EventsCardList all={all} communities={[]} events={[]} user={user} />
@@ -80,9 +86,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 15,
+    gap: 10,
   },
   communitiesInputContainer: {
     width: '87%',
+    flex: 1,
   },
   communitiesInput: {
     padding: 0,
