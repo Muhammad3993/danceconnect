@@ -30,4 +30,8 @@ export const userApi = {
     const res = await apiClient.get<User>('/profile');
     return res.data;
   },
+  async deleteAccount(id: string) {
+    const res = await apiClient.delete(`/${id}`);
+    return res.data;
+  },
 };

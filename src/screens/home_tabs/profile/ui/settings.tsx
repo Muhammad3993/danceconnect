@@ -1,7 +1,7 @@
 import { Linking, StyleSheet } from 'react-native';
 import { View } from 'react-native';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavigationProp } from '@react-navigation/native';
 import { theming } from 'common/constants/theming';
@@ -21,6 +21,7 @@ import { StarIcon } from 'components/icons/star';
 import { LogoutIcon } from 'components/icons/logout';
 import { TrashIcon } from 'components/icons/trash';
 import { useDCStore } from 'store';
+import { DeleteModal } from './DeleteModal';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -28,6 +29,8 @@ interface Props {
 }
 
 export function ProfileSettings({ navigation, close }: Props) {
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+
   const { t } = useTranslation();
   const logOutAction = useDCStore.use.clearDCStoreAction();
 
@@ -47,7 +50,9 @@ export function ProfileSettings({ navigation, close }: Props) {
     close();
   };
 
-  const onPressDeleteAccount = () => {};
+  const onPressDeleteAccount = () => {
+    setDeleteModalVisible(true);
+  };
 
   const handleLogout = async () => {
     await logOutAction();
@@ -281,6 +286,11 @@ export function ProfileSettings({ navigation, close }: Props) {
         titleStyle={{
           color: theming.colors.redError,
         }}
+        click={onPressDeleteAccount}
+      />
+      <DeleteModal
+        visible={deleteModalVisible}
+        onChange={setDeleteModalVisible}
       />
     </View>
   );

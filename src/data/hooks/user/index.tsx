@@ -148,3 +148,11 @@ export const useRegisterUser = () => {
 export const useEditUser = () => {
   return useMutation({ mutationFn: userApi.editUser });
 };
+
+export const useDeleteAccount = () => {
+  return useMutation((id: string) => userApi.deleteAccount(id));
+};
+
+export const logout = async () => {
+  return auth().signOut().then((data: any) => console.log('signOut', data));
+};

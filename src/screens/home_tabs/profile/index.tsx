@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     // padding: theming.spacing.LG,
     backgroundColor: theming.colors.white,
     // justifyContent: 'space-between',
+    position: "relative",
   },
   profileTop: {
     flexDirection: 'row-reverse',
