@@ -17,6 +17,7 @@ import { Messages } from './messages';
 import { CommunityScreen } from './community';
 import { CreateEvent } from './create_event';
 import CreateTicket from './create_ticket';
+import { Message } from './messages/ui/Message';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -53,6 +54,7 @@ export function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="message" component={Message} />
         {user == null ? (
           <>
             <Stack.Screen name="auth" component={AuthScreen} />
