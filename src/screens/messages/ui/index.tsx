@@ -1,11 +1,15 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { images } from 'common/resources/images';
 import { theming } from 'common/constants/theming';
 
-export const MessageItem = () => {
+interface MessageItemProps {
+  click?: () => void;
+}
+
+export const MessageItem = ({click}: MessageItemProps) => {
   return (
-    <View style={styles.messageItem}>
+    <TouchableOpacity style={styles.messageItem} onPress={click}>
       <View style={styles.messageItemImage}>
         <Image source={images.homeImg1} style={styles.messageItemImg} />
       </View>
@@ -16,7 +20,7 @@ export const MessageItem = () => {
         </View>
         <Text style={styles.messageItemTime}>20:49 PM</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

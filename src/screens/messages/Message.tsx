@@ -1,4 +1,5 @@
 import {
+  FlatList,
   Image,
   Linking,
   ScrollView,
@@ -44,6 +45,59 @@ export function Message() {
     );
   };
 
+
+  const messages = [
+    {
+      id: '1',
+      type: 'myMessage',
+      text: 'Hi there! Nice to meet you!.',
+      time: '16:18',
+    },
+    {
+      id: '2',
+      type: 'myMessage',
+      text: 'Sure! We have over 150+ templates fully customizable for any project',
+      time: '16:18',
+    },
+    {
+      id: '3',
+      type: 'anotherMessage',
+      text: 'Can you tell me more about your Webflow Templates?',
+      time: '16:18',
+    },
+    {
+      id: '4',
+      type: 'myMessage',
+      text: 'Sure! We have over 150+ templates fully customizable for any project',
+      time: '16:18',
+    },
+    {
+      id: '5',
+      type: 'anotherMessage',
+      text: 'Do you have a website?',
+      time: '16:18',
+    },
+    {
+      id: '6',
+      type: 'myMessage',
+      text: 'Yes, here’s the link to it 🙋🏻‍♂️',
+      time: '16:18',
+    },
+    {
+      id: '7',
+      type: 'myMessage',
+      text: 'Yes, here’s the link to it 🙋🏻‍♂️ https://www.example.com csahbcdshjccsdhcbdsvhdfjcndsuhvbndhufnvjhdsnvudfnvfdsjvnhj',
+      time: '16:18',
+    },
+  ];
+
+  const renderItem = ({ item }) => (
+    <View style={[styles.messeage, styles[item.type]]}>
+      <Text style={item.type === "myMessage" ? styles.myMessageText : styles.anotherMessageText}>{linkify(item.text)}</Text>
+      <Text style={item.type === "myMessage" ? styles.myMessageTime : styles.anotherMessageTime}>{item.time}</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.messageTop}>
@@ -55,54 +109,13 @@ export function Message() {
           <Image source={images.homeImg} style={styles.messageTopimg} />
         </View>
       </View>
-      <ScrollView style={styles.messageBody}>
-        {/* Messages */}
-        <View style={[styles.messeage, styles.myMessage]}>
-          <Text style={styles.myMessageText}>Hi there! Nice to meet you!.</Text>
-          <Text style={styles.myMessageTime}>16:18</Text>
-        </View>
-        <View style={[styles.messeage, styles.myMessage]}>
-          <Text style={styles.myMessageText}>
-            Sure! We have over 150+ templates fully customizable for any project
-          </Text>
-          <Text style={styles.myMessageTime}>16:18</Text>
-        </View>
-        <View style={[styles.messeage, styles.anotherMessage]}>
-          <Text style={styles.anotherMessageText}>
-            Can you tell me more about your Webflow Templates?
-          </Text>
-          <Text style={styles.anotherMessageTime}>16:18</Text>
-        </View>
-        {/* Date */}
-        <View style={styles.messageDate}>
-          <View style={styles.messageDateLine} />
-          <Text style={styles.messageDateTitle}>Date?Today</Text>
-          <View style={styles.messageDateLine} />
-        </View>
-        {/* Messages */}
-        <View style={[styles.messeage, styles.myMessage]}>
-          <Text style={styles.myMessageText}>
-            Sure! We have over 150+ templates fully customizable for any project
-          </Text>
-          <Text style={styles.myMessageTime}>16:18</Text>
-        </View>
-        <View style={[styles.messeage, styles.anotherMessage]}>
-          <Text style={styles.anotherMessageText}>Do you have a website?</Text>
-          <Text style={styles.anotherMessageTime}>16:18</Text>
-        </View>
-        <View style={[styles.messeage, styles.myMessage]}>
-          <Text style={styles.myMessageText}>
-            Yes, here’s the link to it 🙋🏻‍♂️
-          </Text>
-          <Text style={styles.myMessageTime}>16:18</Text>
-        </View>
-        <View style={[styles.messeage, styles.myMessage]}>
-          <Text style={styles.myMessageText}>
-            {linkify('Yes, here’s the link to it 🙋🏻‍♂️ https://www.example.com csahbcdshjccsdhcbdsvhdfjcndsuhvbndhufnvjhdsnvudfnvfdsjvnhj')}
-          </Text>
-          <Text style={styles.myMessageTime}>16:18</Text>
-        </View>
-      </ScrollView>
+      <FlatList
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.messageBody}
+        inverted
+      />
       <View style={styles.messageBottom}>
         <DCInput
           placeholder="Message"

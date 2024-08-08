@@ -4,8 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MessageIcon } from 'components/icons/message';
 import { theming } from 'common/constants/theming';
 import { MessageItem } from './ui';
+import { useNavigation } from '@react-navigation/native';
 
 export function Messages() {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.messageTop}>
@@ -14,18 +16,11 @@ export function Messages() {
       </View>
       <ScrollView style={styles.container}>
         <View style={styles.messageBody}>
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
-          <MessageItem />
+          <MessageItem click={() => navigation.navigate("message")} />
+          <MessageItem click={() => navigation.navigate("message")} />
+          <MessageItem click={() => navigation.navigate("message")} />
+          <MessageItem click={() => navigation.navigate("message")} />
+          <MessageItem click={() => navigation.navigate("message")} />
         </View>
       </ScrollView>
     </SafeAreaView>
