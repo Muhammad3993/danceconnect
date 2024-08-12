@@ -8,7 +8,7 @@ import { AuthScreen } from './auth';
 import { useDCStore } from 'store';
 import { isEmptyArray } from 'common/utils/array';
 import { EditUserScreen } from './auth/edit_user';
-import { ActivityIndicator, Platform, UIManager, View } from 'react-native';
+import { Platform, UIManager } from 'react-native';
 import { HomeTabs } from './home_tabs';
 import { EditProfileScreen } from './edit_profile';
 import { EventScreen } from './event';
@@ -18,6 +18,7 @@ import { CommunityScreen } from './community';
 import { CreateEvent } from './create_event';
 import CreateTicket from './create_ticket';
 import { Message } from './messages/Message';
+import { LoaderView } from 'components/shared/loader_view';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -44,11 +45,7 @@ export function Navigation() {
     isEmptyArray(user.userRole);
 
   if (initing) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator />
-      </View>
-    );
+    return <LoaderView />;
   }
 
   return (
@@ -70,9 +67,9 @@ export function Navigation() {
             <Stack.Screen name="createCommunity" component={CreateCommunity} />
             <Stack.Screen name="community" component={CommunityScreen} />
 
-            <Stack.Screen name="messages" component={Messages} />
             <Stack.Screen name="createEvent" component={CreateEvent} />
             <Stack.Screen name="createTicket" component={CreateTicket} />
+            <Stack.Screen name="chatList" component={Messages} />
             <Stack.Screen name="message" component={Message} />
           </>
         )}

@@ -14,6 +14,7 @@ import { StartCommunity } from 'components/shared/start_community';
 import { useTranslation } from 'react-i18next';
 import { DCTabs } from 'components/shared/tabs';
 import { TabScreenProps } from 'screens/interfaces';
+import { JoinCommunityCard } from 'components/shared/join_community_card';
 
 export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
       {false ? (
         <ActivityIndicator size={'large'} />
       ) : (
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.homeTop}>
             <Text style={styles.homeTitle}>You might be interested</Text>
             <DCRoundIcon
@@ -67,16 +68,21 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
             />
           </View>
 
-          <Text style={styles.homeEventsTitle}>Your upcoming events</Text>
+          <Text style={styles.homeEventsTitle}>{t('your_upcoming')}</Text>
 
-          <View style={styles.infoHeader}>
-            <DCTabs
-              textStyle={styles.tabText}
-              itemStyle={{ alignItems: 'center' }}
-              scrollEnabled={false}
-              data={TABS}
-              currentTab={currentTab}
-              onPressTab={setCurrentTab}
+          <DCTabs
+            containerStyle={styles.infoHeader}
+            textStyle={styles.tabText}
+            itemStyle={{ alignItems: 'center' }}
+            scrollEnabled={false}
+            data={TABS}
+            currentTab={currentTab}
+            onPressTab={setCurrentTab}
+          />
+
+          <View style={{ paddingHorizontal: theming.spacing.LG }}>
+            <JoinCommunityCard
+              containerStyle={{ marginTop: theming.spacing.LG }}
             />
           </View>
         </ScrollView>
@@ -99,7 +105,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theming.spacing.LG,
   },
   homeTitle: {
-    fontSize: theming.spacing.LG,
+    fontSize: 18,
     fontWeight: '700',
     color: theming.colors.textPrimary,
   },

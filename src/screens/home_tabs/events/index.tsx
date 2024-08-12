@@ -1,23 +1,37 @@
-import { StyleSheet, Text, Touchable, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, { useState } from 'react';
 import { theming } from 'common/constants/theming';
 import { LocationIcon } from 'components/icons/location';
 import { DCInput } from 'components/shared/input';
 import { SearchIcon } from 'components/icons/search';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { EventsCardList } from 'components/events_cardlist';
 import { useDCStore } from 'store';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
 import { PlusBigIcon } from 'components/icons/plusBig';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { TabScreenProps } from 'screens/interfaces';
+import { DCTabs } from 'components/shared/tabs';
+import { useTranslation } from 'react-i18next';
+import { FilterComponent } from 'components/shared/filter';
+import { EventItem } from 'components/shared/event_item';
 
-export function EventsScreen() {
-  const user = useDCStore.use.user();
-  const [all, setAll] = useState<Amity.Post[]>([]);
+export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
+  const { t } = useTranslation();
+  const TABS = [
+    { text: t('upcoming'), containerStyle: { flex: 1 } },
+    { text: t('attending'), containerStyle: { flex: 1 } },
+    { text: t('managing'), containerStyle: { flex: 1 } },
+    { text: t('passed'), containerStyle: { flex: 1 } },
+  ];
+  const [currentTab, setCurrentTab] = useState(TABS[0].text);
 
-  const navigation = useNavigation();
   return (
-    <View style={styles.root}>
+    <SafeAreaView edges={['top']} style={styles.root}>
       <View style={styles.events}>
         <View style={styles.eventsLocation}>
           <LocationIcon width={16} height={16} />
@@ -27,9 +41,6 @@ export function EventsScreen() {
         </View>
 
         <View style={styles.communitiesSearch}>
-          <TouchableOpacity>
-            <ArrowLeftIcon fill={theming.colors.textPrimary} />
-          </TouchableOpacity>
           <DCInput
             leftIcon={<SearchIcon />}
             placeholder="Event name, dance style, plac."
@@ -42,10 +53,34 @@ export function EventsScreen() {
             <PlusBigIcon />
           </TouchableOpacity>
         </View>
-
-        <EventsCardList all={all} communities={[]} events={[]} user={user} />
+        <View style={styles.infoHeader}>
+          <DCTabs
+            textStyle={styles.tabText}
+            itemStyle={{ alignItems: 'center', paddingHorizontal: 20 }}
+            scrollEnabled={true}
+            data={TABS}
+            currentTab={currentTab}
+            onPressTab={setCurrentTab}
+          />
+        </View>
+        <FilterComponent
+          title="978 communities found"
+          containerStyle={{ marginBottom: theming.spacing.LG }}
+        />
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+          data={[1, 2, 3]}
+          renderItem={() => (
+            <EventItem click={() => navigation.navigate('event')} />
+          )}
+          ListFooterComponent={
+            false ? <ActivityIndicator size={'large'} /> : undefined
+          }
+          scrollEventThrottle={500}
+        />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -99,5 +134,13 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingHorizontal: 20,
     height: 48,
+  },
+
+  tabText: {
+    lineHeight: 22,
+    textTransform: 'capitalize',
+  },
+  infoHeader: {
+    backgroundColor: theming.colors.white,
   },
 });

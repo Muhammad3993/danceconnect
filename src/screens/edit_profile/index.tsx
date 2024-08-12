@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // import react-native
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 // import component
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
@@ -18,6 +18,7 @@ import { genders } from 'common/constants';
 import { useDCStore } from 'store';
 import { useTranslation } from 'react-i18next';
 import { UserImage } from 'components/user_image';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export function EditProfileScreen() {
   const user = useDCStore.use.user();
@@ -28,10 +29,10 @@ export function EditProfileScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.editProfile}>
         <View style={styles.editTop}>
-          <View style={styles.editBack}>
+          {/* <View style={styles.editBack}>
             <ArrowLeftIcon fill={theming.colors.textPrimary} />
             <Text style={styles.backTitle}>Edit profile</Text>
-          </View>
+          </View> */}
 
           <View style={styles.editAvatar}>
             <UserImage style={styles.editImage} />
@@ -96,7 +97,6 @@ const styles = StyleSheet.create({
   editProfile: {
     flex: 1,
     justifyContent: 'space-between',
-    paddingVertical: theming.spacing.LG,
   },
   editTop: {
     alignItems: 'center',

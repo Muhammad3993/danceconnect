@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { theming } from 'common/constants/theming';
 import { EventItem } from 'components/shared/event_item';
-import { JoinCommunity } from 'components/shared/join_community';
+import { JoinCommunityCard } from 'components/shared/join_community_card';
 import { DCTabs } from 'components/shared/tabs';
 import { Community } from 'data/api/community/interfaces';
 import { Event } from 'data/api/event/interfaces';
@@ -84,7 +84,7 @@ export function CommunityCardList({
               )) ||
               (currentTab === t('passed') && (
                 <>
-                  <JoinCommunity title="Create Your First Event" />
+                  <JoinCommunityCard title="Create Your First Event" />
                 </>
               ))
             )}

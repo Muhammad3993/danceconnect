@@ -24,6 +24,9 @@ export type RootStackRoutes = {
   event: undefined;
   createCommunity: undefined;
   community: { id: string };
+  createEvent: undefined;
+  createTicket: undefined;
+  chatList: undefined;
 };
 
 export type TabRoutes = {

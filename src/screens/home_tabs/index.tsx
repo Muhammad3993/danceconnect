@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StackScreenProps, TabRoutes } from 'screens/interfaces';
@@ -37,9 +40,8 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
               />
             );
           },
-          headerStyle: { height: top + 50 },
           headerTitle: () => null,
-          headerLeft(props) {
+          headerLeft() {
             return (
               <Image
                 resizeMode="contain"
@@ -52,20 +54,17 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
               />
             );
           },
-          headerRight(props) {
+          headerRight() {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('messages')}>
-                <View
-                  style={{
-                    marginRight: 20,
-                  }}>
-                  <MessageIcon
-                    fill={theming.colors.orange}
-                    stroke={theming.colors.white}
-                    width={37}
-                    height={37}
-                  />
-                </View>
+              <TouchableOpacity
+                style={{ marginRight: theming.spacing.MD }}
+                onPress={() => navigation.navigate('chatList')}>
+                <MessageIcon
+                  fill={theming.colors.orange}
+                  stroke={theming.colors.white}
+                  width={37}
+                  height={37}
+                />
               </TouchableOpacity>
             );
           },

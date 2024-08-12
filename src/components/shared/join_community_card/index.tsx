@@ -1,53 +1,50 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { ReactNode } from 'react';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import React from 'react';
 import { DCRoundIcon } from '../round_icon';
 import { CommunitiesIcon } from 'components/icons/communities';
 import { theming } from 'common/constants/theming';
 import { DCButton } from '../button';
+import { useTranslation } from 'react-i18next';
 
-interface JoinProps {
-  title?: ReactNode;
+interface Props {
+  containerStyle?: ViewStyle;
 }
 
-export const JoinCommunity = ({ title }: JoinProps) => {
+export const JoinCommunityCard = ({ containerStyle }: Props) => {
+  const { t } = useTranslation();
   return (
-    <View style={styles.homeEventsFree}>
+    <View style={[styles.homeEventsFree, containerStyle]}>
       <DCRoundIcon
         icon={<CommunitiesIcon active fill={theming.colors.white} />}
-        iconBoxStyle={{
-          width: 44,
-          height: 44,
-          backgroundColor: theming.colors.purple,
-        }}
+        iconBoxStyle={styles.icon}
       />
-      <Text style={styles.homeEventsFreeTitle}>{title}</Text>
-      <Text style={styles.homeEventsFreeSubtitle}>
-        to see and attend upcoming events that you interested in
+      <Text style={styles.homeEventsFreeTitle}>
+        {t('join_community_card_first')}
       </Text>
-      <View style={{ marginTop: 15 }}>
+      <Text style={styles.homeEventsFreeSubtitle}>
+        {t('join_community_card_second')}
+      </Text>
+      <View style={{ marginTop: theming.spacing.MD }}>
         <DCButton
-          children="Search for a community"
           variant="primary"
-          containerStyle={{
-            paddingHorizontal: theming.spacing.MD,
-            paddingVertical: 13,
-          }}
-        />
+          containerStyle={{ paddingHorizontal: theming.spacing.MD }}>
+          {t('join_community_card_btn')}
+        </DCButton>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  icon: { width: 44, height: 44, backgroundColor: theming.colors.purple },
   homeEventsFree: {
+    paddingVertical: theming.spacing.LG,
     width: '100%',
-    height: 236,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: theming.colors.gray250,
     borderRadius: theming.spacing.SM,
-    marginTop: 20,
     backgroundColor: theming.colors.white,
   },
   homeEventsFreeTitle: {

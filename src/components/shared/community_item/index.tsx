@@ -4,6 +4,8 @@ import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
 import { DCLine } from '../line';
 import { Community } from 'data/api/community/interfaces';
+import { UserImage } from 'components/user_image';
+import { useTranslation } from 'react-i18next';
 
 interface CommunityItemProps {
   community: Community;
@@ -12,10 +14,15 @@ interface CommunityItemProps {
 
 export function CommunityItem({ community, click }: CommunityItemProps) {
   // Only show elements
+  const { t } = useTranslation();
   const slicedCategories = community.categories.slice(0, 2);
   // Remaining elements
   const remainingCategoriesCount =
     community.categories.length - slicedCategories.length;
+
+  const slicedFollowers = community.followers.slice(0, 3);
+
+  const remainingFollowersCount = community.followers.length - 3;
 
   return (
     <TouchableOpacity onPress={click}>
@@ -37,16 +44,16 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
         <View style={styles.itemSpot}>
           <View style={styles.itemSpotRight}>
             <View style={styles.itemSpotImages}>
-              {community.followers.map(userUmg => (
-                <Image source={userUmg} style={styles.itemSpotImg} />
+              {slicedFollowers.map(user => (
+                <UserImage
+                  key={user.id}
+                  source={user.userImage}
+                  style={styles.itemSpotImg}
+                />
               ))}
-              <Image
-                source={images.defaultUser}
-                style={[styles.itemSpotImg, { marginLeft: -8, zIndex: -1 }]}
-              />
             </View>
             <Text style={styles.itemSpotTitle}>
-              + {community.followers.length} followers
+              {t(remainingFollowersCount.toString(), 'followers')}
             </Text>
           </View>
         </View>

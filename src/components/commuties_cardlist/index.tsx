@@ -1,7 +1,7 @@
 import { theming } from 'common/constants/theming';
 import { CommunityItem } from 'components/shared/community_item';
 import { FilterComponent } from 'components/shared/filter';
-import { JoinCommunity } from 'components/shared/join_community';
+import { JoinCommunityCard } from 'components/shared/join_community_card';
 import { StartCommunity } from 'components/shared/start_community';
 import { DCTabs } from 'components/shared/tabs';
 import { Community } from 'data/api/community/interfaces';
@@ -96,7 +96,7 @@ export function CommunitiesCardList({
               )) ||
               (currentTab === t('joined') && (
                 <>
-                  <JoinCommunity />
+                  <JoinCommunityCard />
                 </>
               )) ||
               (currentTab === t('managing') && (

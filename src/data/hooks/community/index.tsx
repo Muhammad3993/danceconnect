@@ -10,7 +10,7 @@ export default function useGetCommunities() {
 
 export const useGetCommunity = (id: number) => {
   return useQuery({
-    queryKey: ['community', id],
+    queryKey: ['communites', id],
     queryFn: () => communityApi.getCommunity(id),
   });
 };

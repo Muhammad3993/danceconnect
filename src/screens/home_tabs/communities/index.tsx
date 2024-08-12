@@ -9,7 +9,7 @@ import { SearchIcon } from 'components/icons/search';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native-gesture-handler';
-import { JoinCommunity } from 'components/shared/join_community';
+import { JoinCommunityCard } from 'components/shared/join_community_card';
 import { StartCommunity } from 'components/shared/start_community';
 import { CommunityItem } from 'components/shared/community_item';
 import { DCTabs } from 'components/shared/tabs';
@@ -72,13 +72,11 @@ export function CommunitiesScreen({
           <LoaderView />
         ) : (
           <FlatList
-            bounces={false}
             showsVerticalScrollIndicator={false}
             style={{ flex: 1 }}
             data={data}
             renderItem={({ item }) => (
               <CommunityItem
-                key={item.id}
                 community={item}
                 click={() => navigation.navigate('community', { id: item.id })}
               />
@@ -124,8 +122,8 @@ const styles = StyleSheet.create({
     color: theming.colors.textPrimary,
   },
   communitiesPlus: {
-    width: 48,
-    height: 48,
+    width: 40,
+    height: 40,
     backgroundColor: theming.colors.purple,
     borderRadius: 50,
     justifyContent: 'center',
