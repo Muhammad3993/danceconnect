@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import Config from 'react-native-config';
 import auth from '@react-native-firebase/auth';
 import { Platform } from 'react-native';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { localStorage } from 'common/libs/local_storage';
 import { userApi } from 'data/api/user';
 import { useDCStore } from 'store';
@@ -15,10 +15,10 @@ import { images } from 'common/resources/images';
 export function useSocialBtns() {
   const { t } = useTranslation();
   const getUser = useDCStore.use.initAppAction();
-  const { mutate: handleGoogleLogin, isLoading: isGoogleLoading } =
+  const { mutate: handleGoogleLogin, isPending: isGoogleLoading } =
     useGoogleLoginUser();
 
-  const { mutate: handleAppleLogin, isLoading: isAplleLoading } =
+  const { mutate: handleAppleLogin, isPending: isAplleLoading } =
     useAppleLoginUser();
 
   const socialButtons = useMemo(
@@ -150,9 +150,5 @@ export const useEditUser = () => {
 };
 
 export const useDeleteAccount = () => {
-  return useMutation((id: string) => userApi.deleteAccount(id));
-};
-
-export const logout = async () => {
-  return auth().signOut().then((data: any) => console.log('signOut', data));
+  return useMutation({ mutationFn: userApi.deleteAccount });
 };

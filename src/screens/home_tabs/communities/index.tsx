@@ -16,10 +16,11 @@ import { DCTabs } from 'components/shared/tabs';
 import { TabScreenProps } from 'screens/interfaces';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import useGetCommunities from 'data/hooks/community';
+import { LoaderView } from 'components/shared/loader_view';
 
 export function CommunitiesScreen({
   navigation,
-}: TabScreenProps<'createCommunity'>) {
+}: TabScreenProps<'communities'>) {
   const { t } = useTranslation();
 
   const TABS = [
@@ -30,7 +31,7 @@ export function CommunitiesScreen({
 
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
 
-  const { data } = useGetCommunities();
+  const { data, isPending } = useGetCommunities();
 
   return (
     <SafeAreaView style={styles.root}>
@@ -57,25 +58,24 @@ export function CommunitiesScreen({
           </TouchableOpacity>
         </View>
         {/* <Text>{JSON.stringify(data, null, 2)}</Text> */}
-
-        <View style={{ position: 'relative', flex: 1 }}>
+        <View style={styles.infoHeader}>
+          <DCTabs
+            textStyle={styles.tabText}
+            itemStyle={{ alignItems: 'center' }}
+            scrollEnabled={false}
+            data={TABS}
+            currentTab={currentTab}
+            onPressTab={setCurrentTab}
+          />
+        </View>
+        {isPending ? (
+          <LoaderView />
+        ) : (
           <FlatList
             bounces={false}
             showsVerticalScrollIndicator={false}
             style={{ flex: 1 }}
             data={data}
-            ListHeaderComponent={
-              <View style={styles.infoHeader}>
-                <DCTabs
-                  textStyle={styles.tabText}
-                  itemStyle={{ alignItems: 'center' }}
-                  scrollEnabled={false}
-                  data={TABS}
-                  currentTab={currentTab}
-                  onPressTab={setCurrentTab}
-                />
-              </View>
-            }
             renderItem={({ item }) => (
               <CommunityItem
                 key={item.id}
@@ -83,18 +83,18 @@ export function CommunitiesScreen({
                 click={() => navigation.navigate('community', { id: item.id })}
               />
             )}
-            ListEmptyComponent={
-              <View>
-                <JoinCommunity title="Join a community " />
-                <StartCommunity containerStyle={{ marginTop: 20 }} />
-              </View>
-            }
+            // ListEmptyComponent={
+            //   <View>
+            //     <JoinCommunity title="Join a community " />
+            //     <StartCommunity containerStyle={{ marginTop: 20 }} />
+            //   </View>
+            // }
             ListFooterComponent={
               false ? <ActivityIndicator size={'large'} /> : undefined
             }
             scrollEventThrottle={500}
           />
-        </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -167,7 +167,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Lato-Regular',
     fontSize: 16,
-
     color: theming.colors.gray500,
   },
 });

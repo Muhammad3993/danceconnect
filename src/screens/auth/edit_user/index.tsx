@@ -24,7 +24,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const updateUser = useDCStore.use.setUser();
   const [currPage, setCurrPage] = useState(0);
   const refPagerView = useRef<PagerViewInternal>(null);
-  const { mutateAsync, isLoading } = useEditUser();
+  const { mutateAsync, isPending } = useEditUser();
   const methods = useForm<EditUserRequest>({
     defaultValues: user ?? {},
     resolver: yupResolver(userEditSchema),
@@ -76,7 +76,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
 
         <View style={{ paddingHorizontal: theming.spacing.LG }}>
           <DCButton
-            isLoading={isLoading}
+            isLoading={isPending}
             disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
             onPress={goNext}>
             {t('next')}

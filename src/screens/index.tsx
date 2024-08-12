@@ -68,8 +68,9 @@ export function Navigation() {
             <Stack.Screen name="editProfile" component={EditProfileScreen} />
             <Stack.Screen name="event" component={EventScreen} />
             <Stack.Screen name="createCommunity" component={CreateCommunity} />
-            <Stack.Screen name="messages" component={Messages} />
             <Stack.Screen name="community" component={CommunityScreen} />
+
+            <Stack.Screen name="messages" component={Messages} />
             <Stack.Screen name="createEvent" component={CreateEvent} />
             <Stack.Screen name="createTicket" component={CreateTicket} />
             <Stack.Screen name="message" component={Message} />

@@ -11,7 +11,7 @@ import { theming } from 'common/constants/theming';
 import { showErrorToast } from 'common/libs/toast';
 
 export function LoginScreen({ navigation }: StackScreenProps<'login'>) {
-  const { mutate, isLoading } = useLoginUser();
+  const { mutate, isPending } = useLoginUser();
   const getUser = useDCStore.use.initAppAction();
 
   const { t } = useTranslation();
@@ -35,7 +35,7 @@ export function LoginScreen({ navigation }: StackScreenProps<'login'>) {
   return (
     <CredentialsForm
       onSubmit={handleLogin}
-      isLoading={isLoading}
+      isLoading={isPending}
       submitTitle={t('login')}
       footerComponent={
         <View style={styles.bottomWrapper}>

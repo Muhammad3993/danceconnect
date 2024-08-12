@@ -1,6 +1,6 @@
 import { collectionsApi } from 'data/api/collections';
 import { DCCountry } from 'data/api/collections/interfaces';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useSearchCities = (
   searchString: string,

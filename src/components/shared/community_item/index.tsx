@@ -3,28 +3,19 @@ import React from 'react';
 import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
 import { DCLine } from '../line';
+import { Community } from 'data/api/community/interfaces';
 
 interface CommunityItemProps {
-  community: {
-    id: string;
-    title: string;
-    description: string;
-    imageUrl: string;
-    followers: [];
-    categories: [];
-    tags: string[];
-  };
+  community: Community;
   click?: () => void;
 }
 
 export function CommunityItem({ community, click }: CommunityItemProps) {
-
   // Only show elements
   const slicedCategories = community.categories.slice(0, 2);
   // Remaining elements
   const remainingCategoriesCount =
     community.categories.length - slicedCategories.length;
-
 
   return (
     <TouchableOpacity onPress={click}>

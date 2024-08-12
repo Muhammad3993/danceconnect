@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
 import { DCRoundIcon } from '../round_icon';
 import { CommunitiesIcon } from 'components/icons/communities';
@@ -8,19 +14,19 @@ import { RightArrowIcon } from 'components/icons/rightArrow';
 
 interface StartCommunityProps {
   containerStyle?: ViewStyle;
+  onPress?: () => void;
 }
 
-export function StartCommunity({ containerStyle }: StartCommunityProps) {
+export function StartCommunity({
+  containerStyle,
+  onPress,
+}: StartCommunityProps) {
   return (
-    <View style={[styles.box, containerStyle]}>
+    <TouchableOpacity onPress={onPress} style={[styles.box, containerStyle]}>
       <View style={styles.boxIcon}>
         <DCRoundIcon
           icon={<CommunitiesIcon active fill={theming.colors.white} />}
-          iconBoxStyle={{
-            width: 44,
-            height: 44,
-            backgroundColor: theming.colors.purple,
-          }}
+          iconBoxStyle={styles.icon}
         />
         <View style={styles.boxPlusIcon}>
           <PlusIcon />
@@ -37,7 +43,7 @@ export function StartCommunity({ containerStyle }: StartCommunityProps) {
       <View>
         <RightArrowIcon />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -59,6 +65,11 @@ const styles = StyleSheet.create({
   boxIcon: {
     width: 44,
     position: 'relative',
+  },
+  icon: {
+    width: 44,
+    height: 44,
+    backgroundColor: theming.colors.purple,
   },
   boxPlusIcon: {
     width: 18,

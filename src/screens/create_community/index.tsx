@@ -33,10 +33,10 @@ export function CreateCommunity() {
   const [location, setLocation] = useState('');
   const [type, setType] = useState('');
   const [channelId, setChannelId] = useState('');
-  
+
   const {
     mutate: createCommunity,
-    isLoading,
+    isPending,
     isError,
     error,
   } = useCreateCommunity();

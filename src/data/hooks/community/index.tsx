@@ -1,6 +1,5 @@
 import { communityApi } from 'data/api/community';
-import { Community } from 'data/api/community/interfaces';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export default function useGetCommunities() {
   return useQuery({
@@ -17,7 +16,5 @@ export const useGetCommunity = (id: number) => {
 };
 
 export const useCreateCommunity = () => {
-  return useMutation((communityData: Omit<Community, 'id'>) =>
-    communityApi.createCommunity(communityData),
-  );
-}
+  return useMutation({ mutationFn: communityApi.createCommunity });
+};

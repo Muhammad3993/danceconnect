@@ -1,6 +1,5 @@
 import {
   ActivityIndicator,
-  FlatList,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,10 +12,10 @@ import { RightArrowIcon } from 'components/icons/rightArrow';
 import { HomeItem } from 'components/shared/home_item';
 import { StartCommunity } from 'components/shared/start_community';
 import { useTranslation } from 'react-i18next';
-import { JoinCommunity } from 'components/shared/join_community';
 import { DCTabs } from 'components/shared/tabs';
+import { TabScreenProps } from 'screens/interfaces';
 
-export function HomeScreen() {
+export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
   const { t } = useTranslation();
   const TABS = [
     { text: t('all'), containerStyle: { flex: 0.7 } },
@@ -41,55 +40,46 @@ export function HomeScreen() {
       {false ? (
         <ActivityIndicator size={'large'} />
       ) : (
-        <FlatList
-          bounces={false}
-          showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
-          ListHeaderComponent={
-            <>
-              <View style={styles.homeTop}>
-                <Text style={styles.homeTitle}>You might be interested</Text>
-                <DCRoundIcon
-                  icon={<RightArrowIcon />}
-                  iconBoxStyle={{
-                    width: 28,
-                    height: 28,
-                    backgroundColor: theming.colors.lightPurple,
-                  }}
-                />
-              </View>
+        <ScrollView>
+          <View style={styles.homeTop}>
+            <Text style={styles.homeTitle}>You might be interested</Text>
+            <DCRoundIcon
+              icon={<RightArrowIcon />}
+              iconBoxStyle={{
+                width: 28,
+                height: 28,
+                backgroundColor: theming.colors.lightPurple,
+              }}
+            />
+          </View>
 
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <HomeItem />
-                <HomeItem />
-              </ScrollView>
+          <ScrollView
+            style={{ paddingHorizontal: theming.spacing.LG }}
+            horizontal
+            showsHorizontalScrollIndicator={false}>
+            <HomeItem />
+            <HomeItem />
+          </ScrollView>
 
-              <StartCommunity />
+          <View style={{ paddingHorizontal: theming.spacing.LG }}>
+            <StartCommunity
+              onPress={() => navigation.push('createCommunity')}
+            />
+          </View>
 
-              <Text style={styles.homeEventsTitle}>Your upcoming events</Text>
+          <Text style={styles.homeEventsTitle}>Your upcoming events</Text>
 
-              <View style={styles.infoHeader}>
-                <DCTabs
-                  textStyle={styles.tabText}
-                  itemStyle={{ alignItems: 'center' }}
-                  scrollEnabled={false}
-                  data={TABS}
-                  currentTab={currentTab}
-                  onPressTab={setCurrentTab}
-                />
-              </View>
-            </>
-          }
-          renderItem={() => null}
-          ListEmptyComponent={<JoinCommunity />}
-          ListFooterComponent={
-            false ? <ActivityIndicator size={'large'} /> : undefined
-          }
-          keyExtractor={(item, index) =>
-            item?.postId ?? item?.id ?? index.toString()
-          }
-          scrollEventThrottle={500}
-        />
+          <View style={styles.infoHeader}>
+            <DCTabs
+              textStyle={styles.tabText}
+              itemStyle={{ alignItems: 'center' }}
+              scrollEnabled={false}
+              data={TABS}
+              currentTab={currentTab}
+              onPressTab={setCurrentTab}
+            />
+          </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -99,7 +89,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: theming.colors.white,
-    paddingHorizontal: theming.spacing.LG,
   },
   homeTop: {
     width: '100%',
@@ -107,6 +96,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 20,
+    paddingHorizontal: theming.spacing.LG,
   },
   homeTitle: {
     fontSize: theming.spacing.LG,
@@ -119,13 +109,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
     marginTop: 30,
+    paddingHorizontal: theming.spacing.LG,
   },
   infoHeader: {
     backgroundColor: theming.colors.white,
-    marginTop: 15
+    marginTop: 15,
+    paddingHorizontal: theming.spacing.LG,
   },
   tabText: {
     lineHeight: 22,
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
 });

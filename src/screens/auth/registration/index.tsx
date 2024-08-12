@@ -11,7 +11,7 @@ import { theming } from 'common/constants/theming';
 import { showErrorToast } from 'common/libs/toast';
 
 export function RegisterScreen({ navigation }: StackScreenProps<'register'>) {
-  const { mutate, isLoading } = useRegisterUser();
+  const { mutate, isPending } = useRegisterUser();
   const getUser = useDCStore.use.initAppAction();
   const { t } = useTranslation();
 
@@ -33,7 +33,7 @@ export function RegisterScreen({ navigation }: StackScreenProps<'register'>) {
 
   return (
     <CredentialsForm
-      isLoading={isLoading}
+      isLoading={isPending}
       submitTitle={t('sign_up')}
       onSubmit={handleLogin}
       footerComponent={
