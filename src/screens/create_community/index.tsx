@@ -22,17 +22,29 @@ import { t } from 'i18next';
 
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useCreateCommunity } from 'data/hooks/community';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 export function CreateCommunity() {
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [categoryError, setCategoryError] = useState('');
+  const methods = useForm({
+    defaultValues: {
+      title: '',
+      description: '',
+      images: [],
+      categories: [],
+      location: '',
+      type: '',
+      channelId: '',
+    },
+  });
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [images, setImages] = useState([]);
-  const [location, setLocation] = useState('');
-  const [type, setType] = useState('');
-  const [channelId, setChannelId] = useState('');
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = methods;
+
+  console.log(control);
 
   const {
     mutate: createCommunity,
@@ -41,19 +53,9 @@ export function CreateCommunity() {
     error,
   } = useCreateCommunity();
 
-  const handleCreateCommunity = () => {
-    const communityData = {
-      title,
-      description,
-      images,
-      categories: selectedCategories,
-      location,
-      type,
-      channelId,
-    };
-    createCommunity(communityData);
-    console.log('Community Data: ', communityData);
-    // API call to create community can be placed here
+  const handleCreateCommunity = data => {
+    createCommunity(data);
+    console.log('Community Data: ', data);
   };
 
   return (
@@ -64,101 +66,141 @@ export function CreateCommunity() {
       </View>
 
       <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.box}>
-            <View style={styles.boxCircleOpacity}>
-              <View style={styles.boxCircle}>
-                <CommunitiesIcon active fill={'white'} />
+        <FormProvider {...methods}>
+          <View style={styles.container}>
+            <View style={styles.box}>
+              <View style={styles.boxCircleOpacity}>
+                <View style={styles.boxCircle}>
+                  <CommunitiesIcon active fill={'white'} />
+                </View>
               </View>
-            </View>
-            <Text style={styles.boxTitle}>
-              {t('create_community_card_title')}
-            </Text>
-            <Text style={styles.boxSubtitle}>{t('ds_desc_event')}</Text>
-          </View>
-        </View>
-
-        <View style={styles.inputName}>
-          <View style={styles.inputNameTop}>
-            <Text style={styles.inputNameTopTitle}>{t('create_name')}</Text>
-            <Text style={styles.inputNameTopLimit}>{title.length}/100</Text>
-          </View>
-          <DCInput
-            placeholder={t('name')}
-            inputStyle={styles.inputNameStyle}
-            value={title}
-            onChangeText={setTitle}
-          />
-        </View>
-
-        <View>
-          <View style={[styles.container, { marginBottom: 15 }]}>
-            <Text style={styles.inputNameTopTitle}>
-              {t('choose_category_title')}{' '}
-              <Text style={styles.bodyTitle}>{t('few')}</Text>
-            </Text>
-            <Text style={styles.bodySubtitle}>{t('ds_desc_event')}</Text>
-          </View>
-          <CategorySelector
-            value={selectedCategories}
-            onChange={setSelectedCategories}
-            errorMessage={categoryError}
-          />
-        </View>
-
-        <View style={styles.inputName}>
-          <View style={styles.inputNameTop}>
-            <Text style={styles.inputNameTopTitle}>
-              {t('description_title')}
-            </Text>
-            <Text style={styles.inputNameTopLimit}>0/350</Text>
-          </View>
-          <Text style={styles.describe}>{t('description_desc')}</Text>
-          {true ? (
-            <DCInput
-              placeholder={t('description')}
-              inputStyle={styles.inputNameStyle}
-              onChangeText={setDescription}
-              value={description}
-            />
-          ) : (
-            <View style={styles.descriptionBox}>
-              <Text style={styles.descriptionTitle}>
-                Our community created for dancers who are passionate about
-                salsa, bachata, and kizomba. We bring together individuals from
-                all walks of life who share a deep love for Latin music and the
-                exhilarating art of dance.
+              <Text style={styles.boxTitle}>
+                {t('create_community_card_title')}
               </Text>
+              <Text style={styles.boxSubtitle}>{t('ds_desc_event')}</Text>
             </View>
-          )}
-        </View>
+          </View>
 
-        <View style={styles.uploadBox}>
-          <Text style={styles.inputNameTopTitle}>
-            {false ? t('upload_img_title') : `Add Cover Image`}
-            <Text style={styles.bodyTitle}>{t('optional')}</Text>
-          </Text>
-          <Text style={styles.bodySubtitle}>{t('upload_img_desc')}</Text>
-          {true ? (
-            <TouchableOpacity style={styles.upload}>
-              <UploadIcon />
-              <Text style={styles.uploadTitle}>Upload picture</Text>
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.images}>
-              <View style={styles.image}>
-                <Image source={images.homeImg1} style={styles.img} />
-                <TouchableOpacity style={styles.imageTrash}>
-                  <TrashIcon stroke={theming.colors.white} />
-                </TouchableOpacity>
+          <View style={styles.inputName}>
+            <Controller
+              name="title"
+              control={control}
+              rules={{ required: 'Name is required' }}
+              render={({ field: { value, onChange }, fieldState }) => (
+                <>
+                  <View style={styles.inputNameTop}>
+                    <Text style={styles.inputNameTopTitle}>
+                      {t('create_name')}
+                    </Text>
+                    <Text style={styles.inputNameTopLimit}>
+                      {value.length}/100
+                    </Text>
+                  </View>
+                  <DCInput
+                    placeholder={t('name')}
+                    inputStyle={styles.inputNameStyle}
+                    value={value}
+                    onChangeText={onChange}
+                    errorText={fieldState.error?.message}
+                  />
+                </>
+              )}
+            />
+          </View>
+
+          <View>
+            <View style={[styles.container, { marginBottom: 15 }]}>
+              <Text style={styles.inputNameTopTitle}>
+                {t('choose_category_title')}{' '}
+                <Text style={styles.bodyTitle}>{t('few')}</Text>
+              </Text>
+              <Text style={styles.bodySubtitle}>{t('ds_desc_event')}</Text>
+            </View>
+            <Controller
+              name="categories"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CategorySelector
+                  value={value}
+                  onChange={onChange}
+                  errorMessage={errors.categories?.message}
+                />
+              )}
+            />
+          </View>
+
+          <View style={styles.inputName}>
+            {true ? (
+              <Controller
+                name="description"
+                control={control}
+                rules={{ required: 'Description is required' }}
+                render={({ field: { value, onChange }, fieldState }) => (
+                  <>
+                    <View style={styles.inputNameTop}>
+                      <Text style={styles.inputNameTopTitle}>
+                        {t('description_title')}
+                      </Text>
+                      <Text style={styles.inputNameTopLimit}>
+                        {value.length}/350
+                      </Text>
+                    </View>
+                    <Text style={styles.describe}>{t('description_desc')}</Text>
+                    <DCInput
+                      placeholder={t('description')}
+                      inputStyle={styles.inputNameStyle}
+                      onChangeText={onChange}
+                      value={value}
+                      errorText={fieldState.error?.message}
+                    />
+                  </>
+                )}
+              />
+            ) : (
+              <View style={styles.descriptionBox}>
+                <Text style={styles.descriptionTitle}>
+                  Our community created for dancers who are passionate about
+                  salsa, bachata, and kizomba. We bring together individuals
+                  from all walks of life who share a deep love for Latin music
+                  and the exhilarating art of dance.
+                </Text>
               </View>
-            </View>
-          )}
-        </View>
+            )}
+          </View>
 
-        <View style={[styles.container, { marginBottom: 15 }]}>
-          <LocationSelector value={location} onChange={setLocation} />
-        </View>
+          <View style={styles.uploadBox}>
+            <Text style={styles.inputNameTopTitle}>
+              {false ? t('upload_img_title') : `Add Cover Image`}
+              <Text style={styles.bodyTitle}>{t('optional')}</Text>
+            </Text>
+            <Text style={styles.bodySubtitle}>{t('upload_img_desc')}</Text>
+            {true ? (
+              <TouchableOpacity style={styles.upload}>
+                <UploadIcon />
+                <Text style={styles.uploadTitle}>Upload picture</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.images}>
+                <View style={styles.image}>
+                  <Image source={images.homeImg1} style={styles.img} />
+                  <TouchableOpacity style={styles.imageTrash}>
+                    <TrashIcon stroke={theming.colors.white} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+
+          <View style={[styles.container, { marginBottom: 15 }]}>
+            <Controller
+              name="location"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <LocationSelector value={value} onChange={onChange} />
+              )}
+            />
+          </View>
+        </FormProvider>
       </ScrollView>
 
       <View style={styles.bottom}>
@@ -166,20 +208,13 @@ export function CreateCommunity() {
           children={t('clear')}
           containerStyle={styles.bottomBtn}
           textStyle={styles.bottomTitle}
-          onPress={() => {
-            setTitle('');
-            setDescription('');
-            setImages([]);
-            setSelectedCategories([]);
-            setLocation('');
-            setType('');
-            setChannelId('');
-          }}
+          onPress={() => reset()}
         />
         <DCButton
           children={t('create_community')}
           containerStyle={styles.bottomBtn1}
-          onPress={handleCreateCommunity}
+          onPress={handleSubmit(handleCreateCommunity)}
+          isLoading={isPending}
         />
       </View>
     </SafeAreaView>
