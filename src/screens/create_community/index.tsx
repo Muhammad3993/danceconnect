@@ -1,25 +1,14 @@
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { theming } from 'common/constants/theming';
-import { CommunitiesIcon } from 'components/icons/communities';
-import { DCInput } from 'components/shared/input';
-import { UploadIcon } from 'components/icons/upload';
-import { images } from 'common/resources/images';
-import { TrashIcon } from 'components/icons/trash';
-import { DCButton } from 'components/shared/button';
 import CategorySelector from 'components/category_selector';
+import { CommunitiesIcon } from 'components/icons/communities';
 import LocationSelector from 'components/location_selector';
+import { DCButton } from 'components/shared/button';
+import { DCInput } from 'components/shared/input';
 import { t } from 'i18next';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import ImageUploadList from 'components/image_upload_list';
 import { useCreateCommunity } from 'data/hooks/community';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
@@ -45,26 +34,17 @@ export function CreateCommunity() {
 
   console.log(control);
 
-  const {
-    mutate: createCommunity,
-    isPending,
-    isError,
-    error,
-  } = useCreateCommunity();
+  const { mutate: createCommunity, isPending } = useCreateCommunity();
 
   const handleCreateCommunity = data => {
     createCommunity(data);
-    console.log('Community Data: ', data);
   };
 
-  return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.top}>
-        <ArrowLeftIcon fill={theming.colors.textPrimary} />
-        <Text style={styles.topTitle}>{t('create_community_card_title')}</Text>
-      </View>
+  const addImage = () => {};
 
-      <ScrollView>
+  return (
+    <View style={styles.root}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <FormProvider {...methods}>
           <View style={styles.container}>
             <View style={styles.box}>
@@ -120,6 +100,7 @@ export function CreateCommunity() {
               control={control}
               render={({ field: { value, onChange } }) => (
                 <CategorySelector
+                  scrollEnabled={false}
                   value={value}
                   onChange={onChange}
                   errorMessage={errors.categories?.message}
@@ -129,65 +110,52 @@ export function CreateCommunity() {
           </View>
 
           <View style={styles.inputName}>
-            {true ? (
-              <Controller
-                name="description"
-                control={control}
-                rules={{ required: 'Description is required' }}
-                render={({ field: { value, onChange }, fieldState }) => (
-                  <>
-                    <View style={styles.inputNameTop}>
-                      <Text style={styles.inputNameTopTitle}>
-                        {t('description_title')}
-                      </Text>
-                      <Text style={styles.inputNameTopLimit}>
-                        {value.length}/350
-                      </Text>
-                    </View>
-                    <Text style={styles.describe}>{t('description_desc')}</Text>
-                    <DCInput
-                      placeholder={t('description')}
-                      inputStyle={styles.inputNameStyle}
-                      onChangeText={onChange}
-                      value={value}
-                      errorText={fieldState.error?.message}
-                    />
-                  </>
-                )}
-              />
-            ) : (
-              <View style={styles.descriptionBox}>
-                <Text style={styles.descriptionTitle}>
-                  Our community created for dancers who are passionate about
-                  salsa, bachata, and kizomba. We bring together individuals
-                  from all walks of life who share a deep love for Latin music
-                  and the exhilarating art of dance.
-                </Text>
-              </View>
-            )}
+            <Controller
+              name="description"
+              control={control}
+              rules={{ required: 'Description is required' }}
+              render={({ field: { value, onChange }, fieldState }) => (
+                <>
+                  <View style={styles.inputNameTop}>
+                    <Text style={styles.inputNameTopTitle}>
+                      {t('description_title')}
+                    </Text>
+                    <Text style={styles.inputNameTopLimit}>
+                      {value.length}/350
+                    </Text>
+                  </View>
+                  <Text style={styles.describe}>{t('description_desc')}</Text>
+                  <DCInput
+                    placeholder={t('description')}
+                    inputStyle={styles.inputNameStyle}
+                    onChangeText={onChange}
+                    value={value}
+                    errorText={fieldState.error?.message}
+                  />
+                </>
+              )}
+            />
           </View>
 
           <View style={styles.uploadBox}>
             <Text style={styles.inputNameTopTitle}>
-              {false ? t('upload_img_title') : `Add Cover Image`}
+              {false ? t('upload_img_title') : 'Add Cover Image'}
               <Text style={styles.bodyTitle}>{t('optional')}</Text>
             </Text>
             <Text style={styles.bodySubtitle}>{t('upload_img_desc')}</Text>
-            {true ? (
-              <TouchableOpacity style={styles.upload}>
-                <UploadIcon />
-                <Text style={styles.uploadTitle}>{t("upload_img")}</Text>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.images}>
-                <View style={styles.image}>
-                  <Image source={images.homeImg1} style={styles.img} />
-                  <TouchableOpacity style={styles.imageTrash}>
-                    <TrashIcon stroke={theming.colors.white} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
+
+            <Controller
+              name="images"
+              control={control}
+              rules={{ required: 'Description is required' }}
+              render={({ field: { value, onChange } }) => (
+                <ImageUploadList
+                  containerStyle={{ marginTop: theming.spacing.LG }}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
+            />
           </View>
 
           <View style={[styles.container, { marginBottom: 15 }]}>
@@ -205,18 +173,19 @@ export function CreateCommunity() {
       <View style={styles.bottom}>
         <DCButton
           children={t('clear')}
-          containerStyle={styles.bottomBtn}
+          containerStyle={{ flex: 1, borderRadius: 100 }}
+          variant="outlined"
           textStyle={styles.bottomTitle}
           onPress={() => reset()}
         />
         <DCButton
           children={t('create_community')}
-          containerStyle={styles.bottomBtn1}
+          containerStyle={{ flex: 1 }}
           onPress={handleSubmit(handleCreateCommunity)}
           isLoading={isPending}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -232,12 +201,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: theming.spacing.LG,
   },
-  topTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theming.colors.black,
-    fontFamily: theming.fonts.latoRegular,
-  },
+
   container: {
     paddingHorizontal: theming.spacing.LG,
   },
@@ -248,6 +212,10 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginTop: 10,
     borderRadius: 8,
+  },
+  uploadBox: {
+    paddingHorizontal: theming.spacing.LG,
+    marginBottom: theming.spacing.LG,
   },
   boxCircleOpacity: {
     width: 66,
@@ -333,67 +301,7 @@ const styles = StyleSheet.create({
     fontFamily: theming.fonts.latoRegular,
     marginBottom: 15,
   },
-  descriptionBox: {
-    borderWidth: 1,
-    borderColor: theming.colors.gray50,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 17,
-    backgroundColor: theming.colors.lightGray,
-  },
-  descriptionTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: theming.colors.gray800,
-    fontFamily: theming.fonts.latoRegular,
-  },
-  upload: {
-    width: '100%',
-    height: 60,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: theming.colors.secondary200,
-    borderRadius: 8,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 12,
-    marginTop: 15,
-  },
-  uploadTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.purple,
-  },
-  uploadBox: {
-    marginBottom: 30,
-    paddingHorizontal: theming.spacing.LG,
-  },
-  image: {
-    width: 177,
-    height: 141,
-    position: 'relative',
-  },
-  img: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  imageTrash: {
-    width: 40,
-    height: 40,
-    backgroundColor: theming.colors.brown,
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  images: {
-    marginTop: 20,
-  },
+
   bottom: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -401,19 +309,18 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: theming.colors.gray75,
     paddingHorizontal: theming.spacing.LG,
-    paddingVertical: 20,
+    paddingVertical: theming.spacing.MD,
+    gap: theming.spacing.MD,
   },
-  bottomBtn: {
-    width: '49%',
-    height: 58,
-    backgroundColor: theming.colors.white,
-    borderWidth: 1,
-    borderColor: theming.colors.purple,
-  },
-  bottomBtn1: {
-    width: '49%',
-    height: 58,
-  },
+  // bottomBtn: {
+  //   width: '49%',
+  //   backgroundColor: theming.colors.white,
+  //   borderWidth: 1,
+  //   borderColor: theming.colors.purple,
+  // },
+  // bottomBtn1: {
+  //   width: '49%',
+  // },
   bottomTitle: {
     color: theming.colors.purple,
     fontWeight: '700',

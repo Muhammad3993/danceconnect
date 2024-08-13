@@ -22,6 +22,7 @@ import {
 import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserLocation } from 'data/api/user/inerfaces';
+import { LocationIcon } from 'components/icons/location';
 
 interface Props {
   value?: string;
@@ -115,9 +116,7 @@ export function LocationSelector({ value = '', onChange, inputStyle }: Props) {
           <Text style={styles.chooseCountryText}>
             {value?.length > 0 ? value : t('location_choose')}
           </Text>
-          <View style={styles.justifyCenter}>
-            {/* <Image source={{ uri: 'arrowdown' }} style={styles.backIcon} /> */}
-          </View>
+          <LocationIcon />
         </TouchableOpacity>
       </View>
       <DCBottomSheet

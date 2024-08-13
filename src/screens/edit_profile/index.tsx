@@ -1,79 +1,70 @@
 import React, { useState } from 'react';
-// import react-native
-import { StyleSheet, Text, View } from 'react-native';
-// import component
+import { StyleSheet, View } from 'react-native';
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
-// import theming
 import { theming } from 'common/constants/theming';
-// import images
-// import icons
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { EditIcon } from 'components/icons/edit';
 import { MailIcon } from 'components/icons/mail';
 // dropdown
-import DropDownPicker from 'react-native-dropdown-picker';
 import { FillArrowIcon } from 'components/icons/fillArrow';
 import { genders } from 'common/constants';
 import { useDCStore } from 'store';
 import { useTranslation } from 'react-i18next';
 import { UserImage } from 'components/user_image';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Controller, useForm } from 'react-hook-form';
+import { Dropdown } from 'react-native-element-dropdown';
 
 export function EditProfileScreen() {
   const user = useDCStore.use.user();
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const { control } = useForm({
+    defaultValues: user ?? {},
+  });
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.editProfile}>
         <View style={styles.editTop}>
-          {/* <View style={styles.editBack}>
-            <ArrowLeftIcon fill={theming.colors.textPrimary} />
-            <Text style={styles.backTitle}>{t("edit_profile")}</Text>
-          </View> */}
-
           <View style={styles.editAvatar}>
             <UserImage style={styles.editImage} />
             <EditIcon style={styles.editIcon} />
           </View>
 
           <View style={styles.editForm}>
-            <DCInput
-              inputStyle={{
-                backgroundColor: theming.colors.lightGray,
-              }}
-              value="Andrew Ainsley"
-            />
-            <DropDownPicker
-              open={open}
-              value={user?.userGender ?? 'male'}
-              items={genders.map(el => ({ label: el.title, value: el.title }))}
-              setOpen={setOpen}
-              setValue={() => {}}
-              placeholder="Gender"
-              style={styles.dropdown}
-              dropDownContainerStyle={styles.dropDownContainer}
-              showArrowIcon={true}
-              showTickIcon={false}
-              modalContentContainerStyle={{
-                borderWidth: 1,
-                borderColor: theming.colors.gray,
-              }}
-              textStyle={{
-                textTransform: 'capitalize',
-                fontSize: 16,
-              }}
-              ArrowDownIconComponent={() => <FillArrowIcon />}
-              ArrowUpIconComponent={() => (
-                <FillArrowIcon style={{ transform: [{ rotate: '180deg' }] }} />
+            <Controller
+              control={control}
+              name="userName"
+              render={({ field: { value, onChange } }) => (
+                <DCInput
+                  placeholder={t('name')}
+                  value={value}
+                  onChangeText={onChange}
+                />
               )}
             />
+
+            <Controller
+              control={control}
+              name="userGender"
+              render={({ field: { value, onChange } }) => (
+                <Dropdown
+                  value={value}
+                  data={genders.map(el => ({
+                    label: el.title,
+                    value: el.id,
+                  }))}
+                  onChange={data => onChange(data)}
+                  placeholder={t('gender')}
+                  labelField="label"
+                  valueField="value"
+                  style={styles.dropdown}
+                  renderRightIcon={() => <FillArrowIcon />}
+                />
+              )}
+            />
+
             <DCInput
-              inputStyle={{
-                backgroundColor: theming.colors.lightGray,
-              }}
               value="andrew_ainsley@yourdomain.com"
               rightIcon={<MailIcon style={{ margin: 'auto' }} />}
             />

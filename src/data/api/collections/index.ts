@@ -1,5 +1,9 @@
 import Config from 'react-native-config';
-import { DCConstants, PlaceAutocompleteResponse } from './interfaces';
+import {
+  DCConstants,
+  FileUploadRespoonse,
+  PlaceAutocompleteResponse,
+} from './interfaces';
 import axios from 'axios';
 import { apiClient } from '../';
 
@@ -18,5 +22,12 @@ export const collectionsApi = {
       `${googleUrl}key=${Config.GOOGLE_API_KEY}&types=(cities)&components=country:${countryCode}&input=${searchString}&language=en`,
     );
     return response.data;
+  },
+
+  async uploadImage(data: FormData) {
+    const res = await apiClient.post<FileUploadRespoonse>('/upload', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
   },
 };

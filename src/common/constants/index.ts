@@ -7,9 +7,9 @@ export const SCREEN_HEIGHT = screenSize.height;
 export const SCREEN_WIDTH = screenSize.width;
 
 export const genders = [
-  { id: 1, title: i18n.t('gender_select.male') },
-  { id: 2, title: i18n.t('gender_select.female') },
-  { id: 3, title: i18n.t('gender_select.nonbinary') },
+  { id: 'male', title: i18n.t('gender_select.male') },
+  { id: 'female', title: i18n.t('gender_select.female') },
+  { id: 'nonbinary', title: i18n.t('gender_select.nonbinary') },
 ];
 
 export const roles = [

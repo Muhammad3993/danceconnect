@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { theming } from 'common/constants/theming';
 import { useDCStore } from 'store';
@@ -11,14 +11,21 @@ import {
   View,
 } from 'react-native';
 import { DanceStyleGroup } from 'data/api/collections/interfaces';
+import { PlusIcon } from 'components/icons/plus';
 
 interface Props {
   value: string[];
   onChange: (newValue: string[]) => void;
   errorMessage?: string;
+  scrollEnabled?: boolean;
 }
 
-export const CategorySelector = ({ onChange, value, errorMessage }: Props) => {
+export const CategorySelector = ({
+  onChange,
+  value,
+  errorMessage,
+  scrollEnabled,
+}: Props) => {
   const constants = useDCStore.use.constants();
   const danceStyles = constants?.danceStyles ?? [];
 
@@ -39,6 +46,7 @@ export const CategorySelector = ({ onChange, value, errorMessage }: Props) => {
           {value.map(item => {
             return (
               <TouchableOpacity
+                key={item}
                 style={styles.addedDanceStyleItem}
                 onPress={() => deleteStyle(item)}>
                 <Text style={styles.addedDanceStyleText}>{item}</Text>
@@ -50,6 +58,7 @@ export const CategorySelector = ({ onChange, value, errorMessage }: Props) => {
       )}
       {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
       <FlatList
+        scrollEnabled={scrollEnabled}
         showsVerticalScrollIndicator={false}
         data={danceStyles}
         renderItem={({ item }) => {
@@ -126,10 +135,10 @@ const styles = StyleSheet.create({
   },
   rightIconWrapper: {
     backgroundColor: theming.colors.orange,
-    padding: 2,
+    paddingVertical: 2,
     borderRadius: 6,
     justifyContent: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 8,
   },
   animatedBody: {
     flex: 1,
@@ -161,50 +170,56 @@ interface StylesGroupProps {
 }
 
 export function StylesGroup({ group, value, onSelectItem }: StylesGroupProps) {
+  const [expand, setExpand] = useState(false);
   return (
     <View style={styles.itemContainer}>
       <TouchableOpacity
         style={styles.titleWrapper}
-        onPress={() => { }}
+        onPress={() => {
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          setExpand(!expand);
+        }}
         activeOpacity={0.7}>
         <View style={{ justifyContent: 'center' }}>
           <Text style={styles.itemTitle}>{group.title}</Text>
         </View>
         <View style={styles.rightIconWrapper}>
-          {/* <Image source={{ uri: 'backicon' }} style={styles.rightIcon} /> */}
+          <PlusIcon fill={theming.colors.white} />
         </View>
       </TouchableOpacity>
-      <View style={styles.animatedBody}>
-        {group.items.map(dStyle => {
-          const isAvailable = value.includes(dStyle);
-          return (
-            <TouchableOpacity
-              key={dStyle}
-              style={[
-                styles.danceStyleItem,
-                {
-                  borderColor: isAvailable
-                    ? theming.colors.orange
-                    : theming.colors.darkGray,
-                },
-              ]}
-              activeOpacity={0.7}
-              onPress={() => onSelectItem(dStyle)}>
-              <Text
+      {expand && (
+        <View style={styles.animatedBody}>
+          {group.items.map(dStyle => {
+            const isAvailable = value.includes(dStyle);
+            return (
+              <TouchableOpacity
+                key={dStyle}
                 style={[
-                  styles.danceStyleText,
+                  styles.danceStyleItem,
                   {
-                    color: isAvailable
+                    borderColor: isAvailable
                       ? theming.colors.orange
                       : theming.colors.darkGray,
                   },
-                ]}>
-                {dStyle}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+                ]}
+                activeOpacity={0.7}
+                onPress={() => onSelectItem(dStyle)}>
+                <Text
+                  style={[
+                    styles.danceStyleText,
+                    {
+                      color: isAvailable
+                        ? theming.colors.orange
+                        : theming.colors.darkGray,
+                    },
+                  ]}>
+                  {dStyle}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      )}
     </View>
   );
 }

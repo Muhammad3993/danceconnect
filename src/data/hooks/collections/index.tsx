@@ -1,6 +1,6 @@
 import { collectionsApi } from 'data/api/collections';
 import { DCCountry } from 'data/api/collections/interfaces';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useSearchCities = (
   searchString: string,
@@ -12,4 +12,8 @@ export const useSearchCities = (
       collectionsApi.searchCity(searchString, country?.countryCode ?? ''),
     enabled: searchString !== '' && Boolean(country?.availableSearchString),
   });
+};
+
+export const useUploadImage = () => {
+  return useMutation({ mutationFn: collectionsApi.uploadImage });
 };

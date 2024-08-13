@@ -19,11 +19,15 @@ import { CreateEvent } from './create_event';
 import CreateTicket from './create_ticket';
 import { Message } from './messages/Message';
 import { LoaderView } from 'components/shared/loader_view';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeftIcon } from 'components/icons/arrowLeft';
+import { NavigationBackIcon } from './ui/BackIcon';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
 export function Navigation() {
   const initApp = useDCStore.use.initAppAction();
+  const { t } = useTranslation();
   const user = useDCStore.use.user();
   const [initing, setIniting] = useState(true);
 
@@ -50,7 +54,11 @@ export function Navigation() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          headerLeft: () => <NavigationBackIcon />,
+        }}>
         {user == null ? (
           <>
             <Stack.Screen name="auth" component={AuthScreen} />
@@ -64,7 +72,15 @@ export function Navigation() {
             <Stack.Screen name="homeTabs" component={HomeTabs} />
             <Stack.Screen name="editProfile" component={EditProfileScreen} />
             <Stack.Screen name="event" component={EventScreen} />
-            <Stack.Screen name="createCommunity" component={CreateCommunity} />
+            <Stack.Screen
+              options={{
+                headerShown: true,
+                headerTitle: t('create_community_card_title'),
+                headerTitleAlign: 'center',
+              }}
+              name="createCommunity"
+              component={CreateCommunity}
+            />
             <Stack.Screen name="community" component={CommunityScreen} />
 
             <Stack.Screen name="createEvent" component={CreateEvent} />

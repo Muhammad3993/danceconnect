@@ -47,3 +47,8 @@ export interface PlaceAutocompleteTerm {
   offset: number;
   value: string;
 }
+
+export interface FileUploadRespoonse {
+  message: string;
+  filename: string;
+}
