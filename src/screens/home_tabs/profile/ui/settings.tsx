@@ -139,7 +139,7 @@ export function ProfileSettings({ navigation, close }: Props) {
       <ListItem
         leftIcon={<SecurityIcon />}
         click={onPressTickets}
-        title={t('Security')}
+        title={t('security')}
         rightIcon={
           <RightArrowIcon
             stroke={theming.colors.textPrimary}
@@ -152,7 +152,7 @@ export function ProfileSettings({ navigation, close }: Props) {
       <ListItem
         leftIcon={<NotificationIcon />}
         click={onPressTickets}
-        title={t('Notification')}
+        title={t('notification')}
         rightIcon={
           <RightArrowIcon
             stroke={theming.colors.textPrimary}
@@ -165,7 +165,7 @@ export function ProfileSettings({ navigation, close }: Props) {
       <ListItem
         leftIcon={<PaymentIcon />}
         click={onPressTickets}
-        title={t('Payments')}
+        title={t('payments')}
         rightIcon={
           <RightArrowIcon
             stroke={theming.colors.textPrimary}
@@ -178,7 +178,7 @@ export function ProfileSettings({ navigation, close }: Props) {
       <ListItem
         leftIcon={<SwapIcon />}
         click={onPressTickets}
-        title={t('Linked Accounts')}
+        title={t('linked_accounts')}
         rightIcon={
           <RightArrowIcon
             stroke={theming.colors.textPrimary}
@@ -191,7 +191,7 @@ export function ProfileSettings({ navigation, close }: Props) {
       <ListItem
         leftIcon={<InfoIcon />}
         click={onPressTickets}
-        title={t('Help Center')}
+        title={t('help_center')}
         rightIcon={
           <RightArrowIcon
             stroke={theming.colors.textPrimary}
@@ -246,7 +246,7 @@ export function ProfileSettings({ navigation, close }: Props) {
       <ListItem
         leftIcon={<StarIcon />}
         click={onPressTickets}
-        title={t('Rate us')}
+        title={t('rate_us')}
         rightIcon={
           <RightArrowIcon
             stroke={theming.colors.textPrimary}
@@ -261,7 +261,7 @@ export function ProfileSettings({ navigation, close }: Props) {
         click={() => {
           Linking.openURL('https://danceconnect.online/terms.html');
         }}
-        title={t('Terms & Privacy')}
+        title={t('terms_condition')}
         rightIcon={
           <RightArrowIcon
             stroke={theming.colors.textPrimary}
@@ -274,7 +274,7 @@ export function ProfileSettings({ navigation, close }: Props) {
       <ListItem
         click={handleLogout}
         leftIcon={<LogoutIcon />}
-        title={t('Logout')}
+        title={t('logout')}
         titleStyle={{
           color: theming.colors.redError,
         }}

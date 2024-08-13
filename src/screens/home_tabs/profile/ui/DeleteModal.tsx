@@ -4,6 +4,7 @@ import { theming } from 'common/constants/theming';
 import { DCButton } from 'components/shared/button';
 import { useDCStore } from 'store';
 import { useDeleteAccount } from 'data/hooks/user';
+import { useTranslation } from 'react-i18next';
 
 interface DeleteModalProps {
   visible: boolean;
@@ -18,6 +19,7 @@ export const DeleteModal = ({ visible, onChange }: DeleteModalProps) => {
   const userId = user?.id;
 
   const { mutate: deleteAccount } = useDeleteAccount();
+  const { t } = useTranslation();
 
   const handleDeleteAccount = () => {
     deleteAccount(userId, {
@@ -35,11 +37,11 @@ export const DeleteModal = ({ visible, onChange }: DeleteModalProps) => {
     <View style={visible ? styles.modal : styles.modalVisible}>
       <View style={styles.modalBox}>
         <Text style={styles.modalBoxTitle}>
-          Do you really want to delete account?
+          {t("del_acc_question")}
         </Text>
         <View style={styles.modalBoxButtons}>
           <DCButton
-            children="Cencel"
+            children={t("cancel")}
             containerStyle={{
               width: '50%',
               height: 58,
@@ -48,7 +50,7 @@ export const DeleteModal = ({ visible, onChange }: DeleteModalProps) => {
             onPress={() => onChange(false)}
           />
           <DCButton
-            children="Yes, delete"
+            children={t("y_delete")}
             containerStyle={{
               width: '50%',
               height: 58,

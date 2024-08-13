@@ -31,7 +31,7 @@ export function EditProfileScreen() {
         <View style={styles.editTop}>
           {/* <View style={styles.editBack}>
             <ArrowLeftIcon fill={theming.colors.textPrimary} />
-            <Text style={styles.backTitle}>Edit profile</Text>
+            <Text style={styles.backTitle}>{t("edit_profile")}</Text>
           </View> */}
 
           <View style={styles.editAvatar}>

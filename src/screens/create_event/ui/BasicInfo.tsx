@@ -10,20 +10,20 @@ import { theming } from 'common/constants/theming';
 import { Header } from './Header';
 import { CloseIcon } from 'components/icons/close';
 import { Status } from './Status';
-import { t } from 'i18next';
 import { DCInput } from 'components/shared/input';
 import CategorySelector from 'components/category_selector';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DCButton } from 'components/shared/button';
+import { useTranslation } from 'react-i18next';
 
 interface BasicInfoProps {
-  click: () => void
+  click: () => void;
 }
 
 export const BasicInfo = ({ click }: BasicInfoProps) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categoryError, setCategoryError] = useState('');
-
+  const { t } = useTranslation();
   const [eventType, setEventType] = useState('');
 
   console.log(eventType);
@@ -147,7 +147,7 @@ export const BasicInfo = ({ click }: BasicInfoProps) => {
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   root: {

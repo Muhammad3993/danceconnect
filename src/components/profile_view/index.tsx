@@ -74,7 +74,7 @@ export function PrifleView({
 
   const emptyTitle = useMemo(() => {
     if (currentTab === t('posts')) {
-      return 'There are no records yet';
+      return t("no_records");
     }
     if (currentTab === t('events_tab')) {
       return t('no_upcoming_communities');
@@ -142,7 +142,7 @@ export function PrifleView({
                       {!showAbout ? t('show_more') : t('show_less')}
                     </Text>
                     <View style={{ justifyContent: 'center' }}>
-                      <Text>more</Text>
+                      <Text>{t("more")}</Text>
                     </View>
                   </TouchableOpacity>
                 )}
@@ -151,7 +151,7 @@ export function PrifleView({
             <View style={styles.profileBottom}>
               {actions && <View style={styles.actions}>{actions}</View>}
               <DCButton
-                children="Edit Profile"
+                children={t("edit_profile")}
                 leftIcon={<EditFillIcon />}
                 containerStyle={{
                   width: '48.5%',

@@ -30,7 +30,7 @@ export function PeopleScreen() {
 
       <ScrollView style={styles.container}>
         <FilterComponent
-          title="978 people found"
+          title={"people_found"}
           containerStyle={{
             marginTop: 0,
             marginBottom: 20,

@@ -222,5 +222,25 @@
     "ct_free": {
         "title": "Community Standard",
         "description": "- Создание событий"
-    }
+    },
+    "no_records": "Пока нет записей",
+    "more": "более",
+    "details": "Подробности",
+    "upcoming_events": "Предстоящие события",
+    "upload_img": "Отпреми слику",
+    "start_date": "Дата начала",
+    "end_date": "Дата окончания",
+    "t_paid_title": "Нужны оплаченные билеты",
+    "tt_set_title": "Установить цену билета",
+    "tt_set_desc": "Если мероприятие бесплатное, оставьте заявку.",
+    "interested": "Вам может быть интересно",
+    "security": "Безопасность",
+    "notification": "Уведомление",
+    "payments": "Платежи",
+    "linked_accounts": "Связанные аккаунты",
+    "help_center": "Центр помощи",
+    "rate_us": "Оцените нас",
+    "add_post": "Добавить пост",
+    "messages": "Сообщения",
+    "message": "Сообщение"
 }

@@ -43,7 +43,7 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
         <View style={styles.communitiesSearch}>
           <DCInput
             leftIcon={<SearchIcon />}
-            placeholder="Event name, dance style, plac."
+            placeholder={t("input_search_events")}
             containerStyle={styles.communitiesInputContainer}
             inputStyle={styles.communitiesInput}
           />

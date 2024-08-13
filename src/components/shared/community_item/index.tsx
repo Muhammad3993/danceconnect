@@ -13,7 +13,6 @@ interface CommunityItemProps {
 }
 
 export function CommunityItem({ community, click }: CommunityItemProps) {
-  // Only show elements
   const { t } = useTranslation();
   const slicedCategories = community.categories.slice(0, 2);
   // Remaining elements
@@ -32,7 +31,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
             <Text style={styles.itemTitle}>{community.title}</Text>
             <Text style={styles.itemSubtitle} numberOfLines={3}>
               {community.description}
-              <Text style={{ color: theming.colors.purple }}>Details</Text>
+              <Text style={{ color: theming.colors.purple }}>{t("details")}</Text>
             </Text>
           </View>
 
@@ -53,7 +52,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
               ))}
             </View>
             <Text style={styles.itemSpotTitle}>
-              {t(remainingFollowersCount.toString(), 'followers')}
+              {t(remainingFollowersCount.toString(), "followers")}
             </Text>
           </View>
         </View>
@@ -76,7 +75,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
             )}
           </View>
           <View style={styles.itemBtn}>
-            <Text style={styles.itemBtnTitle}>Join</Text>
+            <Text style={styles.itemBtnTitle}>{t("join_small")}</Text>
           </View>
         </View>
       </View>

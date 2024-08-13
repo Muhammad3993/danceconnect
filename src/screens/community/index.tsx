@@ -82,7 +82,7 @@ export function CommunityScreen({ route }) {
           <TouchableOpacity
             style={styles.eventBodyBtn}
             onPress={handleDescriptionToggle}>
-            <Text style={styles.eventBodyBtnTitle}>Show More</Text>
+            <Text style={styles.eventBodyBtnTitle}>{t("show_more")}</Text>
             <RightArrowIcon
               style={
                 isShowDescriptions
@@ -107,7 +107,7 @@ export function CommunityScreen({ route }) {
               <View style={styles.eventRowBox}>
                 <Text style={styles.eventDate}>{community?.creator.location.location}</Text>
                 <View style={styles.eventMaps}>
-                  <Text style={styles.eventMapsTitle}>Maps</Text>
+                  <Text style={styles.eventMapsTitle}>{t("maps")}</Text>
                   <ArrowLeftIcon
                     fill={theming.colors.purple}
                     style={{ transform: [{ rotate: '180deg' }] }}
@@ -126,13 +126,13 @@ export function CommunityScreen({ route }) {
                   style={[styles.eventDate, { fontSize: theming.spacing.MD }]}>
                   {community?.creator.userName}
                 </Text>
-                <Text style={styles.eventTime}>Organizer</Text>
+                <Text style={styles.eventTime}>{t("organizer")}</Text>
               </View>
             </View>
             <View style={styles.eventPeople}>
               <View style={styles.eventPeopleLeft}>
                 <Image source={images.eventAvatar} style={styles.eventAvatar} />
-                <Text style={styles.eventPeopleTitle}>+ {community?.followers.length} going</Text>
+                <Text style={styles.eventPeopleTitle}>+ {community?.followers.length} {t("going")}</Text>
               </View>
             </View>
           </View>

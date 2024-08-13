@@ -2,6 +2,7 @@ import { StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import React from 'react';
 import { theming } from 'common/constants/theming';
 import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 interface StatusProps {
   containerStyle?: ViewStyle;
@@ -28,6 +29,7 @@ export const Status = ({
   titleStyle2,
   titleStyle3
 }: StatusProps) => {
+  const { t } = useTranslation();
   return (
     <View style={[styles.statusess, containerStyle]}>
       <View style={[styles.status, statusStyle1]}>

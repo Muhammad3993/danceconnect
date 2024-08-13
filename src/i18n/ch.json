@@ -192,5 +192,25 @@
      "y_logout": "是的，注销",
      "del_acc": "删除账户",
      "del_acc_question": "您真的要删除账户吗？",
-     "y_delete": "是的，删除"
-    }
+     "y_delete": "是的，删除",
+    "no_records": "暂无记录",
+    "more": "更多的",
+    "details": "细节",
+    "upcoming_events": "即将举行的活动",
+    "upload_img": "上传图片",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "t_paid_title": "需付费门票",
+    "tt_set_title": "设定票价",
+    "tt_set_desc": "如果活动是免费休假",
+    "interested": "你可能会感兴趣",
+    "security": "安全",
+    "notification": "通知",
+    "payments": "付款",
+    "linked_accounts": "关联账户",
+    "help_center": "帮助中心",
+    "rate_us": "给我们评分",
+    "add_post": "添加帖子",
+    "messages": "消息",
+    "message": "信息"
+}

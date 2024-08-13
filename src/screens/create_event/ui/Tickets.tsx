@@ -21,6 +21,7 @@ import { EditFillIcon } from 'components/icons/editFIll';
 import { EditIconSvg } from 'components/icons/editIcon';
 import { TrashIcon } from 'components/icons/trash';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 export function Tickets() {
   const [selectedBox, setSelectedBox] = useState(null);
@@ -30,6 +31,8 @@ export function Tickets() {
   const handleBoxPress = boxNumber => {
     setSelectedBox(boxNumber);
   };
+  const { t } = useTranslation();
+
   return (
     <SafeAreaView style={styles.root}>
       <Header
@@ -75,11 +78,8 @@ export function Tickets() {
             style={selectedBox !== 1 ? styles.box : styles.boxActive}
             onPress={() => handleBoxPress(1)}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.boxTitle}>Free Event. No tickets needed</Text>
-              <Text style={styles.boxSubTitle}>
-                Guests don't need tickets and the number of visitors is not
-                limited.
-              </Text>
+              <Text style={styles.boxTitle}>{t('tt_free_title')}</Text>
+              <Text style={styles.boxSubTitle}>{t('tt_free_desc')}</Text>
             </View>
             <CustomCheckBox
               value={selectedBox === 1}
@@ -95,11 +95,8 @@ export function Tickets() {
               style={selectedBox !== 2 ? styles.box : styles.boxActive}
               onPress={() => handleBoxPress(2)}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.boxTitle}>Tickets needed</Text>
-                <Text style={styles.boxSubTitle}>
-                  Entrance is paid and there are one or more types of tickets or
-                  Entrance is free, but the number of visitors is limited.
-                </Text>
+                <Text style={styles.boxTitle}>{t('tt_paid_title')}</Text>
+                <Text style={styles.boxSubTitle}>{t('tt_paid_desc')}</Text>
               </View>
               <CustomCheckBox
                 value={selectedBox === 2}
@@ -116,11 +113,8 @@ export function Tickets() {
               style={selectedBox !== 3 ? styles.box : styles.boxActive}
               onPress={() => handleBoxPress(3)}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.boxTitle}>Paid tickets needed</Text>
-                <Text style={styles.boxSubTitle}>
-                  Entrance is paid and there are one or more types of tickets or
-                  Entrance is free, but the number of visitors is limited.
-                </Text>
+                <Text style={styles.boxTitle}>{t("t_paid_title")}</Text>
+                <Text style={styles.boxSubTitle}>{t('tt_paid_desc')}</Text>
               </View>
               <CustomCheckBox
                 value={selectedBox === 3}
@@ -152,37 +146,53 @@ export function Tickets() {
                   />
                 </View>
               </View>
-              <Text style={styles.ticketSubtitle}>Starts Jun 3,2023 / Ends Jun 13,2023 / Limit 100</Text>
-              <Text style={styles.ticketSubtitle}>Price 30 USD (+10% platform fee + 3$ Stripe fee)</Text>
-              <Text style={styles.ticketDescription}>Description here entrance is paid and there are one or more types of tickets. </Text>
+              <Text style={styles.ticketSubtitle}>
+                Starts Jun 3,2023 / Ends Jun 13,2023 / Limit 100
+              </Text>
+              <Text style={styles.ticketSubtitle}>
+                Price 30 USD (+10% platform fee + 3$ Stripe fee)
+              </Text>
+              <Text style={styles.ticketDescription}>
+                Description here entrance is paid and there are one or more
+                types of tickets.{' '}
+              </Text>
               <View style={styles.ticketBottom}>
                 <View style={styles.ticketBottomLeft}>
                   <View style={styles.tickeCircle}></View>
                   <Text style={styles.ticketBottomTitle}>On Hold</Text>
                 </View>
                 <View style={styles.ticketBottomRight}>
-                  <Text style={[styles.ticketBottomTitle, {color: theming.colors.gray700}]}>Final price:</Text>
-                  <Text style={[styles.ticketBottomTitle, {fontWeight: "700"}]}>39.00 USD</Text>
+                  <Text
+                    style={[
+                      styles.ticketBottomTitle,
+                      { color: theming.colors.gray700 },
+                    ]}>
+                    Final price:
+                  </Text>
+                  <Text
+                    style={[styles.ticketBottomTitle, { fontWeight: '700' }]}>
+                    39.00 USD
+                  </Text>
                 </View>
               </View>
             </View>
           )}
           {(selectedBox === 2 || selectedBox === 3) && (
-              <DCButton
-                children={'+' + ' ' + t('add_ticket')}
-                containerStyle={{
-                  height: 58,
-                  marginTop: 10,
-                  backgroundColor: theming.colors.white,
-                  borderWidth: 1,
-                  borderColor: theming.colors.purple,
-                }}
-                textStyle={{
-                  color: theming.colors.purple,
-                }}
-                onPress={() => navigation.navigate("createTicket")}
-              />
-            )}
+            <DCButton
+              children={'+' + ' ' + t('add_ticket')}
+              containerStyle={{
+                height: 58,
+                marginTop: 10,
+                backgroundColor: theming.colors.white,
+                borderWidth: 1,
+                borderColor: theming.colors.purple,
+              }}
+              textStyle={{
+                color: theming.colors.purple,
+              }}
+              onPress={() => navigation.navigate('createTicket')}
+            />
+          )}
         </View>
       </ScrollView>
       <View style={styles.bottom}>
@@ -256,29 +266,29 @@ const styles = StyleSheet.create({
   },
   ticketTop: {
     flexDirection: 'row',
-    justifyContent:'space-between',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   ticketTopLeft: {
-    flexDirection: "row",
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM
+    gap: theming.spacing.SM,
   },
   ticketTitle: {
-    fontWeight: "700",
+    fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
     fontSize: 16,
     color: theming.colors.textPrimary,
   },
   ticketTopRight: {
-    flexDirection: "row",
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.MD
+    gap: theming.spacing.MD,
   },
   ticketSubtitle: {
     fontSize: 14,
     color: theming.colors.textPrimary,
-    fontWeight: "400",
+    fontWeight: '400',
     fontFamily: theming.fonts.latoRegular,
     marginTop: 10,
     lineHeight: 21,
@@ -286,24 +296,24 @@ const styles = StyleSheet.create({
   ticketDescription: {
     fontSize: 14,
     color: theming.colors.gray700,
-    fontWeight: "400",
+    fontWeight: '400',
     fontFamily: theming.fonts.latoRegular,
     marginTop: 10,
     lineHeight: 21,
   },
   ticketBottom: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginTop: 12,
   },
   ticketBottomLeft: {
-    flexDirection: "row",
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM
+    gap: theming.spacing.SM,
   },
   ticketBottomRight: {
-    flexDirection: "row",
+    flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
@@ -312,13 +322,13 @@ const styles = StyleSheet.create({
     height: 9,
     borderRadius: 50,
     backgroundColor: theming.colors.orange,
-    position: "relative",
-    top: .5,
+    position: 'relative',
+    top: 0.5,
   },
   ticketBottomTitle: {
     fontSize: 16,
     color: theming.colors.textPrimary,
-    fontWeight: "400",
+    fontWeight: '400',
     fontFamily: theming.fonts.latoRegular,
   },
   bottom: {

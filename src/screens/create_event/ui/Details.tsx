@@ -11,7 +11,6 @@ import { theming } from 'common/constants/theming';
 import { Header } from './Header';
 import { CloseIcon } from 'components/icons/close';
 import { Status } from './Status';
-import { t } from 'i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DCButton } from 'components/shared/button';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
@@ -20,13 +19,14 @@ import { TrashIcon } from 'components/icons/trash';
 import LocationSelector from 'components/location_selector';
 import { images } from 'common/resources/images';
 import { LittleCalendarIcon } from 'components/icons/calendarIcon';
+import { useTranslation } from 'react-i18next';
 
 interface DetailsProps {
   click: () => void
 }
 
 export const Details = ({click}: DetailsProps) => {
-
+  const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.root}>
       <Header
@@ -61,14 +61,14 @@ export const Details = ({click}: DetailsProps) => {
           <Text style={styles.describe}>{t('description_desc')}</Text>
           <View style={styles.dateBoxes}>
             <View style={styles.date}>
-              <Text style={styles.dateTitle}>Start Date</Text>
+              <Text style={styles.dateTitle}>{t("start_date")}</Text>
               <View style={styles.dateBox}>
                 <Text style={styles.dateBoxTitle}>03-01-2022 </Text>
                 <LittleCalendarIcon />
               </View>
             </View>
             <View style={styles.date}>
-              <Text style={styles.dateTitle}>End Date</Text>
+              <Text style={styles.dateTitle}>{t("end_date")}</Text>
               <View style={styles.dateBox}>
                 <Text style={styles.dateBoxTitle}>03-01-2022 </Text>
                 <LittleCalendarIcon />
@@ -85,7 +85,7 @@ export const Details = ({click}: DetailsProps) => {
           {true ? (
             <TouchableOpacity style={styles.upload}>
               <UploadIcon />
-              <Text style={styles.uploadTitle}>Upload picture</Text>
+              <Text style={styles.uploadTitle}>{t("upload_img")}</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.images}>

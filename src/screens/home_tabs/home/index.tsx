@@ -19,7 +19,7 @@ import { JoinCommunityCard } from 'components/shared/join_community_card';
 export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
   const { t } = useTranslation();
   const TABS = [
-    { text: t('all'), containerStyle: { flex: 0.7 } },
+    { text: t('all_tab'), containerStyle: { flex: 0.7 } },
     { text: t('festival'), containerStyle: { flex: 1 } },
     {
       text: t('competitions'),
@@ -43,7 +43,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.homeTop}>
-            <Text style={styles.homeTitle}>You might be interested</Text>
+            <Text style={styles.homeTitle}>{t("interested")}</Text>
             <DCRoundIcon
               icon={<RightArrowIcon />}
               iconBoxStyle={{
@@ -105,7 +105,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: theming.spacing.LG,
   },
   homeTitle: {
-    fontSize: 18,
+    width: "77%",
+    fontSize: 24,
     fontWeight: '700',
     color: theming.colors.textPrimary,
   },

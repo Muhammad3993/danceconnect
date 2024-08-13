@@ -4,8 +4,10 @@ import { images } from 'common/resources/images';
 import { SetCalendarIcon } from 'components/icons/setCalendar';
 import { LocationIcon } from 'components/icons/location';
 import { theming } from 'common/constants/theming';
+import { useTranslation } from 'react-i18next';
 
 export function HomeItem() {
+  const { t } = useTranslation();
   const [isActiveBox, setIsActiveBox] = useState(1);
   const screenWidth = Dimensions.get('window').width;
 
@@ -79,7 +81,7 @@ export function HomeItem() {
             <Text style={styles.homeBoxRowTitle}>night Club 24</Text>
           </View>
           <View style={styles.homeBoxBottomBtn}>
-            <Text style={styles.homeBoxBottomBtnTitle}>Attend</Text>
+            <Text style={styles.homeBoxBottomBtnTitle}>{t('attend')}</Text>
           </View>
         </View>
       </View>

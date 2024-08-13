@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { ReactNode } from 'react';
 import { theming } from 'common/constants/theming';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
   leftIcon?: ReactNode;
@@ -9,6 +9,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ leftIcon, rightIcon }: HeaderProps) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <View style={{ width: '20%' }}>{leftIcon}</View>

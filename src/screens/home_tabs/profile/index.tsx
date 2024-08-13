@@ -15,6 +15,7 @@ import { ShareIcon } from 'components/icons/shareIcon';
 import { DCRoundIcon } from 'components/shared/round_icon';
 import { DCButton } from 'components/shared/button';
 import { PlusSquareIcon } from 'components/icons/plusSquare';
+import { useTranslation } from 'react-i18next';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const user = useDCStore.use.user();
@@ -22,7 +23,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const settingsSheet = useRef<BottomSheetModal>(null);
 
   // const logOut = useDCStore.use.clearDCStoreAction();
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!user) {
@@ -72,7 +73,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
         user={user}
         actions={
           <DCButton
-            children="Add Post"
+            children={t("add_post")}
             leftIcon={<PlusSquareIcon />}
             containerStyle={{
               width: '100%',

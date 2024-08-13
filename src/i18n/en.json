@@ -215,5 +215,25 @@
     "ct_free": {
         "title": "Community Standard",
         "description": "- Post events"
-    }
+    },
+    "no_records": "There are no records yet",
+    "more": "more",
+    "details": "Details",
+    "upcoming_events": "Upcoming Events",
+    "upload_img": "Upload picture",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "t_paid_title": "Paid tickets needed",
+    "tt_set_title": "Set Ticket Price",
+    "tt_set_desc": "If event is free leave",
+    "interested": "You might be interested",
+    "security": "Security",
+    "notification": "Notification",
+    "payments": "Payments",
+    "linked_accounts": "Linked Accounts",
+    "help_center": "Help Center",
+    "rate_us": "Rate us",
+    "add_post": "Add Post",
+    "messages": "Messages",
+    "message": "Message"
 }

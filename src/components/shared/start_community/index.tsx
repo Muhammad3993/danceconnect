@@ -11,6 +11,7 @@ import { CommunitiesIcon } from 'components/icons/communities';
 import { theming } from 'common/constants/theming';
 import { PlusIcon } from 'components/icons/plus';
 import { RightArrowIcon } from 'components/icons/rightArrow';
+import { useTranslation } from 'react-i18next';
 
 interface StartCommunityProps {
   containerStyle?: ViewStyle;
@@ -21,6 +22,7 @@ export function StartCommunity({
   containerStyle,
   onPress,
 }: StartCommunityProps) {
+  const { t } = useTranslation();
   return (
     <TouchableOpacity onPress={onPress} style={[styles.box, containerStyle]}>
       <View style={styles.boxIcon}>
@@ -34,10 +36,8 @@ export function StartCommunity({
       </View>
 
       <View style={{ width: '77%', flex: 1 }}>
-        <Text style={styles.boxTitle}>Start a new community</Text>
-        <Text style={styles.boxSubtitle}>
-          to create and manage your own events
-        </Text>
+        <Text style={styles.boxTitle}>{t('create_community_first')}</Text>
+        <Text style={styles.boxSubtitle}>{t('create_community_second')}</Text>
       </View>
 
       <View>

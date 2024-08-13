@@ -6,12 +6,14 @@ import { images } from 'common/resources/images';
 import { LocationIcon } from 'components/icons/location';
 import { DCLine } from '../line';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useTranslation } from 'react-i18next';
 
 interface EventItemProps {
   click?: () => void;
 }
 
 export const EventItem = ({ click }: EventItemProps) => {
+  const { t } = useTranslation();
   return (
     <TouchableOpacity onPress={click}>
       <View style={styles.item}>
@@ -37,7 +39,9 @@ export const EventItem = ({ click }: EventItemProps) => {
             <Text style={styles.itemSubtitle} numberOfLines={3}>
               Experience the Magic of Bachata at the Los Angeles Bachata
               Festival!...
-              <Text style={{ color: theming.colors.purple }}>Details</Text>
+              <Text style={{ color: theming.colors.purple }}>
+                {t('details')}
+              </Text>
             </Text>
           </View>
 
@@ -57,7 +61,7 @@ export const EventItem = ({ click }: EventItemProps) => {
                 style={[styles.itemSpotImg, { marginLeft: -8, zIndex: -1 }]}
               />
             </View>
-            <Text style={styles.itemSpotTitle}>+ 10900 going</Text>
+            <Text style={styles.itemSpotTitle}>+ 10900 {t("going")}</Text>
           </View>
         </View>
 
@@ -79,7 +83,7 @@ export const EventItem = ({ click }: EventItemProps) => {
             </View>
           </View>
           <View style={styles.itemBtn}>
-            <Text style={styles.itemBtnTitle}>Attend</Text>
+            <Text style={styles.itemBtnTitle}>{t("attend")}</Text>
           </View>
         </View>
       </View>

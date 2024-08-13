@@ -4,12 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MessageIcon } from 'components/icons/message';
 import { theming } from 'common/constants/theming';
 import { MessageItem } from './ui';
+import { useTranslation } from 'react-i18next';
 
 export function Messages({ navigation }) {
+  const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.messageTop}>
-        <Text style={styles.messageTitle}>Messages</Text>
+        <Text style={styles.messageTitle}>{t("messages")}</Text>
         <MessageIcon />
       </View>
       <ScrollView style={styles.container}>

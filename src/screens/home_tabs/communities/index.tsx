@@ -47,7 +47,7 @@ export function CommunitiesScreen({
         <View style={styles.communitiesSearch}>
           <DCInput
             leftIcon={<SearchIcon />}
-            placeholder="Community name, dance style"
+            placeholder={t("input_search_communities")}
             containerStyle={styles.communitiesInputContainer}
             inputStyle={styles.communitiesInput}
           />

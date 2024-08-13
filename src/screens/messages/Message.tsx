@@ -15,8 +15,10 @@ import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
 import { SendIcon } from 'components/icons/send';
+import { useTranslation } from 'react-i18next';
 
 export function Message() {
+  const {t} = useTranslation();
   const handleLinkPress = url => {
     Linking.openURL(url);
   };
@@ -118,7 +120,7 @@ export function Message() {
       />
       <View style={styles.messageBottom}>
         <DCInput
-          placeholder="Message"
+          placeholder={t("message")}
           containerStyle={{
             width: '85%',
             height: 44,

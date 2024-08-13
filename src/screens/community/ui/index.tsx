@@ -33,21 +33,11 @@ export function CommunityCardList({
   const navigation = useNavigation();
 
   const TABS = [
-    { text: t('upcoming events'), containerStyle: { flex: 1 } },
+    { text: t('upcoming_events'), containerStyle: { flex: 1 } },
     { text: t('passed'), containerStyle: { flex: 1 } },
   ];
 
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
-
-  const flatData = useMemo(() => {
-    if (currentTab === t('upcoming events')) {
-      return all;
-    }
-    if (currentTab === t('passed')) {
-      return events;
-    }
-    return [];
-  }, []);
 
   return (
     <View style={{ position: 'relative', flex: 1 }}>
@@ -56,7 +46,7 @@ export function CommunityCardList({
         onEndReached={onEndReached}
         showsVerticalScrollIndicator={false}
         style={{ flex: 1 }}
-        data={flatData}
+        data={[]}
         ListHeaderComponent={
           <>
             <View style={styles.infoHeader}>
@@ -77,14 +67,14 @@ export function CommunityCardList({
             {isLoading ? (
               <ActivityIndicator size={'large'} />
             ) : (
-              (currentTab === t('upcoming events') && (
+              (currentTab === t('upcoming_events') && (
                 <View style={styles.eventWrapper}>
                   <EventItem click={() => navigation.navigate('event')} />
                 </View>
               )) ||
               (currentTab === t('passed') && (
                 <>
-                  <JoinCommunityCard title="Create Your First Event" />
+                  <JoinCommunityCard />
                 </>
               ))
             )}

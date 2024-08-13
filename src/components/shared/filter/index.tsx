@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react';
 import { FilterIcon } from 'components/icons/filter';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { theming } from 'common/constants/theming';
+import { useTranslation } from 'react-i18next';
 
 interface FilterComponentProps {
   containerStyle?: ViewStyle;
@@ -13,12 +14,13 @@ export const FilterComponent = ({
   title,
   containerStyle,
 }: FilterComponentProps) => {
+  const { t } = useTranslation();
   return (
     <View style={[styles.filter, containerStyle]}>
       <Text style={styles.filterTitle}>{title}</Text>
       <View style={styles.filterBtn}>
         <FilterIcon />
-        <Text style={styles.filterBtnTitle}>Filters</Text>
+        <Text style={styles.filterBtnTitle}>{t('filters')}</Text>
         <RightArrowIcon
           stroke={theming.colors.textPrimary}
           style={{

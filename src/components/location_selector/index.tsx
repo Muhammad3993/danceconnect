@@ -135,7 +135,7 @@ export function LocationSelector({ value = '', onChange, inputStyle }: Props) {
           }}>
           <DCInput
             forBottomSheet
-            placeholder="Search Country"
+            placeholder={t("country_choose")}
             containerStyle={{ marginBottom: 24 }}
             inputStyle={styles.inputSearch}
             value={

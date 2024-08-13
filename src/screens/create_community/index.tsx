@@ -20,7 +20,6 @@ import CategorySelector from 'components/category_selector';
 import LocationSelector from 'components/location_selector';
 import { t } from 'i18next';
 
-import ImageCropPicker from 'react-native-image-crop-picker';
 import { useCreateCommunity } from 'data/hooks/community';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
@@ -177,7 +176,7 @@ export function CreateCommunity() {
             {true ? (
               <TouchableOpacity style={styles.upload}>
                 <UploadIcon />
-                <Text style={styles.uploadTitle}>Upload picture</Text>
+                <Text style={styles.uploadTitle}>{t("upload_img")}</Text>
               </TouchableOpacity>
             ) : (
               <View style={styles.images}>

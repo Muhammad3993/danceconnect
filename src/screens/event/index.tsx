@@ -104,7 +104,7 @@ export function EventScreen() {
           <View style={styles.eventPeople}>
             <View style={styles.eventPeopleLeft}>
               <Image source={images.eventAvatar} style={styles.eventAvatar} />
-              <Text style={styles.eventPeopleTitle}>+ 1 going</Text>
+              <Text style={styles.eventPeopleTitle}>+ 1 {t("going")}</Text>
             </View>
             <View style={styles.eventPeopleRight}>
               <Text style={styles.eventPeopleRightTitle}>$25.00</Text>
@@ -143,7 +143,7 @@ export function EventScreen() {
               <View style={styles.eventRowBox}>
                 <Text style={styles.eventDate}>La Favela Night Club</Text>
                 <View style={styles.eventMaps}>
-                  <Text style={styles.eventMapsTitle}>Maps</Text>
+                  <Text style={styles.eventMapsTitle}>{t("maps")}</Text>
                   <ArrowLeftIcon
                     fill={theming.colors.purple}
                     style={{ transform: [{ rotate: '180deg' }] }}
@@ -202,7 +202,7 @@ export function EventScreen() {
           </DCButton>
 
           <View style={{ marginTop: 25 }}>
-            <Text style={styles.eventSubtitle}>About this event</Text>
+            <Text style={styles.eventSubtitle}>{t("about_event")}</Text>
             <Text style={styles.eventDescription}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
