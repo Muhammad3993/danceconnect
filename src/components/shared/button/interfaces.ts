@@ -13,5 +13,5 @@ export interface DCButtonProps extends PropsWithChildren {
   size?: DCButtonSize;
 }
 
-type DCButtonVariant = 'primary' | 'outlined';
+type DCButtonVariant = 'primary' | 'secondary' | 'outlined';
 type DCButtonSize = 'medium' | 'large';

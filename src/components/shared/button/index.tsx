@@ -20,6 +20,12 @@ export const DCButton = ({
   variant = 'primary',
   size = 'medium',
 }: DCButtonProps) => {
+  const variantStyle = {
+    primary: styles.btnPrimary,
+    outlined: styles.btnOutlined,
+    secondary: styles.btnSecondary,
+  };
+
   return (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -27,7 +33,7 @@ export const DCButton = ({
       onPress={onPress}
       style={[
         styles.btn,
-        variant === 'primary' ? styles.btnPrimary : styles.btnOutlined,
+        variantStyle[variant],
         size === 'medium' ? styles.btnMd : styles.btnLg,
         disabled && styles.btnDisabled,
         containerStyle,
@@ -60,6 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
+    gap: 6,
   },
   btnMd: { height: 48 },
   btnLg: { height: 58 },
@@ -71,6 +78,12 @@ const styles = StyleSheet.create({
   btnPrimary: {
     borderRadius: 100,
     backgroundColor: theming.colors.orange,
+  },
+
+  btnSecondary: {
+    borderRadius: 100,
+    borderColor: theming.colors.purple,
+    borderWidth: 1,
   },
 
   btnDisabled: {

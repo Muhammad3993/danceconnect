@@ -24,8 +24,8 @@ export const DCStore = create<State & Action>(set => ({
   constants: null,
   initAppAction: async () => {
     const user = await userApi.getUser();
-    await DCAmity.loginUser(user.id, user.userName);
 
+    await DCAmity.loginUser(user.id, user.userName);
     const constants = await collectionsApi.getConstants();
 
     return set({ user, constants });
@@ -34,7 +34,9 @@ export const DCStore = create<State & Action>(set => ({
   setUser: (user: User) => set({ user }),
   clearDCStoreAction: async () => {
     await DCAmity.logoutUser();
-    await auth().signOut();
+    if (auth().currentUser) {
+      await auth().signOut();
+    }
     await localStorage.clearAll();
     set({ user: null, constants: null });
   },

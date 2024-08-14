@@ -25,7 +25,7 @@ import { UserLocation } from 'data/api/user/inerfaces';
 import { LocationIcon } from 'components/icons/location';
 
 interface Props {
-  value?: string;
+  value?: UserLocation;
   onChange?: (val: UserLocation) => void;
   inputStyle?: ViewStyle;
 }
@@ -114,7 +114,7 @@ export function LocationSelector({ value = '', onChange, inputStyle }: Props) {
           style={styles.chooseCountryWrapper}
           activeOpacity={0.7}>
           <Text style={styles.chooseCountryText}>
-            {value?.length > 0 ? value : t('location_choose')}
+            {value ? value.country + ', ' + value.city : t('location_choose')}
           </Text>
           <LocationIcon />
         </TouchableOpacity>
@@ -134,7 +134,7 @@ export function LocationSelector({ value = '', onChange, inputStyle }: Props) {
           }}>
           <DCInput
             forBottomSheet
-            placeholder={t("country_choose")}
+            placeholder={t('country_choose')}
             containerStyle={{ marginBottom: 24 }}
             inputStyle={styles.inputSearch}
             value={

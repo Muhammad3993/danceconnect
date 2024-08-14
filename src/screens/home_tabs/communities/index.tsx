@@ -9,8 +9,6 @@ import { SearchIcon } from 'components/icons/search';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native-gesture-handler';
-import { JoinCommunityCard } from 'components/shared/join_community_card';
-import { StartCommunity } from 'components/shared/start_community';
 import { CommunityItem } from 'components/shared/community_item';
 import { DCTabs } from 'components/shared/tabs';
 import { TabScreenProps } from 'screens/interfaces';
@@ -47,7 +45,7 @@ export function CommunitiesScreen({
         <View style={styles.communitiesSearch}>
           <DCInput
             leftIcon={<SearchIcon />}
-            placeholder={t("input_search_communities")}
+            placeholder={t('input_search_communities')}
             containerStyle={styles.communitiesInputContainer}
             inputStyle={styles.communitiesInput}
           />

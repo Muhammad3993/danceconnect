@@ -6,8 +6,7 @@ import { DCLine } from '../line';
 import { Community } from 'data/api/community/interfaces';
 import { UserImage } from 'components/user_image';
 import { useTranslation } from 'react-i18next';
-import { useFollowCommunity } from 'data/hooks/community';
-import { useQueryClient } from '@tanstack/react-query';
+import { useToggleFollowCommunity } from 'data/hooks/community';
 
 interface CommunityItemProps {
   community: Community;
@@ -25,19 +24,10 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
 
   const remainingFollowersCount = community.followers.length - 3;
   // Following
-  const queryClient = useQueryClient();
-  const followMutation = useFollowCommunity();
+  const followMutation = useToggleFollowCommunity();
 
-  const handleFollow = (id: number) => {
-    followMutation.mutate(id, {
-      onSuccess: data => {
-        queryClient.invalidateQueries(['communities']);
-        console.log('Successfully followed ' + data);
-      },
-      onError: error => {
-        console.error('Failed to follow ' + error);
-      },
-    });
+  const handleFollow = () => {
+    followMutation.mutate(community);
   };
 
   return (
@@ -47,7 +37,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
           <View style={styles.itemBodyText}>
             <Text style={styles.itemTitle}>{community.title}</Text>
             <Text style={styles.itemSubtitle} numberOfLines={3}>
-              {community.description}
+              {community.description}{' '}
               <Text style={{ color: theming.colors.purple }}>
                 {t('details')}
               </Text>
@@ -65,7 +55,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
               {slicedFollowers.map((user, i) => (
                 <UserImage
                   key={user.id}
-                  source={user.userImage}
+                  userImage={user.userImage}
                   style={i === 0 ? styles.itemSpotImg : styles.itemSpotImg1}
                 />
               ))}
@@ -94,9 +84,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
             )}
           </View>
           {!community.isFollowing ? (
-            <TouchableOpacity
-              style={styles.itemBtn}
-              onPress={() => handleFollow(community.id)}>
+            <TouchableOpacity style={styles.itemBtn} onPress={handleFollow}>
               <Text style={styles.itemBtnTitle}>{t('join_small')}</Text>
             </TouchableOpacity>
           ) : (
@@ -247,5 +235,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: theming.colors.gray700,
     fontFamily: theming.fonts.latoRegular,
-  }
+  },
 });

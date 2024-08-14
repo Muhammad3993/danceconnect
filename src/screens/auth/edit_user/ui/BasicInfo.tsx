@@ -90,10 +90,7 @@ export const BasicInfo = () => {
           return (
             <View
               style={[{ paddingHorizontal: theming.spacing.LG }, styles.input]}>
-              <LocationSelector
-                value={value?.location ?? ''}
-                onChange={onChange}
-              />
+              <LocationSelector value={value} onChange={onChange} />
               {fieldState.error?.location?.message && (
                 <Text style={{ color: theming.colors.redError }}>
                   {fieldState.error?.location?.message}

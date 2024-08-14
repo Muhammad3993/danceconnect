@@ -14,4 +14,5 @@ export interface Community {
   title: string;
   type: 'free' | 'paid';
   isFollowing: boolean;
+  channelId: string;
 }

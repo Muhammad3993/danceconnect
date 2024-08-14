@@ -2,6 +2,7 @@ import {
   Client,
   API_REGIONS,
   PostRepository,
+  ChannelRepository,
 } from '@amityco/ts-sdk-react-native';
 import Config from 'react-native-config';
 
@@ -48,5 +49,17 @@ export const DCAmity = {
       { targetId: userId, targetType: 'user', includeDeleted: false, limit },
       onGetPosts,
     );
+  },
+
+  createCommunity(data: { displayName: string; metadata: { photo: string } }) {
+    return ChannelRepository.createChannel({ type: 'community', ...data });
+  },
+
+  joinCommunity(communityId: string) {
+    return ChannelRepository.joinChannel(communityId);
+  },
+
+  leaveCommunity(communityId: string) {
+    return ChannelRepository.leaveChannel(communityId);
   },
 };

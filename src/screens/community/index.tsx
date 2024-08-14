@@ -22,15 +22,25 @@ import {
 import { useTranslation } from 'react-i18next';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { CommunityCardList } from './ui';
-import { useGetCommunity, useUnFollowCommunity } from 'data/hooks/community';
+import {
+  useGetCommunity,
+  useToggleFollowCommunity,
+} from 'data/hooks/community';
 import { MessageIcon } from 'components/icons/message';
 import { CloseIcon } from 'components/icons/close';
-import { useQueryClient } from '@tanstack/react-query';
+import { StackScreenProps } from 'screens/interfaces';
+import { UserImage } from 'components/user_image';
+import { useDCStore } from 'store';
+import ExpandableText from 'components/shared/expandable_text';
 
-export function CommunityScreen({ route }) {
+export function CommunityScreen({
+  route,
+  navigation,
+}: StackScreenProps<'community'>) {
   const { t } = useTranslation();
   const [isActiveBox, setIsActiveBox] = useState(0);
-  const [isShowDescriptions, setIsShowDescriptions] = useState();
+  const [isShowDescriptions, setIsShowDescriptions] = useState(false);
+  const user = useDCStore.use.user();
   const handleDescriptionToggle = () => {
     setIsShowDescriptions(!isShowDescriptions);
   };
@@ -39,27 +49,24 @@ export function CommunityScreen({ route }) {
 
   const { data: community } = useGetCommunity(id);
 
-  const [isOpenModal, setIsOpenModal] = useState(false);
-
-  const handleOpenModal = () => {
-    setIsOpenModal(!isOpenModal);
-  };
-
   // UnFollowing
-  const queryClient = useQueryClient();
-  const unFollowMutation = useUnFollowCommunity();
+  const unFollowMutation = useToggleFollowCommunity();
 
-  const handleUnFollow = (id: number) => {
-    unFollowMutation.mutate(id, {
-      onSuccess: data => {
-        queryClient.invalidateQueries(['communities']);
-        console.log('Successfull unfollow' + data);
-      },
-      onError: error => {
-        console.error('Failed unfollow ' + error);
-      },
-    });
+  const toggleFollow = () => {
+    if (!community) {
+      return;
+    }
+    unFollowMutation.mutate(community);
   };
+
+  const goToChat = () => {
+    if (!community) {
+      return;
+    }
+    navigation.navigate('chat', { channelId: community.channelId });
+  };
+
+  const isOwner = user?.id === community?.creator.id;
 
   return (
     <SafeAreaView style={styles.root}>
@@ -68,11 +75,16 @@ export function CommunityScreen({ route }) {
           source={images.homeImg1}
           style={styles.backgroundImage}>
           <View style={styles.eventTop}>
-            <DCRoundIcon icon={<ArrowLeftIcon fill={theming.colors.white} />} />
+            <TouchableOpacity onPress={() => navigation.pop()}>
+              <DCRoundIcon
+                icon={<ArrowLeftIcon fill={theming.colors.white} />}
+              />
+            </TouchableOpacity>
+
             <View style={styles.eventTopRight}>
               <DCRoundIcon icon={<EditIconSvg />} />
               <DCRoundIcon icon={<SettingIcon />} />
-              {community?.isFollowing ? (
+              {/* {community?.isFollowing ? (
                 <View style={{ position: 'relative' }}>
                   <TouchableOpacity onPress={handleOpenModal}>
                     <DCRoundIcon
@@ -91,7 +103,7 @@ export function CommunityScreen({ route }) {
                             stroke={theming.colors.redError}
                           />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleUnFollow(community.id)}>
+                        <TouchableOpacity onPress={handleUnFollow}>
                           <Text style={styles.modalBoxTitle}>Unfollow</Text>
                         </TouchableOpacity>
                       </View>
@@ -102,7 +114,7 @@ export function CommunityScreen({ route }) {
                 </View>
               ) : (
                 ''
-              )}
+              )} */}
               <DCRoundIcon icon={<ShareIcon />} />
             </View>
           </View>
@@ -129,24 +141,26 @@ export function CommunityScreen({ route }) {
 
         <View style={styles.eventBody}>
           <Text style={styles.eventTitle}>{community?.title}</Text>
-          <Text
-            style={styles.eventDescription}
-            numberOfLines={isShowDescriptions ? null : 3}>
+          <ExpandableText
+            expand={isShowDescriptions}
+            style={styles.eventDescription}>
             {community?.description}
-          </Text>
+          </ExpandableText>
 
-          <TouchableOpacity
-            style={styles.eventBodyBtn}
-            onPress={handleDescriptionToggle}>
-            <Text style={styles.eventBodyBtnTitle}>{t('show_more')}</Text>
-            <RightArrowIcon
-              style={
-                isShowDescriptions
-                  ? { transform: [{ rotate: '-90deg' }] }
-                  : { transform: [{ rotate: '90deg' }] }
-              }
-            />
-          </TouchableOpacity>
+          {community?.description?.length > 100 && (
+            <TouchableOpacity
+              style={styles.eventBodyBtn}
+              onPress={handleDescriptionToggle}>
+              <Text style={styles.eventBodyBtnTitle}>{t('show_more')}</Text>
+              <RightArrowIcon
+                style={
+                  isShowDescriptions
+                    ? { transform: [{ rotate: '-90deg' }] }
+                    : { transform: [{ rotate: '90deg' }] }
+                }
+              />
+            </TouchableOpacity>
+          )}
 
           <DCLine containerStyle={{ marginTop: 15 }} />
 
@@ -162,7 +176,7 @@ export function CommunityScreen({ route }) {
               />
               <View style={styles.eventRowBox}>
                 <Text style={styles.eventDate}>
-                  {community?.creator.location.location}
+                  {community?.creator.location?.location}
                 </Text>
                 <View style={styles.eventMaps}>
                   <Text style={styles.eventMapsTitle}>{t('maps')}</Text>
@@ -175,8 +189,8 @@ export function CommunityScreen({ route }) {
             </View>
 
             <View style={styles.eventRow}>
-              <Image
-                source={images.eventAvatar}
+              <UserImage
+                userImage={community?.creator.userImage}
                 style={styles.eventOrganizerAvatar}
               />
               <View>
@@ -196,7 +210,23 @@ export function CommunityScreen({ route }) {
               </View>
             </View>
           </View>
-          <DCButton>{t('create_event')}</DCButton>
+          {community?.isFollowing ? (
+            <DCButton
+              leftIcon={<MessageIcon />}
+              onPress={goToChat}
+              variant="secondary"
+              containerStyle={{ marginBottom: theming.spacing.LG }}>
+              {t('write_to_chat')}
+            </DCButton>
+          ) : (
+            <DCButton
+              onPress={toggleFollow}
+              variant="secondary"
+              containerStyle={{ marginBottom: theming.spacing.LG }}>
+              {t('join')}
+            </DCButton>
+          )}
+          {isOwner && <DCButton>{t('create_event')}</DCButton>}
         </View>
         <View style={styles.container}>
           <CommunityCardList all={[]} communities={[]} events={[]} />
@@ -340,6 +370,7 @@ const styles = StyleSheet.create({
   eventOrganizerAvatar: {
     width: 44,
     height: 44,
+    borderRadius: 50,
   },
   eventColumn: {
     marginVertical: 15,

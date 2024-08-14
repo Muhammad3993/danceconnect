@@ -13,14 +13,13 @@ import { HomeTabs } from './home_tabs';
 import { EditProfileScreen } from './edit_profile';
 import { EventScreen } from './event';
 import { CreateCommunity } from './create_community';
-import { Messages } from './messages';
+import { ChatsScreen } from './chats';
 import { CommunityScreen } from './community';
 import { CreateEvent } from './create_event';
 import CreateTicket from './create_ticket';
-import { Message } from './messages/Message';
+import { ChatScreen } from './chat';
 import { LoaderView } from 'components/shared/loader_view';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { NavigationBackIcon } from './ui/BackIcon';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
@@ -85,8 +84,16 @@ export function Navigation() {
 
             <Stack.Screen name="createEvent" component={CreateEvent} />
             <Stack.Screen name="createTicket" component={CreateTicket} />
-            <Stack.Screen name="chatList" component={Messages} />
-            <Stack.Screen name="message" component={Message} />
+            <Stack.Screen name="chats" component={ChatsScreen} />
+            <Stack.Screen
+              name="chat"
+              component={ChatScreen}
+              options={{
+                headerShown: true,
+                headerTitle: t('create_community_card_title'),
+                headerTitleAlign: 'center',
+              }}
+            />
           </>
         )}
       </Stack.Navigator>

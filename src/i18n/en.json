@@ -208,6 +208,7 @@
     "y_delete": "Yes, delete",
     "posts": "Posts",
     "community_type": "Set community type",
+    "write_to_chat": "Write to chat",
     "ct_paid": {
         "title": "Community Plus",
         "description": "- Post events\n- Group chats\n- Community posts"

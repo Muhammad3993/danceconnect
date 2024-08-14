@@ -1,16 +1,16 @@
 import { communityApi } from 'data/api/community';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export default function useGetCommunities() {
   return useQuery({
-    queryKey: ['communites'],
+    queryKey: ['communities'],
     queryFn: communityApi.getCommunities,
   });
 }
 
-export const useGetCommunity = (id: number) => {
+export const useGetCommunity = (id: string) => {
   return useQuery({
-    queryKey: ['communites', id],
+    queryKey: ['communities', id],
     queryFn: () => communityApi.getCommunity(id),
   });
 };
@@ -19,14 +19,13 @@ export const useCreateCommunity = () => {
   return useMutation({ mutationFn: communityApi.createCommunity });
 };
 
-export const useFollowCommunity = () => {
-  return useMutation({
-    mutationFn: (id: number) => communityApi.followCommunity(id),
-  });
-};
+export const useToggleFollowCommunity = () => {
+  const queryClient = useQueryClient();
 
-export const useUnFollowCommunity = () => {
   return useMutation({
-    mutationFn: (id: number) => communityApi.unFollowCommunity(id),
+    mutationFn: communityApi.toggleFollowCommunity,
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['communities'] });
+    },
   });
 };

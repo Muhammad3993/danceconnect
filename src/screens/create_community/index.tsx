@@ -11,15 +11,19 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import ImageUploadList from 'components/image_upload_list';
 import { useCreateCommunity } from 'data/hooks/community';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StackScreenProps } from 'screens/interfaces';
 
-export function CreateCommunity() {
+export function CreateCommunity({
+  navigation,
+}: StackScreenProps<'createCommunity'>) {
   const methods = useForm({
     defaultValues: {
       title: '',
       description: '',
       images: [],
       categories: [],
-      location: '',
+      location: undefined,
       type: '',
       channelId: '',
     },
@@ -32,18 +36,18 @@ export function CreateCommunity() {
     formState: { errors },
   } = methods;
 
-  console.log(control);
-
   const { mutate: createCommunity, isPending } = useCreateCommunity();
 
   const handleCreateCommunity = data => {
-    createCommunity(data);
+    createCommunity(data, {
+      onSuccess() {
+        navigation.pop();
+      },
+    });
   };
 
-  const addImage = () => {};
-
   return (
-    <View style={styles.root}>
+    <SafeAreaView edges={['bottom']} style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <FormProvider {...methods}>
           <View style={styles.container}>
@@ -162,9 +166,9 @@ export function CreateCommunity() {
             <Controller
               name="location"
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <LocationSelector value={value} onChange={onChange} />
-              )}
+              render={({ field: { value, onChange } }) => {
+                return <LocationSelector value={value} onChange={onChange} />;
+              }}
             />
           </View>
         </FormProvider>
@@ -185,7 +189,7 @@ export function CreateCommunity() {
           isLoading={isPending}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

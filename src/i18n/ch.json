@@ -212,5 +212,6 @@
     "rate_us": "给我们评分",
     "add_post": "添加帖子",
     "messages": "消息",
-    "message": "信息"
+    "message": "信息",
+    "write_to_chat": "Write to chat"
 }

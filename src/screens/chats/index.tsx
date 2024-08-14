@@ -3,15 +3,15 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MessageIcon } from 'components/icons/message';
 import { theming } from 'common/constants/theming';
-import { MessageItem } from './ui';
+import { MessageItem } from '../chat/ui';
 import { useTranslation } from 'react-i18next';
 
-export function Messages({ navigation }) {
+export function ChatsScreen({ navigation }) {
   const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.messageTop}>
-        <Text style={styles.messageTitle}>{t("messages")}</Text>
+        <Text style={styles.messageTitle}>{t('messages')}</Text>
         <MessageIcon />
       </View>
       <ScrollView style={styles.container}>
