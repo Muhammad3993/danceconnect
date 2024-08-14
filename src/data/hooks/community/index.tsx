@@ -18,3 +18,15 @@ export const useGetCommunity = (id: number) => {
 export const useCreateCommunity = () => {
   return useMutation({ mutationFn: communityApi.createCommunity });
 };
+
+export const useFollowCommunity = () => {
+  return useMutation({
+    mutationFn: (id: number) => communityApi.followCommunity(id),
+  });
+};
+
+export const useUnFollowCommunity = () => {
+  return useMutation({
+    mutationFn: (id: number) => communityApi.unFollowCommunity(id),
+  });
+};

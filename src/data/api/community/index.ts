@@ -18,4 +18,14 @@ export const communityApi = {
     const res = await apiClient.post<Community>('/community', communityData);
     return res.data;
   },
+
+  async followCommunity(id: number) {
+    const res = await apiClient.post(`/community/follow/${id}`);
+    return res.data;
+  },
+
+  async unFollowCommunity(id: number) {
+    const res = await apiClient.post(`/community/unfollow/${id}`);
+    return res.data;
+  },
 };
