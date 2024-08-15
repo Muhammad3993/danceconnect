@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
@@ -7,6 +7,8 @@ import { Community } from 'data/api/community/interfaces';
 import { UserImage } from 'components/user_image';
 import { useTranslation } from 'react-i18next';
 import { useToggleFollowCommunity } from 'data/hooks/community';
+import FastImage from 'react-native-fast-image';
+import { getImgePath } from 'data/api';
 
 interface CommunityItemProps {
   community: Community;
@@ -45,7 +47,14 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
           </View>
 
           <View style={styles.itemImage}>
-            <Image source={images.itemImg} style={styles.itemImg} />
+            <FastImage
+              source={
+                community.images.length > 0
+                  ? { uri: getImgePath(community.images[0]) }
+                  : images.itemImg
+              }
+              style={styles.itemImg}
+            />
           </View>
         </View>
 
@@ -55,7 +64,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
               {slicedFollowers.map((user, i) => (
                 <UserImage
                   key={user.id}
-                  userImage={user.userImage}
+                  userImage={getImgePath(user.userImage)}
                   style={i === 0 ? styles.itemSpotImg : styles.itemSpotImg1}
                 />
               ))}

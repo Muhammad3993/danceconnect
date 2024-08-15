@@ -234,6 +234,7 @@ const CitySearch = ({
           const cityName = mainText + ', ' + item.terms[0].value;
           return (
             <TouchableOpacity
+              key={item.place_id}
               style={{ paddingVertical: 8 }}
               onPress={() => onPickCity(mainText)}>
               <Text
@@ -283,6 +284,7 @@ const CityPicker = ({
           const isLast = idx === cities.length - 1;
           return (
             <TouchableOpacity
+              key={city.name}
               onPress={() => {
                 onSelectCity(city.name);
                 setOpenList(false);

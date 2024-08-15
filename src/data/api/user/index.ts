@@ -1,10 +1,5 @@
 import { apiClient } from '../';
-import {
-  AuthResponse,
-  AuthUserRequest,
-  User,
-  EditUserRequest,
-} from './inerfaces';
+import { AuthResponse, AuthUserRequest, User } from './inerfaces';
 
 export const userApi = {
   async googleLoginUser(idToken: string) {
@@ -21,7 +16,7 @@ export const userApi = {
 
     return res.data;
   },
-  async editUser(data: EditUserRequest) {
+  async editUser(data: Partial<User>) {
     const res = await apiClient.put<User>('/user', data);
 
     return res.data;

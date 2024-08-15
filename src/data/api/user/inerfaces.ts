@@ -9,17 +9,6 @@ export interface AuthUserRequest {
   password: string;
 }
 
-export interface EditUserRequest {
-  userRole?: string[];
-  individualStyles?: string[];
-  userName?: string;
-  userGender?: string;
-  about?: string;
-  fcmToken?: string;
-  location?: UserLocation;
-  userImage?: string;
-}
-
 export interface UserShort {
   id: string;
   individualStyles: string[];

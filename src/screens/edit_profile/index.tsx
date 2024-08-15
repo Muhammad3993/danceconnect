@@ -1,77 +1,117 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
 import { theming } from 'common/constants/theming';
-import { EditIcon } from 'components/icons/edit';
-import { MailIcon } from 'components/icons/mail';
 // dropdown
 import { FillArrowIcon } from 'components/icons/fillArrow';
 import { genders } from 'common/constants';
 import { useDCStore } from 'store';
 import { useTranslation } from 'react-i18next';
-import { UserImage } from 'components/user_image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller, useForm } from 'react-hook-form';
 import { Dropdown } from 'react-native-element-dropdown';
+import { useEditUser } from 'data/hooks/user';
+import { User } from 'stream-chat';
+import { PhotoUplaod } from './ui/photo_uplaod';
+import { StackScreenProps } from 'screens/interfaces';
+import { showErrorToast } from 'common/libs/toast';
+import { client } from 'common/libs/strem-chat';
+import { getImgePath } from 'data/api';
 
-export function EditProfileScreen() {
+export function EditProfileScreen({
+  navigation,
+}: StackScreenProps<'editProfile'>) {
   const user = useDCStore.use.user();
+  const setUser = useDCStore.use.setUser();
   const { t } = useTranslation();
-  const { control } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: user ?? {},
   });
+
+  const { mutate, isPending } = useEditUser();
+
+  const handleUpdateUser = (newData: Partial<User>) => {
+    console.log(newData);
+
+    mutate(newData, {
+      onSuccess(data) {
+        setUser(data);
+        client.upsertUser({
+          id: data.id,
+          name: data.userName,
+          image: getImgePath(data.userImage),
+        });
+        navigation.pop();
+      },
+      onError(err) {
+        const error = err as Error;
+        showErrorToast(error.message);
+      },
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.editProfile}>
-        <View style={styles.editTop}>
-          <View style={styles.editAvatar}>
-            <UserImage style={styles.editImage} />
-            <EditIcon style={styles.editIcon} />
-          </View>
+        <View style={styles.editForm}>
+          <Controller
+            control={control}
+            name="userImage"
+            render={({ field: { value, onChange } }) => (
+              <PhotoUplaod value={value} onChange={onChange} />
+            )}
+          />
 
-          <View style={styles.editForm}>
-            <Controller
-              control={control}
-              name="userName"
-              render={({ field: { value, onChange } }) => (
-                <DCInput
-                  placeholder={t('name')}
-                  value={value}
-                  onChangeText={onChange}
-                />
-              )}
-            />
+          <Controller
+            control={control}
+            name="userName"
+            render={({ field: { value, onChange } }) => (
+              <DCInput
+                placeholder={t('name')}
+                value={value}
+                onChangeText={onChange}
+              />
+            )}
+          />
 
-            <Controller
-              control={control}
-              name="userGender"
-              render={({ field: { value, onChange } }) => (
-                <Dropdown
-                  value={value}
-                  data={genders.map(el => ({
-                    label: el.title,
-                    value: el.id,
-                  }))}
-                  onChange={data => onChange(data)}
-                  placeholder={t('gender')}
-                  labelField="label"
-                  valueField="value"
-                  style={styles.dropdown}
-                  renderRightIcon={() => <FillArrowIcon />}
-                />
-              )}
-            />
+          <Controller
+            control={control}
+            name="userGender"
+            render={({ field: { value, onChange } }) => (
+              <Dropdown
+                value={value}
+                data={genders.map(el => ({
+                  label: el.title,
+                  value: el.id,
+                }))}
+                onChange={data => onChange(data.value)}
+                placeholder={t('gender')}
+                labelField="label"
+                valueField="value"
+                style={styles.dropdown}
+                renderRightIcon={() => <FillArrowIcon />}
+              />
+            )}
+          />
 
-            <DCInput
-              value="andrew_ainsley@yourdomain.com"
-              rightIcon={<MailIcon style={{ margin: 'auto' }} />}
-            />
-          </View>
+          <Controller
+            control={control}
+            name="about"
+            render={({ field: { value, onChange } }) => (
+              <DCInput
+                placeholder={t('yourself')}
+                value={value}
+                onChangeText={onChange}
+              />
+            )}
+          />
         </View>
 
-        <DCButton textStyle={{ fontWeight: '700' }}>
+        <DCButton
+          isLoading={isPending}
+          onPress={handleSubmit(handleUpdateUser)}
+          textStyle={{ fontWeight: '700' }}>
           {t('save_changes')}
         </DCButton>
       </View>
@@ -104,27 +144,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
   },
-  editAvatar: {
-    width: 140,
-    height: 140,
-    position: 'relative',
-    marginVertical: theming.spacing.LG,
-  },
 
-  editImage: {
-    width: 140,
-    height: 140,
-    resizeMode: 'contain',
-    borderRadius: 70,
-  },
-  editIcon: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-  },
   editForm: {
     width: '100%',
     gap: theming.spacing.MD,
+    alignItems: 'center',
   },
   dropdown: {
     width: '100%',

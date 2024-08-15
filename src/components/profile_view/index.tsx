@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
+import { getImgePath } from 'data/api';
 
 interface Props {
   posts: Amity.InternalPost[];
@@ -74,7 +75,7 @@ export function PrifleView({
 
   const emptyTitle = useMemo(() => {
     if (currentTab === t('posts')) {
-      return t("no_records");
+      return t('no_records');
     }
     if (currentTab === t('events_tab')) {
       return t('no_upcoming_communities');
@@ -98,7 +99,10 @@ export function PrifleView({
       ListHeaderComponent={
         <View style={styles.infoHeader}>
           <View style={styles.profile}>
-            <UserImage userImage={user.userImage} style={styles.image} />
+            <UserImage
+              userImage={getImgePath(user.userImage)}
+              style={styles.image}
+            />
             <View style={styles.profileData}>
               <Text numberOfLines={1} style={styles.userName}>
                 {user?.userName}
@@ -142,7 +146,7 @@ export function PrifleView({
                       {!showAbout ? t('show_more') : t('show_less')}
                     </Text>
                     <View style={{ justifyContent: 'center' }}>
-                      <Text>{t("more")}</Text>
+                      <Text>{t('more')}</Text>
                     </View>
                   </TouchableOpacity>
                 )}
@@ -151,7 +155,7 @@ export function PrifleView({
             <View style={styles.profileBottom}>
               {actions && <View style={styles.actions}>{actions}</View>}
               <DCButton
-                children={t("edit_profile")}
+                children={t('edit_profile')}
                 leftIcon={<EditFillIcon />}
                 containerStyle={{
                   width: '48.5%',

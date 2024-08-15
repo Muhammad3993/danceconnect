@@ -10,13 +10,20 @@ export default function useGetCommunities() {
 
 export const useGetCommunity = (id: string) => {
   return useQuery({
-    queryKey: ['communities', id],
+    queryKey: ['communities', { id }],
     queryFn: () => communityApi.getCommunity(id),
   });
 };
 
 export const useCreateCommunity = () => {
-  return useMutation({ mutationFn: communityApi.createCommunity });
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: communityApi.createCommunity,
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['communities'] });
+    },
+  });
 };
 
 export const useToggleFollowCommunity = () => {

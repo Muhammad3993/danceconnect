@@ -10,6 +10,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
+import { Channel } from 'stream-chat';
 
 export type RootStackRoutes = {
   // auth
@@ -27,7 +28,7 @@ export type RootStackRoutes = {
   createEvent: undefined;
   createTicket: undefined;
   chats: undefined;
-  chat: { channelId: string };
+  chat: { channel: Channel };
 };
 
 export type TabRoutes = {

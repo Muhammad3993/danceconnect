@@ -7,6 +7,7 @@ PODS:
     - AppAuth/Core
   - boost (1.83.0)
   - DoubleConversion (1.1.6)
+  - DVAssetLoaderDelegate (0.3.3)
   - FBLazyVector (0.74.5)
   - ffmpeg-kit-ios-min (6.0)
   - Firebase/Analytics (10.29.0):
@@ -1108,6 +1109,10 @@ PODS:
     - react-native-config/App (= 1.5.3)
   - react-native-config/App (1.5.3):
     - React-Core
+  - react-native-document-picker (9.3.0):
+    - React-Core
+  - react-native-image-resizer (1.4.5):
+    - React-Core
   - react-native-netinfo (11.3.2):
     - React-Core
   - react-native-pager-view (6.3.3):
@@ -1131,8 +1136,51 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-quick-sqlite (8.1.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-safe-area-context (4.10.8):
     - React-Core
+  - react-native-video (6.4.3):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - react-native-video/Video (= 6.4.3)
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-video-trim (1.0.24):
     - DoubleConversion
     - ffmpeg-kit-ios-min (~> 6.0)
@@ -1154,6 +1202,29 @@ PODS:
     - React-utils
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-video/Video (6.4.3):
+    - DoubleConversion
+    - DVAssetLoaderDelegate (~> 0.3.1)
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SPTPersistentCache (~> 1.1.0)
     - Yoga
   - React-nativeconfig (0.74.5)
   - React-NativeModulesApple (0.74.5):
@@ -1387,7 +1458,11 @@ PODS:
   - RecaptchaInterop (100.0.0)
   - RNAppleAuthentication (2.3.0):
     - React-Core
+  - RNAudioRecorderPlayer (3.6.10):
+    - React-Core
   - RNCAsyncStorage (1.24.0):
+    - React-Core
+  - RNCClipboard (1.14.1):
     - React-Core
   - RNCMaskedView (0.3.1):
     - React-Core
@@ -1415,6 +1490,8 @@ PODS:
     - FirebaseCoreExtension
     - React-Core
     - RNFBApp
+  - RNFS (2.20.0):
+    - React-Core
   - RNGestureHandler (2.18.1):
     - DoubleConversion
     - glog
@@ -1448,6 +1525,27 @@ PODS:
     - React-Core
     - React-RCTImage
     - TOCropViewController (~> 2.7.4)
+  - RNReactNativeHapticFeedback (2.3.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNReanimated (3.15.0):
     - DoubleConversion
     - glog
@@ -1546,6 +1644,7 @@ PODS:
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
   - SocketRocket (0.7.0)
+  - SPTPersistentCache (1.1.0)
   - Stripe (23.28.1):
     - StripeApplePay (= 23.28.1)
     - StripeCore (= 23.28.1)
@@ -1621,9 +1720,13 @@ DEPENDENCIES:
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - "react-native-cameraroll (from `../node_modules/@react-native-camera-roll/camera-roll`)"
   - react-native-config (from `../node_modules/react-native-config`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
+  - react-native-quick-sqlite (from `../node_modules/react-native-quick-sqlite`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-video (from `../node_modules/react-native-video`)
   - react-native-video-trim (from `../node_modules/react-native-video-trim`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1649,7 +1752,9 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNAppleAuthentication (from `../node_modules/@invertase/react-native-apple-authentication`)"
+  - RNAudioRecorderPlayer (from `../node_modules/react-native-audio-recorder-player`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
@@ -1658,9 +1763,11 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
+  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
@@ -1671,6 +1778,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AppAuth
+    - DVAssetLoaderDelegate
     - ffmpeg-kit-ios-min
     - Firebase
     - FirebaseAnalytics
@@ -1694,6 +1802,7 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - SocketRocket
+    - SPTPersistentCache
     - Stripe
     - StripeApplePay
     - StripeCore
@@ -1772,12 +1881,20 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-camera-roll/camera-roll"
   react-native-config:
     :path: "../node_modules/react-native-config"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
+  react-native-image-resizer:
+    :path: "../node_modules/react-native-image-resizer"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
+  react-native-quick-sqlite:
+    :path: "../node_modules/react-native-quick-sqlite"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-video:
+    :path: "../node_modules/react-native-video"
   react-native-video-trim:
     :path: "../node_modules/react-native-video-trim"
   React-nativeconfig:
@@ -1828,8 +1945,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNAppleAuthentication:
     :path: "../node_modules/@invertase/react-native-apple-authentication"
+  RNAudioRecorderPlayer:
+    :path: "../node_modules/react-native-audio-recorder-player"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCClipboard:
+    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCMaskedView:
     :path: "../node_modules/@react-native-masked-view/masked-view"
   RNCPicker:
@@ -1846,12 +1967,16 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/auth"
   RNFBMessaging:
     :path: "../node_modules/@react-native-firebase/messaging"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-google-signin/google-signin"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -1869,6 +1994,7 @@ SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
+  DVAssetLoaderDelegate: 0caec20e4e08b8560b691131539e9180024d4bce
   FBLazyVector: ac12dc084d1c8ec4cc4d7b3cf1b0ebda6dab85af
   ffmpeg-kit-ios-min: 4e9a088f4ee9629435960b9d68e54848975f1931
   Firebase: cec914dab6fd7b1bd8ab56ea07ce4e03dd251c2d
@@ -1919,9 +2045,13 @@ SPEC CHECKSUMS:
   react-native-blob-util: 39a20f2ef11556d958dc4beb0aa07d1ef2690745
   react-native-cameraroll: e7574b563f7ee67fd31fb005ecc4184088694ba5
   react-native-config: 8f7283449bbb048902f4e764affbbf24504454af
+  react-native-document-picker: 5b97e24a7f1a1e4a50a72c540a043f32d29a70a2
+  react-native-image-resizer: d9fb629a867335bdc13230ac2a58702bb8c8828f
   react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
   react-native-pager-view: ffcd8fbc1edcc103a1d9dab390dfb695764d5ac7
+  react-native-quick-sqlite: 16d9ade7efc2dc91033a7f07af54bdd96afdf0b5
   react-native-safe-area-context: b7daa1a8df36095a032dff095a1ea8963cb48371
+  react-native-video: a44e3f24867dc31bfc09cbeb3cc82d030cfde1a5
   react-native-video-trim: d65ba8c9498c2ed94bb6f124e0cf47d470f9d43f
   React-nativeconfig: f326487bc61eba3f0e328da6efb2711533dcac46
   React-NativeModulesApple: d89733f5baed8b9249ca5a8e497d63c550097312
@@ -1948,7 +2078,9 @@ SPEC CHECKSUMS:
   ReactCommon: f79ae672224dc1e6c2d932062176883c98eebd57
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNAppleAuthentication: e99eaf3c4c01ad8ecb6125dd6f0cfd98871685b5
+  RNAudioRecorderPlayer: f3b4f32d5581a44be0f9eb383dc87f98f941b08b
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
+  RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
   RNCMaskedView: 090213d32d8b3bb83a4dcb7d12c18f0152591906
   RNCPicker: b7873ba797dc586bfaf3307d737cbdc620a9ff3e
   RNDateTimePicker: 40ffda97d071a98a10fdca4fa97e3977102ccd14
@@ -1957,9 +2089,11 @@ SPEC CHECKSUMS:
   RNFBApp: 10819a4f67d634fe34aa607c6d1e8a8aef019308
   RNFBAuth: 43dea92a17ffa9481029a50df0e8c50943ec495a
   RNFBMessaging: 652aac21d91b8ddb85a5e25c0f04150ef60b5384
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: fc0d83b45872ee937ecc9814012d9b48586b4d7a
   RNGoogleSignin: 08dc4ba7eac2096c7fecfe109f0950fa4683c803
   RNImageCropPicker: 771e2ca319d2cf92e04ebf334ece892ee9a6728f
+  RNReactNativeHapticFeedback: 61b48a1b3b4025917dbeb6afc9b60ca0e9aee022
   RNReanimated: 45f0fd1250364dffec9aabd4a0959f2956a5e78b
   RNScreens: db442e7b8c7bc8befec2ce057927305ff8598cc8
   RNShare: 0fad69ae2d71de9d1f7b9a43acf876886a6cb99c
@@ -1967,6 +2101,7 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
+  SPTPersistentCache: df36ea46762d7cf026502bbb86a8b79d0080dff4
   Stripe: 20e24971647daa5750e7764faa1e8aefe4917243
   stripe-react-native: 3479d62b758ac162b4465cb0aed313b525a575f3
   StripeApplePay: 5b098a0ba6136f4b587e03f5a3776461b4f20dd4

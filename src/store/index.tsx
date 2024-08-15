@@ -4,9 +4,10 @@ import { create } from 'zustand';
 import { createSelectors } from './types';
 import { DCConstants } from 'data/api/collections/interfaces';
 import { collectionsApi } from 'data/api/collections';
-import { DCAmity } from 'common/libs/amity';
 import auth from '@react-native-firebase/auth';
 import { localStorage } from 'common/libs/local_storage';
+import { client } from 'common/libs/strem-chat';
+import { getImgePath } from 'data/api';
 
 type State = {
   user: User | null;
@@ -25,15 +26,24 @@ export const DCStore = create<State & Action>(set => ({
   initAppAction: async () => {
     const user = await userApi.getUser();
 
-    await DCAmity.loginUser(user.id, user.userName);
+    await client.connectUser(
+      {
+        id: user.id,
+        name: user.userName,
+        image: getImgePath(user.userImage),
+      },
+      client.devToken(user.id),
+    );
+
     const constants = await collectionsApi.getConstants();
 
     return set({ user, constants });
   },
 
   setUser: (user: User) => set({ user }),
+
   clearDCStoreAction: async () => {
-    await DCAmity.logoutUser();
+    await client.disconnectUser();
     if (auth().currentUser) {
       await auth().signOut();
     }

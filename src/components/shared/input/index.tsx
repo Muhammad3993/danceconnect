@@ -111,6 +111,7 @@ export const DCInput = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
+    width: '100%',
   },
   inner: {
     borderWidth: 1,

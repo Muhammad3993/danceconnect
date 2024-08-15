@@ -12,9 +12,9 @@ import { theming } from 'common/constants/theming';
 import { UploadIcon } from 'components/icons/upload';
 import FastImage from 'react-native-fast-image';
 import { TrashIcon } from 'components/icons/trash';
-import Config from 'react-native-config';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useTranslation } from 'react-i18next';
+import { getImgePath } from 'data/api';
 
 export interface Props {
   value?: string[];
@@ -71,7 +71,7 @@ export default function ImageUploadList({
         <View style={styles.image} key={img}>
           <FastImage
             resizeMode="cover"
-            source={{ uri: Config.API_URL + '/public/' + img }}
+            source={{ uri: getImgePath(img) }}
             style={styles.img}
           />
           <TouchableOpacity

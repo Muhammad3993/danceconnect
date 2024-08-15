@@ -58,7 +58,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
             return (
               <TouchableOpacity
                 style={{ marginRight: theming.spacing.MD }}
-                onPress={() => navigation.navigate('chatList')}>
+                onPress={() => navigation.navigate('chats')}>
                 <MessageIcon
                   fill={theming.colors.orange}
                   stroke={theming.colors.white}

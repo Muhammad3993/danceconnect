@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -10,15 +10,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toasts } from '@backpackapp-io/react-native-toast';
-import { DCAmity } from 'common/libs/amity';
+// import { DCAmity } from 'common/libs/amity';
 
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
-  useEffect(() => {
-    DCAmity.init();
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>

@@ -43,6 +43,9 @@ export function CreateCommunity({
       onSuccess() {
         navigation.pop();
       },
+      onError(error) {
+        console.log(error);
+      },
     });
   };
 

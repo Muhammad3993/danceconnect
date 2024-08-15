@@ -10,6 +10,7 @@ import { DCRoundIcon } from 'components/shared/round_icon';
 import { DCLine } from 'components/shared/line';
 import React, { useState } from 'react';
 import {
+  FlatList,
   Image,
   ImageBackground,
   SafeAreaView,
@@ -32,6 +33,12 @@ import { StackScreenProps } from 'screens/interfaces';
 import { UserImage } from 'components/user_image';
 import { useDCStore } from 'store';
 import ExpandableText from 'components/shared/expandable_text';
+import { client } from 'common/libs/strem-chat';
+import Config from 'react-native-config';
+import { SCREEN_WIDTH } from 'common/constants';
+import { LoaderView } from 'components/shared/loader_view';
+import FastImage from 'react-native-fast-image';
+import { getImgePath } from 'data/api';
 
 export function CommunityScreen({
   route,
@@ -47,7 +54,7 @@ export function CommunityScreen({
 
   const { id } = route.params;
 
-  const { data: community } = useGetCommunity(id);
+  const { data: community, isPending } = useGetCommunity(id);
 
   // UnFollowing
   const unFollowMutation = useToggleFollowCommunity();
@@ -59,21 +66,27 @@ export function CommunityScreen({
     unFollowMutation.mutate(community);
   };
 
-  const goToChat = () => {
+  const goToChat = async () => {
     if (!community) {
       return;
     }
-    navigation.navigate('chat', { channelId: community.channelId });
+    const channel = client.channel('messaging', community.channelId);
+
+    await channel.watch();
+
+    navigation.navigate('chat', { channel });
   };
 
   const isOwner = user?.id === community?.creator.id;
 
+  if (isPending || !community) {
+    return <LoaderView />;
+  }
+
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView>
-        <ImageBackground
-          source={images.homeImg1}
-          style={styles.backgroundImage}>
+        <View style={styles.backgroundImage}>
           <View style={styles.eventTop}>
             <TouchableOpacity onPress={() => navigation.pop()}>
               <DCRoundIcon
@@ -119,6 +132,21 @@ export function CommunityScreen({
             </View>
           </View>
 
+          {community?.images.length > 0 && (
+            <FlatList
+              pagingEnabled
+              renderItem={({ item }) => (
+                <FastImage
+                  resizeMode="cover"
+                  style={{ width: SCREEN_WIDTH, height: '100%' }}
+                  source={{ uri: getImgePath(item) }}
+                />
+              )}
+              data={community?.images}
+              horizontal
+              style={{ flex: 1 }}
+            />
+          )}
           <View style={styles.eventBoxes}>
             {community?.categories.map((category, i) => (
               <View
@@ -137,7 +165,7 @@ export function CommunityScreen({
               </View>
             ))}
           </View>
-        </ImageBackground>
+        </View>
 
         <View style={styles.eventBody}>
           <Text style={styles.eventTitle}>{community?.title}</Text>
@@ -190,7 +218,7 @@ export function CommunityScreen({
 
             <View style={styles.eventRow}>
               <UserImage
-                userImage={community?.creator.userImage}
+                userImage={getImgePath(community?.creator.userImage)}
                 style={styles.eventOrganizerAvatar}
               />
               <View>
@@ -246,6 +274,7 @@ const styles = StyleSheet.create({
     height: 340,
     position: 'relative',
     marginBottom: 30,
+    backgroundColor: theming.colors.gray100,
   },
   eventTop: {
     height: 56,
@@ -253,6 +282,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: theming.spacing.LG,
+    position: 'absolute',
+    top: 0,
+    width: SCREEN_WIDTH,
+    zIndex: 1,
   },
   eventTopRight: {
     flexDirection: 'row',

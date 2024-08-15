@@ -1,6 +1,6 @@
-import { DCAmity } from 'common/libs/amity';
-import { apiClient } from '../';
+import { apiClient, getImgePath } from '../';
 import { Community } from './interfaces';
+import { client } from 'common/libs/strem-chat';
 
 export const communityApi = {
   async getCommunities() {
@@ -16,24 +16,21 @@ export const communityApi = {
   },
 
   async createCommunity(communityData: Omit<Community, 'id'>) {
-    const amityCommunity = await DCAmity.createCommunity({
-      displayName: communityData.title,
-      metadata: { photo: communityData.images[0] },
+    const channel = client.channel('messaging', null, {
+      blocked: false,
+      name: communityData.title,
+      image: getImgePath(communityData.images[0]),
     });
 
-    communityData.channelId = amityCommunity.data.channelId;
+    const created = await channel.create();
+
+    communityData.channelId = created.channel.id;
 
     const res = await apiClient.post<Community>('/community', communityData);
     return res.data;
   },
 
-  async toggleFollowCommunity({ isFollowing, id, channelId }: Community) {
-    if (isFollowing) {
-      await DCAmity.leaveCommunity(channelId);
-    } else {
-      await DCAmity.joinCommunity(channelId);
-    }
-
+  async toggleFollowCommunity({ isFollowing, id }: Community) {
     const res = await apiClient.post(
       `/community/${isFollowing ? 'unfollow' : 'follow'}/${id}`,
     );

@@ -1,21 +1,19 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useDCStore } from 'store';
 import { theming } from 'common/constants/theming';
-import { TabScreenProps } from 'screens/interfaces';
 import { PrifleView } from 'components/profile_view';
+import React, { useCallback, useRef, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TabScreenProps } from 'screens/interfaces';
+import { useDCStore } from 'store';
 
-import { DCAmity } from 'common/libs/amity';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { ProfileSettings } from './ui/settings';
+import { PlusSquareIcon } from 'components/icons/plusSquare';
 import { SettingIcon } from 'components/icons/settingIcon';
 import { ShareIcon } from 'components/icons/shareIcon';
-import { DCRoundIcon } from 'components/shared/round_icon';
+import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import { DCButton } from 'components/shared/button';
-import { PlusSquareIcon } from 'components/icons/plusSquare';
 import { useTranslation } from 'react-i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ProfileSettings } from './ui/settings';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const user = useDCStore.use.user();
@@ -25,24 +23,24 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   // const logOut = useDCStore.use.clearDCStoreAction();
   const { t } = useTranslation();
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-    const unsubscribe = DCAmity.queryUserPosts({
-      userId: user?.id,
-      onGetPosts: ({ data, onNextPage, hasNextPage, loading, error }) => {
-        if (!loading) {
-          setPosts(data ?? []);
-          console.log(data, onNextPage, hasNextPage, loading, error);
-        }
-      },
-    });
+  // useEffect(() => {
+  // if (!user) {
+  //   return;
+  // }
+  // const unsubscribe = DCAmity.queryUserPosts({
+  //   userId: user?.id,
+  //   onGetPosts: ({ data, onNextPage, hasNextPage, loading, error }) => {
+  //     if (!loading) {
+  //       setPosts(data ?? []);
+  //       console.log(data, onNextPage, hasNextPage, loading, error);
+  //     }
+  //   },
+  // });
 
-    return () => {
-      unsubscribe();
-    };
-  }, [user]);
+  // return () => {
+  //   unsubscribe();
+  // };
+  // }, [user]);
 
   const presentModal = useCallback(() => {
     settingsSheet.current?.present();
@@ -73,7 +71,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
         user={user}
         actions={
           <DCButton
-            children={t("add_post")}
+            children={t('add_post')}
             leftIcon={<PlusSquareIcon />}
             containerStyle={{
               width: '100%',
@@ -98,7 +96,7 @@ const styles = StyleSheet.create({
     // padding: theming.spacing.LG,
     backgroundColor: theming.colors.white,
     // justifyContent: 'space-between',
-    position: "relative",
+    position: 'relative',
   },
   profileTop: {
     flexDirection: 'row-reverse',

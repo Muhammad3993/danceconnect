@@ -11,12 +11,12 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDCStore } from 'store';
 import { userEditSchema } from './schema';
-import { EditUserRequest } from 'data/api/user/inerfaces';
 import { isEmptyObj } from 'common/utils/object';
 import { PagerViewInternal } from 'react-native-pager-view/lib/typescript/PagerView';
 import { useEditUser } from 'data/hooks/user';
 import { showErrorToast } from 'common/libs/toast';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { User } from 'data/api/user/inerfaces';
 
 export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const [currPage, setCurrPage] = useState(0);
   const refPagerView = useRef<PagerViewInternal>(null);
   const { mutateAsync, isPending } = useEditUser();
-  const methods = useForm<EditUserRequest>({
+  const methods = useForm<Partial<User>>({
     defaultValues: user ?? {},
     resolver: yupResolver(userEditSchema),
   });

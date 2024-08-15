@@ -1,4 +1,4 @@
-import { EditUserRequest, UserLocation } from 'data/api/user/inerfaces';
+import { User, UserLocation } from 'data/api/user/inerfaces';
 import * as yup from 'yup';
 
 const locationSchema = yup.object<UserLocation>({
@@ -9,7 +9,7 @@ const locationSchema = yup.object<UserLocation>({
   location: yup.string().required('location is required'),
 });
 
-export const userEditSchema = yup.object<EditUserRequest>({
+export const userEditSchema = yup.object<Partial<User>>({
   userRole: yup.array(yup.string()).min(1, 'Choose your role').required(),
   individualStyles: yup
     .array(yup.string())
