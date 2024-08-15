@@ -1,14 +1,14 @@
-import { KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import React from 'react';
 import {
   Channel,
-  Chat,
+  FileIcon,
   MessageInput,
   MessageList,
 } from 'stream-chat-react-native';
-import { client } from 'common/libs/strem-chat';
 import { StackScreenProps } from 'screens/interfaces';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { InfoIcon } from 'components/icons/info';
 
 export function ChatScreen2({ route }: StackScreenProps<'chat'>) {
   return (

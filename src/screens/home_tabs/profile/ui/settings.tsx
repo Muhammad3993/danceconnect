@@ -15,13 +15,12 @@ import { LocationIcon } from 'components/icons/location';
 import { SecurityIcon } from 'components/icons/security';
 import { NotificationIcon } from 'components/icons/notification';
 import { PaymentIcon } from 'components/icons/payment';
-import { SwapIcon } from 'components/icons/swap';
 import { InfoIcon } from 'components/icons/info';
-import { StarIcon } from 'components/icons/star';
 import { LogoutIcon } from 'components/icons/logout';
 import { TrashIcon } from 'components/icons/trash';
 import { useDCStore } from 'store';
 import { DeleteModal } from './DeleteModal';
+import Modal from 'react-native-modal';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -65,234 +64,167 @@ export function ProfileSettings({ navigation, close }: Props) {
     close();
   };
   return (
-    <View style={styles.listWrapper}>
-      <ListItem
-        leftIcon={
-          <CommunitiesIcon
-            fill={theming.colors.textPrimary}
-            width={28}
-            height={28}
-          />
-        }
-        click={onPressCommunities}
-        title={t('manage_communties')}
-        count={'(1)'}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+    <>
+      <View style={styles.listWrapper}>
+        <ListItem
+          leftIcon={
+            <CommunitiesIcon
+              fill={theming.colors.textPrimary}
+              width={28}
+              height={28}
+            />
+          }
+          click={onPressCommunities}
+          title={t('manage_communties')}
+          count={'(1)'}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      <ListItem
-        leftIcon={<CategoryIcon />}
-        click={onPressDanceStyles}
-        title={t('manage_dc')}
-        count={'(3)'}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+        <ListItem
+          leftIcon={<CategoryIcon />}
+          click={onPressDanceStyles}
+          title={t('manage_dc')}
+          count={'(3)'}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      <ListItem
-        leftIcon={
-          <TicketIcon
-            fill={theming.colors.textPrimary}
-            width={28}
-            height={28}
-          />
-        }
-        click={onPressTickets}
-        title={t('my_tickets')}
-        count={'(3)'}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+        <ListItem
+          leftIcon={
+            <TicketIcon
+              fill={theming.colors.textPrimary}
+              width={28}
+              height={28}
+            />
+          }
+          click={onPressTickets}
+          title={t('my_tickets')}
+          count={'(3)'}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      <DCLine />
+        <DCLine />
 
-      <ListItem
-        leftIcon={<LocationIcon active />}
-        click={onPressTickets}
-        title={t('location')}
-        location={'San Francisco, California'}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+        <ListItem
+          leftIcon={<LocationIcon active />}
+          click={onPressTickets}
+          title={t('location')}
+          location={'San Francisco, California'}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      <ListItem
-        leftIcon={<SecurityIcon />}
-        click={onPressTickets}
-        title={t('security')}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+        <ListItem
+          leftIcon={<SecurityIcon />}
+          click={onPressTickets}
+          title={t('security')}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      <ListItem
-        leftIcon={<NotificationIcon />}
-        click={onPressTickets}
-        title={t('notification')}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+        <ListItem
+          leftIcon={<NotificationIcon />}
+          click={onPressTickets}
+          title={t('notification')}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      <ListItem
-        leftIcon={<PaymentIcon />}
-        click={onPressTickets}
-        title={t('payments')}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+        <ListItem
+          leftIcon={<PaymentIcon />}
+          click={onPressTickets}
+          title={t('payments')}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      <ListItem
-        leftIcon={<SwapIcon />}
-        click={onPressTickets}
-        title={t('linked_accounts')}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+        <ListItem
+          leftIcon={<InfoIcon />}
+          click={onPressTickets}
+          title={t('help_center')}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      <ListItem
-        leftIcon={<InfoIcon />}
-        click={onPressTickets}
-        title={t('help_center')}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
+        <DCLine />
 
-      <DCLine />
+        <ListItem
+          leftIcon={<InfoIcon />}
+          click={() => {
+            Linking.openURL('https://danceconnect.online/terms.html');
+          }}
+          title={t('terms_condition')}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
 
-      {/* <View style={styles.line} /> */}
-      {/* {isSocialAuth && <View style={{ marginTop: -12 }} />}
-      <LocationSelector isProfileScreen />
-      {isSocialAuth && <View style={{ marginTop: -12 }} />} */}
-      {/* {!isSocialAuth && (
-        <TouchableOpacity
-          style={styles.listItemWrapper}
-          onPress={() => changePassRefModalize?.current?.open('top')}>
-          <View style={{ flexDirection: 'row' }}>
-            <Image source={{ uri: 'shield' }} style={styles.icon} />
-            <View style={{ justifyContent: 'center' }}>
-              <Text style={styles.listItemText}>{t('change_pass')}</Text>
-            </View>
-          </View>
-          <View style={{ justifyContent: 'center' }}>
-            <Image source={{ uri: 'arrowright' }} style={styles.iconRight} />
-          </View>
-        </TouchableOpacity>
-      )} */}
-      {/* {isChangeLanguage && (
-        <>
-          {<View style={{ marginTop: 10 }} />}
-          <TouchableOpacity
-            style={styles.listItemWrapper}
-            onPress={onPressChangeLG}>
-            <View style={{ flexDirection: 'row' }}>
-              <Image source={{ uri: 'lg' }} style={styles.icon} />
-              <View style={{ justifyContent: 'center' }}>
-                <Text style={styles.listItemText}>{t('select_language')}</Text>
-              </View>
-            </View>
-            <View style={{ justifyContent: 'center' }}>
-              <Image source={{ uri: 'arrowright' }} style={styles.iconRight} />
-            </View>
-          </TouchableOpacity>
-          {isSocialAuth && <View style={{ marginTop: -12 }} />}
-        </>
-      )} */}
-      {/* <View style={styles.line} /> */}
+        <ListItem
+          click={handleLogout}
+          leftIcon={<LogoutIcon />}
+          title={t('logout')}
+          titleStyle={{ color: theming.colors.redError }}
+        />
 
-      <ListItem
-        leftIcon={<StarIcon />}
-        click={onPressTickets}
-        title={t('rate_us')}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
-
-      <ListItem
-        leftIcon={<InfoIcon />}
-        click={() => {
-          Linking.openURL('https://danceconnect.online/terms.html');
-        }}
-        title={t('terms_condition')}
-        rightIcon={
-          <RightArrowIcon
-            stroke={theming.colors.textPrimary}
-            width={20}
-            height={20}
-          />
-        }
-      />
-
-      <ListItem
-        click={handleLogout}
-        leftIcon={<LogoutIcon />}
-        title={t('logout')}
-        titleStyle={{
-          color: theming.colors.redError,
-        }}
-      />
-
-      <ListItem
-        leftIcon={<TrashIcon />}
-        title={t('del_acc')}
-        titleStyle={{
-          color: theming.colors.redError,
-        }}
-        click={onPressDeleteAccount}
-      />
-      <DeleteModal
-        visible={deleteModalVisible}
-        onChange={setDeleteModalVisible}
-      />
-    </View>
+        <ListItem
+          leftIcon={<TrashIcon />}
+          title={t('del_acc')}
+          titleStyle={{ color: theming.colors.redError }}
+          click={onPressDeleteAccount}
+        />
+      </View>
+      <Modal
+        onBackdropPress={() => setDeleteModalVisible(false)}
+        isVisible={deleteModalVisible}>
+        <DeleteModal onChange={setDeleteModalVisible} />
+      </Modal>
+    </>
   );
 }
 

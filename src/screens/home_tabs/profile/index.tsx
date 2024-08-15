@@ -81,7 +81,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
           />
         }
       />
-      <DCBottomSheet snapPoints={['80%']} ref={settingsSheet}>
+      <DCBottomSheet snapPoints={['70%']} ref={settingsSheet}>
         <BottomSheetView>
           <ProfileSettings close={closeModal} navigation={navigation} />
         </BottomSheetView>

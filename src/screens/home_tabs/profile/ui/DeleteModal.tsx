@@ -7,11 +7,10 @@ import { useDeleteAccount } from 'data/hooks/user';
 import { useTranslation } from 'react-i18next';
 
 interface DeleteModalProps {
-  visible: boolean;
   onChange: (visible: boolean) => void;
 }
 
-export const DeleteModal = ({ visible, onChange }: DeleteModalProps) => {
+export const DeleteModal = ({ onChange }: DeleteModalProps) => {
   const user = useDCStore.use.user();
 
   const logOutAction = useDCStore.use.clearDCStoreAction();
@@ -34,61 +33,30 @@ export const DeleteModal = ({ visible, onChange }: DeleteModalProps) => {
   };
 
   return (
-    <View style={visible ? styles.modal : styles.modalVisible}>
-      <View style={styles.modalBox}>
-        <Text style={styles.modalBoxTitle}>
-          {t("del_acc_question")}
-        </Text>
-        <View style={styles.modalBoxButtons}>
-          <DCButton
-            children={t("cancel")}
-            containerStyle={{
-              width: '50%',
-              height: 58,
-              flex: 1,
-            }}
-            onPress={() => onChange(false)}
-          />
-          <DCButton
-            children={t("y_delete")}
-            containerStyle={{
-              width: '50%',
-              height: 58,
-              flex: 1,
-              backgroundColor: theming.colors.redError,
-            }}
-            onPress={handleDeleteAccount}
-          />
-        </View>
+    <View style={styles.modalBox}>
+      <Text style={styles.modalBoxTitle}>{t('del_acc_question')}</Text>
+      <View style={styles.modalBoxButtons}>
+        <DCButton
+          children={t('cancel')}
+          containerStyle={{ width: '50%', height: 58, flex: 1 }}
+          onPress={() => onChange(false)}
+        />
+        <DCButton
+          children={t('y_delete')}
+          containerStyle={{
+            width: '50%',
+            height: 58,
+            flex: 1,
+            backgroundColor: theming.colors.redError,
+          }}
+          onPress={handleDeleteAccount}
+        />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  modal: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: theming.spacing.LG,
-  },
-  modalVisible: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: theming.spacing.LG,
-    display: 'none',
-  },
   modalBox: {
     width: '100%',
     backgroundColor: theming.colors.white,
