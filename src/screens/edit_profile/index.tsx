@@ -32,8 +32,6 @@ export function EditProfileScreen({
   const { mutate, isPending } = useEditUser();
 
   const handleUpdateUser = (newData: Partial<User>) => {
-    console.log(newData);
-
     mutate(newData, {
       onSuccess(data) {
         setUser(data);

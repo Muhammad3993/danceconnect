@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { genders, roles } from 'common/constants';
 import { DCInput } from 'components/shared/input';
 import { useTranslation } from 'react-i18next';
@@ -6,13 +6,16 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocationSelector } from 'components/location_selector';
 import { Controller, useFormContext } from 'react-hook-form';
-import { EditUserRequest } from 'data/api/user/inerfaces';
+import { User } from 'data/api/user/inerfaces';
 import { theming } from 'common/constants/theming';
 import { Header } from './Header';
+import { LocationIcon } from 'components/icons/location';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export const BasicInfo = () => {
   const { t } = useTranslation();
-  const { control } = useFormContext<EditUserRequest>();
+  const { control } = useFormContext<Partial<User>>();
+  const locationRef = useRef<BottomSheetModal>(null);
 
   return (
     <>
@@ -88,15 +91,36 @@ export const BasicInfo = () => {
         name="location"
         render={({ field: { value, onChange }, fieldState }) => {
           return (
-            <View
-              style={[{ paddingHorizontal: theming.spacing.LG }, styles.input]}>
-              <LocationSelector value={value} onChange={onChange} />
-              {fieldState.error?.location?.message && (
-                <Text style={{ color: theming.colors.redError }}>
-                  {fieldState.error?.location?.message}
-                </Text>
-              )}
-            </View>
+            <>
+              <View
+                style={[
+                  { paddingHorizontal: theming.spacing.LG },
+                  styles.input,
+                ]}>
+                <TouchableOpacity
+                  onPress={() => locationRef.current?.present()}
+                  style={styles.chooseCountryWrapper}
+                  activeOpacity={0.7}>
+                  <Text style={styles.chooseCountryText}>
+                    {value ? value.location : t('location_choose')}
+                  </Text>
+                  <LocationIcon />
+                </TouchableOpacity>
+
+                {fieldState.error?.location?.message && (
+                  <Text style={{ color: theming.colors.redError }}>
+                    {fieldState.error?.location?.message}
+                  </Text>
+                )}
+              </View>
+              <LocationSelector
+                ref={locationRef}
+                onChange={data => {
+                  onChange(data);
+                  locationRef.current?.dismiss();
+                }}
+              />
+            </>
           );
         }}
       />
@@ -166,6 +190,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     marginRight: 6,
+  },
+  chooseCountryWrapper: {
+    backgroundColor: theming.colors.lightGray,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: theming.colors.grayTransparent,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+  },
+  chooseCountryText: {
+    paddingVertical: 18,
+    fontSize: 16,
+    lineHeight: 22.4,
+    letterSpacing: 0.2,
+    color: theming.colors.textPrimary,
   },
   choiseItemActive: {
     borderColor: theming.colors.orange,

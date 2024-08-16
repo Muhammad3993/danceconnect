@@ -1,53 +1,68 @@
-import { Linking, StyleSheet } from 'react-native';
-import { View } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { NavigationProp } from '@react-navigation/native';
 import { theming } from 'common/constants/theming';
-import { ListItem } from 'components/list_item';
-import { CommunitiesIcon } from 'components/icons/communities';
-import { RightArrowIcon } from 'components/icons/rightArrow';
 import { CategoryIcon } from 'components/icons/category';
-import { TicketIcon } from 'components/icons/ticket';
-import { DCLine } from 'components/shared/line';
-import { LocationIcon } from 'components/icons/location';
-import { SecurityIcon } from 'components/icons/security';
-import { NotificationIcon } from 'components/icons/notification';
-import { PaymentIcon } from 'components/icons/payment';
+import { CommunitiesIcon } from 'components/icons/communities';
 import { InfoIcon } from 'components/icons/info';
+import { LocationIcon } from 'components/icons/location';
 import { LogoutIcon } from 'components/icons/logout';
+import { RightArrowIcon } from 'components/icons/rightArrow';
+import { TicketIcon } from 'components/icons/ticket';
 import { TrashIcon } from 'components/icons/trash';
+import { ListItem } from 'components/list_item';
+import { DCLine } from 'components/shared/line';
+import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import Modal from 'react-native-modal';
+import { TabScreenNavigation } from 'screens/interfaces';
 import { useDCStore } from 'store';
 import { DeleteModal } from './DeleteModal';
-import Modal from 'react-native-modal';
+import LocationSelector from 'components/location_selector';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useEditUser } from 'data/hooks/user';
+import { UserLocation } from 'data/api/user/inerfaces';
+import { showErrorToast } from 'common/libs/toast';
 
 interface Props {
-  navigation: NavigationProp<any>;
+  navigation: TabScreenNavigation<'profile'>;
   close: () => void;
 }
 
 export function ProfileSettings({ navigation, close }: Props) {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-
+  const locationRef = useRef<BottomSheetModal>(null);
   const { t } = useTranslation();
   const logOutAction = useDCStore.use.clearDCStoreAction();
+  const { mutate } = useEditUser();
+  const user = useDCStore.use.user();
+  const setUser = useDCStore.use.setUser();
+
+  const changeLocation = (location: UserLocation) => {
+    mutate(
+      { location },
+      {
+        onSuccess(data) {
+          setUser(data);
+          locationRef.current?.dismiss();
+        },
+        onError(err) {
+          const error = err as Error;
+          showErrorToast(error.message);
+        },
+      },
+    );
+  };
 
   const onPressCommunities = () => {
     close();
   };
 
-  const onPressEvents = () => {
-    close();
-  };
-
   const onPressDanceStyles = () => {
     close();
+    navigation.push('editDanceStyles');
   };
 
-  const onPressTickets = () => {
-    close();
-  };
+  const onPressTickets = () => {};
 
   const onPressDeleteAccount = () => {
     setDeleteModalVisible(true);
@@ -58,11 +73,6 @@ export function ProfileSettings({ navigation, close }: Props) {
     close();
   };
 
-  const onPressChangePassword = () => {};
-
-  const onPressChangeLG = () => {
-    close();
-  };
   return (
     <>
       <View style={styles.listWrapper}>
@@ -76,7 +86,19 @@ export function ProfileSettings({ navigation, close }: Props) {
           }
           click={onPressCommunities}
           title={t('manage_communties')}
-          count={'(1)'}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
+
+        <ListItem
+          leftIcon={<CategoryIcon />}
+          click={onPressDanceStyles}
+          title={t('manage_events')}
           rightIcon={
             <RightArrowIcon
               stroke={theming.colors.textPrimary}
@@ -90,7 +112,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           leftIcon={<CategoryIcon />}
           click={onPressDanceStyles}
           title={t('manage_dc')}
-          count={'(3)'}
+          count={`(${user?.individualStyles.length})`}
           rightIcon={
             <RightArrowIcon
               stroke={theming.colors.textPrimary}
@@ -110,7 +132,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           }
           click={onPressTickets}
           title={t('my_tickets')}
-          count={'(3)'}
+          // count={'(3)'}
           rightIcon={
             <RightArrowIcon
               stroke={theming.colors.textPrimary}
@@ -124,67 +146,22 @@ export function ProfileSettings({ navigation, close }: Props) {
 
         <ListItem
           leftIcon={<LocationIcon active />}
-          click={onPressTickets}
+          click={() => {
+            locationRef.current?.present();
+          }}
           title={t('location')}
-          location={'San Francisco, California'}
           rightIcon={
-            <RightArrowIcon
-              stroke={theming.colors.textPrimary}
-              width={20}
-              height={20}
-            />
-          }
-        />
-
-        <ListItem
-          leftIcon={<SecurityIcon />}
-          click={onPressTickets}
-          title={t('security')}
-          rightIcon={
-            <RightArrowIcon
-              stroke={theming.colors.textPrimary}
-              width={20}
-              height={20}
-            />
-          }
-        />
-
-        <ListItem
-          leftIcon={<NotificationIcon />}
-          click={onPressTickets}
-          title={t('notification')}
-          rightIcon={
-            <RightArrowIcon
-              stroke={theming.colors.textPrimary}
-              width={20}
-              height={20}
-            />
-          }
-        />
-
-        <ListItem
-          leftIcon={<PaymentIcon />}
-          click={onPressTickets}
-          title={t('payments')}
-          rightIcon={
-            <RightArrowIcon
-              stroke={theming.colors.textPrimary}
-              width={20}
-              height={20}
-            />
-          }
-        />
-
-        <ListItem
-          leftIcon={<InfoIcon />}
-          click={onPressTickets}
-          title={t('help_center')}
-          rightIcon={
-            <RightArrowIcon
-              stroke={theming.colors.textPrimary}
-              width={20}
-              height={20}
-            />
+            <View
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={styles.listItemLocation}>
+                {user?.location?.location}
+              </Text>
+              <RightArrowIcon
+                stroke={theming.colors.textPrimary}
+                width={20}
+                height={20}
+              />
+            </View>
           }
         />
 
@@ -196,6 +173,51 @@ export function ProfileSettings({ navigation, close }: Props) {
             Linking.openURL('https://danceconnect.online/terms.html');
           }}
           title={t('terms_condition')}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
+
+        <ListItem
+          leftIcon={<InfoIcon />}
+          click={() => {
+            Linking.openURL('https://danceconnect.online/privacy.html');
+          }}
+          title={t('privacy')}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
+
+        <ListItem
+          leftIcon={<InfoIcon />}
+          click={() => {
+            Linking.openURL('https://danceconnect.online/payouts.html');
+          }}
+          title={t('payouts')}
+          rightIcon={
+            <RightArrowIcon
+              stroke={theming.colors.textPrimary}
+              width={20}
+              height={20}
+            />
+          }
+        />
+
+        <ListItem
+          leftIcon={<InfoIcon />}
+          click={() => {
+            Linking.openURL('mailto:dance.connect@incode-systems.com');
+          }}
+          title={t('contact')}
           rightIcon={
             <RightArrowIcon
               stroke={theming.colors.textPrimary}
@@ -224,6 +246,7 @@ export function ProfileSettings({ navigation, close }: Props) {
         isVisible={deleteModalVisible}>
         <DeleteModal onChange={setDeleteModalVisible} />
       </Modal>
+      <LocationSelector ref={locationRef} onChange={changeLocation} />
     </>
   );
 }
@@ -244,5 +267,11 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     color: theming.colors.textPrimary,
     fontWeight: '500',
+  },
+  listItemLocation: {
+    fontSize: 14,
+    color: theming.colors.gray700,
+    fontWeight: '400',
+    fontFamily: theming.fonts.latoRegular,
   },
 });

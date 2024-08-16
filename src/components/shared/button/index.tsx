@@ -94,10 +94,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: theming.colors.white,
+    fontFamily: theming.fonts.latoRegular,
   },
   titleOutlined: {
     fontSize: 16,
     fontWeight: '600',
     color: theming.colors.textPrimary,
+    fontFamily: theming.fonts.latoRegular,
   },
 });

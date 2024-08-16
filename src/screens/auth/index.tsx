@@ -40,6 +40,9 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
             isLoading={btn.isLoading}
             key={btn.title}
             onPress={btn.onPress}
+            leftIcon={
+              <Image source={btn.icon} style={{ width: 24, height: 24 }} />
+            }
             containerStyle={{ marginBottom: theming.spacing.MD }}>
             {btn.title}
           </DCButton>

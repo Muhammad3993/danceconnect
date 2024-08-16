@@ -109,7 +109,7 @@ export function PrifleView({
               </Text>
               {user?.location && (
                 <Text numberOfLines={1} style={styles.userAdress}>
-                  {user.location.country}
+                  {user.location.location}
                 </Text>
               )}
               <ScrollView
@@ -243,16 +243,16 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 18,
-    fontFamily: 'Lato-Bold',
     color: theming.colors.textPrimary,
     marginBottom: 4,
+    fontFamily: theming.fonts.latoRegular,
   },
   userAdress: {
     fontSize: 14,
     color: theming.colors.gray700,
     marginBottom: theming.spacing.SM,
-    fontFamily: 'Lato-Regular',
     letterSpacing: 0.2,
+    fontFamily: theming.fonts.latoRegular,
   },
 
   roles: {
@@ -261,12 +261,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontWeight: '600',
     letterSpacing: 0.2,
+    fontFamily: theming.fonts.latoRegular,
   },
   aboutUser: {
     marginBottom: theming.spacing.MD,
     fontSize: 14,
     color: theming.colors.textPrimary,
-    fontFamily: 'Lato-Regular',
+    fontFamily: theming.fonts.latoRegular,
     letterSpacing: 0.2,
   },
   showMoreText: {
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    fontFamily: 'Lato-Regular',
+    fontFamily: theming.fonts.latoRegular,
     fontSize: 16,
 
     color: theming.colors.gray500,

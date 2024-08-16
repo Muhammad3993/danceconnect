@@ -22,6 +22,7 @@ export type RootStackRoutes = {
   // home
   homeTabs: undefined;
   editProfile: undefined;
+  editDanceStyles: undefined;
   event: undefined;
   createCommunity: undefined;
   community: { id: string };

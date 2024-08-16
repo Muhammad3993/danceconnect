@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    fontFamily: 'Lato-Regular',
+    fontFamily: theming.fonts.latoRegular,
     fontSize: 16,
     color: theming.colors.gray500,
   },

@@ -15,7 +15,6 @@ interface ListItemProps {
   leftIcon?: ReactNode;
   title?: ReactNode;
   count?: ReactNode;
-  location?: ReactNode;
   rightIcon?: ReactNode;
   click?: () => void;
 }
@@ -27,7 +26,6 @@ export const ListItem = ({
   title,
   count,
   click,
-  location,
   rightIcon,
 }: ListItemProps) => {
   return (
@@ -35,13 +33,13 @@ export const ListItem = ({
       <View style={styles.listItemWrapper}>
         {leftIcon}
         <Text style={[styles.listItemTitle, titleStyle]}>
-          {title}
+          {title}{' '}
           <Text style={{ color: theming.colors.darkGray, fontWeight: '400' }}>
             {count}
           </Text>
         </Text>
       </View>
-      <Text style={styles.listItemLocation}>{location}</Text>
+
       {rightIcon}
     </TouchableOpacity>
   );
@@ -58,16 +56,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20,
   },
-  listItemLocation: {
-    fontSize: 14,
-    color: theming.colors.gray700,
-    fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
-  },
+
   listItemTitle: {
     color: theming.colors.textPrimary,
     fontFamily: theming.fonts.latoRegular,
     fontSize: 18,
-    fontWeight: '600',
   },
 });

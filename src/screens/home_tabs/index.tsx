@@ -19,16 +19,21 @@ import { images } from 'common/resources/images';
 import { theming } from 'common/constants/theming';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MessageIcon } from 'components/icons/message';
+import { useTranslation } from 'react-i18next';
 
 const Tab = createBottomTabNavigator<TabRoutes>();
 
 export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
-  const { top } = useSafeAreaInsets();
+  const { t } = useTranslation();
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: theming.colors.orange,
         tabBarInactiveTintColor: theming.colors.gray,
+        tabBarLabelStyle: {
+          fontFamily: theming.fonts.latoRegular,
+          fontSize: 12,
+        },
       }}>
       <Tab.Screen
         options={{
@@ -68,6 +73,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
               </TouchableOpacity>
             );
           },
+          tabBarLabel: t('home_tab'),
         }}
         name="home"
         component={HomeScreen}
@@ -78,6 +84,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           tabBarIcon({ focused }) {
             return <CommunitiesIcon active={focused} />;
           },
+          tabBarLabel: t('communities_tab'),
         }}
         name="communities"
         component={CommunitiesScreen}
@@ -88,6 +95,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           tabBarIcon(props) {
             return <TicketIcon active={props.focused} />;
           },
+          tabBarLabel: t('events_tab'),
         }}
         name="events"
         component={EventsScreen}
@@ -98,6 +106,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           tabBarIcon(props) {
             return <PeopleIcon />;
           },
+          tabBarLabel: t('people_tab'),
         }}
         name="people"
         component={PeopleScreen}
@@ -108,6 +117,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           tabBarIcon(props) {
             return <ProfileIcon />;
           },
+          tabBarLabel: t('profile_tab'),
         }}
         name="profile"
         component={ProfileScreen}

@@ -5,6 +5,7 @@ import { DCButton } from 'components/shared/button';
 import { useDCStore } from 'store';
 import { useDeleteAccount } from 'data/hooks/user';
 import { useTranslation } from 'react-i18next';
+import { showErrorToast } from 'common/libs/toast';
 
 interface DeleteModalProps {
   onChange: (visible: boolean) => void;
@@ -22,12 +23,10 @@ export const DeleteModal = ({ onChange }: DeleteModalProps) => {
 
   const handleDeleteAccount = () => {
     deleteAccount(userId, {
-      onSuccess: () => {
-        console.log('Account deleted successfully');
-        logOutAction();
-      },
-      onError: error => {
-        console.error('Error deleting account:', error);
+      onSuccess: logOutAction,
+      onError(err) {
+        const error = err as Error;
+        showErrorToast(error.message);
       },
     });
   };

@@ -1,11 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDCStore } from 'store';
 import { DCCountry } from 'data/api/collections/interfaces';
@@ -22,103 +16,81 @@ import {
 import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserLocation } from 'data/api/user/inerfaces';
-import { LocationIcon } from 'components/icons/location';
 
 interface Props {
-  value?: UserLocation;
   onChange?: (val: UserLocation) => void;
-  inputStyle?: ViewStyle;
 }
 
-export function LocationSelector({ value = '', onChange, inputStyle }: Props) {
-  const { t } = useTranslation();
-  const { bottom, top } = useSafeAreaInsets();
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+export const LocationSelector = forwardRef<BottomSheetModal, Props>(
+  ({ onChange }, bottomSheetModalRef) => {
+    const { t } = useTranslation();
+    const { bottom, top } = useSafeAreaInsets();
 
-  const constants = useDCStore.use.constants();
-  const [searchCountryText, setSearchCountryText] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState<DCCountry | null>(
-    null,
-  );
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
-
-  const snapPoints = useMemo(() => ['100%'], []);
-
-  const countriesSearchValue = useMemo(() => {
-    const countries = constants?.countries ?? [];
-
-    if (searchCountryText.trim().length > 0) {
-      const search = countries.filter(item => {
-        const itemData = `${item.country?.toLowerCase()}`;
-        const textData = searchCountryText.toLowerCase();
-        return itemData.includes(textData);
-      });
-      return search;
-    } else {
-      return [];
-    }
-  }, [constants?.countries, searchCountryText]);
-
-  const handleSelectCountry = (data: DCCountry) => {
-    if (!data.availableSearchString && data.cities) {
-      setSelectedCity(
-        Array.isArray(data.cities) ? data.cities[0].name : data.cities,
-      );
-    }
-
-    setSelectedCountry(data);
-  };
-
-  const handleSearchCountry = (text: string) => {
-    setSelectedCity(null);
-    setSelectedCountry(null);
-    setSearchCountryText(text);
-  };
-
-  const handleSelectLocation = () => {
-    bottomSheetModalRef.current?.close();
-    onChange?.({
-      city: selectedCity!,
-      country: selectedCountry!.country,
-      countryCode2: selectedCountry!.countryCode,
-      countryCode3: selectedCountry!.countryCode,
-      location: selectedCountry!.country + ', ' + selectedCity,
-    });
-  };
-
-  const presentModal = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
-  const handle = useCallback(() => {
-    return (
-      <View style={[styles.headerWrapper, { paddingTop: top + 24 }]}>
-        <View style={{ width: 22 }} />
-        <View style={{ alignSelf: 'center' }}>
-          <Text style={styles.title}>{t('location')}</Text>
-        </View>
-        <TouchableOpacity
-          style={styles.backIcon}
-          onPress={() => bottomSheetModalRef?.current?.close()}>
-          {/* <Image source={{ uri: 'close' }} style={styles.backIcon} /> */}
-        </TouchableOpacity>
-      </View>
+    const constants = useDCStore.use.constants();
+    const [searchCountryText, setSearchCountryText] = useState('');
+    const [selectedCountry, setSelectedCountry] = useState<DCCountry | null>(
+      null,
     );
-  }, [t, top]);
+    const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
-  return (
-    <>
-      <View style={inputStyle}>
-        <TouchableOpacity
-          onPress={presentModal}
-          style={styles.chooseCountryWrapper}
-          activeOpacity={0.7}>
-          <Text style={styles.chooseCountryText}>
-            {value ? value.country + ', ' + value.city : t('location_choose')}
-          </Text>
-          <LocationIcon />
-        </TouchableOpacity>
-      </View>
+    const snapPoints = useMemo(() => ['100%'], []);
+
+    const countriesSearchValue = useMemo(() => {
+      const countries = constants?.countries ?? [];
+
+      if (searchCountryText.trim().length > 0) {
+        const search = countries.filter(item => {
+          const itemData = `${item.country?.toLowerCase()}`;
+          const textData = searchCountryText.toLowerCase();
+          return itemData.includes(textData);
+        });
+        return search;
+      } else {
+        return [];
+      }
+    }, [constants?.countries, searchCountryText]);
+
+    const handleSelectCountry = (data: DCCountry) => {
+      if (!data.availableSearchString && data.cities) {
+        setSelectedCity(
+          Array.isArray(data.cities) ? data.cities[0].name : data.cities,
+        );
+      }
+
+      setSelectedCountry(data);
+    };
+
+    const handleSearchCountry = (text: string) => {
+      setSelectedCity(null);
+      setSelectedCountry(null);
+      setSearchCountryText(text);
+    };
+
+    const handleSelectLocation = () => {
+      onChange?.({
+        city: selectedCity!,
+        country: selectedCountry!.country,
+        countryCode2: selectedCountry!.countryCode,
+        countryCode3: selectedCountry!.countryCode,
+        location: selectedCountry!.country + ', ' + selectedCity,
+      });
+    };
+
+    const handle = useCallback(() => {
+      return (
+        <View style={[styles.headerWrapper, { paddingTop: top + 24 }]}>
+          <View style={{ width: 22 }} />
+          <View style={{ alignSelf: 'center' }}>
+            <Text style={styles.title}>{t('location')}</Text>
+          </View>
+          <TouchableOpacity style={styles.backIcon}>
+            {/* <Image source={{ uri: 'close' }} style={styles.backIcon} /> */}
+          </TouchableOpacity>
+        </View>
+      );
+    }, [t, top]);
+
+    return (
       <DCBottomSheet
         enableContentPanningGesture={false}
         enableHandlePanningGesture={false}
@@ -190,9 +162,9 @@ export function LocationSelector({ value = '', onChange, inputStyle }: Props) {
           </DCButton>
         </BottomSheetView>
       </DCBottomSheet>
-    </>
-  );
-}
+    );
+  },
+);
 
 interface CityPickerProps {
   selectedCountry: DCCountry;
@@ -328,28 +300,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: theming.colors.textPrimary,
   },
-  chooseCountryWrapper: {
-    backgroundColor: theming.colors.lightGray,
-    borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: theming.colors.grayTransparent,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-  },
+
   chooseCountryWrapperOpened: {
     borderColor: theming.colors.grayTransparent,
     borderBottomWidth: 0.5,
     marginHorizontal: 6,
   },
-  chooseCountryText: {
-    paddingVertical: 18,
-    fontSize: 16,
-    lineHeight: 22.4,
-    letterSpacing: 0.2,
-    color: theming.colors.textPrimary,
-  },
+
   chooseCountryTextOpened: {
     paddingVertical: 8,
     fontSize: 16,

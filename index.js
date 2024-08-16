@@ -8,14 +8,18 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   return remoteMessage;
 });
 
-Text.defaultProps = Text.defaultProps || {
-  fontFamily: theming.fonts.latoRegular,
-};
+Text.defaultProps =
+  Text.defaultProps ||
+  {
+    // fontFamily: theming.fonts.latoRegular,
+  };
 Text.defaultProps.allowFontScaling = false;
 
-TextInput.defaultProps = TextInput.defaultProps || {
-  fontFamily: theming.fonts.latoRegular,
-};
+TextInput.defaultProps =
+  TextInput.defaultProps ||
+  {
+    // fontFamily: theming.fonts.latoRegular,
+  };
 TextInput.defaultProps.allowFontScaling = false;
 
 AppRegistry.registerComponent(appName, () => App);

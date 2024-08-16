@@ -16,16 +16,15 @@ import { DCButton } from 'components/shared/button';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { UploadIcon } from 'components/icons/upload';
 import { TrashIcon } from 'components/icons/trash';
-import LocationSelector from 'components/location_selector';
 import { images } from 'common/resources/images';
 import { LittleCalendarIcon } from 'components/icons/calendarIcon';
 import { useTranslation } from 'react-i18next';
 
 interface DetailsProps {
-  click: () => void
+  click: () => void;
 }
 
-export const Details = ({click}: DetailsProps) => {
+export const Details = ({ click }: DetailsProps) => {
   const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.root}>
@@ -61,14 +60,14 @@ export const Details = ({click}: DetailsProps) => {
           <Text style={styles.describe}>{t('description_desc')}</Text>
           <View style={styles.dateBoxes}>
             <View style={styles.date}>
-              <Text style={styles.dateTitle}>{t("start_date")}</Text>
+              <Text style={styles.dateTitle}>{t('start_date')}</Text>
               <View style={styles.dateBox}>
                 <Text style={styles.dateBoxTitle}>03-01-2022 </Text>
                 <LittleCalendarIcon />
               </View>
             </View>
             <View style={styles.date}>
-              <Text style={styles.dateTitle}>{t("end_date")}</Text>
+              <Text style={styles.dateTitle}>{t('end_date')}</Text>
               <View style={styles.dateBox}>
                 <Text style={styles.dateBoxTitle}>03-01-2022 </Text>
                 <LittleCalendarIcon />
@@ -85,7 +84,7 @@ export const Details = ({click}: DetailsProps) => {
           {true ? (
             <TouchableOpacity style={styles.upload}>
               <UploadIcon />
-              <Text style={styles.uploadTitle}>{t("upload_img")}</Text>
+              <Text style={styles.uploadTitle}>{t('upload_img')}</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.images}>
@@ -99,7 +98,7 @@ export const Details = ({click}: DetailsProps) => {
           )}
         </View>
         <View style={[styles.container, { marginBottom: 15 }]}>
-          <LocationSelector />
+          {/* <LocationSelector /> */}
         </View>
       </ScrollView>
       <View style={styles.bottom}>
@@ -113,7 +112,7 @@ export const Details = ({click}: DetailsProps) => {
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   root: {
@@ -195,13 +194,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   dateBoxes: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   date: {
-    width: "48%",
+    width: '48%',
   },
   dateTitle: {
     fontSize: 16,
@@ -210,20 +209,20 @@ const styles = StyleSheet.create({
     fontFamily: theming.fonts.latoRegular,
   },
   dateBox: {
-    width: "100%",
+    width: '100%',
     backgroundColor: theming.colors.lightGray,
     borderWidth: 1,
     borderColor: theming.colors.gray50,
     borderRadius: theming.spacing.SM,
     paddingVertical: 17,
     paddingHorizontal: theming.spacing.MD,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 10,
   },
   dateBoxTitle: {
     fontSize: 16,
-    fontWeight: "400",
+    fontWeight: '400',
     color: theming.colors.textPrimary,
     fontFamily: theming.fonts.latoRegular,
   },

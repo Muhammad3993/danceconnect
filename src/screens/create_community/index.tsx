@@ -5,18 +5,28 @@ import LocationSelector from 'components/location_selector';
 import { DCButton } from 'components/shared/button';
 import { DCInput } from 'components/shared/input';
 import { t } from 'i18next';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useRef } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import ImageUploadList from 'components/image_upload_list';
 import { useCreateCommunity } from 'data/hooks/community';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from 'screens/interfaces';
+import { LocationIcon } from 'components/icons/location';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export function CreateCommunity({
   navigation,
 }: StackScreenProps<'createCommunity'>) {
+  const locationRef = useRef<BottomSheetModal>(null);
+
   const methods = useForm({
     defaultValues: {
       title: '',
@@ -169,8 +179,31 @@ export function CreateCommunity({
             <Controller
               name="location"
               control={control}
-              render={({ field: { value, onChange } }) => {
-                return <LocationSelector value={value} onChange={onChange} />;
+              render={({ field: { value, onChange }, fieldState }) => {
+                return (
+                  <>
+                    <TouchableOpacity
+                      onPress={() => locationRef.current?.present()}
+                      style={styles.chooseCountryWrapper}>
+                      <Text style={styles.chooseCountryText}>
+                        {value ? value.location : t('location_choose')}
+                      </Text>
+                      <LocationIcon />
+                    </TouchableOpacity>
+                    {fieldState.error?.location?.message && (
+                      <Text style={{ color: theming.colors.redError }}>
+                        {fieldState.error?.location?.message}
+                      </Text>
+                    )}
+                    <LocationSelector
+                      ref={locationRef}
+                      onChange={data => {
+                        onChange(data);
+                        locationRef.current?.dismiss();
+                      }}
+                    />
+                  </>
+                );
               }}
             />
           </View>
@@ -246,6 +279,23 @@ const styles = StyleSheet.create({
     color: theming.colors.black,
     fontFamily: theming.fonts.latoRegular,
     marginTop: 5,
+  },
+  chooseCountryWrapper: {
+    backgroundColor: theming.colors.lightGray,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: theming.colors.grayTransparent,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+  },
+  chooseCountryText: {
+    paddingVertical: 18,
+    fontSize: 16,
+    lineHeight: 22.4,
+    letterSpacing: 0.2,
+    color: theming.colors.textPrimary,
   },
   boxSubtitle: {
     width: '90%',
