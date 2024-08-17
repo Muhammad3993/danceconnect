@@ -1,5 +1,8 @@
 import { communityApi } from 'data/api/community';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { DCAmity } from 'common/libs/amity';
+import { getImgePath } from 'data/api';
+import { Community } from 'data/api/community/interfaces';
 
 export default function useGetCommunities() {
   return useQuery({
@@ -19,7 +22,18 @@ export const useCreateCommunity = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: communityApi.createCommunity,
+    mutationFn: async (data: Omit<Community, 'id'>) => {
+      const amityCommunity = await DCAmity.createCommunity({
+        displayName: data.title,
+        metadata: { photo: getImgePath(data.images[0]) ?? '' },
+      });
+
+      data.channelId = amityCommunity.data.channelId;
+
+      const community = await communityApi.createCommunity(data);
+
+      return community;
+    },
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['communities'] });
     },
@@ -30,7 +44,14 @@ export const useToggleFollowCommunity = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: communityApi.toggleFollowCommunity,
+    mutationFn: async (community: Community) => {
+      if (community.isFollowing) {
+        await DCAmity.leaveCommunity(community.channelId);
+      } else {
+        await DCAmity.joinCommunity(community.channelId);
+      }
+      await communityApi.toggleFollowCommunity(community);
+    },
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['communities'] });
     },

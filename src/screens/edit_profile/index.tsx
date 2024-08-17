@@ -12,12 +12,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller, useForm } from 'react-hook-form';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useEditUser } from 'data/hooks/user';
-import { User } from 'stream-chat';
 import { PhotoUplaod } from './ui/photo_uplaod';
 import { StackScreenProps } from 'screens/interfaces';
 import { showErrorToast } from 'common/libs/toast';
-import { client } from 'common/libs/strem-chat';
-import { getImgePath } from 'data/api';
+import { User } from 'data/api/user/inerfaces';
 
 export function EditProfileScreen({
   navigation,
@@ -35,11 +33,6 @@ export function EditProfileScreen({
     mutate(newData, {
       onSuccess(data) {
         setUser(data);
-        client.upsertUser({
-          id: data.id,
-          name: data.userName,
-          image: getImgePath(data.userImage),
-        });
         navigation.pop();
       },
       onError(err) {

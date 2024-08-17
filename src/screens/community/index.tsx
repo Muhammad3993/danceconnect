@@ -12,7 +12,6 @@ import React, { useState } from 'react';
 import {
   FlatList,
   Image,
-  ImageBackground,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -28,13 +27,10 @@ import {
   useToggleFollowCommunity,
 } from 'data/hooks/community';
 import { MessageIcon } from 'components/icons/message';
-import { CloseIcon } from 'components/icons/close';
 import { StackScreenProps } from 'screens/interfaces';
 import { UserImage } from 'components/user_image';
 import { useDCStore } from 'store';
 import ExpandableText from 'components/shared/expandable_text';
-import { client } from 'common/libs/strem-chat';
-import Config from 'react-native-config';
 import { SCREEN_WIDTH } from 'common/constants';
 import { LoaderView } from 'components/shared/loader_view';
 import FastImage from 'react-native-fast-image';
@@ -70,11 +66,8 @@ export function CommunityScreen({
     if (!community) {
       return;
     }
-    const channel = client.channel('messaging', community.channelId);
 
-    await channel.watch();
-
-    navigation.navigate('chat', { channel });
+    navigation.navigate('chat', { channelId: community.channelId });
   };
 
   const isOwner = user?.id === community?.creator.id;

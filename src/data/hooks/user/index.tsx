@@ -11,6 +11,9 @@ import { userApi } from 'data/api/user';
 import { useDCStore } from 'store';
 import { showErrorToast } from 'common/libs/toast';
 import { images } from 'common/resources/images';
+import { DCAmity } from 'common/libs/amity';
+import { getImgePath } from 'data/api';
+import { User } from 'data/api/user/inerfaces';
 
 export function useSocialBtns() {
   const { t } = useTranslation();
@@ -146,7 +149,19 @@ export const useRegisterUser = () => {
 };
 
 export const useEditUser = () => {
-  return useMutation({ mutationFn: userApi.editUser });
+  return useMutation({
+    mutationFn: async (data: Partial<User>) => {
+      await DCAmity.updateUser({
+        userId: data?.id ?? '',
+        displayName: data?.userName ?? '',
+        photo: getImgePath(data.userImage) ?? '',
+      });
+
+      const newUser = await userApi.editUser(data);
+
+      return newUser;
+    },
+  });
 };
 
 export const useDeleteAccount = () => {

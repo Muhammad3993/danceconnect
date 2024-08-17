@@ -3,6 +3,7 @@ import {
   API_REGIONS,
   PostRepository,
   ChannelRepository,
+  UserRepository,
 } from '@amityco/ts-sdk-react-native';
 import Config from 'react-native-config';
 
@@ -28,6 +29,13 @@ export const DCAmity = {
   logoutUser() {
     console.log('user logout from Amity');
     return Client.logout();
+  },
+
+  updateUser(data: { userId: string; displayName: string; photo: string }) {
+    return UserRepository.updateUser(data.userId, {
+      displayName: data.displayName,
+      metadata: { photo: data.photo },
+    });
   },
 
   queryUserPosts({
