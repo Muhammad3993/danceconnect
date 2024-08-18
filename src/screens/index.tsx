@@ -23,6 +23,7 @@ import { NavigationBackIcon } from './ui/BackIcon';
 import { ChatScreen } from './chat';
 
 import { EditDanceStylesSreen } from './edit_dance_styles';
+import { CreatePostScreen } from './create_post';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -104,6 +105,12 @@ export function Navigation() {
                 headerTitle: t('create_community_card_title'),
                 headerTitleAlign: 'center',
               }}
+            />
+
+            <Stack.Screen
+              name="createPost"
+              component={CreatePostScreen}
+              options={{ animation: 'slide_from_bottom' }}
             />
           </>
         )}

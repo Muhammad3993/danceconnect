@@ -21,6 +21,7 @@ import {
 
 import { useNavigation } from '@react-navigation/native';
 import { getImgePath } from 'data/api';
+import { PostCard } from 'components/PostCard';
 
 interface Props {
   posts: Amity.InternalPost[];
@@ -31,6 +32,7 @@ interface Props {
   actions?: ReactNode;
   user: User;
   loadingMore?: boolean;
+  isCurrentUser: boolean;
 }
 
 export function PrifleView({
@@ -42,6 +44,7 @@ export function PrifleView({
   user,
   actions,
   loadingMore,
+  isCurrentUser,
 }: Props) {
   const { t } = useTranslation();
 
@@ -91,7 +94,6 @@ export function PrifleView({
 
   return (
     <FlatList
-      bounces={false}
       onEndReached={onEndReached}
       showsVerticalScrollIndicator={false}
       style={{ flex: 1 }}
@@ -183,7 +185,14 @@ export function PrifleView({
           />
         </View>
       }
-      renderItem={() => null}
+      renderItem={({ item }) => (
+        <PostCard
+          canEdit={isCurrentUser}
+          navigation={navigation}
+          user={user}
+          post={item}
+        />
+      )}
       ListEmptyComponent={
         <View style={{ marginTop: 90 }}>
           {isLoading ? (

@@ -3,7 +3,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MessageIcon } from 'components/icons/message';
 import { theming } from 'common/constants/theming';
-import { MessageItem } from '../chat/ui';
+// import { MessageItem } from '../chat/ui';
 import { useTranslation } from 'react-i18next';
 import { StackScreenProps } from 'screens/interfaces';
 
@@ -17,7 +17,7 @@ export function ChatsScreen({ navigation }: StackScreenProps<'chats'>) {
       </View>
       <ScrollView style={styles.container}>
         <View style={styles.messageBody}>
-          <MessageItem click={() => navigation.navigate('message')} />
+          {/* <MessageItem click={() => navigation.navigate('message')} /> */}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -29,6 +29,13 @@ export type RootStackRoutes = {
   createTicket: undefined;
   chats: undefined;
   chat: { channelId: string };
+  createPost: {
+    targetId: string;
+    targetType: 'community' | 'user';
+    postId?: string;
+    postText?: string;
+    file?: Amity.File<'image' | 'video'>;
+  };
 };
 
 export type TabRoutes = {

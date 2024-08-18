@@ -1,6 +1,6 @@
 import { theming } from 'common/constants/theming';
 import { PrifleView } from 'components/profile_view';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { TabScreenProps } from 'screens/interfaces';
 import { useDCStore } from 'store';
@@ -14,33 +14,38 @@ import { DCButton } from 'components/shared/button';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileSettings } from './ui/settings';
+import { DCAmity } from 'common/libs/amity';
+import { useFocusEffect } from '@react-navigation/native';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const user = useDCStore.use.user();
   const [posts, setPosts] = useState<Amity.Post[]>([]);
   const settingsSheet = useRef<BottomSheetModal>(null);
+  console.log(posts[0]);
 
   // const logOut = useDCStore.use.clearDCStoreAction();
   const { t } = useTranslation();
 
-  // useEffect(() => {
-  // if (!user) {
-  //   return;
-  // }
-  // const unsubscribe = DCAmity.queryUserPosts({
-  //   userId: user?.id,
-  //   onGetPosts: ({ data, onNextPage, hasNextPage, loading, error }) => {
-  //     if (!loading) {
-  //       setPosts(data ?? []);
-  //       console.log(data, onNextPage, hasNextPage, loading, error);
-  //     }
-  //   },
-  // });
+  useFocusEffect(
+    useCallback(() => {
+      if (!user) {
+        return;
+      }
+      const unsubscribe = DCAmity.queryUserPosts({
+        userId: user?.id,
+        onGetPosts: ({ data, onNextPage, hasNextPage, loading, error }) => {
+          if (!loading) {
+            setPosts(data ?? []);
+            console.log(data, onNextPage, hasNextPage, loading, error);
+          }
+        },
+      });
 
-  // return () => {
-  //   unsubscribe();
-  // };
-  // }, [user]);
+      return () => {
+        unsubscribe();
+      };
+    }, [user]),
+  );
 
   const presentModal = useCallback(() => {
     settingsSheet.current?.present();
@@ -49,6 +54,13 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const closeModal = useCallback(() => {
     settingsSheet.current?.close();
   }, []);
+
+  const createPost = useCallback(() => {
+    navigation.navigate('createPost', {
+      targetType: 'user',
+      targetId: user?.id ?? '',
+    });
+  }, [navigation, user]);
 
   if (!user) {
     return null;
@@ -65,12 +77,14 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
         </TouchableOpacity>
       </View>
       <PrifleView
+        isCurrentUser
         posts={posts}
         communities={[]}
         events={[]}
         user={user}
         actions={
           <DCButton
+            onPress={createPost}
             children={t('add_post')}
             leftIcon={<PlusSquareIcon />}
             containerStyle={{
