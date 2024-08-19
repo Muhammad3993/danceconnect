@@ -37,6 +37,7 @@ export function CreatePostScreen({
   const isCreating = postId === undefined;
 
   const [touched, setTouched] = useState(false);
+  const [crating, setCreating] = useState(false);
   const [text, setText] = useState(postText ?? '');
   const [attachment, setAttachment] = useState<
     undefined | Amity.File<'image' | 'video'>
@@ -59,6 +60,8 @@ export function CreatePostScreen({
         setAttachment(result[0]);
       }
     } catch (err) {
+      console.log(err);
+
       const error = err as Error;
       showErrorToast(error.message);
     }
@@ -92,6 +95,7 @@ export function CreatePostScreen({
 
   const createPost = async () => {
     try {
+      setCreating(true);
       const newPost = {
         data: { text },
         targetType,
@@ -112,6 +116,8 @@ export function CreatePostScreen({
     } catch (err) {
       const error = err as Error;
       showErrorToast(error.message);
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -137,12 +143,16 @@ export function CreatePostScreen({
             </View>
 
             <View style={{ flex: 1, alignItems: 'flex-end' }}>
-              <Text
-                style={[styles.headerRight, { opacity: canCreate ? 1 : 0.6 }]}
-                disabled={!canCreate}
-                onPress={createPost}>
-                Post
-              </Text>
+              {crating ? (
+                <ActivityIndicator size={'small'} />
+              ) : (
+                <Text
+                  style={[styles.headerRight, { opacity: canCreate ? 1 : 0.6 }]}
+                  disabled={!canCreate}
+                  onPress={createPost}>
+                  Post
+                </Text>
+              )}
             </View>
           </View>
 

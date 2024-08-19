@@ -90,14 +90,10 @@ export const VideoView = memo(
             }
           }}
           onLoad={({ naturalSize }) => {
-            if (
-              isCreating &&
-              Platform.OS !== 'android' &&
-              naturalSize.orientation === 'portrait'
-            ) {
-              adjustSize(naturalSize.height, naturalSize.width);
-            } else {
+            if (naturalSize.orientation === 'portrait') {
               adjustSize(naturalSize.width, naturalSize.height);
+            } else {
+              adjustSize(naturalSize.height, naturalSize.width);
             }
           }}
         />

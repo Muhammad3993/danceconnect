@@ -35,7 +35,6 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
         onGetPosts: ({ data, onNextPage, hasNextPage, loading, error }) => {
           if (!loading) {
             setPosts(data ?? []);
-            console.log(data, onNextPage, hasNextPage, loading, error);
           }
         },
       });

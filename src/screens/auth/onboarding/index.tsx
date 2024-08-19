@@ -31,7 +31,6 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   });
 
   const { isValid, dirtyFields, errors } = methods.formState;
-  console.log(errors);
 
   const goNext = async () => {
     if (currPage === 0) {

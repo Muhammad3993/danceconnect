@@ -64,7 +64,7 @@ export function usePickVideoFile(onPickVideo: (data: VideoData) => void) {
 
       const duration = video.duration ?? 0;
 
-      if (duration > 31) {
+      if (duration > 31000) {
         await showEditor(video.path ?? '', {
           maxDuration: 30,
           removeAfterSavedToPhoto: true,

@@ -3598,16 +3598,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stream-io/flat-list-mvcp@npm:^0.10.3":
-  version: 0.10.3
-  resolution: "@stream-io/flat-list-mvcp@npm:0.10.3"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 6c839e060b1c0291f87101f39308cb8a53f34e200e41316255c2b3e2f1db0239b98e7c5f17e5882f3374222b29cf5015d0e8855069068ae818b01c64faf04742
-  languageName: node
-  linkType: hard
-
 "@stripe/stripe-react-native@npm:^0.38.4":
   version: 0.38.4
   resolution: "@stripe/stripe-react-native@npm:0.38.4"
@@ -4145,7 +4135,6 @@ __metadata:
     "@react-navigation/bottom-tabs": ^6.6.1
     "@react-navigation/native": ^6.1.18
     "@react-navigation/native-stack": ^6.11.0
-    "@stream-io/flat-list-mvcp": ^0.10.3
     "@stripe/stripe-react-native": ^0.38.4
     "@tanstack/eslint-plugin-query": ^5.51.15
     "@tanstack/react-query": ^5.51.23
@@ -4172,14 +4161,12 @@ __metadata:
     react-native: 0.75.1
     react-native-calendars: ^1.1306.0
     react-native-config: ^1.5.3
-    react-native-document-picker: ^9.3.0
     react-native-element-dropdown: ^2.12.1
     react-native-fast-image: ^8.6.3
     react-native-fs: ^2.20.0
     react-native-gesture-handler: ^2.18.1
     react-native-gifted-chat: ^2.4.0
     react-native-image-crop-picker: ^0.41.2
-    react-native-image-resizer: ^1.4.5
     react-native-keyboard-aware-scroll-view: ^0.9.5
     react-native-modal: ^13.0.1
     react-native-pager-view: ^6.3.4
@@ -4190,7 +4177,6 @@ __metadata:
     react-native-svg: ^15.5.0
     react-native-video: ^6.4.5
     react-native-video-trim: ^1.0.24
-    react-native-wheel-picker-android: ^2.0.6
     react-test-renderer: 18.3.1
     rn-fetch-blob: ^0.12.0
     typescript: 5.5.4
@@ -9271,7 +9257,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment@npm:^2.22.0, moment@npm:^2.29.4, moment@npm:^2.30.1":
+"moment@npm:^2.29.4, moment@npm:^2.30.1":
   version: 2.30.1
   resolution: "moment@npm:2.30.1"
   checksum: 859236bab1e88c3e5802afcf797fc801acdbd0ee509d34ea3df6eea21eb6bcc2abd4ae4e4e64aa7c986aa6cba563c6e62806218e6412a765010712e5fa121ba6
@@ -10305,22 +10291,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-document-picker@npm:^9.3.0":
-  version: 9.3.0
-  resolution: "react-native-document-picker@npm:9.3.0"
-  dependencies:
-    invariant: ^2.2.4
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-    react-native-windows: "*"
-  peerDependenciesMeta:
-    react-native-windows:
-      optional: true
-  checksum: 622c9bd3a17b7b92ff6b13571ccf2a916dd2477f2aa8c22b79e4b204156742ba95680dea912ee5ee56718f13c537107f5937e5bcf88d93cdf2142d508dc16351
-  languageName: node
-  linkType: hard
-
 "react-native-element-dropdown@npm:^2.12.1":
   version: 2.12.1
   resolution: "react-native-element-dropdown@npm:2.12.1"
@@ -10401,15 +10371,6 @@ __metadata:
   peerDependencies:
     react-native: ">=0.40.0"
   checksum: c1333b3b761e948bd0bc856773f68dcc859c7ce39dda3e14d2c32c17d55927735bfc5cbbb7ac5e8bac21feda87c93399f2a596aca7d5b0611cc1e8203d97ad2e
-  languageName: node
-  linkType: hard
-
-"react-native-image-resizer@npm:^1.4.5":
-  version: 1.4.5
-  resolution: "react-native-image-resizer@npm:1.4.5"
-  peerDependencies:
-    react-native: ">=v0.40.0"
-  checksum: c530b119f25c27b669148461554440acd05fb37f0a24a1afc3d58c861e426551c70c679983c0399034fd54ca3575c89d0863778c49295721cb33b65bbf3f0f37
   languageName: node
   linkType: hard
 
@@ -10588,15 +10549,6 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 705e183b09b5b07d70f9edd22a4f926aab7f3d4d1227b54959c168512ba3b0da9b3ce55e11bae78cb41a297439cdc8ebf624d2c5d6236391fe6c23708cc8045e
-  languageName: node
-  linkType: hard
-
-"react-native-wheel-picker-android@npm:^2.0.6":
-  version: 2.0.6
-  resolution: "react-native-wheel-picker-android@npm:2.0.6"
-  dependencies:
-    moment: ^2.22.0
-  checksum: acaae02ac7956488954255872acacac2e3291fc9c5c618aea7c622075694c09563d64598fef72602bd33089d33aef2eb8cb4e676f5e28142a290d9585400e419
   languageName: node
   linkType: hard
 
