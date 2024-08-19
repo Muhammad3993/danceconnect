@@ -16,14 +16,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileSettings } from './ui/settings';
 import { DCAmity } from 'common/libs/amity';
 import { useFocusEffect } from '@react-navigation/native';
+import { EditFillIcon } from 'components/icons/editFIll';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const user = useDCStore.use.user();
   const [posts, setPosts] = useState<Amity.Post[]>([]);
   const settingsSheet = useRef<BottomSheetModal>(null);
-  console.log(posts[0]);
 
-  // const logOut = useDCStore.use.clearDCStoreAction();
   const { t } = useTranslation();
 
   useFocusEffect(
@@ -77,22 +76,28 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
         </TouchableOpacity>
       </View>
       <PrifleView
-        isCurrentUser
         posts={posts}
         communities={[]}
         events={[]}
         user={user}
         actions={
-          <DCButton
-            onPress={createPost}
-            children={t('add_post')}
-            leftIcon={<PlusSquareIcon />}
-            containerStyle={{
-              width: '100%',
-              height: 38,
-              gap: 8,
-            }}
-          />
+          <>
+            <DCButton
+              containerStyle={{ flex: 1 }}
+              size="medium"
+              onPress={createPost}
+              children={t('add_post')}
+              leftIcon={<PlusSquareIcon />}
+            />
+            <DCButton
+              containerStyle={{ flex: 1 }}
+              children={t('edit_profile')}
+              leftIcon={<EditFillIcon />}
+              textStyle={{ color: theming.colors.purple }}
+              variant="secondary"
+              onPress={() => navigation.navigate('editProfile')}
+            />
+          </>
         }
       />
       <DCBottomSheet snapPoints={['70%']} ref={settingsSheet}>

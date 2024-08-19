@@ -1,13 +1,11 @@
 import { theming } from 'common/constants/theming';
-import { EditFillIcon } from 'components/icons/editFIll';
-import { DCButton } from 'components/shared/button';
 import ExpandableText from 'components/shared/expandable_text';
 import { DCTabs } from 'components/shared/tabs';
 import { UserImage } from 'components/user_image';
 import { Community } from 'data/api/community/interfaces';
 import { Event } from 'data/api/event/interfaces';
 import { User } from 'data/api/user/inerfaces';
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
@@ -17,14 +15,20 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewToken,
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { getImgePath } from 'data/api';
 import { PostCard } from 'components/PostCard';
 
+const viewabilityConfig = {
+  waitForInteraction: true,
+  viewAreaCoveragePercentThreshold: 40,
+};
+
 interface Props {
-  posts: Amity.InternalPost[];
+  posts: Amity.Post[];
   events: Event[];
   communities: Community[];
   onEndReached?: () => void;
@@ -32,7 +36,6 @@ interface Props {
   actions?: ReactNode;
   user: User;
   loadingMore?: boolean;
-  isCurrentUser: boolean;
 }
 
 export function PrifleView({
@@ -44,9 +47,9 @@ export function PrifleView({
   user,
   actions,
   loadingMore,
-  isCurrentUser,
 }: Props) {
   const { t } = useTranslation();
+  const [viewablesMap, setViewablesMap] = useState<Record<string, boolean>>({});
 
   const navigation = useNavigation();
 
@@ -76,6 +79,23 @@ export function PrifleView({
     return [];
   }, [events, currentTab, communities, posts, t]);
 
+  const onViewableItemsChanged = useCallback(
+    ({
+      viewableItems,
+    }: {
+      viewableItems: ViewToken[];
+      changed: ViewToken[];
+    }) => {
+      const map: Record<string, boolean> = {};
+      for (let index = 0; index < viewableItems.length; index++) {
+        const viewableItem = viewableItems[index];
+        map[viewableItem.item.postId] = viewableItem.isViewable;
+      }
+      setViewablesMap(map);
+    },
+    [],
+  );
+
   const emptyTitle = useMemo(() => {
     if (currentTab === t('posts')) {
       return t('no_records');
@@ -89,6 +109,29 @@ export function PrifleView({
 
     return '';
   }, [t, currentTab]);
+
+  const renderItem = useCallback(
+    ({ item }: any) => {
+      switch (currentTab) {
+        case t('posts'):
+          return (
+            <PostCard
+              post={item}
+              user={user}
+              inView={viewablesMap[item.postId] ?? false}
+              navigation={navigation}
+            />
+          );
+        case t('communities_tab'):
+          return <View style={{ paddingHorizontal: 16 }}></View>;
+        case t('events_tab'):
+          return <View style={{ paddingHorizontal: 16 }}></View>;
+        default:
+          break;
+      }
+    },
+    [currentTab, navigation, t, user, viewablesMap],
+  );
 
   const aboutText = user.about ?? '';
 
@@ -154,25 +197,7 @@ export function PrifleView({
                 )}
               </>
             )}
-            <View style={styles.profileBottom}>
-              {actions && <View style={styles.actions}>{actions}</View>}
-              <DCButton
-                children={t('edit_profile')}
-                leftIcon={<EditFillIcon />}
-                containerStyle={{
-                  width: '48.5%',
-                  height: 38,
-                  backgroundColor: theming.colors.white,
-                  borderWidth: 1,
-                  borderColor: theming.colors.gray250,
-                  gap: 8,
-                }}
-                textStyle={{
-                  color: theming.colors.purple,
-                }}
-                onPress={() => navigation.navigate('editProfile')}
-              />
-            </View>
+            <View style={styles.profileBottom}>{actions}</View>
           </View>
 
           <DCTabs
@@ -185,14 +210,7 @@ export function PrifleView({
           />
         </View>
       }
-      renderItem={({ item }) => (
-        <PostCard
-          canEdit={isCurrentUser}
-          navigation={navigation}
-          user={user}
-          post={item}
-        />
-      )}
+      renderItem={renderItem}
       ListEmptyComponent={
         <View style={{ marginTop: 90 }}>
           {isLoading ? (
@@ -208,7 +226,9 @@ export function PrifleView({
       keyExtractor={(item, index) =>
         item?.postId ?? item?.id ?? index.toString()
       }
-      scrollEventThrottle={500}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={onViewableItemsChanged}
+      scrollEventThrottle={400}
     />
   );
 }
@@ -297,11 +317,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
     tintColor: theming.colors.purple,
   },
-  actions: {
-    width: '48.5%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
 
   actionBtn: {
     flex: 1,
@@ -316,7 +331,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: theming.fonts.latoRegular,
     fontSize: 16,
-
     color: theming.colors.gray500,
   },
   profileBottom: {

@@ -1,17 +1,16 @@
 import { FileRepository, PostRepository } from '@amityco/ts-sdk-react-native';
-import { NavigationProp, useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import Share, { Social } from 'react-native-share';
-// import RNFetchBlob from 'rn-fetch-blob';
-// import CameraRoll from '@react-native-community/cameraroll';
+import RNFetchBlob from 'rn-fetch-blob';
+import CameraRoll from '@react-native-community/cameraroll';
 import { SCREEN_WIDTH } from 'common/constants';
 import { User } from 'data/api/user/inerfaces';
 import { UserImage } from './user_image';
@@ -21,11 +20,12 @@ import { ScalableImage } from './shared/scallable_image';
 import { VideoView } from './shared/scallable_video';
 import ExpandableText from './shared/expandable_text';
 import { TabScreenNavigation } from 'screens/interfaces';
+import { MenuIcon } from './icons/menu';
+import { showErrorToast } from 'common/libs/toast';
 
 interface Props {
   post: Amity.Post;
   user: User;
-  canEdit: boolean;
   inView: boolean;
   navigation: TabScreenNavigation<'profile'>;
 }
@@ -55,7 +55,7 @@ const getPostFile = async <T extends Amity.FileType>(fileId?: string) => {
 
 const IMAGE_WIDTH = SCREEN_WIDTH - 32;
 
-export function PostCard({ post, user, canEdit, navigation }: Props) {
+export function PostCard({ post, user, inView, navigation }: Props) {
   const isFocused = useIsFocused();
 
   const [file, setFile] = useState<Amity.File<'image' | 'video'> | null>(null);
@@ -102,34 +102,46 @@ export function PostCard({ post, user, canEdit, navigation }: Props) {
 
   const sharePost = async () => {
     setMenuIsOpen(false);
-    // if (videoUrl) {
-    //   const cache = await RNFetchBlob.config({
-    //     fileCache: true,
-    //     appendExt: 'mp4',
-    //   }).fetch('GET', videoUrl, {});
-    //   const gallery = await CameraRoll.save(cache.path(), { type: 'video' });
-    //   cache.flush();
-    //   await Share.shareSingle({
-    //     social: Share.Social.INSTAGRAM as Social,
-    //     url: gallery,
-    //     type: 'video/*',
-    //     appId: 'com.danceconnect',
-    //   });
-    // } else {
-    //   const resp = await RNFetchBlob.config({
-    //     fileCache: true,
-    //   }).fetch('GET', postImageUrl + '?size=large', {});
-    //   const base64 = await resp.readFile('base64');
+    try {
+      const downloadUrl = file?.fileUrl;
 
-    //   await Share.shareSingle({
-    //     social: Share.Social.INSTAGRAM as Social,
-    //     url: ('data:image/png;base64,' + base64) as string,
-    //     type: 'image/*',
-    //     appId: 'com.danceconnect',
-    //   });
-    //   resp.flush();
-    // }
+      if (!downloadUrl) {
+        return;
+      }
+      if (file?.type == 'video') {
+        const cache = await RNFetchBlob.config({
+          fileCache: true,
+          appendExt: 'mp4',
+        }).fetch('GET', downloadUrl, {});
+        const gallery = await CameraRoll.save(cache.path(), { type: 'video' });
+        cache.flush();
+        await Share.shareSingle({
+          social: Share.Social.INSTAGRAM as Social,
+          url: gallery,
+          type: 'video/*',
+          appId: 'com.danceconnect',
+        });
+      } else {
+        const resp = await RNFetchBlob.config({
+          fileCache: true,
+        }).fetch('GET', downloadUrl, {});
+        const base64 = await resp.readFile('base64');
+
+        await Share.shareSingle({
+          social: Share.Social.INSTAGRAM as Social,
+          url: ('data:image/png;base64,' + base64) as string,
+          type: 'image/*',
+          appId: 'com.danceconnect',
+        });
+        resp.flush();
+      }
+    } catch (err) {
+      const error = err as Error;
+      showErrorToast(error.message);
+    }
   };
+
+  const isCurrentUser = post.postedUserId == user.id;
 
   return (
     <View style={styles.container}>
@@ -144,10 +156,10 @@ export function PostCard({ post, user, canEdit, navigation }: Props) {
           <Text style={styles.time}>{timeAgo(post.createdAt)} </Text>
         </View>
 
-        {canEdit && (
+        {isCurrentUser && (
           <View>
             <TouchableOpacity onPress={toggleMenu}>
-              <Text>menu</Text>
+              <MenuIcon />
               {/* <Image source={{ uri: 'menu' }} style={styles.headerAction} /> */}
             </TouchableOpacity>
             {menuIsOpen && (
@@ -193,7 +205,7 @@ export function PostCard({ post, user, canEdit, navigation }: Props) {
             ) : (
               <VideoView
                 width={IMAGE_WIDTH}
-                paused={!isFocused}
+                paused={!isFocused || !inView}
                 videoUrl={
                   file?.videoUrl?.['720p'] ??
                   file?.videoUrl?.['480p'] ??

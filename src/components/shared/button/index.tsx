@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
   },
-  btnMd: { height: 48 },
-  btnLg: { height: 58 },
+  btnMd: { height: 46 },
+  btnLg: { height: 54 },
   btnOutlined: {
     borderWidth: 1,
     borderColor: theming.colors.gray300,
