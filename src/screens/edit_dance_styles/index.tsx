@@ -21,7 +21,7 @@ export function EditDanceStylesSreen({
 
   const save = () => {
     mutate(
-      { individualStyles: dStyles },
+      { ...user, individualStyles: dStyles },
       {
         onSuccess(data) {
           setUser(data);

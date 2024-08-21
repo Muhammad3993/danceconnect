@@ -281,6 +281,8 @@ const styles = StyleSheet.create({
     color: theming.colors.purple,
     fontSize: 12,
     letterSpacing: 0.2,
+    fontFamily: theming.fonts.latoRegular,
+    fontWeight: '600',
   },
 
   profile: {
@@ -305,6 +307,7 @@ const styles = StyleSheet.create({
     color: theming.colors.textPrimary,
     marginBottom: 4,
     fontFamily: theming.fonts.latoRegular,
+    fontWeight: '600',
   },
   userAdress: {
     fontSize: 14,

@@ -18,6 +18,7 @@ import { DCTabs } from 'components/shared/tabs';
 import { useTranslation } from 'react-i18next';
 import { FilterComponent } from 'components/shared/filter';
 import { EventItem } from 'components/shared/event_item';
+import { RightArrowIcon } from 'components/icons/rightArrow';
 
 export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
   const { t } = useTranslation();
@@ -27,11 +28,12 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
   return (
     <SafeAreaView edges={['top']} style={styles.root}>
       <View style={styles.events}>
-        <View style={styles.eventsLocation}>
+        <View style={styles.communitiesLocation}>
           <LocationIcon width={16} height={16} />
-          <Text style={styles.eventsLocationTitle}>
+          <Text style={styles.communitiesLocationTitle}>
             San Francisco, California
           </Text>
+          <RightArrowIcon style={{ transform: [{ rotate: '90deg' }] }} />
         </View>
 
         <View style={styles.communitiesSearch}>
@@ -42,7 +44,7 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
             inputStyle={styles.communitiesInput}
           />
           <TouchableOpacity
-            onPress={() => navigation.navigate('createEvent')}
+            onPress={() => navigation.push('createEvent')}
             style={styles.communitiesPlus}>
             <PlusBigIcon />
           </TouchableOpacity>
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: theming.spacing.LG,
   },
-  eventsLocation: {
+  communitiesLocation: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -95,15 +97,15 @@ const styles = StyleSheet.create({
     gap: theming.spacing.SM,
     marginTop: 10,
   },
-  eventsLocationTitle: {
+  communitiesLocationTitle: {
     fontWeight: '700',
     fontSize: 16,
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.textPrimary,
   },
   communitiesPlus: {
-    width: 48,
-    height: 48,
+    width: 40,
+    height: 40,
     backgroundColor: theming.colors.purple,
     borderRadius: 50,
     justifyContent: 'center',
@@ -115,11 +117,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 15,
-    gap: 10,
   },
   communitiesInputContainer: {
-    width: '87%',
-    flex: 1,
+    width: '82%',
   },
   communitiesInput: {
     padding: 0,

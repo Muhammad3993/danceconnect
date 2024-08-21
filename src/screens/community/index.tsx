@@ -96,7 +96,13 @@ export function CommunityScreen({
       <ScrollView>
         <View style={styles.backgroundImage}>
           <View style={styles.eventTop}>
-            <TouchableOpacity onPress={() => navigation.pop()}>
+            <TouchableOpacity
+              onPress={() => {
+                if (navigation.canGoBack()) {
+                  navigation.pop();
+                }
+                navigation.navigate('homeTabs');
+              }}>
               <DCRoundIcon
                 icon={<ArrowLeftIcon fill={theming.colors.white} />}
               />
