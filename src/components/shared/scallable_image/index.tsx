@@ -1,7 +1,7 @@
 import { theming } from 'common/constants/theming';
 import React, { useState, useCallback, memo } from 'react';
 
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 
 interface Props {
@@ -9,10 +9,17 @@ interface Props {
   originalWidth: number;
   originalHeight?: number;
   style?: ImageStyle;
+  containerStyle?: ViewStyle;
 }
 
 export const ScalableImage = memo(
-  ({ uri, originalWidth, originalHeight, style = {} }: Props) => {
+  ({
+    uri,
+    originalWidth,
+    originalHeight,
+    style = {},
+    containerStyle,
+  }: Props) => {
     const [scalableWidth, setScalableWidth] = useState(originalWidth);
     const [scalableHeight, setScalableHeight] = useState(
       originalHeight ?? originalWidth,
@@ -22,6 +29,7 @@ export const ScalableImage = memo(
     const adjustSize = useCallback(
       (sourceWidth: number, sourceHeight: number) => {
         let ratio = 1;
+        console.log('adjustSize');
 
         if (originalWidth && originalHeight) {
           ratio = Math.min(
@@ -44,46 +52,32 @@ export const ScalableImage = memo(
       [originalHeight, originalWidth],
     );
 
-    // useEffect(() => {
-    //   Image.getSize(
-    //     uri,
-    //     (width, height) => adjustSize(width, height),
-    //     console.log,
-    //   );
-    // }, [adjustSize, uri]);
-
-    // if (sizing) {
-    //   return (
-    //     <View
-    //       style={[
-    //         styles.mediaContainer,
-    //         { width: scalableWidth, height: scalableHeight },
-    //       ]}>
-    //       <ActivityIndicator />
-    //     </View>
-    //   );
-    // }
-
     return (
-      <FastImage
-        onLoad={({ nativeEvent: { height, width } }) => {
-          adjustSize(width, height);
-        }}
-        resizeMode="contain"
-        source={{ uri }}
-        style={[{ width: scalableWidth, height: scalableHeight }, style]}
-      />
+      <View style={[styles.mediaContainer, containerStyle]}>
+        <FastImage
+          onLoad={({ nativeEvent: { height, width } }) => {
+            adjustSize(width, height);
+          }}
+          resizeMode="contain"
+          source={{ uri }}
+          style={[{ width: scalableWidth, height: scalableHeight }, style]}
+        />
+        {sizing && <ActivityIndicator style={styles.loader} />}
+      </View>
     );
   },
 );
 
 const styles = StyleSheet.create({
   mediaContainer: {
-    borderRadius: 8,
-    overflow: 'hidden',
     backgroundColor: theming.colors.gray100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 8,
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: 8,
+  },
+  loader: {
+    position: 'absolute',
   },
 });

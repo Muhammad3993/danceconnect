@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
-import CategorySelector from 'components/category_selector';
+import DanceStylesSelector from 'components/dance_styles_selector';
 import { useDCStore } from 'store';
 import { theming } from 'common/constants/theming';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +18,7 @@ export function EditDanceStylesSreen({
   const [dStyles, setDstyles] = useState(user?.individualStyles ?? []);
   const { t } = useTranslation();
   const { mutate, isPending } = useEditUser();
+
   const save = () => {
     mutate(
       { individualStyles: dStyles },
@@ -36,7 +37,7 @@ export function EditDanceStylesSreen({
   return (
     <SafeAreaView edges={['bottom']} style={styles.root}>
       <Text style={styles.title}>{t('select_dc')}</Text>
-      <CategorySelector value={dStyles} onChange={setDstyles} />
+      <DanceStylesSelector value={dStyles} onChange={setDstyles} />
       <View style={{ paddingHorizontal: theming.spacing.LG }}>
         <DCButton
           isLoading={isPending}
@@ -57,8 +58,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theming.colors.textPrimary,
-    fontSize: 32,
-    fontWeight: '700',
+    fontSize: 30,
+    fontWeight: '600',
     fontFamily: theming.fonts.latoRegular,
     paddingHorizontal: theming.spacing.LG,
     marginBottom: 28,

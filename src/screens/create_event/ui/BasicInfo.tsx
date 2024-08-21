@@ -11,7 +11,7 @@ import { Header } from './Header';
 import { CloseIcon } from 'components/icons/close';
 import { Status } from './Status';
 import { DCInput } from 'components/shared/input';
-import CategorySelector from 'components/category_selector';
+import DanceStylesSelector from 'components/dance_styles_selector';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DCButton } from 'components/shared/button';
 import { useTranslation } from 'react-i18next';
@@ -115,7 +115,7 @@ export const BasicInfo = ({ click }: BasicInfoProps) => {
             </Text>
             <Text style={styles.bodySubtitle}>{t('ds_desc_event')}</Text>
           </View>
-          <CategorySelector
+          <DanceStylesSelector
             value={selectedCategories}
             onChange={setSelectedCategories}
             errorMessage={categoryError}

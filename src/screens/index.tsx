@@ -27,6 +27,53 @@ import { CreatePostScreen } from './create_post';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
+const linking = {
+  prefixes: ['https://danceconnect.online/', 'danceconnect://'],
+  config: {
+    screens: {
+      // ['EventScreen']: {
+      //   path: 'event/:id',
+      //   parse: {
+      //     id: (id: string) => id,
+      //   },
+      // },
+      community: {
+        path: 'community/:id',
+        parse: {
+          id: (id: string) => id,
+        },
+      },
+      // ['User']: {
+      //   path: 'user/:id',
+      //   parse: {
+      //     id: (id: string) => id,
+      //   },
+      // },
+      // ['TABS']: {
+      //   path: '/',
+      //   screens: {
+      //     ['Communities']: {
+      //       initialRouteName: 'CommunitiesMain',
+      //       screens: {
+      //         ['CommunitiesMain']: {
+      //           path: 'communities',
+      //         },
+      //       },
+      //     },
+      //     ['Events']: {
+      //       initialRouteName: 'Events',
+      //       screens: {
+      //         ['Events']: {
+      //           path: 'events',
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
+    },
+  },
+};
+
 export function Navigation() {
   const initApp = useDCStore.use.initAppAction();
   const { t } = useTranslation();
@@ -55,7 +102,7 @@ export function Navigation() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,

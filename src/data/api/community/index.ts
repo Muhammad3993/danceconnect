@@ -19,6 +19,14 @@ export const communityApi = {
     return res.data;
   },
 
+  async updateCommunity(communityData: Community) {
+    const res = await apiClient.put<Community>(
+      `/community/update/${communityData.id}`,
+      communityData,
+    );
+    return res.data;
+  },
+
   async toggleFollowCommunity({ isFollowing, id }: Community) {
     const res = await apiClient.post(
       `/community/${isFollowing ? 'unfollow' : 'follow'}/${id}`,

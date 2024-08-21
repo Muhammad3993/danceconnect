@@ -200,10 +200,11 @@ export function PostCard({ post, user, inView, navigation }: Props) {
               <ScalableImage
                 originalWidth={IMAGE_WIDTH}
                 uri={file.fileUrl + '?size=medium'}
-                style={{ marginVertical: 8, borderRadius: 8 }}
+                containerStyle={{ marginVertical: 8 }}
               />
             ) : (
               <VideoView
+                containerStyle={{ marginVertical: 8 }}
                 width={IMAGE_WIDTH}
                 paused={!isFocused || !inView}
                 videoUrl={

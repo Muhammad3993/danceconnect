@@ -11,7 +11,8 @@ import {
   View,
 } from 'react-native';
 import { DanceStyleGroup } from 'data/api/collections/interfaces';
-import { PlusIcon } from 'components/icons/plus';
+import { CloseSmallIcon } from 'components/icons/close_small';
+import { ArrowDownButtonIcon } from 'components/icons/arrow_down_button';
 
 interface Props {
   value: string[];
@@ -20,7 +21,7 @@ interface Props {
   scrollEnabled?: boolean;
 }
 
-export const CategorySelector = ({
+export const DanceStylesSelector = ({
   onChange,
   value,
   errorMessage,
@@ -50,7 +51,7 @@ export const CategorySelector = ({
                 style={styles.addedDanceStyleItem}
                 onPress={() => deleteStyle(item)}>
                 <Text style={styles.addedDanceStyleText}>{item}</Text>
-                <Text>x</Text>
+                <CloseSmallIcon />
               </TouchableOpacity>
             );
           })}
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 4,
     paddingHorizontal: theming.spacing.SM,
+    alignItems: 'center',
   },
   addedDanceStyleText: {
     color: theming.colors.orange,
@@ -95,6 +97,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     marginRight: 6,
     fontWeight: '600',
+    fontFamily: theming.fonts.latoRegular,
   },
   danceStyleContainer: {
     flexDirection: 'row',
@@ -133,33 +136,28 @@ const styles = StyleSheet.create({
     margin: 2,
     tintColor: theming.colors.white,
   },
-  rightIconWrapper: {
-    backgroundColor: theming.colors.orange,
-    paddingVertical: 2,
-    borderRadius: 6,
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-  },
+
   animatedBody: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingTop: 16,
     maxWidth: 380,
+    rowGap: 8,
+    columnGap: 5,
   },
   danceStyleItem: {
     borderWidth: 1,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    marginRight: 4,
-    marginBottom: 8,
   },
   danceStyleText: {
     fontSize: 14,
     lineHeight: 14.9,
     fontWeight: '600',
     letterSpacing: 0.2,
+    fontFamily: theming.fonts.latoRegular,
   },
 });
 
@@ -183,9 +181,9 @@ export function StylesGroup({ group, value, onSelectItem }: StylesGroupProps) {
         <View style={{ justifyContent: 'center' }}>
           <Text style={styles.itemTitle}>{group.title}</Text>
         </View>
-        <View style={styles.rightIconWrapper}>
-          <PlusIcon fill={theming.colors.white} />
-        </View>
+        <ArrowDownButtonIcon
+          style={{ transform: [{ rotate: `${expand ? 0 : 180}deg` }] }}
+        />
       </TouchableOpacity>
       {expand && (
         <View style={styles.animatedBody}>
@@ -224,4 +222,4 @@ export function StylesGroup({ group, value, onSelectItem }: StylesGroupProps) {
   );
 }
 
-export default CategorySelector;
+export default DanceStylesSelector;

@@ -103,8 +103,8 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       <Tab.Screen
         options={{
           headerShown: false,
-          tabBarIcon(props) {
-            return <PeopleIcon />;
+          tabBarIcon({ focused }) {
+            return <PeopleIcon focused={focused} />;
           },
           tabBarLabel: t('people_tab'),
         }}
@@ -114,8 +114,8 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       <Tab.Screen
         options={{
           headerShown: false,
-          tabBarIcon(props) {
-            return <ProfileIcon />;
+          tabBarIcon({ focused }) {
+            return <ProfileIcon focused={focused} />;
           },
           tabBarLabel: t('profile_tab'),
         }}

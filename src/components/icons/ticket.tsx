@@ -29,8 +29,5 @@ const SvgComponent = (props: SvgProps & { active?: boolean }) => (
       </>
     )}
   </Svg>
-  // <Svg width={24} height={24} fill="none" {...props}>
-
-  // </Svg>
 );
 export const TicketIcon = memo(SvgComponent);

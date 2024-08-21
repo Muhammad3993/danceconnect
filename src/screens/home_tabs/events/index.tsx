@@ -10,7 +10,6 @@ import { theming } from 'common/constants/theming';
 import { LocationIcon } from 'components/icons/location';
 import { DCInput } from 'components/shared/input';
 import { SearchIcon } from 'components/icons/search';
-import { useDCStore } from 'store';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PlusBigIcon } from 'components/icons/plusBig';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,13 +21,8 @@ import { EventItem } from 'components/shared/event_item';
 
 export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
   const { t } = useTranslation();
-  const TABS = [
-    { text: t('upcoming'), containerStyle: { flex: 1 } },
-    { text: t('attending'), containerStyle: { flex: 1 } },
-    { text: t('managing'), containerStyle: { flex: 1 } },
-    { text: t('passed'), containerStyle: { flex: 1 } },
-  ];
-  const [currentTab, setCurrentTab] = useState(TABS[0].text);
+  const TABS = [t('upcoming'), t('attending'), t('managing'), t('passed')];
+  const [currentTab, setCurrentTab] = useState(TABS[0]);
 
   return (
     <SafeAreaView edges={['top']} style={styles.root}>
@@ -43,7 +37,7 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
         <View style={styles.communitiesSearch}>
           <DCInput
             leftIcon={<SearchIcon />}
-            placeholder={t("input_search_events")}
+            placeholder={t('input_search_events')}
             containerStyle={styles.communitiesInputContainer}
             inputStyle={styles.communitiesInput}
           />

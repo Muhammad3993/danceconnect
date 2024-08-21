@@ -1,5 +1,5 @@
 import { theming } from 'common/constants/theming';
-import CategorySelector from 'components/category_selector';
+import DanceStylesSelector from 'components/dance_styles_selector';
 import { CommunitiesIcon } from 'components/icons/communities';
 import LocationSelector from 'components/location_selector';
 import { DCButton } from 'components/shared/button';
@@ -15,20 +15,22 @@ import {
 } from 'react-native';
 
 import ImageUploadList from 'components/image_upload_list';
-import { useCreateCommunity } from 'data/hooks/community';
+import { useCreateCommunity, useUpdateCommunity } from 'data/hooks/community';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from 'screens/interfaces';
 import { LocationIcon } from 'components/icons/location';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { showErrorToast } from 'common/libs/toast';
 
 export function CreateCommunity({
   navigation,
+  route,
 }: StackScreenProps<'createCommunity'>) {
   const locationRef = useRef<BottomSheetModal>(null);
-
+  const initialData = route.params.community;
   const methods = useForm({
-    defaultValues: {
+    defaultValues: initialData ?? {
       title: '',
       description: '',
       images: [],
@@ -46,17 +48,23 @@ export function CreateCommunity({
     formState: { errors },
   } = methods;
 
-  const { mutate: createCommunity, isPending } = useCreateCommunity();
+  const { mutateAsync: createCommunity, isPending: isCreateing } =
+    useCreateCommunity();
+  const { mutateAsync: editCommunity, isPending: isEditing } =
+    useUpdateCommunity();
 
-  const handleCreateCommunity = data => {
-    createCommunity(data, {
-      onSuccess() {
-        navigation.pop();
-      },
-      onError(error) {
-        console.log(error);
-      },
-    });
+  const handleCreateCommunity = async data => {
+    try {
+      if (initialData) {
+        await editCommunity(data);
+      } else {
+        await createCommunity(data);
+      }
+      navigation.pop();
+    } catch (err) {
+      const error = err as Error;
+      showErrorToast(error.message);
+    }
   };
 
   return (
@@ -116,7 +124,7 @@ export function CreateCommunity({
               name="categories"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <CategorySelector
+                <DanceStylesSelector
                   scrollEnabled={false}
                   value={value}
                   onChange={onChange}
@@ -222,7 +230,7 @@ export function CreateCommunity({
           children={t('create_community')}
           containerStyle={{ flex: 1 }}
           onPress={handleSubmit(handleCreateCommunity)}
-          isLoading={isPending}
+          isLoading={isCreateing || isEditing}
         />
       </View>
     </SafeAreaView>

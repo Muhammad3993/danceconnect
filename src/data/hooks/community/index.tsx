@@ -40,6 +40,26 @@ export const useCreateCommunity = () => {
   });
 };
 
+export const useUpdateCommunity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: Community) => {
+      await DCAmity.updateCommunity(data.channelId, {
+        displayName: data.title,
+        metadata: { photo: getImgePath(data.images[0]) ?? '' },
+      });
+
+      const community = await communityApi.updateCommunity(data);
+
+      return community;
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['communities'] });
+    },
+  });
+};
+
 export const useToggleFollowCommunity = () => {
   const queryClient = useQueryClient();
 

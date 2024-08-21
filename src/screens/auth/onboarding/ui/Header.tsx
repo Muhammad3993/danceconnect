@@ -19,7 +19,7 @@ export function Header({ description, title }: Props) {
 const styles = StyleSheet.create({
   title: {
     color: theming.colors.textPrimary,
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
   },

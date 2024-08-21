@@ -6,11 +6,14 @@ import {
   StyleSheet,
   Text,
   View,
+  ViewStyle,
 } from 'react-native';
 import React, { memo, useCallback, useState } from 'react';
 import Video from 'react-native-video';
 import { theming } from 'common/constants/theming';
 import { PlayCircle } from 'components/icons/play_circle';
+import { SoundIcon } from 'components/icons/sound';
+import { UnsoundIcon } from 'components/icons/unsound';
 
 interface Props {
   paused?: boolean;
@@ -19,7 +22,7 @@ interface Props {
   videoPoster?: string;
   videoUrl?: string;
   uploadPercent?: null | number;
-  isCreating?: boolean;
+  containerStyle?: ViewStyle;
 }
 
 export const VideoView = memo(
@@ -29,7 +32,7 @@ export const VideoView = memo(
     height,
     videoPoster,
     videoUrl,
-    isCreating = false,
+    containerStyle,
   }: Props) => {
     const [localPause, setLocalPause] = useState(false);
     const [buffering, setBuffering] = useState(true);
@@ -65,6 +68,7 @@ export const VideoView = memo(
         style={[
           styles.mediaContainer,
           { width: scalableWidth, height: scalableHeight },
+          containerStyle,
         ]}>
         {(sizing || buffering) && (
           <View
@@ -116,12 +120,7 @@ export const VideoView = memo(
             {!localPause && (
               <View style={styles.soundBtn}>
                 <Pressable onPress={() => setIsMute(!isMute)}>
-                  <Text>{isMute ? 'unsound' : 'sound'}</Text>
-
-                  {/* <Image
-                    source={{ uri: isMute ? 'unsound' : 'sound' }}
-                    style={styles.img}
-                  /> */}
+                  {isMute ? <UnsoundIcon /> : <SoundIcon />}
                 </Pressable>
               </View>
             )}
@@ -139,7 +138,6 @@ const styles = StyleSheet.create({
     backgroundColor: theming.colors.gray100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 8,
   },
 
   sizingOverlay: {

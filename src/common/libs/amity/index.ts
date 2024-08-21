@@ -40,7 +40,7 @@ export const DCAmity = {
 
   queryUserPosts({
     userId,
-    limit = 5,
+    limit = 8,
     onGetPosts,
   }: {
     userId: string;
@@ -61,6 +61,13 @@ export const DCAmity = {
 
   createCommunity(data: { displayName: string; metadata: { photo: string } }) {
     return ChannelRepository.createChannel({ type: 'community', ...data });
+  },
+
+  updateCommunity(
+    cahnnelId: string,
+    data: { displayName: string; metadata: { photo: string } },
+  ) {
+    return ChannelRepository.updateChannel(cahnnelId, data);
   },
 
   joinCommunity(communityId: string) {

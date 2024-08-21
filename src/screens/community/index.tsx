@@ -12,8 +12,10 @@ import React, { useState } from 'react';
 import {
   FlatList,
   Image,
+  Platform,
   SafeAreaView,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -21,7 +23,6 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { RightArrowIcon } from 'components/icons/rightArrow';
-import { CommunityCardList } from './ui';
 import {
   useGetCommunity,
   useToggleFollowCommunity,
@@ -72,6 +73,20 @@ export function CommunityScreen({
 
   const isOwner = user?.id === community?.creator.id;
 
+  const onPressShare = async () => {
+    if (!community) {
+      return;
+    }
+    await Share.share({
+      title: community.title ?? '',
+      message:
+        Platform.OS == 'android'
+          ? `https://danceconnect.online/community/${community.id}`
+          : `${community.title}`,
+      url: `https://danceconnect.online/community/${community.id}`,
+    });
+  };
+
   if (isPending || !community) {
     return <LoaderView />;
   }
@@ -88,40 +103,18 @@ export function CommunityScreen({
             </TouchableOpacity>
 
             <View style={styles.eventTopRight}>
-              <DCRoundIcon icon={<EditIconSvg />} />
+              {isOwner && (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.push('createCommunity', { community })
+                  }>
+                  <DCRoundIcon icon={<EditIconSvg />} />
+                </TouchableOpacity>
+              )}
               <DCRoundIcon icon={<SettingIcon />} />
-              {/* {community?.isFollowing ? (
-                <View style={{ position: 'relative' }}>
-                  <TouchableOpacity onPress={handleOpenModal}>
-                    <DCRoundIcon
-                      icon={<MessageIcon stroke={theming.colors.white} />}
-                    />
-                  </TouchableOpacity>
-                  {isOpenModal ? (
-                    <View style={styles.modalBox}>
-                      <View style={styles.modalBoxRow}>
-                        <TouchableOpacity
-                          style={styles.modalBoxClose}
-                          onPress={handleOpenModal}>
-                          <CloseIcon
-                            width={10}
-                            height={10}
-                            stroke={theming.colors.redError}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={handleUnFollow}>
-                          <Text style={styles.modalBoxTitle}>Unfollow</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  ) : (
-                    ''
-                  )}
-                </View>
-              ) : (
-                ''
-              )} */}
-              <DCRoundIcon icon={<ShareIcon />} />
+              <TouchableOpacity onPress={onPressShare}>
+                <DCRoundIcon icon={<ShareIcon />} />
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -249,9 +242,9 @@ export function CommunityScreen({
           )}
           {isOwner && <DCButton>{t('create_event')}</DCButton>}
         </View>
-        <View style={styles.container}>
+        {/* <View style={styles.container}>
           <CommunityCardList all={[]} communities={[]} events={[]} />
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );

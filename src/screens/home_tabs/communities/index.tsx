@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
 
   infoHeader: {
     backgroundColor: theming.colors.white,
-    marginTop: 15,
   },
   actions: {
     flexDirection: 'row',

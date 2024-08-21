@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import CategorySelector from 'components/category_selector';
+import DanceStylesSelector from 'components/dance_styles_selector';
 import { Header } from './Header';
-import { EditUserRequest } from 'data/api/user/inerfaces';
+import { User } from 'data/api/user/inerfaces';
 import { Controller, useFormContext } from 'react-hook-form';
 
 export const DanceStyles = () => {
   const { t } = useTranslation();
-  const { control } = useFormContext<EditUserRequest>();
+  const { control } = useFormContext<Partial<User>>();
 
   return (
     <>
@@ -18,7 +18,7 @@ export const DanceStyles = () => {
         name="individualStyles"
         render={({ field: { value, onChange }, fieldState }) => {
           return (
-            <CategorySelector
+            <DanceStylesSelector
               errorMessage={fieldState.error?.message}
               value={value ?? []}
               onChange={onChange}

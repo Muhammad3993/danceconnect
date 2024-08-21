@@ -1,10 +1,10 @@
-import { PostRepository } from '@amityco/ts-sdk-react-native';
-import React, { useCallback, useState } from 'react';
+import { FileRepository, PostRepository } from '@amityco/ts-sdk-react-native';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -27,6 +27,7 @@ import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { CameraIcon } from 'components/icons/camera';
 import { ImageIcon } from 'components/icons/image';
 import { PlayCircle } from 'components/icons/play_circle';
+import { TrashIcon } from 'components/icons/trash';
 
 export function CreatePostScreen({
   navigation,
@@ -35,7 +36,7 @@ export function CreatePostScreen({
   const { targetId, targetType, postId, postText = '', file } = route.params;
 
   const isCreating = postId === undefined;
-
+  const deletedFiles = useRef<string[]>([]);
   const [touched, setTouched] = useState(false);
   const [crating, setCreating] = useState(false);
   const [text, setText] = useState(postText ?? '');
@@ -98,14 +99,14 @@ export function CreatePostScreen({
       setCreating(true);
       const newPost = {
         data: { text },
+        attachments: attachment ? [attachment] : [],
         targetType,
         targetId,
       };
 
-      if (attachment && attachment.fileId !== file?.fileId) {
-        // @ts-ignore
-        newPost.attachments = [attachment];
-      }
+      deletedFiles.current.forEach(id => {
+        FileRepository.deleteFile(id);
+      });
 
       if (isCreating) {
         await PostRepository.createPost(newPost);
@@ -118,6 +119,14 @@ export function CreatePostScreen({
       showErrorToast(error.message);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const onDeleteMedia = () => {
+    if (attachment) {
+      setTouched(true);
+      deletedFiles.current.push(attachment.fileId);
+      setAttachment(undefined);
     }
   };
 
@@ -176,6 +185,7 @@ export function CreatePostScreen({
             <MediaContainer
               fileUploadProgress={uploadProgress}
               attachment={attachment}
+              onDeleteMedia={onDeleteMedia}
             />
           </ScrollView>
 
@@ -205,9 +215,11 @@ export function CreatePostScreen({
 interface MediaContainerProps {
   fileUploadProgress: number;
   attachment?: Amity.File<'image' | 'video'>;
+  onDeleteMedia: () => void;
 }
 const MediaContainer = ({
   fileUploadProgress,
+  onDeleteMedia,
   attachment,
 }: MediaContainerProps) => {
   if (fileUploadProgress > 0 && fileUploadProgress < 99) {
@@ -215,29 +227,40 @@ const MediaContainer = ({
       <View style={styles.uploadOverlay}>
         <ActivityIndicator />
         <Text style={{ fontSize: 25, color: theming.colors.textPrimary }}>
-          {fileUploadProgress}
+          {12}
         </Text>
         <Text style={{ fontSize: 25, color: theming.colors.textPrimary }}>
-          uploading
+          {fileUploadProgress}
         </Text>
       </View>
     );
   }
 
   if (attachment) {
-    return attachment.type == 'image' ? (
+    return (
       <View style={styles.mediaContent}>
-        <ScalableImage
-          originalWidth={SCREEN_WIDTH - 32}
-          uri={attachment.fileUrl + '?size=medium'}
-        />
+        <Pressable
+          onPress={onDeleteMedia}
+          style={{
+            position: 'absolute',
+            right: 15,
+            top: 10,
+            zIndex: 1,
+            padding: 5,
+            backgroundColor: '#fff',
+            borderRadius: 50,
+          }}>
+          <TrashIcon />
+        </Pressable>
+        {attachment.type == 'image' ? (
+          <ScalableImage
+            originalWidth={SCREEN_WIDTH - 32}
+            uri={attachment.fileUrl + '?size=medium'}
+          />
+        ) : (
+          <VideoView videoUrl={attachment.fileUrl} width={SCREEN_WIDTH - 32} />
+        )}
       </View>
-    ) : (
-      <VideoView
-        isCreating
-        videoUrl={attachment.fileUrl}
-        width={SCREEN_WIDTH - 32}
-      />
     );
   }
 
@@ -258,6 +281,8 @@ const styles = StyleSheet.create({
   uploadOverlay: {
     width: WINDOW_WIDTH - 32,
     height: WINDOW_WIDTH - 32,
+    backgroundColor: theming.colors.baseShade,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 12,
@@ -286,10 +311,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   mediaContent: {
-    borderRadius: 8,
     marginVertical: 12,
-    overflow: 'hidden',
-    backgroundColor: theming.colors.gray100,
+    position: 'relative',
   },
   footer: {
     height: 48,

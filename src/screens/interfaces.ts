@@ -10,6 +10,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
+import { Community } from 'data/api/community/interfaces';
 
 export type RootStackRoutes = {
   // auth
@@ -23,7 +24,7 @@ export type RootStackRoutes = {
   editProfile: undefined;
   editDanceStyles: undefined;
   event: undefined;
-  createCommunity: undefined;
+  createCommunity: { community?: Community };
   community: { id: string };
   createEvent: undefined;
   createTicket: undefined;

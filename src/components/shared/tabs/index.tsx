@@ -94,6 +94,8 @@ export function DCTabs({
                 style={[
                   textStyle,
                   {
+                    fontFamily: theming.fonts.latoRegular,
+                    fontWeight: '600',
                     color: active
                       ? theming.colors.purple
                       : theming.colors.darkGray,
