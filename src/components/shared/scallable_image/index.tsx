@@ -29,8 +29,6 @@ export const ScalableImage = memo(
     const adjustSize = useCallback(
       (sourceWidth: number, sourceHeight: number) => {
         let ratio = 1;
-        console.log('adjustSize');
-
         if (originalWidth && originalHeight) {
           ratio = Math.min(
             originalWidth / sourceWidth,

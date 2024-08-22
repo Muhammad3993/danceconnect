@@ -8,16 +8,18 @@ import { SearchIcon } from 'components/icons/search';
 import { t } from 'i18next';
 import { FilterComponent } from 'components/shared/filter';
 import { PeopleItem } from './ui';
+import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
 
 export function PeopleScreen() {
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.eventsLocation}>
+      {/* <View style={styles.eventsLocation}>
         <LocationIcon width={16} height={16} />
         <Text style={styles.eventsLocationTitle}>
           San Francisco, California
         </Text>
-      </View>
+      </View> */}
+      <HeaderWithLocation />
 
       <View style={styles.communitiesSearch}>
         <DCInput
@@ -30,7 +32,7 @@ export function PeopleScreen() {
 
       <ScrollView style={styles.container}>
         <FilterComponent
-          title={"people_found"}
+          title={'people_found'}
           containerStyle={{
             marginTop: 0,
             marginBottom: 20,

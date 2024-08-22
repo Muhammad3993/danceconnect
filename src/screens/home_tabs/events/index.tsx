@@ -7,18 +7,14 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import { theming } from 'common/constants/theming';
-import { LocationIcon } from 'components/icons/location';
-import { DCInput } from 'components/shared/input';
-import { SearchIcon } from 'components/icons/search';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { PlusBigIcon } from 'components/icons/plusBig';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabScreenProps } from 'screens/interfaces';
 import { DCTabs } from 'components/shared/tabs';
 import { useTranslation } from 'react-i18next';
 import { FilterComponent } from 'components/shared/filter';
 import { EventItem } from 'components/shared/event_item';
-import { RightArrowIcon } from 'components/icons/rightArrow';
+import { HeaderWithSearch } from 'components/header_with_search_and_location/HeaderWithSearch';
+import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
 
 export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
   const { t } = useTranslation();
@@ -28,7 +24,7 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
   return (
     <SafeAreaView edges={['top']} style={styles.root}>
       <View style={styles.events}>
-        <View style={styles.communitiesLocation}>
+        {/* <View style={styles.communitiesLocation}>
           <LocationIcon width={16} height={16} />
           <Text style={styles.communitiesLocationTitle}>
             San Francisco, California
@@ -42,13 +38,18 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
             placeholder={t('input_search_events')}
             containerStyle={styles.communitiesInputContainer}
             inputStyle={styles.communitiesInput}
-          />
-          <TouchableOpacity
+            />
+            <TouchableOpacity
             onPress={() => navigation.push('createEvent')}
             style={styles.communitiesPlus}>
             <PlusBigIcon />
-          </TouchableOpacity>
-        </View>
+            </TouchableOpacity>
+            </View> */}
+        <HeaderWithLocation />
+        <HeaderWithSearch
+          placeholder={t('input_search_events')}
+          onPress={() => navigation.push('createEvent')}
+        />
         <View style={styles.infoHeader}>
           <DCTabs
             textStyle={styles.tabText}
@@ -89,46 +90,46 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: theming.spacing.LG,
   },
-  communitiesLocation: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theming.spacing.SM,
-    marginTop: 10,
-  },
-  communitiesLocationTitle: {
-    fontWeight: '700',
-    fontSize: 16,
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.textPrimary,
-  },
-  communitiesPlus: {
-    width: 40,
-    height: 40,
-    backgroundColor: theming.colors.purple,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  communitiesSearch: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 15,
-  },
-  communitiesInputContainer: {
-    width: '82%',
-  },
-  communitiesInput: {
-    padding: 0,
-    borderWidth: 0,
-    alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 20,
-    height: 48,
-  },
+  // communitiesLocation: {
+  //   width: '100%',
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   gap: theming.spacing.SM,
+  //   marginTop: 10,
+  // },
+  // communitiesLocationTitle: {
+  //   fontWeight: '700',
+  //   fontSize: 16,
+  //   fontFamily: theming.fonts.latoRegular,
+  //   color: theming.colors.textPrimary,
+  // },
+  // communitiesPlus: {
+  //   width: 40,
+  //   height: 40,
+  //   backgroundColor: theming.colors.purple,
+  //   borderRadius: 50,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
+  // communitiesSearch: {
+  //   width: '100%',
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  //   alignItems: 'center',
+  //   marginVertical: 15,
+  // },
+  // communitiesInputContainer: {
+  //   width: '82%',
+  // },
+  // communitiesInput: {
+  //   padding: 0,
+  //   borderWidth: 0,
+  //   alignItems: 'center',
+  //   gap: 10,
+  //   paddingHorizontal: 20,
+  //   height: 48,
+  // },
 
   tabText: {
     lineHeight: 22,

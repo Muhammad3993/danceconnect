@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import Share, { Social } from 'react-native-share';
 import RNFetchBlob from 'rn-fetch-blob';
-import CameraRoll from '@react-native-community/cameraroll';
 import { SCREEN_WIDTH } from 'common/constants';
 import { User } from 'data/api/user/inerfaces';
 import { UserImage } from './user_image';
@@ -22,6 +21,7 @@ import ExpandableText from './shared/expandable_text';
 import { TabScreenNavigation } from 'screens/interfaces';
 import { MenuIcon } from './icons/menu';
 import { showErrorToast } from 'common/libs/toast';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 
 interface Props {
   post: Amity.Post;

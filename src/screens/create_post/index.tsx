@@ -74,8 +74,8 @@ export function CreatePostScreen({
 
       const result = await upload({
         fileMediaType: 'image',
-        fileName: data.filename ?? data.path,
-        fileType: 'image/jpg',
+        fileName: postId + 'photo',
+        fileType: data.mime ?? 'image/jpg',
         fileUrl:
           Platform.OS === 'android'
             ? data.path
@@ -86,6 +86,8 @@ export function CreatePostScreen({
         setAttachment(result[0]);
       }
     } catch (err) {
+      console.log(err);
+
       const error = err as Error;
       showErrorToast(error.message);
     }

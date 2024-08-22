@@ -86,11 +86,11 @@ new file mode 100644
 index 0000000..e69de29
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties
 new file mode 100644
-index 0000000..1c60396
+index 0000000..c561b9b
 --- /dev/null
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties
 @@ -0,0 +1 @@
-+#Mon Aug 19 18:43:49 UZT 2024
++#Thu Aug 22 13:07:12 UZT 2024
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/release/packageReleaseResources/merger.xml b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/release/packageReleaseResources/merger.xml
 new file mode 100644
 index 0000000..94498e0
@@ -226,5 +226,5 @@ index 0000000..247762a
 +		INJECTED from /Users/javoxir/Desktop/DC/DC/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/tmp/compileReleaseJavaWithJavac/previous-compilation-data.bin b/node_modules/@react-native-camera-roll/camera-roll/android/build/tmp/compileReleaseJavaWithJavac/previous-compilation-data.bin
 new file mode 100644
-index 0000000..fa7874a
+index 0000000..190e907
 Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/tmp/compileReleaseJavaWithJavac/previous-compilation-data.bin differ
