@@ -30,6 +30,7 @@ import { getImgePath } from 'data/api';
 import ExpandableText from 'components/shared/expandable_text';
 import { DCTabs } from 'components/shared/tabs';
 import { useGetAmityUserPosts } from 'common/libs/amity/hooks/useGetAmityUserPosts';
+import { TagsList } from 'components/tags_list';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const user = useDCStore.use.user()!;
@@ -176,13 +177,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   scrollEnabled={user.individualStyles.length > 3}>
-                  {user.individualStyles.map((tag: string, idx: number) => {
-                    return (
-                      <View style={styles.tagItem} key={idx}>
-                        <Text style={styles.tagItemText}>{tag}</Text>
-                      </View>
-                    );
-                  })}
+                  <TagsList list={user.individualStyles} shouldSlice={false} />
                 </ScrollView>
               </View>
             </View>
@@ -267,22 +262,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     backgroundColor: theming.colors.purpleTransparent,
-  },
-  tagItem: {
-    height: 24,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    borderRadius: 4,
-    marginRight: 4,
-    borderWidth: 1,
-    borderColor: theming.colors.gray300,
-  },
-  tagItemText: {
-    color: theming.colors.purple,
-    fontSize: 12,
-    letterSpacing: 0.2,
-    fontFamily: theming.fonts.latoRegular,
-    fontWeight: '600',
   },
 
   profile: {

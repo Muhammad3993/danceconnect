@@ -16,13 +16,15 @@ import {
 import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserLocation } from 'data/api/user/inerfaces';
+import Config from 'react-native-config';
 
 interface Props {
   onChange?: (val: UserLocation) => void;
+  onClose?: () => void;
 }
 
 export const LocationSelector = forwardRef<BottomSheetModal, Props>(
-  ({ onChange }, bottomSheetModalRef) => {
+  ({ onChange, onClose }, bottomSheetModalRef) => {
     const { t } = useTranslation();
     const { bottom, top } = useSafeAreaInsets();
 
@@ -83,12 +85,12 @@ export const LocationSelector = forwardRef<BottomSheetModal, Props>(
           <View style={{ alignSelf: 'center' }}>
             <Text style={styles.title}>{t('location')}</Text>
           </View>
-          <TouchableOpacity style={styles.backIcon}>
+          <TouchableOpacity onPress={onClose} style={styles.backIcon}>
             {/* <Image source={{ uri: 'close' }} style={styles.backIcon} /> */}
           </TouchableOpacity>
         </View>
       );
-    }, [t, top]);
+    }, [t, top, onClose]);
 
     return (
       <DCBottomSheet
@@ -96,13 +98,15 @@ export const LocationSelector = forwardRef<BottomSheetModal, Props>(
         enableHandlePanningGesture={false}
         handleComponent={handle}
         ref={bottomSheetModalRef}
-        snapPoints={snapPoints}>
+        snapPoints={snapPoints}
+        backgroundStyle={{ borderRadius: 0 }}
+        enableDynamicSizing={false}>
         <BottomSheetView
           style={{
             flex: 1,
             paddingHorizontal: 24,
             paddingVertical: 16,
-            paddingBottom: bottom,
+            paddingBottom: bottom + theming.spacing.MD,
           }}>
           <DCInput
             forBottomSheet

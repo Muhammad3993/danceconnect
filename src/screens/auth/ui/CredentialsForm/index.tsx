@@ -16,14 +16,14 @@ import { useSocialBtns } from 'data/hooks/user';
 import { images } from 'common/resources/images';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AuthSchema, authSchema } from './schema';
+import { AuthSchema, authSchema } from 'data/api/user/schema';
 import { isEmptyObj } from 'common/utils/object';
 
 interface Props {
   footerComponent: ReactNode;
   submitTitle: string;
   isLoading: boolean;
-  onSubmit: (email: string, password: string) => void;
+  onSubmit: (data: AuthSchema) => void;
 }
 
 export function CredentialsForm({
@@ -43,13 +43,13 @@ export function CredentialsForm({
   const openTerms = () => {
     Linking.openURL('https://danceconnect.online/terms.html');
   };
-  const onPressSubmit = ({ email, password }: AuthSchema) => {
-    onSubmit(email, password);
-  };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="height">
-      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingVertical: 20 }}>
         <View>
           <Image source={images.authLogo} style={styles.logo} />
           <Text style={styles.welcome}>{t('create_account')}</Text>
@@ -94,7 +94,7 @@ export function CredentialsForm({
           <DCButton
             size="large"
             isLoading={isLoading}
-            onPress={handleSubmit(onPressSubmit)}
+            onPress={handleSubmit(onSubmit)}
             disabled={isEmptyObj(dirtyFields)}>
             {submitTitle}
           </DCButton>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theming.colors.white,
-    padding: theming.spacing.LG,
+    paddingHorizontal: theming.spacing.LG,
     justifyContent: 'space-between',
   },
 

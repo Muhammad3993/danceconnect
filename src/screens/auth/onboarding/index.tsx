@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { BasicInfo } from './ui/BasicInfo';
 import { DanceStyles } from './ui/DanceStyles';
 import { theming } from 'common/constants/theming';
@@ -12,7 +12,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useDCStore } from 'store';
 import { userEditSchema } from './schema';
 import { isEmptyObj } from 'common/utils/object';
-import { PagerViewInternal } from 'react-native-pager-view/lib/typescript/PagerView';
 import { useEditUser } from 'data/hooks/user';
 import { showErrorToast } from 'common/libs/toast';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,7 +22,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const user = useDCStore.use.user();
   const updateUser = useDCStore.use.setUser();
   const [currPage, setCurrPage] = useState(0);
-  const refPagerView = useRef<PagerViewInternal>(null);
+  const refPagerView = useRef<PagerView>(null);
   const { mutateAsync, isPending } = useEditUser();
   const methods = useForm<Partial<User>>({
     defaultValues: user ?? {},
@@ -67,21 +66,25 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
           scrollEnabled={false}
           ref={refPagerView}
           style={styles.root}
-          initialPage={0}
-          useNext={false}>
+          initialPage={0}>
           <BasicInfo key={'1'} />
+
           <DanceStyles key={'2'} />
         </PagerView>
-
-        <View style={{ paddingHorizontal: theming.spacing.LG }}>
-          <DCButton
-            isLoading={isPending}
-            disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
-            onPress={goNext}>
-            {t('next')}
-          </DCButton>
-        </View>
       </FormProvider>
+
+      <View
+        style={{
+          paddingHorizontal: theming.spacing.LG,
+          paddingVertical: theming.spacing.MD,
+        }}>
+        <DCButton
+          isLoading={isPending}
+          disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
+          onPress={goNext}>
+          {t('next')}
+        </DCButton>
+      </View>
     </SafeAreaView>
   );
 }

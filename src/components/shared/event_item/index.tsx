@@ -7,6 +7,7 @@ import { LocationIcon } from 'components/icons/location';
 import { DCLine } from '../line';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
+import { TagsList } from '../../tags_list';
 
 interface EventItemProps {
   click?: () => void;
@@ -19,18 +20,11 @@ export const EventItem = ({ click }: EventItemProps) => {
       <View style={styles.item}>
         <View style={styles.itemBody}>
           <View style={styles.itemBodyText}>
-            <View style={styles.itemCategories}>
-              <View style={styles.itemCategory}>
-                <Text style={styles.itemCategoryTitle}>Festival</Text>
-              </View>
-              <View
-                style={[
-                  styles.itemCategory,
-                  { backgroundColor: theming.colors.green },
-                ]}>
-                <Text style={styles.itemCategoryTitle}>$25.00</Text>
-              </View>
-            </View>
+            <TagsList
+              list={['Festival', '$25.00']}
+              backgroundColor={[theming.colors.purple, theming.colors.green]}
+            />
+
             <View style={styles.itemDate}>
               <SetCalendarIcon />
               <Text style={styles.itemDateTitle}>Mon, Dec 24 • 21:00</Text>
@@ -61,29 +55,16 @@ export const EventItem = ({ click }: EventItemProps) => {
                 style={[styles.itemSpotImg, { marginLeft: -8, zIndex: -1 }]}
               />
             </View>
-            <Text style={styles.itemSpotTitle}>+ 10900 {t("going")}</Text>
+            <Text style={styles.itemSpotTitle}>+ 10900 {t('going')}</Text>
           </View>
         </View>
 
         <DCLine />
 
         <View style={styles.itemBottom}>
-          <View style={styles.itemTags}>
-            <View style={styles.itemTag}>
-              <Text style={styles.itemTagTitle}>Salsa</Text>
-            </View>
-            <View style={styles.itemTag}>
-              <Text style={styles.itemTagTitle}>Bachata</Text>
-            </View>
-            <View style={styles.itemTag}>
-              <Text style={styles.itemTagTitle}>Kizomba</Text>
-            </View>
-            <View style={styles.itemAnotherTag}>
-              <Text style={styles.itemAnotherTagTitle}>+3</Text>
-            </View>
-          </View>
+          <TagsList list={['Salsa', 'Bachata', 'Kizomba']} />
           <View style={styles.itemBtn}>
-            <Text style={styles.itemBtnTitle}>{t("attend")}</Text>
+            <Text style={styles.itemBtnTitle}>{t('attend')}</Text>
           </View>
         </View>
       </View>
@@ -114,18 +95,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 4,
   },
-  itemCategory: {
-    backgroundColor: theming.colors.purple,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 4,
-  },
-  itemCategoryTitle: {
-    color: theming.colors.white,
-    fontWeight: '700',
-    fontSize: 12,
-    fontFamily: theming.fonts.latoRegular,
-  },
+
   itemDate: {
     flexDirection: 'row',
     gap: theming.spacing.SM,
@@ -200,38 +170,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 10,
-  },
-  itemTags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: 4,
-    flex: 1,
-  },
-  itemTag: {
-    borderWidth: 1,
-    borderColor: theming.colors.gray250,
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-  },
-  itemTagTitle: {
-    color: theming.colors.purple,
-    fontWeight: '700',
-    fontSize: 12,
-    fontFamily: theming.fonts.latoRegular,
-  },
-  itemAnotherTag: {
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    backgroundColor: theming.colors.gray75,
-  },
-  itemAnotherTagTitle: {
-    color: theming.colors.darkGray,
-    fontWeight: '700',
-    fontSize: 12,
-    fontFamily: theming.fonts.latoRegular,
   },
   itemBtn: {
     backgroundColor: theming.colors.orange,

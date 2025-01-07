@@ -1,10 +1,13 @@
 import * as yup from 'yup';
 
 export const authSchema = yup.object({
-  email: yup.string().email().required('location is required'),
+  email: yup
+    .string()
+    .email('Email must be valid email')
+    .required('Email is required'),
   password: yup
     .string()
-    .required('location is required')
+    .required('Password is required')
     .min(6, 'Password must include minimum letters'),
 });
 

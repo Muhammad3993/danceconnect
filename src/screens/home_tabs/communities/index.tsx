@@ -11,6 +11,7 @@ import useGetCommunities from 'data/hooks/community';
 import { LoaderView } from 'components/shared/loader_view';
 import { HeaderWithSearch } from 'components/header_with_search_and_location/HeaderWithSearch';
 import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
+import { FilterComponent } from 'components/shared/filter';
 
 export function CommunitiesScreen({
   navigation,
@@ -30,33 +31,11 @@ export function CommunitiesScreen({
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.communities}>
-        {/* <View style={styles.communitiesLocation}>
-          <LocationIcon width={16} height={16} />
-          <Text style={styles.communitiesLocationTitle}>
-            San Francisco, California
-          </Text>
-          <RightArrowIcon style={{ transform: [{ rotate: '90deg' }] }} />
-        </View>
-
-        <View style={styles.communitiesSearch}>
-          <DCInput
-            leftIcon={<SearchIcon />}
-            placeholder={t('input_search_communities')}
-            containerStyle={styles.communitiesInputContainer}
-            inputStyle={styles.communitiesInput}
-            />
-            <TouchableOpacity
-            onPress={() => navigation.push('createCommunity')}
-            style={styles.communitiesPlus}>
-            <PlusBigIcon />
-            </TouchableOpacity>
-            </View> */}
         <HeaderWithLocation />
         <HeaderWithSearch
           placeholder={t('input_search_communities')}
           onPress={() => navigation.push('createCommunity', {})}
         />
-        {/* <Text>{JSON.stringify(data, null, 2)}</Text> */}
         <View style={styles.infoHeader}>
           <DCTabs
             textStyle={styles.tabText}
@@ -67,6 +46,10 @@ export function CommunitiesScreen({
             onPressTab={setCurrentTab}
           />
         </View>
+        <FilterComponent
+          title="978 communities found"
+          containerStyle={{ marginBottom: theming.spacing.SM }}
+        />
         {isPending ? (
           <LoaderView />
         ) : (

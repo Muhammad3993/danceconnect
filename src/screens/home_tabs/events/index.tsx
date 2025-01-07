@@ -24,27 +24,6 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
   return (
     <SafeAreaView edges={['top']} style={styles.root}>
       <View style={styles.events}>
-        {/* <View style={styles.communitiesLocation}>
-          <LocationIcon width={16} height={16} />
-          <Text style={styles.communitiesLocationTitle}>
-            San Francisco, California
-          </Text>
-          <RightArrowIcon style={{ transform: [{ rotate: '90deg' }] }} />
-        </View>
-
-        <View style={styles.communitiesSearch}>
-          <DCInput
-            leftIcon={<SearchIcon />}
-            placeholder={t('input_search_events')}
-            containerStyle={styles.communitiesInputContainer}
-            inputStyle={styles.communitiesInput}
-            />
-            <TouchableOpacity
-            onPress={() => navigation.push('createEvent')}
-            style={styles.communitiesPlus}>
-            <PlusBigIcon />
-            </TouchableOpacity>
-            </View> */}
         <HeaderWithLocation />
         <HeaderWithSearch
           placeholder={t('input_search_events')}
@@ -90,47 +69,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: theming.spacing.LG,
   },
-  // communitiesLocation: {
-  //   width: '100%',
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   gap: theming.spacing.SM,
-  //   marginTop: 10,
-  // },
-  // communitiesLocationTitle: {
-  //   fontWeight: '700',
-  //   fontSize: 16,
-  //   fontFamily: theming.fonts.latoRegular,
-  //   color: theming.colors.textPrimary,
-  // },
-  // communitiesPlus: {
-  //   width: 40,
-  //   height: 40,
-  //   backgroundColor: theming.colors.purple,
-  //   borderRadius: 50,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
-  // communitiesSearch: {
-  //   width: '100%',
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'center',
-  //   marginVertical: 15,
-  // },
-  // communitiesInputContainer: {
-  //   width: '82%',
-  // },
-  // communitiesInput: {
-  //   padding: 0,
-  //   borderWidth: 0,
-  //   alignItems: 'center',
-  //   gap: 10,
-  //   paddingHorizontal: 20,
-  //   height: 48,
-  // },
-
   tabText: {
     lineHeight: 22,
     textTransform: 'capitalize',

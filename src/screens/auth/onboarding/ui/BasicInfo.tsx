@@ -18,7 +18,7 @@ export const BasicInfo = () => {
   const locationRef = useRef<BottomSheetModal>(null);
 
   return (
-    <>
+    <ScrollView style={{ flex: 1 }}>
       <Header title={t('yourself')} description={t('yourself_desc')} />
 
       <Text style={styles.placeholderTitle}>{t('name')}</Text>
@@ -119,6 +119,7 @@ export const BasicInfo = () => {
                   onChange(data);
                   locationRef.current?.dismiss();
                 }}
+                onClose={() => locationRef.current?.dismiss()}
               />
             </>
           );
@@ -171,7 +172,7 @@ export const BasicInfo = () => {
           );
         }}
       />
-    </>
+    </ScrollView>
   );
 };
 

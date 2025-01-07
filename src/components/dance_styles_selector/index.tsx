@@ -51,7 +51,7 @@ export const DanceStylesSelector = ({
                 style={styles.addedDanceStyleItem}
                 onPress={() => deleteStyle(item)}>
                 <Text style={styles.addedDanceStyleText}>{item}</Text>
-                <CloseSmallIcon />
+                <CloseSmallIcon style={{ marginBottom: -1 }} />
               </TouchableOpacity>
             );
           })}

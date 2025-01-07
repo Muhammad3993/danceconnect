@@ -21,6 +21,8 @@ export const collectionsApi = {
     const response = await axios.get<PlaceAutocompleteResponse>(
       `${googleUrl}key=${Config.GOOGLE_API_KEY}&types=(cities)&components=country:${countryCode}&input=${searchString}&language=en`,
     );
+    console.log(response);
+
     return response.data;
   },
 

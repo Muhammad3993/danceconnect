@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useToggleFollowCommunity } from 'data/hooks/community';
 import FastImage from 'react-native-fast-image';
 import { getImgePath } from 'data/api';
+import { TagsList } from 'components/tags_list';
 
 interface CommunityItemProps {
   community: Community;
@@ -17,10 +18,10 @@ interface CommunityItemProps {
 
 export function CommunityItem({ community, click }: CommunityItemProps) {
   const { t } = useTranslation();
-  const slicedCategories = community.categories.slice(0, 2);
-  // Remaining elements
-  const remainingCategoriesCount =
-    community.categories.length - slicedCategories.length;
+  // const slicedCategories = community.categories.slice(0, 2);
+  // // Remaining elements
+  // const remainingCategoriesCount =
+  //   community.categories.length - slicedCategories.length;
 
   const slicedFollowers = community.followers.slice(0, 3);
 
@@ -78,20 +79,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
         <DCLine />
 
         <View style={styles.itemBottom}>
-          <View style={styles.itemTags}>
-            {slicedCategories.map((category, i) => (
-              <View style={styles.itemTag} key={i}>
-                <Text style={styles.itemTagTitle}>{category}</Text>
-              </View>
-            ))}
-            {remainingCategoriesCount > 0 && (
-              <View style={styles.itemAnotherTag}>
-                <Text style={styles.itemAnotherTagTitle}>
-                  +{remainingCategoriesCount}
-                </Text>
-              </View>
-            )}
-          </View>
+          <TagsList list={community?.categories} />
           {!community.isFollowing ? (
             <TouchableOpacity style={styles.itemBtn} onPress={handleFollow}>
               <Text style={styles.itemBtnTitle}>{t('join_small')}</Text>
@@ -194,38 +182,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 10,
-  },
-  itemTags: {
-    flex: 1,
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  itemTag: {
-    borderWidth: 1,
-    borderColor: theming.colors.gray250,
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-  },
-  itemTagTitle: {
-    color: theming.colors.purple,
-    fontWeight: '700',
-    fontSize: 12,
-    fontFamily: theming.fonts.latoRegular,
-  },
-  itemAnotherTag: {
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    backgroundColor: theming.colors.gray75,
-  },
-  itemAnotherTagTitle: {
-    color: theming.colors.darkGray,
-    fontWeight: '700',
-    fontSize: 12,
-    fontFamily: theming.fonts.latoRegular,
   },
   itemBtn: {
     backgroundColor: theming.colors.orange,

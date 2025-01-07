@@ -1,18 +1,41 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { LocationIcon } from 'components/icons/location';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { theming } from 'common/constants/theming';
+import { DCBottomSheet } from 'components/shared/bottom_sheet';
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { LocationBottomSheet } from './ui/LocationBottomSheet';
 
 export function HeaderWithLocation() {
+  const [content, setContent] = useState('main');
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  const presentModal = useCallback(() => {
+    bottomSheetRef.current?.present();
+  }, []);
+
+  const closeModal = useCallback(() => {
+    bottomSheetRef.current?.close();
+  }, []);
+
   return (
-    <View style={styles.communitiesLocation}>
-      <LocationIcon width={16} height={16} />
-      <Text style={styles.communitiesLocationTitle}>
-        San Francisco, California
-      </Text>
-      <RightArrowIcon style={{ transform: [{ rotate: '90deg' }] }} />
-    </View>
+    <>
+      <TouchableOpacity
+        style={styles.communitiesLocation}
+        onPress={presentModal}>
+        <LocationIcon width={16} height={16} />
+        <Text style={styles.communitiesLocationTitle}>
+          San Francisco, California
+        </Text>
+        <RightArrowIcon style={{ transform: [{ rotate: '90deg' }] }} />
+      </TouchableOpacity>
+      <DCBottomSheet snapPoints={['90%']} ref={bottomSheetRef}>
+        <BottomSheetView>
+          <LocationBottomSheet content={content} setContent={setContent} />
+        </BottomSheetView>
+      </DCBottomSheet>
+    </>
   );
 }
 

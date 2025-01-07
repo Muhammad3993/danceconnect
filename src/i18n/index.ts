@@ -26,15 +26,9 @@ i18n
   .init({
     compatibilityJSON: 'v3',
     resources: {
-      ru: {
-        translation: ru,
-      },
-      en: {
-        translation: en,
-      },
-      中文: {
-        translation: ch,
-      },
+      ru: { translation: ru },
+      en: { translation: en },
+      中文: { translation: ch }
     },
   });
 

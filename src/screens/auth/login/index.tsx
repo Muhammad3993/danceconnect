@@ -9,6 +9,7 @@ import { StackScreenProps } from 'screens/interfaces';
 import { useDCStore } from 'store';
 import { theming } from 'common/constants/theming';
 import { showErrorToast } from 'common/libs/toast';
+import { AuthSchema } from 'data/api/user/schema';
 
 export function LoginScreen({ navigation }: StackScreenProps<'login'>) {
   const { mutate, isPending } = useLoginUser();
@@ -16,20 +17,17 @@ export function LoginScreen({ navigation }: StackScreenProps<'login'>) {
 
   const { t } = useTranslation();
 
-  const handleLogin = (email: string, password: string) => {
-    mutate(
-      { email, password },
-      {
-        async onSuccess(data) {
-          await localStorage.setItem('token', data.access_token);
-          getUser();
-        },
-        onError(err) {
-          const error = err as Error;
-          showErrorToast(error.message);
-        },
+  const handleLogin = (d: AuthSchema) => {
+    mutate(d, {
+      async onSuccess(data) {
+        await localStorage.setItem('token', data.access_token);
+        getUser();
       },
-    );
+      onError(err) {
+        const error = err as Error;
+        showErrorToast(error.message);
+      },
+    });
   };
 
   return (
