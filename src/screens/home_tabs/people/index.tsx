@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
     marginTop: 10,
   },
   eventsLocationTitle: {
@@ -99,6 +99,6 @@ const styles = StyleSheet.create({
     height: 48,
   },
   messageBody: {
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
 });

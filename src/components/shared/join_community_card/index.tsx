@@ -36,7 +36,7 @@ export const JoinCommunityCard = ({ containerStyle }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  icon: { width: 44, height: 44, backgroundColor: theming.colors.purple },
+  icon: { width: 44, height: 44, backgroundColor: theming.colors.secondary500 },
   homeEventsFree: {
     paddingVertical: theming.spacing.LG,
     width: '100%',
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: theming.colors.gray250,
-    borderRadius: theming.spacing.SM,
+    borderRadius: theming.spacing.XS,
     backgroundColor: theming.colors.white,
   },
   homeEventsFreeTitle: {

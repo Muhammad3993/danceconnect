@@ -74,7 +74,7 @@ export const BasicInfo = () => {
               {fieldState.error?.message && (
                 <Text
                   style={{
-                    color: theming.colors.redError,
+                    color: theming.colors.error,
                     paddingHorizontal: theming.spacing.LG,
                   }}>
                   {fieldState.error.message}
@@ -108,7 +108,7 @@ export const BasicInfo = () => {
                 </TouchableOpacity>
 
                 {fieldState.error?.location?.message && (
-                  <Text style={{ color: theming.colors.redError }}>
+                  <Text style={{ color: theming.colors.error }}>
                     {fieldState.error?.location?.message}
                   </Text>
                 )}
@@ -163,7 +163,7 @@ export const BasicInfo = () => {
                 <Text
                   style={{
                     paddingHorizontal: theming.spacing.LG,
-                    color: theming.colors.redError,
+                    color: theming.colors.error,
                   }}>
                   {fieldState.error.message}
                 </Text>
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: theming.colors.textPrimary,
     paddingHorizontal: theming.spacing.LG,
-    marginBottom: theming.spacing.SM,
+    marginBottom: theming.spacing.XS,
   },
   choiseItem: {
     borderWidth: 1,

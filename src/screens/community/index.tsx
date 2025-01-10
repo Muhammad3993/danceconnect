@@ -201,7 +201,7 @@ export function CommunityScreen({
                 <View style={styles.eventMaps}>
                   <Text style={styles.eventMapsTitle}>{t('maps')}</Text>
                   <ArrowLeftIcon
-                    fill={theming.colors.purple}
+                    fill={theming.colors.secondary500}
                     style={{ transform: [{ rotate: '180deg' }] }}
                   />
                 </View>
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   },
   eventTopRight: {
     flexDirection: 'row',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   eventBoxes: {
     width: '100%',
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   eventBox: {
     borderWidth: 1,
-    borderColor: theming.colors.purple,
+    borderColor: theming.colors.secondary500,
     backgroundColor: theming.colors.white,
     paddingHorizontal: 10,
     paddingVertical: 3,
@@ -304,14 +304,14 @@ const styles = StyleSheet.create({
   },
   eventBoxActive: {
     borderWidth: 1,
-    borderColor: theming.colors.purple,
-    backgroundColor: theming.colors.purple,
+    borderColor: theming.colors.secondary500,
+    backgroundColor: theming.colors.secondary500,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 4,
   },
   eventBoxTitle: {
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontWeight: '700',
     fontSize: 14,
     position: 'relative',
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   eventAvatar: {
     width: 36,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   eventMapsTitle: {
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontSize: theming.spacing.MD,
     fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.gray800,
-    marginVertical: theming.spacing.SM,
+    marginVertical: theming.spacing.XS,
   },
   eventBodyBtn: {
     flexDirection: 'row',
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   eventBodyBtnTitle: {
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontWeight: '700',
   },
   container: {
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor: theming.colors.white,
     paddingHorizontal: theming.spacing.MD,
-    paddingVertical: theming.spacing.SM,
+    paddingVertical: theming.spacing.XS,
   },
   modalBoxRow: {
     flexDirection: 'row',
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
   },
   modalBoxClose: {
     borderWidth: 1,
-    borderColor: theming.colors.redError,
+    borderColor: theming.colors.error,
     borderRadius: 4,
     padding: 3,
   },

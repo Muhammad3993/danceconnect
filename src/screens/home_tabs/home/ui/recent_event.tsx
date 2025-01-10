@@ -5,84 +5,64 @@ import { SetCalendarIcon } from 'components/icons/setCalendar';
 import { LocationIcon } from 'components/icons/location';
 import { theming } from 'common/constants/theming';
 import { useTranslation } from 'react-i18next';
+import { SCREEN_WIDTH } from 'common/constants';
 
-export function HomeItem() {
+export function RecentEvent() {
   const { t } = useTranslation();
-  const [isActiveBox, setIsActiveBox] = useState(1);
-  const screenWidth = Dimensions.get('window').width;
+  // const [isActiveBox, setIsActiveBox] = useState(1);
 
   return (
-    <View style={[styles.homeBox, { width: screenWidth - 60 }]}>
+    <View style={styles.homeBox}>
       <View style={styles.homeBoxImage}>
-        <Image source={images.homeImg} style={styles.homeBoxImg} />
+        <Image source={images.homeImg} style={{ flex: 1 }} />
         <View style={styles.homePrice}>
           <Text style={styles.homePriceTitle}>$ 25.00</Text>
         </View>
       </View>
 
       <View style={styles.homeBoxTags}>
-        <View
-          style={
-            isActiveBox !== 1 ? styles.homeBoxTag : styles.homeBoxTagActive
-          }>
-          <Text
-            style={
-              isActiveBox !== 1
-                ? styles.homeBoxTagTitle
-                : styles.homeBoxTagTitleActive
-            }
-            onPress={() => setIsActiveBox(1)}>
-            Party
-          </Text>
+        <View style={styles.homeBoxTagActive}>
+          <Text style={styles.homeBoxTagTitleActive}>Party</Text>
         </View>
-        <View
-          style={
-            isActiveBox !== 2 ? styles.homeBoxTag : styles.homeBoxTagActive
-          }>
-          <Text
-            style={
-              isActiveBox !== 2
-                ? styles.homeBoxTagTitle
-                : styles.homeBoxTagTitleActive
-            }
-            onPress={() => setIsActiveBox(2)}>
-            Hip Hop
-          </Text>
+        <View style={styles.homeBoxTag}>
+          <Text style={styles.homeBoxTagTitle}>Hip Hop</Text>
         </View>
-        <View
-          style={
-            isActiveBox !== 3 ? styles.homeBoxTag : styles.homeBoxTagActive
-          }>
-          <Text
-            style={
-              isActiveBox !== 3
-                ? styles.homeBoxTagTitle
-                : styles.homeBoxTagTitleActive
-            }
-            onPress={() => setIsActiveBox(3)}>
-            Afro Dance
-          </Text>
+        <View style={styles.homeBoxTag}>
+          <Text style={styles.homeBoxTagTitle}>Afro Dance</Text>
         </View>
         <View style={styles.homeBoxTagCount}>
           <Text style={styles.homeBoxTagCountTitle}>+3</Text>
         </View>
       </View>
 
-      <Text style={styles.homeBoxTitle}>Afro Beats Meets Hip-Hop</Text>
+      <Text style={styles.homeBoxTitle} numberOfLines={1}>
+        National Music Festival
+      </Text>
 
-      <View style={{ marginTop: 10 }}>
-        <View style={styles.homeBoxRow}>
-          <SetCalendarIcon />
-          <Text style={styles.homeBoxRowTitle}>Mon, nov 5 • 21:00</Text>
-        </View>
-        <View style={styles.homeBoxBottom}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+        }}>
+        <View style={{ flex: 1 }}>
+          <View
+            style={[styles.homeBoxRow, { marginBottom: theming.spacing.SM }]}>
+            <SetCalendarIcon />
+            <Text style={styles.homeBoxRowTitle} numberOfLines={1}>
+              Mon, nov 5 • 21:00
+            </Text>
+          </View>
           <View style={styles.homeBoxRow}>
             <LocationIcon width={16} height={16} />
-            <Text style={styles.homeBoxRowTitle}>night Club 24</Text>
+            <Text style={styles.homeBoxRowTitle} numberOfLines={1}>
+              night Club 24
+            </Text>
           </View>
-          <View style={styles.homeBoxBottomBtn}>
-            <Text style={styles.homeBoxBottomBtnTitle}>{t('attend')}</Text>
-          </View>
+        </View>
+
+        <View style={styles.homeBoxBottomBtn}>
+          <Text style={styles.homeBoxBottomBtnTitle}>{t('attend')}</Text>
         </View>
       </View>
     </View>
@@ -92,24 +72,21 @@ export function HomeItem() {
 const styles = StyleSheet.create({
   homeBox: {
     flex: 1,
-    maxWidth: 332,
+    width: 333,
     backgroundColor: theming.colors.white,
+    padding: theming.spacing.SM,
     borderWidth: 1,
     borderColor: theming.colors.gray75,
-    borderRadius: theming.spacing.SM,
-    shadowColor: theming.colors.purpleTransparent,
+    borderRadius: theming.spacing.XS,
+    shadowColor: theming.colors.shadow3,
     shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 15,
-    elevation: 5,
-    padding: 10,
-    marginVertical: 20,
-    marginRight: 20,
+    shadowOpacity: 0.75,
+    shadowRadius: 6,
+    elevation: 3,
   },
   homeBoxImage: {
     width: '100%',
-    height: 201,
-    position: 'relative',
+    height: 200,
     overflow: 'hidden',
     borderRadius: 6,
   },
@@ -118,7 +95,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   homePrice: {
-    paddingHorizontal: theming.spacing.SM,
+    paddingHorizontal: theming.spacing.XS,
     paddingVertical: 4,
     backgroundColor: theming.colors.green,
     alignItems: 'center',
@@ -139,14 +116,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     marginTop: 10,
+    marginBottom: theming.spacing.XS,
   },
   homeBoxTagActive: {
     paddingHorizontal: 10,
     paddingVertical: 3,
-    backgroundColor: theming.colors.purple,
+    backgroundColor: theming.colors.secondary500,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: theming.colors.purple,
+    borderColor: theming.colors.secondary500,
   },
   homeBoxTag: {
     paddingHorizontal: 10,
@@ -164,7 +142,7 @@ const styles = StyleSheet.create({
   homeBoxTagTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontFamily: theming.fonts.latoRegular,
   },
   homeBoxTagTitleActive: {
@@ -182,13 +160,13 @@ const styles = StyleSheet.create({
   homeBoxTitle: {
     fontSize: 20,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theming.fonts.latoBold,
     color: theming.colors.textPrimary,
-    marginTop: 6,
+    marginBottom: theming.spacing.SM,
   },
   homeBoxBottomBtn: {
     paddingHorizontal: theming.spacing.MD,
-    paddingVertical: theming.spacing.SM,
+    paddingVertical: theming.spacing.XS,
     backgroundColor: theming.colors.orange,
     borderRadius: 100,
     alignItems: 'center',
@@ -196,7 +174,6 @@ const styles = StyleSheet.create({
   },
   homeBoxBottomBtnTitle: {
     position: 'relative',
-    top: -1,
     fontWeight: '600',
     fontSize: 14,
     color: theming.colors.white,
@@ -205,17 +182,13 @@ const styles = StyleSheet.create({
   homeBoxRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   homeBoxRowTitle: {
     fontWeight: '800',
     fontSize: 12,
     color: theming.colors.textPrimary,
     textTransform: 'uppercase',
-  },
-  homeBoxBottom: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    fontFamily: theming.fonts.latoBold,
   },
 });

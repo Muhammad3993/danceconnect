@@ -74,7 +74,7 @@ export const DanceStylesSelector = ({
 };
 const styles = StyleSheet.create({
   errorText: {
-    color: theming.colors.redError,
+    color: theming.colors.error,
     marginBottom: theming.spacing.MD,
   },
   container: {
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     flexDirection: 'row',
     paddingVertical: 4,
-    paddingHorizontal: theming.spacing.SM,
+    paddingHorizontal: theming.spacing.XS,
     alignItems: 'center',
   },
   addedDanceStyleText: {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: theming.spacing.MD,
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   mainContainer: {
     paddingHorizontal: 20,

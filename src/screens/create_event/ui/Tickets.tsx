@@ -56,7 +56,7 @@ export function Tickets() {
           backgroundColor: theming.colors.green,
         }}
         statusColorStyle3={{
-          backgroundColor: theming.colors.purple,
+          backgroundColor: theming.colors.secondary500,
         }}
         titleStyle1={{
           fontWeight: '400',
@@ -113,7 +113,7 @@ export function Tickets() {
               style={selectedBox !== 3 ? styles.box : styles.boxActive}
               onPress={() => handleBoxPress(3)}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.boxTitle}>{t("t_paid_title")}</Text>
+                <Text style={styles.boxTitle}>{t('t_paid_title')}</Text>
                 <Text style={styles.boxSubTitle}>{t('tt_paid_desc')}</Text>
               </View>
               <CustomCheckBox
@@ -185,10 +185,10 @@ export function Tickets() {
                 marginTop: 10,
                 backgroundColor: theming.colors.white,
                 borderWidth: 1,
-                borderColor: theming.colors.purple,
+                borderColor: theming.colors.secondary500,
               }}
               textStyle={{
-                color: theming.colors.purple,
+                color: theming.colors.secondary500,
               }}
               onPress={() => navigation.navigate('createTicket')}
             />
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theming.spacing.MD,
     borderWidth: 1,
     borderColor: theming.colors.gray250,
-    borderRadius: theming.spacing.SM,
+    borderRadius: theming.spacing.XS,
     backgroundColor: theming.colors.white,
     marginTop: 15,
     flexDirection: 'row',
@@ -238,8 +238,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: theming.spacing.MD,
     borderWidth: 1,
-    borderColor: theming.colors.purple,
-    borderRadius: theming.spacing.SM,
+    borderColor: theming.colors.secondary500,
+    borderRadius: theming.spacing.XS,
     backgroundColor: theming.colors.white,
     marginTop: 15,
     flexDirection: 'row',
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   ticket: {
     backgroundColor: theming.colors.lightOrange,
     marginTop: 10,
-    borderRadius: theming.spacing.SM,
+    borderRadius: theming.spacing.XS,
     paddingVertical: 20,
     paddingHorizontal: theming.spacing.MD,
   },
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   ticketTopLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   ticketTitle: {
     fontWeight: '700',
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   ticketBottomLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   ticketBottomRight: {
     flexDirection: 'row',

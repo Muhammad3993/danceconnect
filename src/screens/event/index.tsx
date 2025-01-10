@@ -104,7 +104,7 @@ export function EventScreen() {
           <View style={styles.eventPeople}>
             <View style={styles.eventPeopleLeft}>
               <Image source={images.eventAvatar} style={styles.eventAvatar} />
-              <Text style={styles.eventPeopleTitle}>+ 1 {t("going")}</Text>
+              <Text style={styles.eventPeopleTitle}>+ 1 {t('going')}</Text>
             </View>
             <View style={styles.eventPeopleRight}>
               <Text style={styles.eventPeopleRightTitle}>$25.00</Text>
@@ -143,9 +143,9 @@ export function EventScreen() {
               <View style={styles.eventRowBox}>
                 <Text style={styles.eventDate}>La Favela Night Club</Text>
                 <View style={styles.eventMaps}>
-                  <Text style={styles.eventMapsTitle}>{t("maps")}</Text>
+                  <Text style={styles.eventMapsTitle}>{t('maps')}</Text>
                   <ArrowLeftIcon
-                    fill={theming.colors.purple}
+                    fill={theming.colors.secondary500}
                     style={{ transform: [{ rotate: '180deg' }] }}
                   />
                 </View>
@@ -172,7 +172,7 @@ export function EventScreen() {
           <View
             style={[styles.eventRow, { marginVertical: 15, marginBottom: 30 }]}>
             <DCRoundIcon
-              icon={<TicketIcon fill={theming.colors.purple} />}
+              icon={<TicketIcon fill={theming.colors.secondary500} />}
               iconBoxStyle={{
                 width: 44,
                 height: 44,
@@ -189,11 +189,11 @@ export function EventScreen() {
 
           <DCButton
           // containerStyle={{
-          //   borderColor: theming.colors.purple,
+          //   borderColor: theming.colors.secondary500,
           //   borderRadius: 100,
           // }}
           // textStyle={{
-          //   color: theming.colors.purple,
+          //   color: theming.colors.secondary500,
           //   fontWeight: '700',
           //   fontFamily: theming.fonts.latoRegular,
           // }}
@@ -202,7 +202,7 @@ export function EventScreen() {
           </DCButton>
 
           <View style={{ marginTop: 25 }}>
-            <Text style={styles.eventSubtitle}>{t("about_event")}</Text>
+            <Text style={styles.eventSubtitle}>{t('about_event')}</Text>
             <Text style={styles.eventDescription}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   },
   eventTopRight: {
     flexDirection: 'row',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   eventBoxes: {
     width: '100%',
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   eventBox: {
     borderWidth: 1,
-    borderColor: theming.colors.purple,
+    borderColor: theming.colors.secondary500,
     backgroundColor: theming.colors.white,
     paddingHorizontal: 10,
     paddingVertical: 3,
@@ -269,14 +269,14 @@ const styles = StyleSheet.create({
   },
   eventBoxActive: {
     borderWidth: 1,
-    borderColor: theming.colors.purple,
-    backgroundColor: theming.colors.purple,
+    borderColor: theming.colors.secondary500,
+    backgroundColor: theming.colors.secondary500,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 4,
   },
   eventBoxTitle: {
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontWeight: '700',
     fontSize: 14,
     position: 'relative',
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   eventAvatar: {
     width: 36,
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   eventMapsTitle: {
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontSize: theming.spacing.MD,
     fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,

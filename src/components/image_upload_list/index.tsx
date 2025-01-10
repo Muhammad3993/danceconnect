@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
   },
   uploadBox: {
     marginBottom: 30,

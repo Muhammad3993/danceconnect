@@ -48,7 +48,7 @@ export function CommunitiesScreen({
         </View>
         <FilterComponent
           title="978 communities found"
-          containerStyle={{ marginBottom: theming.spacing.SM }}
+          containerStyle={{ marginBottom: theming.spacing.XS }}
         />
         {isPending ? (
           <LoaderView />
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
     marginTop: 10,
   },
   communitiesLocationTitle: {
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   communitiesPlus: {
     width: 40,
     height: 40,
-    backgroundColor: theming.colors.purple,
+    backgroundColor: theming.colors.secondary500,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',

@@ -57,7 +57,7 @@ export function DCTabs({
                       fontFamily: theming.fonts.latoRegular,
                       fontWeight: '600',
                       color: active
-                        ? theming.colors.purple
+                        ? theming.colors.secondary500
                         : theming.colors.darkGray,
                     },
                   ]}>
@@ -97,7 +97,7 @@ export function DCTabs({
                     fontFamily: theming.fonts.latoRegular,
                     fontWeight: '600',
                     color: active
-                      ? theming.colors.purple
+                      ? theming.colors.secondary500
                       : theming.colors.darkGray,
                   },
                 ]}>
@@ -115,8 +115,8 @@ export function DCTabs({
 const styles = StyleSheet.create({
   item: {
     alignSelf: 'center',
-    paddingBottom: theming.spacing.SM,
-    borderBottomColor: theming.colors.purple,
+    paddingBottom: theming.spacing.XS,
+    borderBottomColor: theming.colors.secondary500,
   },
   tabsWrapper: {
     flexDirection: 'row',

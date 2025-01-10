@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: theming.colors.gray75,
     paddingHorizontal: theming.spacing.MD,
-    paddingVertical: theming.spacing.SM,
+    paddingVertical: theming.spacing.XS,
     borderRadius: 100,
   },
   filterBtnTitle: {

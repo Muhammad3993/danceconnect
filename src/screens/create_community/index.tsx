@@ -199,7 +199,7 @@ export function CreateCommunity({
                       <LocationIcon />
                     </TouchableOpacity>
                     {fieldState.error?.location?.message && (
-                      <Text style={{ color: theming.colors.redError }}>
+                      <Text style={{ color: theming.colors.error }}>
                         {fieldState.error?.location?.message}
                       </Text>
                     )}
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   boxCircleOpacity: {
     width: 66,
     height: 66,
-    backgroundColor: theming.colors.lightPurple1,
+    backgroundColor: theming.colors.lightPurple,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   boxCircle: {
     width: 46,
     height: 46,
-    backgroundColor: theming.colors.purple,
+    backgroundColor: theming.colors.secondary500,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -381,13 +381,13 @@ const styles = StyleSheet.create({
   //   width: '49%',
   //   backgroundColor: theming.colors.white,
   //   borderWidth: 1,
-  //   borderColor: theming.colors.purple,
+  //   borderColor: theming.colors.secondary500,
   // },
   // bottomBtn1: {
   //   width: '49%',
   // },
   bottomTitle: {
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontWeight: '700',
     fontSize: 16,
     fontFamily: theming.fonts.latoRegular,

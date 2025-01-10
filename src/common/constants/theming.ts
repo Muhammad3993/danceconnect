@@ -2,7 +2,8 @@ export const theming = {
   spacing: {
     LG: 24,
     MD: 16,
-    SM: 8,
+    SM: 12,
+    XS: 8,
   },
   colors: {
     white: '#FFF',
@@ -28,19 +29,19 @@ export const theming = {
     orange: '#F5A80C',
     lightOrange: '#FFF8ED',
     tranparentOrange: 'rgba(245, 168, 12, 0.06)',
-    purple: '#5C33D7',
+    secondary500: '#5C33D7',
     transparentPurple: '#584CF414',
-    purpleTransparent: 'rgba(88, 76, 244, 1)',
     lightPurple: '#F6F5FF',
-    lightPurple1: '#5C33D726',
-    redError: '#F75555',
     grayTransparent: 'rgba(238, 238, 238, 1)',
     green: '#07BD74',
     secondary200: '#B2A4DB',
     secondary300: '#9C86DC',
     brown: '#6E4826',
+    shadow3: '#584CF426',
+    error: '#F75555',
   },
   fonts: {
     latoRegular: 'Lato-Regular',
+    latoBold: 'Lato-Black',
   },
 };

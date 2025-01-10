@@ -36,7 +36,7 @@ export function TagsList({
               {
                 color: backgroundColor.length
                   ? theming.colors.white
-                  : theming.colors.purple,
+                  : theming.colors.secondary500,
               },
             ]}>
             {category}
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   itemTagTitle: {
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontWeight: '700',
     fontSize: 12,
     fontFamily: theming.fonts.latoRegular,

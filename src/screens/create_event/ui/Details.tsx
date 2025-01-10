@@ -43,7 +43,7 @@ export const Details = ({ click }: DetailsProps) => {
           backgroundColor: theming.colors.green,
         }}
         statusColorStyle2={{
-          backgroundColor: theming.colors.purple,
+          backgroundColor: theming.colors.secondary500,
         }}
         titleStyle1={{
           fontWeight: '400',
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
   },
   images: {
     marginTop: 20,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: theming.colors.lightGray,
     borderWidth: 1,
     borderColor: theming.colors.gray50,
-    borderRadius: theming.spacing.SM,
+    borderRadius: theming.spacing.XS,
     paddingVertical: 17,
     paddingHorizontal: theming.spacing.MD,
     flexDirection: 'row',

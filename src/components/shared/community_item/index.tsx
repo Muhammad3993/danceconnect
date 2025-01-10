@@ -41,7 +41,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
             <Text style={styles.itemTitle}>{community.title}</Text>
             <Text style={styles.itemSubtitle} numberOfLines={3}>
               {community.description}{' '}
-              <Text style={{ color: theming.colors.purple }}>
+              <Text style={{ color: theming.colors.secondary500 }}>
                 {t('details')}
               </Text>
             </Text>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 1,
     borderColor: theming.colors.gray250,
-    borderRadius: theming.spacing.SM,
+    borderRadius: theming.spacing.XS,
     padding: 12,
     backgroundColor: theming.colors.white,
     marginTop: 15,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   itemSpot: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
     marginTop: 10,
     marginBottom: 15,
   },
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   itemBtn: {
     backgroundColor: theming.colors.orange,
     paddingHorizontal: 26,
-    paddingVertical: theming.spacing.SM,
+    paddingVertical: theming.spacing.XS,
     borderRadius: 100,
   },
   itemBtnTitle: {

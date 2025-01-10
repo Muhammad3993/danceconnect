@@ -207,7 +207,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
                   containerStyle={{ flex: 1 }}
                   children={t('edit_profile')}
                   leftIcon={<EditFillIcon />}
-                  textStyle={{ color: theming.colors.purple }}
+                  textStyle={{ color: theming.colors.secondary500 }}
                   variant="secondary"
                   onPress={() => navigation.navigate('editProfile')}
                 />
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   profileTopIcon: {
     width: 44,
     height: 44,
-    backgroundColor: theming.colors.purpleTransparent,
+    backgroundColor: theming.colors.shadow3,
   },
 
   profile: {
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   userAdress: {
     fontSize: 14,
     color: theming.colors.gray700,
-    marginBottom: theming.spacing.SM,
+    marginBottom: theming.spacing.XS,
     letterSpacing: 0.2,
     fontFamily: theming.fonts.latoRegular,
   },
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   showMoreText: {
-    color: theming.colors.purple,
+    color: theming.colors.secondary500,
     fontSize: 14,
     lineHeight: 22.4,
     fontWeight: '500',
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     height: 14,
     width: 14,
     marginTop: 2,
-    tintColor: theming.colors.purple,
+    tintColor: theming.colors.secondary500,
   },
 
   actionBtn: {
@@ -334,6 +334,6 @@ const styles = StyleSheet.create({
     marginBottom: theming.spacing.LG,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
 });

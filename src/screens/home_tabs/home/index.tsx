@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,7 +10,7 @@ import React, { useState } from 'react';
 import { theming } from 'common/constants/theming';
 import { DCRoundIcon } from 'components/shared/round_icon';
 import { RightArrowIcon } from 'components/icons/rightArrow';
-import { HomeItem } from 'components/shared/home_item';
+import { RecentEvent } from './ui/recent_event';
 import { StartCommunity } from 'components/shared/start_community';
 import { useTranslation } from 'react-i18next';
 import { DCTabs } from 'components/shared/tabs';
@@ -47,21 +48,25 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
             <Text style={styles.homeTitle}>{t('interested')}</Text>
             <DCRoundIcon
               icon={<RightArrowIcon />}
-              iconBoxStyle={{
-                width: 28,
-                height: 28,
-                backgroundColor: theming.colors.lightPurple,
-              }}
+              iconBoxStyle={{ backgroundColor: theming.colors.lightPurple }}
+              size={28}
             />
           </View>
 
-          <ScrollView
-            style={{ paddingHorizontal: theming.spacing.LG }}
+          <FlatList
+            data={[1, 2]}
+            renderItem={() => <RecentEvent />}
+            pagingEnabled
+            style={{
+              paddingVertical: theming.spacing.MD,
+            }}
+            contentContainerStyle={{
+              gap: theming.spacing.MD,
+              paddingHorizontal: theming.spacing.LG,
+            }}
             horizontal
-            showsHorizontalScrollIndicator={false}>
-            <HomeItem />
-            <HomeItem />
-          </ScrollView>
+            showsHorizontalScrollIndicator={false}
+          />
 
           <View style={{ paddingHorizontal: theming.spacing.LG }}>
             <StartCommunity
@@ -103,12 +108,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 20,
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: 20,
   },
   homeTitle: {
     fontSize: 24,
     fontWeight: '700',
     color: theming.colors.textPrimary,
+    fontFamily: theming.fonts.latoRegular,
   },
   homeEventsTitle: {
     color: theming.colors.textPrimary,

@@ -100,7 +100,7 @@ export const DCInput = ({
         {rightIcon}
       </View>
       {errorText && (
-        <Text style={{ color: theming.colors.redError, marginTop: 4 }}>
+        <Text style={{ color: theming.colors.error, marginTop: 4 }}>
           {errorText}
         </Text>
       )}

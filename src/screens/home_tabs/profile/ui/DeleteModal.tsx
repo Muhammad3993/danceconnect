@@ -46,7 +46,7 @@ export const DeleteModal = ({ onChange }: DeleteModalProps) => {
             width: '50%',
             height: 58,
             flex: 1,
-            backgroundColor: theming.colors.redError,
+            backgroundColor: theming.colors.error,
           }}
           onPress={handleDeleteAccount}
         />

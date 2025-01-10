@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: theming.colors.lightPurple,
     borderWidth: 1,
     borderColor: theming.colors.gray75,
-    borderRadius: theming.spacing.SM,
+    borderRadius: theming.spacing.XS,
     paddingVertical: 10,
     paddingHorizontal: 12,
     flexDirection: 'row',
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 44,
     height: 44,
-    backgroundColor: theming.colors.purple,
+    backgroundColor: theming.colors.secondary500,
   },
   boxPlusIcon: {
     width: 18,
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: theming.colors.white,
     borderWidth: 2,
-    borderColor: theming.colors.purple,
+    borderColor: theming.colors.secondary500,
     borderRadius: 50,
     position: 'absolute',
     right: 0,

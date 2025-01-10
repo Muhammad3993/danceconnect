@@ -34,6 +34,7 @@ export function RegisterScreen({ navigation }: StackScreenProps<'register'>) {
       isLoading={isPending}
       submitTitle={t('sign_up')}
       onSubmit={handleLogin}
+      title={t('create_account')}
       footerComponent={
         <View style={styles.bottomWrapper}>
           <Text style={styles.alreadyAccountText}>{t('already')}</Text>

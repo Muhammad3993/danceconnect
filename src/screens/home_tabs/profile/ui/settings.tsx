@@ -231,13 +231,13 @@ export function ProfileSettings({ navigation, close }: Props) {
           click={handleLogout}
           leftIcon={<LogoutIcon />}
           title={t('logout')}
-          titleStyle={{ color: theming.colors.redError }}
+          titleStyle={{ color: theming.colors.error }}
         />
 
         <ListItem
           leftIcon={<TrashIcon />}
           title={t('del_acc')}
-          titleStyle={{ color: theming.colors.redError }}
+          titleStyle={{ color: theming.colors.error }}
           click={onPressDeleteAccount}
         />
       </View>

@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
     marginTop: 10,
     borderWidth: 1,
     borderColor: theming.colors.gray300,

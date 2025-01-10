@@ -35,6 +35,7 @@ export function LoginScreen({ navigation }: StackScreenProps<'login'>) {
       onSubmit={handleLogin}
       isLoading={isPending}
       submitTitle={t('login')}
+      title={t('login')}
       footerComponent={
         <View style={styles.bottomWrapper}>
           <Text style={styles.alreadyAccountText}>{t('dont_account')}</Text>

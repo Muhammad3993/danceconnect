@@ -47,6 +47,6 @@ const styles = StyleSheet.create({
     fontFamily: theming.fonts.latoRegular,
   },
   messageBody: {
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
 });

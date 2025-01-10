@@ -25,7 +25,7 @@ export default function CreateTicket() {
     <SafeAreaView style={styles.root}>
       <View style={styles.createTicketTop}>
         <ArrowLeftIcon fill={theming.colors.textPrimary} />
-        <Text style={styles.createTicketTopTitle}>{t("create_ticket")}</Text>
+        <Text style={styles.createTicketTopTitle}>{t('create_ticket')}</Text>
       </View>
       <ScrollView style={styles.container}>
         {/* Toggle */}
@@ -40,7 +40,7 @@ export default function CreateTicket() {
                   : styles.createTicketToggleBoxEnable
               }></View>
           </TouchableOpacity>
-          <Text style={styles.createTicketTitle}>{t("enable_ticket")}</Text>
+          <Text style={styles.createTicketTitle}>{t('enable_ticket')}</Text>
         </View>
         {/* Name */}
         <View style={styles.inputName}>
@@ -53,10 +53,8 @@ export default function CreateTicket() {
         {/* Price */}
         <View style={styles.inputName}>
           <View>
-            <Text style={styles.inputNameTopTitle}>{t("tt_set_title")}</Text>
-            <Text style={styles.inputNameTopText}>
-              {t("tt_set_desc")} 0
-            </Text>
+            <Text style={styles.inputNameTopTitle}>{t('tt_set_title')}</Text>
+            <Text style={styles.inputNameTopText}>{t('tt_set_desc')} 0</Text>
           </View>
           <DCInput
             placeholder={t('0')}
@@ -70,14 +68,14 @@ export default function CreateTicket() {
         {/* Date */}
         <View style={styles.dateBoxes}>
           <View style={styles.date}>
-            <Text style={styles.dateTitle}>{t("start_sale_date")}</Text>
+            <Text style={styles.dateTitle}>{t('start_sale_date')}</Text>
             <View style={styles.dateBox}>
               <Text style={styles.dateBoxTitle}>03-01-2022 </Text>
               <LittleCalendarIcon stroke={theming.colors.darkGray} />
             </View>
           </View>
           <View style={styles.date}>
-            <Text style={styles.dateTitle}>{t("end_sale_date")}</Text>
+            <Text style={styles.dateTitle}>{t('end_sale_date')}</Text>
             <View style={styles.dateBox}>
               <Text style={styles.dateBoxTitle}>03-01-2022 </Text>
               <LittleCalendarIcon stroke={theming.colors.darkGray} />
@@ -115,21 +113,21 @@ export default function CreateTicket() {
       </ScrollView>
       <View style={styles.createTicketBottom}>
         <DCButton
-          children={t("cancel")}
+          children={t('cancel')}
           containerStyle={{
             width: '50%',
             height: 58,
             flex: 1,
             borderWidth: 1,
-            borderColor: theming.colors.purple,
+            borderColor: theming.colors.secondary500,
             backgroundColor: theming.colors.white,
           }}
           textStyle={{
-            color: theming.colors.purple,
+            color: theming.colors.secondary500,
           }}
         />
         <DCButton
-          children={t("create_ticket")}
+          children={t('create_ticket')}
           containerStyle={{
             width: '50%',
             height: 58,
@@ -256,7 +254,7 @@ const styles = StyleSheet.create({
     backgroundColor: theming.colors.lightGray,
     borderWidth: 1,
     borderColor: theming.colors.gray50,
-    borderRadius: theming.spacing.SM,
+    borderRadius: theming.spacing.XS,
     paddingVertical: 17,
     paddingHorizontal: theming.spacing.MD,
     flexDirection: 'row',

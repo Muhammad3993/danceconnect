@@ -24,6 +24,7 @@ interface Props {
   submitTitle: string;
   isLoading: boolean;
   onSubmit: (data: AuthSchema) => void;
+  title: string;
 }
 
 export function CredentialsForm({
@@ -31,6 +32,7 @@ export function CredentialsForm({
   submitTitle,
   isLoading,
   onSubmit,
+  title,
 }: Props) {
   const { control, handleSubmit, formState } = useForm({
     resolver: yupResolver(authSchema),
@@ -52,7 +54,7 @@ export function CredentialsForm({
         contentContainerStyle={{ paddingVertical: 20 }}>
         <View>
           <Image source={images.authLogo} style={styles.logo} />
-          <Text style={styles.welcome}>{t('create_account')}</Text>
+          <Text style={styles.welcome}>{title}</Text>
 
           <Controller
             control={control}
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorMessageText: {
-    color: theming.colors.redError,
+    color: theming.colors.error,
     fontSize: 13,
   },
 

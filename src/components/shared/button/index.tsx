@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 
   btnSecondary: {
     borderRadius: 100,
-    borderColor: theming.colors.purple,
+    borderColor: theming.colors.secondary500,
     borderWidth: 1,
   },
 

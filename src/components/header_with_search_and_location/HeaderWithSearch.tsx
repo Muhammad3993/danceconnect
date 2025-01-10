@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   communitiesPlus: {
     width: 40,
     height: 40,
-    backgroundColor: theming.colors.purple,
+    backgroundColor: theming.colors.secondary500,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',

@@ -63,7 +63,7 @@ export const BasicInfo = ({ click }: BasicInfoProps) => {
           opacity: 1,
         }}
         statusColorStyle1={{
-          backgroundColor: theming.colors.purple,
+          backgroundColor: theming.colors.secondary500,
         }}
         titleStyle1={{
           fontWeight: '700',
@@ -189,17 +189,17 @@ const styles = StyleSheet.create({
   eventTypes: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
   },
   eventType: {
-    paddingVertical: theming.spacing.SM,
+    paddingVertical: theming.spacing.XS,
     paddingHorizontal: theming.spacing.MD,
     borderWidth: 1,
     borderColor: theming.colors.gray400,
     borderRadius: 100,
   },
   eventTypeActive: {
-    paddingVertical: theming.spacing.SM,
+    paddingVertical: theming.spacing.XS,
     paddingHorizontal: theming.spacing.MD,
     borderWidth: 1,
     borderColor: theming.colors.orange,

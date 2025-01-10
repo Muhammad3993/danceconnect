@@ -22,7 +22,10 @@ export const EventItem = ({ click }: EventItemProps) => {
           <View style={styles.itemBodyText}>
             <TagsList
               list={['Festival', '$25.00']}
-              backgroundColor={[theming.colors.purple, theming.colors.green]}
+              backgroundColor={[
+                theming.colors.secondary500,
+                theming.colors.green,
+              ]}
             />
 
             <View style={styles.itemDate}>
@@ -33,7 +36,7 @@ export const EventItem = ({ click }: EventItemProps) => {
             <Text style={styles.itemSubtitle} numberOfLines={3}>
               Experience the Magic of Bachata at the Los Angeles Bachata
               Festival!...
-              <Text style={{ color: theming.colors.purple }}>
+              <Text style={{ color: theming.colors.secondary500 }}>
                 {t('details')}
               </Text>
             </Text>
@@ -77,7 +80,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 1,
     borderColor: theming.colors.gray250,
-    borderRadius: theming.spacing.SM,
+    borderRadius: theming.spacing.XS,
     padding: 12,
     backgroundColor: theming.colors.white,
   },
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
 
   itemDate: {
     flexDirection: 'row',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
     marginTop: 13,
   },
   itemDateTitle: {
@@ -136,7 +139,7 @@ const styles = StyleSheet.create({
   itemSpot: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.SM,
+    gap: theming.spacing.XS,
     marginTop: 10,
     marginBottom: 15,
   },
@@ -174,7 +177,7 @@ const styles = StyleSheet.create({
   itemBtn: {
     backgroundColor: theming.colors.orange,
     paddingHorizontal: 12,
-    paddingVertical: theming.spacing.SM,
+    paddingVertical: theming.spacing.XS,
     borderRadius: 100,
   },
   itemBtnTitle: {

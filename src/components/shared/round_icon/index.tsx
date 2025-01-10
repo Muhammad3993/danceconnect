@@ -4,17 +4,20 @@ import { theming } from 'common/constants/theming';
 
 interface DCIconProps {
   iconBoxStyle?: ViewStyle;
+  size?: number;
   icon?: ReactNode;
 }
 
-export const DCRoundIcon = ({ icon, iconBoxStyle }: DCIconProps) => {
-  return <View style={[styles.iconBox, iconBoxStyle]}>{icon}</View>;
+export const DCRoundIcon = ({ icon, iconBoxStyle, size = 40 }: DCIconProps) => {
+  return (
+    <View style={[styles.iconBox, iconBoxStyle, { width: size, height: size }]}>
+      {icon}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   iconBox: {
-    width: 40,
-    height: 40,
     backgroundColor: theming.colors.textPrimary,
     borderRadius: 50,
     justifyContent: 'center',
