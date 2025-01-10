@@ -1,6 +1,5 @@
 import { communityApi } from 'data/api/community';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { DCAmity } from 'common/libs/amity';
 import { getImgePath } from 'data/api';
 import { Community } from 'data/api/community/interfaces';
 
@@ -23,12 +22,12 @@ export const useCreateCommunity = () => {
 
   return useMutation({
     mutationFn: async (data: Omit<Community, 'id'>) => {
-      const amityCommunity = await DCAmity.createCommunity({
-        displayName: data.title,
-        metadata: { photo: getImgePath(data.images[0]) ?? '' },
-      });
+      // const amityCommunity = await DCAmity.createCommunity({
+      //   displayName: data.title,
+      //   metadata: { photo: getImgePath(data.images[0]) ?? '' },
+      // });
 
-      data.channelId = amityCommunity.data.channelId;
+      // data.channelId = amityCommunity.data.channelId;
 
       const community = await communityApi.createCommunity(data);
 
@@ -45,10 +44,10 @@ export const useUpdateCommunity = () => {
 
   return useMutation({
     mutationFn: async (data: Community) => {
-      await DCAmity.updateCommunity(data.channelId, {
-        displayName: data.title,
-        metadata: { photo: getImgePath(data.images[0]) ?? '' },
-      });
+      // await DCAmity.updateCommunity(data.channelId, {
+      //   displayName: data.title,
+      //   metadata: { photo: getImgePath(data.images[0]) ?? '' },
+      // });
 
       const community = await communityApi.updateCommunity(data);
 
@@ -65,11 +64,11 @@ export const useToggleFollowCommunity = () => {
 
   return useMutation({
     mutationFn: async (community: Community) => {
-      if (community.isFollowing) {
-        await DCAmity.leaveCommunity(community.channelId);
-      } else {
-        await DCAmity.joinCommunity(community.channelId);
-      }
+      // if (community.isFollowing) {
+      //   await DCAmity.leaveCommunity(community.channelId);
+      // } else {
+      //   await DCAmity.joinCommunity(community.channelId);
+      // }
       await communityApi.toggleFollowCommunity(community);
     },
     onSuccess() {

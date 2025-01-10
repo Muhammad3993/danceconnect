@@ -34,6 +34,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           fontFamily: theming.fonts.latoRegular,
           fontSize: 12,
         },
+        headerShown: false,
       }}>
       <Tab.Screen
         options={{
@@ -45,34 +46,34 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
               />
             );
           },
-          headerTitle: () => null,
-          headerLeft() {
-            return (
-              <Image
-                resizeMode="contain"
-                style={{
-                  width: 122,
-                  height: 32,
-                  marginLeft: theming.spacing.LG,
-                }}
-                source={images.authLogo}
-              />
-            );
-          },
-          headerRight() {
-            return (
-              <TouchableOpacity
-                style={{ marginRight: theming.spacing.MD }}
-                onPress={() => navigation.navigate('chats')}>
-                <MessageIcon
-                  fill={theming.colors.orange}
-                  stroke={theming.colors.white}
-                  width={37}
-                  height={37}
-                />
-              </TouchableOpacity>
-            );
-          },
+          // headerTitle: () => null,
+          // headerLeft() {
+          //   return (
+          //     <Image
+          //       resizeMode="contain"
+          //       style={{
+          //         width: 122,
+          //         height: 32,
+          //         marginLeft: theming.spacing.LG,
+          //       }}
+          //       source={images.authLogo}
+          //     />
+          //   );
+          // },
+          // headerRight() {
+          //   return (
+          //     <TouchableOpacity
+          //       style={{ marginRight: theming.spacing.MD }}
+          //       onPress={() => navigation.navigate('chats')}>
+          //       <MessageIcon
+          //         fill={theming.colors.orange}
+          //         stroke={theming.colors.white}
+          //         width={37}
+          //         height={37}
+          //       />
+          //     </TouchableOpacity>
+          //   );
+          // },
           tabBarLabel: t('home_tab'),
         }}
         name="home"
@@ -80,7 +81,6 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       />
       <Tab.Screen
         options={{
-          headerShown: false,
           tabBarIcon({ focused }) {
             return <CommunitiesIcon active={focused} />;
           },
@@ -91,7 +91,6 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       />
       <Tab.Screen
         options={{
-          headerShown: false,
           tabBarIcon(props) {
             return <TicketIcon active={props.focused} />;
           },
@@ -102,7 +101,6 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
       />
       <Tab.Screen
         options={{
-          headerShown: false,
           tabBarIcon({ focused }) {
             return <PeopleIcon focused={focused} />;
           },

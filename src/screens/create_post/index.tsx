@@ -1,4 +1,14 @@
-import { FileRepository, PostRepository } from '@amityco/ts-sdk-react-native';
+import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
+import { SCREEN_WIDTH } from 'common/constants';
+import { theming } from 'common/constants/theming';
+import { ImageData, usePickImage } from 'common/hooks/usePickImage';
+import { usePickVideoFile, VideoData } from 'common/hooks/usePickVideoFile';
+import { showErrorToast } from 'common/libs/toast';
+import { ArrowLeftIcon } from 'components/icons/arrowLeft';
+import { CameraIcon } from 'components/icons/camera';
+import { ImageIcon } from 'components/icons/image';
+import { PlayCircle } from 'components/icons/play_circle';
+import { TrashIcon } from 'components/icons/trash';
 import React, { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -13,21 +23,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SCREEN_WIDTH } from 'common/constants';
-import { theming } from 'common/constants/theming';
-import { ScalableImage } from 'components/shared/scallable_image';
-import { VideoView } from 'components/shared/scallable_video';
 import { StackScreenProps } from 'screens/interfaces';
-import { usePickVideoFile, VideoData } from 'common/hooks/usePickVideoFile';
-import { ImageData, usePickImage } from 'common/hooks/usePickImage';
-import { showErrorToast } from 'common/libs/toast';
-import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
-import { useUploadAmityFile } from 'common/libs/amity/hooks/useUploadAmityFile';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { CameraIcon } from 'components/icons/camera';
-import { ImageIcon } from 'components/icons/image';
-import { PlayCircle } from 'components/icons/play_circle';
-import { TrashIcon } from 'components/icons/trash';
 
 export function CreatePostScreen({
   navigation,
@@ -36,30 +32,27 @@ export function CreatePostScreen({
   const { targetId, targetType, postId, postText = '', file } = route.params;
 
   const isCreating = postId === undefined;
-  const deletedFiles = useRef<string[]>([]);
   const [touched, setTouched] = useState(false);
   const [crating, setCreating] = useState(false);
   const [text, setText] = useState(postText ?? '');
-  const [attachment, setAttachment] = useState<
-    undefined | Amity.File<'image' | 'video'>
-  >(file);
+  const [attachment, setAttachment] = useState<undefined>(file);
 
-  const { uploadProgress, upload } = useUploadAmityFile();
+  // const { uploadProgress, upload } = useUploadAmityFile();
 
   const onUploadVideo = useCallback(async (data: VideoData) => {
     try {
       setTouched(true);
 
-      const result = await upload({
-        fileMediaType: 'video',
-        fileName: data.filename ?? data.path,
-        fileType: data.path.includes('MOV') ? 'video/mov' : 'video/mp4',
-        fileUrl: data.path,
-      });
+      // const result = await upload({
+      //   fileMediaType: 'video',
+      //   fileName: data.filename ?? data.path,
+      //   fileType: data.path.includes('MOV') ? 'video/mov' : 'video/mp4',
+      //   fileUrl: data.path,
+      // });
 
-      if (result.length > 0) {
-        setAttachment(result[0]);
-      }
+      // if (result.length > 0) {
+      //   setAttachment(result[0]);
+      // }
     } catch (err) {
       console.log(err);
 
@@ -72,19 +65,19 @@ export function CreatePostScreen({
     try {
       setTouched(true);
 
-      const result = await upload({
-        fileMediaType: 'image',
-        fileName: postId + 'photo',
-        fileType: data.mime ?? 'image/jpg',
-        fileUrl:
-          Platform.OS === 'android'
-            ? data.path
-            : data.path.replace('file://', ''),
-      });
+      // const result = await upload({
+      //   fileMediaType: 'image',
+      //   fileName: postId + 'photo',
+      //   fileType: data.mime ?? 'image/jpg',
+      //   fileUrl:
+      //     Platform.OS === 'android'
+      //       ? data.path
+      //       : data.path.replace('file://', ''),
+      // });
 
-      if (result.length > 0) {
-        setAttachment(result[0]);
-      }
+      // if (result.length > 0) {
+      //   setAttachment(result[0]);
+      // }
     } catch (err) {
       console.log(err);
 
@@ -106,14 +99,14 @@ export function CreatePostScreen({
         targetId,
       };
 
-      deletedFiles.current.forEach(id => {
-        FileRepository.deleteFile(id);
-      });
+      // deletedFiles.current.forEach(id => {
+      //   FileRepository.deleteFile(id);
+      // });
 
       if (isCreating) {
-        await PostRepository.createPost(newPost);
+        // await PostRepository.createPost(newPost);
       } else {
-        await PostRepository.editPost(postId, newPost);
+        // await PostRepository.editPost(postId, newPost);
       }
       navigation.goBack();
     } catch (err) {
@@ -127,7 +120,7 @@ export function CreatePostScreen({
   const onDeleteMedia = () => {
     if (attachment) {
       setTouched(true);
-      deletedFiles.current.push(attachment.fileId);
+      // deletedFiles.current.push(attachment.fileId);
       setAttachment(undefined);
     }
   };
@@ -184,11 +177,11 @@ export function CreatePostScreen({
               autoFocus
             />
 
-            <MediaContainer
+            {/* <MediaContainer
               fileUploadProgress={uploadProgress}
               attachment={attachment}
               onDeleteMedia={onDeleteMedia}
-            />
+            /> */}
           </ScrollView>
 
           <View style={styles.footer}>
@@ -216,7 +209,7 @@ export function CreatePostScreen({
 
 interface MediaContainerProps {
   fileUploadProgress: number;
-  attachment?: Amity.File<'image' | 'video'>;
+  attachment?: null;
   onDeleteMedia: () => void;
 }
 const MediaContainer = ({
@@ -254,14 +247,14 @@ const MediaContainer = ({
           }}>
           <TrashIcon />
         </Pressable>
-        {attachment.type == 'image' ? (
+        {/* {attachment.type == 'image' ? (
           <ScalableImage
             originalWidth={SCREEN_WIDTH - 32}
             uri={attachment.fileUrl + '?size=medium'}
           />
         ) : (
           <VideoView videoUrl={attachment.fileUrl} width={SCREEN_WIDTH - 32} />
-        )}
+        )} */}
       </View>
     );
   }

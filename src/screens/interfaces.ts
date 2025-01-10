@@ -35,7 +35,7 @@ export type RootStackRoutes = {
     targetType: 'community' | 'user';
     postId?: string;
     postText?: string;
-    file?: Amity.File<'image' | 'video'>;
+    file?: undefined;
   };
 };
 

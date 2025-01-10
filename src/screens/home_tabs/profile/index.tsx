@@ -9,7 +9,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ViewToken,
 } from 'react-native';
 import { TabScreenProps } from 'screens/interfaces';
 import { useDCStore } from 'store';
@@ -24,12 +23,10 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileSettings } from './ui/settings';
 import { EditFillIcon } from 'components/icons/editFIll';
-import { PostCard } from 'components/PostCard';
 import { UserImage } from 'components/user_image';
 import { getImgePath } from 'data/api';
 import ExpandableText from 'components/shared/expandable_text';
 import { DCTabs } from 'components/shared/tabs';
-import { useGetAmityUserPosts } from 'common/libs/amity/hooks/useGetAmityUserPosts';
 import { TagsList } from 'components/tags_list';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
@@ -51,8 +48,6 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
   const settingsSheet = useRef<BottomSheetModal>(null);
 
-  const { posts, isLoading, isloadingMore } = useGetAmityUserPosts(user.id);
-
   const presentModal = useCallback(() => {
     settingsSheet.current?.present();
   }, []);
@@ -70,7 +65,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
 
   const flatData = useMemo(() => {
     if (currentTab === t('posts')) {
-      return posts;
+      return [];
     }
     if (currentTab === t('events_tab')) {
       return [];
@@ -80,7 +75,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
     }
 
     return [];
-  }, [currentTab, posts, t]);
+  }, [currentTab, t]);
 
   const onViewableItemsChanged: NonNullable<
     FlatListProps<{
@@ -115,14 +110,8 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
     ({ item }) => {
       switch (currentTab) {
         case t('posts'):
-          return (
-            <PostCard
-              post={item}
-              user={user}
-              inView={viewablesMap[item.postId] ?? false}
-              navigation={navigation}
-            />
-          );
+          return null;
+
         case t('communities_tab'):
           return <View style={{ paddingHorizontal: 16 }}></View>;
         case t('events_tab'):
@@ -152,8 +141,8 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
         emptyTitle={emptyTitle}
         onViewableItemsChanged={onViewableItemsChanged}
         renderItem={renderItem}
-        isLoading={isLoading}
-        loadingMore={isloadingMore}
+        // isLoading={isLoading}
+        // loadingMore={isloadingMore}
         onEndReached={() => {}}
         data={flatData}
         headerComponent={

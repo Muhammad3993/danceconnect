@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { DCTabs } from 'components/shared/tabs';
 import { TabScreenProps } from 'screens/interfaces';
 import { JoinCommunityCard } from 'components/shared/join_community_card';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
   const { t } = useTranslation();
@@ -37,13 +38,13 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
   const [currentTab, setCurrentTab] = useState(TABS[0].text);
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView edges={['top']} style={styles.root}>
       {false ? (
         <ActivityIndicator size={'large'} />
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.homeTop}>
-            <Text style={styles.homeTitle}>{t("interested")}</Text>
+            <Text style={styles.homeTitle}>{t('interested')}</Text>
             <DCRoundIcon
               icon={<RightArrowIcon />}
               iconBoxStyle={{
@@ -64,7 +65,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
 
           <View style={{ paddingHorizontal: theming.spacing.LG }}>
             <StartCommunity
-              onPress={() => navigation.push('createCommunity')}
+              onPress={() => navigation.push('createCommunity', {})}
             />
           </View>
 
@@ -87,7 +88,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
           </View>
         </ScrollView>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -105,7 +106,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: theming.spacing.LG,
   },
   homeTitle: {
-    width: "77%",
     fontSize: 24,
     fontWeight: '700',
     color: theming.colors.textPrimary,

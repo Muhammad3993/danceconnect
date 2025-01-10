@@ -11,7 +11,6 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@amityco/ts-sdk-react-native": "^6.32.4",
     "@backpackapp-io/react-native-toast": "^0.13.0",
     "@gorhom/bottom-sheet": "^5.0.6",
     "@hookform/resolvers": "^3.10.0",

@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 
 interface Props {
-  all: Amity.InternalPost[];
+  all: any;
   events: Event[];
   communities: Community[];
   onEndReached?: () => void;
