@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
-import { theming } from 'common/constants/theming';
 // dropdown
 import { FillArrowIcon } from 'components/icons/fillArrow';
 import { genders } from 'common/constants';
@@ -16,6 +15,7 @@ import { PhotoUplaod } from './ui/photo_uplaod';
 import { StackScreenProps } from 'screens/interfaces';
 import { showErrorToast } from 'common/libs/toast';
 import { User } from 'data/api/user/inerfaces';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function EditProfileScreen({
   navigation,
@@ -23,6 +23,8 @@ export function EditProfileScreen({
   const user = useDCStore.use.user();
   const setUser = useDCStore.use.setUser();
   const { t } = useTranslation();
+  const { styles } = useStyles(styleSheet);
+
   const { control, handleSubmit } = useForm({
     defaultValues: user ?? {},
   });
@@ -110,11 +112,11 @@ export function EditProfileScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   container: {
     flex: 1,
-    paddingHorizontal: theming.spacing.LG,
-    backgroundColor: theming.colors.white,
+    paddingHorizontal: theme.spacing.LG,
+    backgroundColor: theme.colors.white,
   },
   editProfile: {
     flex: 1,
@@ -131,28 +133,28 @@ const styles = StyleSheet.create({
   },
   backTitle: {
     fontSize: 20,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
 
   editForm: {
     width: '100%',
-    gap: theming.spacing.MD,
+    gap: theme.spacing.MD,
     alignItems: 'center',
   },
   dropdown: {
     width: '100%',
     height: 56,
-    backgroundColor: theming.colors.lightGray,
+    backgroundColor: theme.colors.lightGray,
     borderRadius: 8,
-    paddingHorizontal: theming.spacing.MD,
+    paddingHorizontal: theme.spacing.MD,
     borderWidth: 1,
-    borderColor: theming.colors.gray50,
+    borderColor: theme.colors.gray50,
   },
   dropDownContainer: {
-    backgroundColor: theming.colors.lightGray,
+    backgroundColor: theme.colors.lightGray,
     borderWidth: 1,
-    borderColor: theming.colors.gray50,
+    borderColor: theme.colors.gray50,
   },
-});
+}));

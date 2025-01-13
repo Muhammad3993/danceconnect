@@ -1,11 +1,9 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { theming } from 'common/constants/theming';
 import React, { ReactNode, useMemo, useRef, useState } from 'react';
 import {
   NativeSyntheticEvent,
   Pressable,
   StyleProp,
-  StyleSheet,
   Text,
   TextInput,
   TextInputFocusEventData,
@@ -14,6 +12,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface DCInputProps extends TextInputProps {
   leftIcon?: ReactNode;
@@ -44,22 +43,20 @@ export const DCInput = ({
   forBottomSheet = false,
   onBlur,
 }: DCInputProps) => {
-  const ref = useRef<TextInput>();
-  const [backgroundColor, setBackgroundColor] = useState(
-    theming.colors.lightGray,
-  );
-  const [borderColor, setBorderColor] = useState(theming.colors.gray);
+  const ref = useRef<TextInput>(null);
+
+  const { styles, theme } = useStyles(styleSheet);
+
+  const [borderColor, setBorderColor] = useState<string>(theme.colors.gray);
 
   const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    setBorderColor(theming.colors.orange);
-    // setBackgroundColor(theming.colors.tranparentOrange);
+    setBorderColor(theme.colors.orange);
     if (onFocus) {
       onFocus(e);
     }
   };
   const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    setBorderColor(theming.colors.gray);
-    // setBackgroundColor(theming.colors.lightGray);
+    setBorderColor(theme.colors.gray);
     if (onBlur) {
       onBlur(e);
     }
@@ -74,8 +71,7 @@ export const DCInput = ({
     <Pressable
       onPress={() => ref.current?.focus()}
       style={[styles.container, containerStyle]}>
-      <View
-        style={[styles.inner, { backgroundColor, borderColor }, inputStyle]}>
+      <View style={[styles.inner, { borderColor }, inputStyle]}>
         {leftIcon}
 
         <Input
@@ -88,7 +84,7 @@ export const DCInput = ({
           placeholder={placeholder}
           keyboardType={keyboardType}
           onFocus={handleFocus}
-          placeholderTextColor={theming.colors.gray}
+          placeholderTextColor={theme.colors.gray}
           onBlur={handleBlur}
           autoComplete={autoComplete}
           autoFocus={autoFocus}
@@ -100,7 +96,7 @@ export const DCInput = ({
         {rightIcon}
       </View>
       {errorText && (
-        <Text style={{ color: theming.colors.error, marginTop: 4 }}>
+        <Text style={{ color: theme.colors.error, marginTop: 4 }}>
           {errorText}
         </Text>
       )}
@@ -108,7 +104,7 @@ export const DCInput = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   container: {
     flexDirection: 'column',
     width: '100%',
@@ -119,6 +115,7 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 16,
     flexDirection: 'row',
+    backgroundColor: theming.colors.lightGray,
   },
   input: {
     color: theming.colors.textPrimary,
@@ -127,4 +124,4 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     flex: 1,
   },
-});
+}));

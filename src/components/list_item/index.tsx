@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   Text,
   TextStyle,
   TouchableOpacity,
@@ -7,7 +6,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import React, { ReactNode } from 'react';
-import { theming } from 'common/constants/theming';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface ListItemProps {
   containerStyle?: ViewStyle;
@@ -28,13 +27,14 @@ export const ListItem = ({
   click,
   rightIcon,
 }: ListItemProps) => {
+  const { styles, theme } = useStyles(styleSheet);
   return (
     <TouchableOpacity style={[styles.listItem, containerStyle]} onPress={click}>
       <View style={styles.listItemWrapper}>
         {leftIcon}
         <Text style={[styles.listItemTitle, titleStyle]}>
           {title}{' '}
-          <Text style={{ color: theming.colors.darkGray, fontWeight: '400' }}>
+          <Text style={{ color: theme.colors.darkGray, fontWeight: '400' }}>
             {count}
           </Text>
         </Text>
@@ -45,7 +45,7 @@ export const ListItem = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
     fontFamily: theming.fonts.latoRegular,
     fontSize: 18,
   },
-});
+}));

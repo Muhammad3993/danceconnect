@@ -1,11 +1,9 @@
-import { theming } from 'common/constants/theming';
 import { PrifleView } from 'components/profile_view';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   FlatListProps,
   ListRenderItem,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -28,10 +26,13 @@ import { getImgePath } from 'data/api';
 import ExpandableText from 'components/shared/expandable_text';
 import { DCTabs } from 'components/shared/tabs';
 import { TagsList } from 'components/tags_list';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
-  const user = useDCStore.use.user()!;
+  const user = useDCStore.use.user();
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
+
   const [viewablesMap, setViewablesMap] = useState<Record<string, boolean>>({});
   const [showAbout, setShowAbout] = useState(false);
 
@@ -131,10 +132,10 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
     <SafeAreaView edges={['top']} style={styles.root}>
       <View style={styles.profileTop}>
         <TouchableOpacity onPress={presentModal}>
-          <SettingIcon stroke={theming.colors.textPrimary} />
+          <SettingIcon stroke={theme.colors.textPrimary} />
         </TouchableOpacity>
         <TouchableOpacity>
-          <ShareIcon stroke={theming.colors.textPrimary} />
+          <ShareIcon stroke={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
       <PrifleView
@@ -207,7 +208,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
                   containerStyle={{ flex: 1 }}
                   children={t('edit_profile')}
                   leftIcon={<EditFillIcon />}
-                  textStyle={{ color: theming.colors.secondary500 }}
+                  textStyle={{ color: theme.colors.secondary500 }}
                   variant="secondary"
                   onPress={() => navigation.navigate('editProfile')}
                 />
@@ -234,36 +235,36 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
     position: 'relative',
   },
   profileTop: {
     flexDirection: 'row-reverse',
     alignContent: 'center',
     gap: 10,
-    paddingHorizontal: theming.spacing.MD,
+    paddingHorizontal: theme.spacing.MD,
     marginTop: 10,
   },
   profileTopIcon: {
     width: 44,
     height: 44,
-    backgroundColor: theming.colors.shadow3,
+    backgroundColor: theme.colors.shadow3,
   },
 
   profile: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theming.spacing.MD,
+    marginBottom: theme.spacing.MD,
   },
   image: {
     height: 80,
     width: 80,
     borderRadius: 40,
-    marginRight: theming.spacing.MD,
+    marginRight: theme.spacing.MD,
   },
   profileData: {
     flex: 1,
@@ -272,36 +273,36 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 18,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     marginBottom: 4,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
     fontWeight: '600',
   },
   userAdress: {
     fontSize: 14,
-    color: theming.colors.gray700,
-    marginBottom: theming.spacing.XS,
+    color: theme.colors.gray700,
+    marginBottom: theme.spacing.XS,
     letterSpacing: 0.2,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
 
   roles: {
     fontSize: 14,
-    color: theming.colors.black,
+    color: theme.colors.black,
     marginBottom: 4,
     fontWeight: '600',
     letterSpacing: 0.2,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   aboutUser: {
-    marginBottom: theming.spacing.MD,
+    marginBottom: theme.spacing.MD,
     fontSize: 14,
-    color: theming.colors.textPrimary,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
     letterSpacing: 0.2,
   },
   showMoreText: {
-    color: theming.colors.secondary500,
+    color: theme.colors.secondary500,
     fontSize: 14,
     lineHeight: 22.4,
     fontWeight: '500',
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     height: 14,
     width: 14,
     marginTop: 2,
-    tintColor: theming.colors.secondary500,
+    tintColor: theme.colors.secondary500,
   },
 
   actionBtn: {
@@ -331,9 +332,9 @@ const styles = StyleSheet.create({
 
   profileBottom: {
     marginTop: 12,
-    marginBottom: theming.spacing.LG,
+    marginBottom: theme.spacing.LG,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.XS,
+    gap: theme.spacing.XS,
   },
-});
+}));

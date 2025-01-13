@@ -1,6 +1,6 @@
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import React, { ReactNode } from 'react';
-import { theming } from 'common/constants/theming';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface DCIconProps {
   iconBoxStyle?: ViewStyle;
@@ -9,6 +9,8 @@ interface DCIconProps {
 }
 
 export const DCRoundIcon = ({ icon, iconBoxStyle, size = 40 }: DCIconProps) => {
+  const { styles } = useStyles(styleSheet);
+
   return (
     <View style={[styles.iconBox, iconBoxStyle, { width: size, height: size }]}>
       {icon}
@@ -16,11 +18,11 @@ export const DCRoundIcon = ({ icon, iconBoxStyle, size = 40 }: DCIconProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   iconBox: {
     backgroundColor: theming.colors.textPrimary,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+}));

@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { BasicInfo } from './ui/BasicInfo';
 import { DanceStyles } from './ui/DanceStyles';
-import { theming } from 'common/constants/theming';
 import { StackScreenProps } from 'screens/interfaces';
 import PagerView from 'react-native-pager-view';
 import { DCButton } from 'components/shared/button';
@@ -16,9 +15,12 @@ import { useEditUser } from 'data/hooks/user';
 import { showErrorToast } from 'common/libs/toast';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { User } from 'data/api/user/inerfaces';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const { t } = useTranslation();
+  const { styles } = useStyles(styleSheet);
+
   const user = useDCStore.use.user();
   const updateUser = useDCStore.use.setUser();
   const [currPage, setCurrPage] = useState(0);
@@ -73,11 +75,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
         </PagerView>
       </FormProvider>
 
-      <View
-        style={{
-          paddingHorizontal: theming.spacing.LG,
-          paddingVertical: theming.spacing.MD,
-        }}>
+      <View style={styles.btnFooter}>
         <DCButton
           isLoading={isPending}
           disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
@@ -89,9 +87,13 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   root: {
     flex: 1,
     backgroundColor: theming.colors.white,
   },
-});
+  btnFooter: {
+    paddingHorizontal: theming.spacing.LG,
+    paddingVertical: theming.spacing.MD,
+  },
+}));

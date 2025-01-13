@@ -1,9 +1,7 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 import React, { useState } from 'react';
-import { theming } from 'common/constants/theming';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { FlatList } from 'react-native-gesture-handler';
 import { CommunityItem } from 'components/shared/community_item';
 import { DCTabs } from 'components/shared/tabs';
 import { TabScreenProps } from 'screens/interfaces';
@@ -12,10 +10,13 @@ import { LoaderView } from 'components/shared/loader_view';
 import { HeaderWithSearch } from 'components/header_with_search_and_location/HeaderWithSearch';
 import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
 import { FilterComponent } from 'components/shared/filter';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function CommunitiesScreen({
   navigation,
 }: TabScreenProps<'communities'>) {
+  const { styles, theme } = useStyles(styleSheet);
+
   const { t } = useTranslation();
 
   const TABS = [
@@ -48,7 +49,7 @@ export function CommunitiesScreen({
         </View>
         <FilterComponent
           title="978 communities found"
-          containerStyle={{ marginBottom: theming.spacing.XS }}
+          containerStyle={{ marginBottom: theme.spacing.XS }}
         />
         {isPending ? (
           <LoaderView />
@@ -80,7 +81,7 @@ export function CommunitiesScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   root: {
     flex: 1,
     backgroundColor: theming.colors.white,
@@ -148,4 +149,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: theming.colors.gray500,
   },
-});
+}));

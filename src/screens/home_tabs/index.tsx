@@ -14,24 +14,22 @@ import { CommunitiesIcon } from 'components/icons/communities';
 import { TicketIcon } from 'components/icons/ticket';
 import { PeopleIcon } from 'components/icons/people';
 import { ProfileIcon } from 'components/icons/profile';
-import { Image, TouchableOpacity, View } from 'react-native';
-import { images } from 'common/resources/images';
-import { theming } from 'common/constants/theming';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MessageIcon } from 'components/icons/message';
 import { useTranslation } from 'react-i18next';
+import { useStyles } from 'react-native-unistyles';
 
 const Tab = createBottomTabNavigator<TabRoutes>();
 
 export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
   const { t } = useTranslation();
+  const { theme } = useStyles();
+
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: theming.colors.orange,
-        tabBarInactiveTintColor: theming.colors.gray,
+        tabBarActiveTintColor: theme.colors.orange,
+        tabBarInactiveTintColor: theme.colors.gray,
         tabBarLabelStyle: {
-          fontFamily: theming.fonts.latoRegular,
+          fontFamily: theme.fonts.latoRegular,
           fontSize: 12,
         },
         headerShown: false,
@@ -41,8 +39,8 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           tabBarIcon({ focused }) {
             return (
               <HomeIcon
-                fill={focused ? theming.colors.orange : theming.colors.white}
-                stroke={focused ? theming.colors.orange : theming.colors.gray}
+                fill={focused ? theme.colors.orange : theme.colors.white}
+                stroke={focused ? theme.colors.orange : theme.colors.gray}
               />
             );
           },
@@ -54,7 +52,7 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           //       style={{
           //         width: 122,
           //         height: 32,
-          //         marginLeft: theming.spacing.LG,
+          //         marginLeft: theme.spacing.LG,
           //       }}
           //       source={images.authLogo}
           //     />
@@ -63,11 +61,11 @@ export function HomeTabs({ navigation }: StackScreenProps<'homeTabs'>) {
           // headerRight() {
           //   return (
           //     <TouchableOpacity
-          //       style={{ marginRight: theming.spacing.MD }}
+          //       style={{ marginRight: theme.spacing.MD }}
           //       onPress={() => navigation.navigate('chats')}>
           //       <MessageIcon
-          //         fill={theming.colors.orange}
-          //         stroke={theming.colors.white}
+          //         fill={theme.colors.orange}
+          //         stroke={theme.colors.white}
           //         width={37}
           //         height={37}
           //       />

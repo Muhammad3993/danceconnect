@@ -1,10 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { DCInput } from 'components/shared/input';
 import { SearchIcon } from 'components/icons/search';
 import { PlusBigIcon } from 'components/icons/plusBig';
-import { theming } from 'common/constants/theming';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface IProps {
   onPress: () => void;
@@ -12,7 +12,8 @@ interface IProps {
 }
 
 export function HeaderWithSearch({ onPress, placeholder }: IProps) {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
+  const { styles } = useStyles(styleSheet);
 
   return (
     <View style={styles.communitiesSearch}>
@@ -29,7 +30,7 @@ export function HeaderWithSearch({ onPress, placeholder }: IProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   communitiesPlus: {
     width: 40,
     height: 40,
@@ -56,4 +57,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     height: 48,
   },
-});
+}));

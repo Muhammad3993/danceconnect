@@ -1,4 +1,3 @@
-import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { EditIconSvg } from 'components/icons/editIcon';
@@ -36,11 +35,13 @@ import { SCREEN_WIDTH } from 'common/constants';
 import { LoaderView } from 'components/shared/loader_view';
 import FastImage from 'react-native-fast-image';
 import { getImgePath } from 'data/api';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function CommunityScreen({
   route,
   navigation,
 }: StackScreenProps<'community'>) {
+  const { styles, theme } = useStyles(styleSheet);
   const { t } = useTranslation();
   const [isActiveBox, setIsActiveBox] = useState(0);
   const [isShowDescriptions, setIsShowDescriptions] = useState(false);
@@ -103,9 +104,7 @@ export function CommunityScreen({
                 }
                 navigation.navigate('homeTabs');
               }}>
-              <DCRoundIcon
-                icon={<ArrowLeftIcon fill={theming.colors.white} />}
-              />
+              <DCRoundIcon icon={<ArrowLeftIcon fill={theme.colors.white} />} />
             </TouchableOpacity>
 
             <View style={styles.eventTopRight}>
@@ -191,7 +190,7 @@ export function CommunityScreen({
                 iconBoxStyle={{
                   width: 44,
                   height: 44,
-                  backgroundColor: theming.colors.transparentPurple,
+                  backgroundColor: theme.colors.transparentPurple,
                 }}
               />
               <View style={styles.eventRowBox}>
@@ -201,7 +200,7 @@ export function CommunityScreen({
                 <View style={styles.eventMaps}>
                   <Text style={styles.eventMapsTitle}>{t('maps')}</Text>
                   <ArrowLeftIcon
-                    fill={theming.colors.secondary500}
+                    fill={theme.colors.secondary500}
                     style={{ transform: [{ rotate: '180deg' }] }}
                   />
                 </View>
@@ -215,7 +214,7 @@ export function CommunityScreen({
               />
               <View>
                 <Text
-                  style={[styles.eventDate, { fontSize: theming.spacing.MD }]}>
+                  style={[styles.eventDate, { fontSize: theme.spacing.MD }]}>
                   {community?.creator.userName}
                 </Text>
                 <Text style={styles.eventTime}>{t('organizer')}</Text>
@@ -235,14 +234,14 @@ export function CommunityScreen({
               leftIcon={<MessageIcon />}
               onPress={goToChat}
               variant="secondary"
-              containerStyle={{ marginBottom: theming.spacing.LG }}>
+              containerStyle={{ marginBottom: theme.spacing.LG }}>
               {t('write_to_chat')}
             </DCButton>
           ) : (
             <DCButton
               onPress={toggleFollow}
               variant="secondary"
-              containerStyle={{ marginBottom: theming.spacing.LG }}>
+              containerStyle={{ marginBottom: theme.spacing.LG }}>
               {t('join')}
             </DCButton>
           )}
@@ -256,24 +255,24 @@ export function CommunityScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   backgroundImage: {
     width: '100%',
     height: 340,
     position: 'relative',
     marginBottom: 30,
-    backgroundColor: theming.colors.gray100,
+    backgroundColor: theme.colors.gray100,
   },
   eventTop: {
     height: 56,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
     position: 'absolute',
     top: 0,
     width: SCREEN_WIDTH,
@@ -281,7 +280,7 @@ const styles = StyleSheet.create({
   },
   eventTopRight: {
     flexDirection: 'row',
-    gap: theming.spacing.XS,
+    gap: theme.spacing.XS,
   },
   eventBoxes: {
     width: '100%',
@@ -289,49 +288,49 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row',
     gap: 4,
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
     position: 'absolute',
     bottom: -12,
     zIndex: 1,
   },
   eventBox: {
     borderWidth: 1,
-    borderColor: theming.colors.secondary500,
-    backgroundColor: theming.colors.white,
+    borderColor: theme.colors.secondary500,
+    backgroundColor: theme.colors.white,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 4,
   },
   eventBoxActive: {
     borderWidth: 1,
-    borderColor: theming.colors.secondary500,
-    backgroundColor: theming.colors.secondary500,
+    borderColor: theme.colors.secondary500,
+    backgroundColor: theme.colors.secondary500,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 4,
   },
   eventBoxTitle: {
-    color: theming.colors.secondary500,
+    color: theme.colors.secondary500,
     fontWeight: '700',
     fontSize: 14,
     position: 'relative',
     top: -1,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   eventBoxTitleActive: {
-    color: theming.colors.white,
+    color: theme.colors.white,
     fontWeight: '700',
     fontSize: 14,
     position: 'relative',
     top: -1,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   eventBody: {
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   eventTitle: {
-    fontSize: theming.spacing.LG,
-    color: theming.colors.textPrimary,
+    fontSize: theme.spacing.LG,
+    color: theme.colors.textPrimary,
     fontWeight: '700',
   },
   eventPeople: {
@@ -345,29 +344,29 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.XS,
+    gap: theme.spacing.XS,
   },
   eventAvatar: {
     width: 36,
     height: '100%',
   },
   eventPeopleTitle: {
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 14,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   eventDate: {
     fontSize: 18,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.textPrimary,
   },
   eventTime: {
     fontSize: 14,
     fontWeight: '500',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.gray700,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.gray700,
   },
   eventRow: {
     width: '100%',
@@ -387,10 +386,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   eventMapsTitle: {
-    color: theming.colors.secondary500,
-    fontSize: theming.spacing.MD,
+    color: theme.colors.secondary500,
+    fontSize: theme.spacing.MD,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   eventOrganizerAvatar: {
     width: 44,
@@ -402,11 +401,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   eventDescription: {
-    fontSize: theming.spacing.MD,
+    fontSize: theme.spacing.MD,
     fontWeight: '500',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.gray800,
-    marginVertical: theming.spacing.XS,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.gray800,
+    marginVertical: theme.spacing.XS,
   },
   eventBodyBtn: {
     flexDirection: 'row',
@@ -414,11 +413,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   eventBodyBtnTitle: {
-    color: theming.colors.secondary500,
+    color: theme.colors.secondary500,
     fontWeight: '700',
   },
   container: {
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
     paddingBottom: 10,
     marginTop: 20,
   },
@@ -430,9 +429,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     width: '280%',
     height: 'auto',
-    backgroundColor: theming.colors.white,
-    paddingHorizontal: theming.spacing.MD,
-    paddingVertical: theming.spacing.XS,
+    backgroundColor: theme.colors.white,
+    paddingHorizontal: theme.spacing.MD,
+    paddingVertical: theme.spacing.XS,
   },
   modalBoxRow: {
     flexDirection: 'row',
@@ -441,13 +440,13 @@ const styles = StyleSheet.create({
   },
   modalBoxClose: {
     borderWidth: 1,
-    borderColor: theming.colors.error,
+    borderColor: theme.colors.error,
     borderRadius: 4,
     padding: 3,
   },
   modalBoxTitle: {
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 14,
     fontWeight: '600',
   },
-});
+}));

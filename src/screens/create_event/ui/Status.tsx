@@ -1,8 +1,7 @@
-import { StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import React from 'react';
-import { theming } from 'common/constants/theming';
-import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface StatusProps {
   containerStyle?: ViewStyle;
@@ -12,9 +11,9 @@ interface StatusProps {
   statusColorStyle1?: ViewStyle;
   statusColorStyle2?: ViewStyle;
   statusColorStyle3?: ViewStyle;
-  titleStyle1?: TextStyle
-  titleStyle2?: TextStyle
-  titleStyle3?: TextStyle
+  titleStyle1?: TextStyle;
+  titleStyle2?: TextStyle;
+  titleStyle3?: TextStyle;
 }
 
 export const Status = ({
@@ -27,49 +26,53 @@ export const Status = ({
   statusColorStyle3,
   titleStyle1,
   titleStyle2,
-  titleStyle3
+  titleStyle3,
 }: StatusProps) => {
   const { t } = useTranslation();
+  const { styles } = useStyles(styleSheet);
+
   return (
     <View style={[styles.statusess, containerStyle]}>
       <View style={[styles.status, statusStyle1]}>
         <View style={[styles.statusColor, statusColorStyle1]}></View>
-        <Text style={[styles.statusTitle, titleStyle1]}>{t("basic_info")}</Text>
+        <Text style={[styles.statusTitle, titleStyle1]}>{t('basic_info')}</Text>
       </View>
       <View style={[styles.status, statusStyle2]}>
         <View style={[styles.statusColor, statusColorStyle2]}></View>
-        <Text style={[styles.statusTitle, titleStyle2]}>{t("detail")}</Text>
+        <Text style={[styles.statusTitle, titleStyle2]}>{t('detail')}</Text>
       </View>
       <View style={[styles.status, statusStyle3]}>
         <View style={[styles.statusColor, statusColorStyle3]}></View>
-        <Text style={[styles.statusTitle, titleStyle3]}>{t("set_tickets")}</Text>
+        <Text style={[styles.statusTitle, titleStyle3]}>
+          {t('set_tickets')}
+        </Text>
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   statusess: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
     marginTop: 20,
     paddingBottom: 14,
   },
   status: {
     width: '31.5%',
-    opacity: .5,
+    opacity: 0.5,
   },
   statusColor: {
     width: '100%',
     height: 4,
     borderRadius: 100,
-    backgroundColor: theming.colors.gray250,
+    backgroundColor: theme.colors.gray250,
   },
   statusTitle: {
     fontWeight: '400',
-    color: theming.colors.gray500,
+    color: theme.colors.gray500,
     fontSize: 12,
     marginTop: 5,
   },
-});
+}));

@@ -2,20 +2,21 @@ import React, { useRef } from 'react';
 import { genders, roles } from 'common/constants';
 import { DCInput } from 'components/shared/input';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocationSelector } from 'components/location_selector';
 import { Controller, useFormContext } from 'react-hook-form';
 import { User } from 'data/api/user/inerfaces';
-import { theming } from 'common/constants/theming';
 import { Header } from './Header';
 import { LocationIcon } from 'components/icons/location';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export const BasicInfo = () => {
   const { t } = useTranslation();
   const { control } = useFormContext<Partial<User>>();
   const locationRef = useRef<BottomSheetModal>(null);
+  const { styles, theme } = useStyles(styleSheet);
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -30,7 +31,7 @@ export const BasicInfo = () => {
           return (
             <DCInput
               containerStyle={[
-                { paddingHorizontal: theming.spacing.LG },
+                { paddingHorizontal: theme.spacing.LG },
                 styles.input,
               ]}
               onChangeText={onChange}
@@ -51,7 +52,7 @@ export const BasicInfo = () => {
           return (
             <View style={styles.input}>
               <ScrollView
-                style={{ paddingHorizontal: theming.spacing.LG }}
+                style={{ paddingHorizontal: theme.spacing.LG }}
                 showsHorizontalScrollIndicator={false}
                 horizontal>
                 {genders.map(item => {
@@ -74,8 +75,8 @@ export const BasicInfo = () => {
               {fieldState.error?.message && (
                 <Text
                   style={{
-                    color: theming.colors.error,
-                    paddingHorizontal: theming.spacing.LG,
+                    color: theme.colors.error,
+                    paddingHorizontal: theme.spacing.LG,
                   }}>
                   {fieldState.error.message}
                 </Text>
@@ -93,10 +94,7 @@ export const BasicInfo = () => {
           return (
             <>
               <View
-                style={[
-                  { paddingHorizontal: theming.spacing.LG },
-                  styles.input,
-                ]}>
+                style={[{ paddingHorizontal: theme.spacing.LG }, styles.input]}>
                 <TouchableOpacity
                   onPress={() => locationRef.current?.present()}
                   style={styles.chooseCountryWrapper}
@@ -107,9 +105,9 @@ export const BasicInfo = () => {
                   <LocationIcon />
                 </TouchableOpacity>
 
-                {fieldState.error?.location?.message && (
-                  <Text style={{ color: theming.colors.error }}>
-                    {fieldState.error?.location?.message}
+                {fieldState.error?.message && (
+                  <Text style={{ color: theme.colors.error }}>
+                    {fieldState.error?.message}
                   </Text>
                 )}
               </View>
@@ -136,7 +134,7 @@ export const BasicInfo = () => {
           return (
             <View style={styles.input}>
               <ScrollView
-                style={{ paddingHorizontal: theming.spacing.LG }}
+                style={{ paddingHorizontal: theme.spacing.LG }}
                 showsHorizontalScrollIndicator={false}
                 horizontal>
                 {roles.map(item => {
@@ -162,8 +160,8 @@ export const BasicInfo = () => {
               {fieldState.error?.message && (
                 <Text
                   style={{
-                    paddingHorizontal: theming.spacing.LG,
-                    color: theming.colors.error,
+                    paddingHorizontal: theme.spacing.LG,
+                    color: theme.colors.error,
                   }}>
                   {fieldState.error.message}
                 </Text>
@@ -176,27 +174,27 @@ export const BasicInfo = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   placeholderTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: theming.colors.textPrimary,
-    paddingHorizontal: theming.spacing.LG,
-    marginBottom: theming.spacing.XS,
+    color: theme.colors.textPrimary,
+    paddingHorizontal: theme.spacing.LG,
+    marginBottom: theme.spacing.XS,
   },
   choiseItem: {
     borderWidth: 1,
     borderRadius: 100,
-    borderColor: theming.colors.darkGray,
+    borderColor: theme.colors.darkGray,
     paddingHorizontal: 16,
     paddingVertical: 6,
     marginRight: 6,
   },
   chooseCountryWrapper: {
-    backgroundColor: theming.colors.lightGray,
+    backgroundColor: theme.colors.lightGray,
     borderRadius: 8,
     borderWidth: 0.5,
-    borderColor: theming.colors.grayTransparent,
+    borderColor: theme.colors.grayTransparent,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -207,10 +205,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22.4,
     letterSpacing: 0.2,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   choiseItemActive: {
-    borderColor: theming.colors.orange,
+    borderColor: theme.colors.orange,
   },
 
   choiseItemText: {
@@ -222,4 +220,4 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 28,
   },
-});
+}));

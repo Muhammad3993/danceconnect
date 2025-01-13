@@ -2,12 +2,12 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 import React from 'react';
 import { EditIcon } from 'components/icons/edit';
 import { UserImage } from 'components/user_image';
-import { theming } from 'common/constants/theming';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { useUploadImage } from 'data/hooks/collections';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showErrorToast } from 'common/libs/toast';
 import { getImgePath } from 'data/api';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   value?: string;
@@ -15,6 +15,7 @@ interface Props {
 }
 
 export function PhotoUplaod({ value, onChange }: Props) {
+  const { styles } = useStyles(styleSheet);
   const { mutate, isPending } = useUploadImage();
   const uploadImage = async (path: string) => {
     const formData = new FormData();
@@ -56,7 +57,7 @@ export function PhotoUplaod({ value, onChange }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   editAvatar: {
     width: 140,
     height: 140,
@@ -75,4 +76,4 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
   },
-});
+}));

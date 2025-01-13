@@ -1,12 +1,14 @@
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Text, View, ViewStyle } from 'react-native';
 import React from 'react';
-import { theming } from 'common/constants/theming';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface DCLineProps {
   containerStyle?: ViewStyle;
 }
 
-export const DCLine = ({containerStyle}: DCLineProps) => {
+export const DCLine = ({ containerStyle }: DCLineProps) => {
+  const { styles } = useStyles(styleSheet);
+
   return (
     <View style={[styles.line, containerStyle]}>
       <Text>index</Text>
@@ -14,10 +16,10 @@ export const DCLine = ({containerStyle}: DCLineProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   line: {
     width: '100%',
     height: 1,
     backgroundColor: theming.colors.gray50,
   },
-});
+}));

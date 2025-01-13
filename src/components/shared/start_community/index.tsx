@@ -8,10 +8,10 @@ import {
 import React from 'react';
 import { DCRoundIcon } from '../round_icon';
 import { CommunitiesIcon } from 'components/icons/communities';
-import { theming } from 'common/constants/theming';
 import { PlusIcon } from 'components/icons/plus';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface StartCommunityProps {
   containerStyle?: ViewStyle;
@@ -22,12 +22,14 @@ export function StartCommunity({
   containerStyle,
   onPress,
 }: StartCommunityProps) {
+  const { styles, theme } = useStyles(styleSheet);
+
   const { t } = useTranslation();
   return (
     <TouchableOpacity onPress={onPress} style={[styles.box, containerStyle]}>
       <View style={styles.boxIcon}>
         <DCRoundIcon
-          icon={<CommunitiesIcon active fill={theming.colors.white} />}
+          icon={<CommunitiesIcon active fill={theme.colors.white} />}
           iconBoxStyle={styles.icon}
         />
         <View style={styles.boxPlusIcon}>
@@ -47,14 +49,14 @@ export function StartCommunity({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   box: {
     flex: 1,
     width: '100%',
-    backgroundColor: theming.colors.lightPurple,
+    backgroundColor: theme.colors.lightPurple,
     borderWidth: 1,
-    borderColor: theming.colors.gray75,
-    borderRadius: theming.spacing.XS,
+    borderColor: theme.colors.gray75,
+    borderRadius: theme.spacing.XS,
     paddingVertical: 10,
     paddingHorizontal: 12,
     flexDirection: 'row',
@@ -69,30 +71,30 @@ const styles = StyleSheet.create({
   icon: {
     width: 44,
     height: 44,
-    backgroundColor: theming.colors.secondary500,
+    backgroundColor: theme.colors.secondary500,
   },
   boxPlusIcon: {
     width: 18,
     height: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
     borderWidth: 2,
-    borderColor: theming.colors.secondary500,
+    borderColor: theme.colors.secondary500,
     borderRadius: 50,
     position: 'absolute',
     right: 0,
   },
   boxTitle: {
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontWeight: '700',
     fontSize: 18,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   boxSubtitle: {
-    color: theming.colors.gray700,
+    color: theme.colors.gray700,
     fontWeight: '400',
     fontSize: 14,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
-});
+}));

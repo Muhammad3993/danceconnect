@@ -1,30 +1,24 @@
-import {
-  Image,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Linking, ScrollView, Text, View } from 'react-native';
 import React from 'react';
 import { StackScreenProps } from '../interfaces';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { DCButton } from 'components/shared/button';
-import { theming } from 'common/constants/theming';
 import { useSocialBtns } from 'data/hooks/user';
 import { images } from 'common/resources/images';
 import { SCREEN_HEIGHT } from 'common/constants';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
   const { socialButtons } = useSocialBtns();
 
   return (
     <ScrollView
       style={{
-        backgroundColor: theming.colors.white,
-        padding: theming.spacing.LG,
+        backgroundColor: theme.colors.white,
+        padding: theme.spacing.LG,
       }}
       showsVerticalScrollIndicator={false}>
       <Image source={images.authLogo} style={styles.logo} />
@@ -43,7 +37,7 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
             leftIcon={
               <Image source={btn.icon} style={{ width: 24, height: 24 }} />
             }
-            containerStyle={{ marginBottom: theming.spacing.MD }}>
+            containerStyle={{ marginBottom: theme.spacing.MD }}>
             {btn.title}
           </DCButton>
         );
@@ -56,7 +50,7 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
       <DCButton
         size="large"
         variant="outlined"
-        containerStyle={{ marginTop: theming.spacing.MD }}
+        containerStyle={{ marginTop: theme.spacing.MD }}
         onPress={() => navigation.push('register')}>
         {t('auth_btn_email')}
       </DCButton>
@@ -91,7 +85,7 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   container: {
     flex: 1,
     backgroundColor: theming.colors.white,
@@ -182,4 +176,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: theming.fonts.latoRegular,
   },
-});
+}));

@@ -1,14 +1,13 @@
-import { theming } from 'common/constants/theming';
 import React, { ReactNode } from 'react';
 import {
   ActivityIndicator,
   FlatList,
   FlatListProps,
   ListRenderItem,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 const viewabilityConfig = {
   waitForInteraction: true,
@@ -36,6 +35,8 @@ export function PrifleView<T extends { id: string }>({
   headerComponent,
   onViewableItemsChanged,
 }: Props<T>) {
+  const { styles } = useStyles(styleSheet);
+
   return (
     <FlatList
       onEndReached={onEndReached}
@@ -66,7 +67,7 @@ export function PrifleView<T extends { id: string }>({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   infoHeader: {
     backgroundColor: theming.colors.white,
     paddingHorizontal: theming.spacing.MD,
@@ -77,4 +78,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: theming.colors.gray500,
   },
-});
+}));

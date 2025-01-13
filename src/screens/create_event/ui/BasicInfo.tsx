@@ -1,12 +1,5 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
-import { theming } from 'common/constants/theming';
 import { Header } from './Header';
 import { CloseIcon } from 'components/icons/close';
 import { Status } from './Status';
@@ -15,18 +8,18 @@ import DanceStylesSelector from 'components/dance_styles_selector';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DCButton } from 'components/shared/button';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface BasicInfoProps {
   click: () => void;
 }
 
 export const BasicInfo = ({ click }: BasicInfoProps) => {
+  const { styles, theme } = useStyles(styleSheet);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categoryError, setCategoryError] = useState('');
   const { t } = useTranslation();
   const [eventType, setEventType] = useState('');
-
-  console.log(eventType);
 
   const data = [
     {
@@ -59,16 +52,9 @@ export const BasicInfo = ({ click }: BasicInfoProps) => {
     <SafeAreaView style={styles.root}>
       <Header rightIcon={<CloseIcon />} />
       <Status
-        statusStyle1={{
-          opacity: 1,
-        }}
-        statusColorStyle1={{
-          backgroundColor: theming.colors.secondary500,
-        }}
-        titleStyle1={{
-          fontWeight: '700',
-          color: theming.colors.gray800,
-        }}
+        statusStyle1={{ opacity: 1 }}
+        statusColorStyle1={{ backgroundColor: theme.colors.secondary500 }}
+        titleStyle1={{ fontWeight: '700', color: theme.colors.gray800 }}
       />
       <ScrollView>
         {/* Name */}
@@ -149,7 +135,7 @@ export const BasicInfo = ({ click }: BasicInfoProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   root: {
     flex: 1,
     backgroundColor: theming.colors.white,
@@ -243,4 +229,4 @@ const styles = StyleSheet.create({
   bottom: {
     padding: theming.spacing.LG,
   },
-});
+}));

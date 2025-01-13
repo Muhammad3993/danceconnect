@@ -7,15 +7,17 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { theming } from 'common/constants/theming';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { DCButton } from 'components/shared/button';
 import { DCInput } from 'components/shared/input';
 import { t } from 'i18next';
 import { LittleCalendarIcon } from 'components/icons/calendarIcon';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export default function CreateTicket() {
+  const { styles, theme } = useStyles(styleSheet);
+
   const [toggle, setToggle] = useState(false);
   const { t } = useTranslation();
   const handleToggle = () => {
@@ -24,7 +26,7 @@ export default function CreateTicket() {
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.createTicketTop}>
-        <ArrowLeftIcon fill={theming.colors.textPrimary} />
+        <ArrowLeftIcon fill={theme.colors.textPrimary} />
         <Text style={styles.createTicketTopTitle}>{t('create_ticket')}</Text>
       </View>
       <ScrollView style={styles.container}>
@@ -61,7 +63,7 @@ export default function CreateTicket() {
             inputStyle={styles.inputNameStyle}
             keyboardType="numeric"
             rightIcon={
-              <Text style={{ color: theming.colors.textPrimary }}>USD</Text>
+              <Text style={{ color: theme.colors.textPrimary }}>USD</Text>
             }
           />
         </View>
@@ -71,14 +73,14 @@ export default function CreateTicket() {
             <Text style={styles.dateTitle}>{t('start_sale_date')}</Text>
             <View style={styles.dateBox}>
               <Text style={styles.dateBoxTitle}>03-01-2022 </Text>
-              <LittleCalendarIcon stroke={theming.colors.darkGray} />
+              <LittleCalendarIcon stroke={theme.colors.darkGray} />
             </View>
           </View>
           <View style={styles.date}>
             <Text style={styles.dateTitle}>{t('end_sale_date')}</Text>
             <View style={styles.dateBox}>
               <Text style={styles.dateBoxTitle}>03-01-2022 </Text>
-              <LittleCalendarIcon stroke={theming.colors.darkGray} />
+              <LittleCalendarIcon stroke={theme.colors.darkGray} />
             </View>
           </View>
         </View>
@@ -119,11 +121,11 @@ export default function CreateTicket() {
             height: 58,
             flex: 1,
             borderWidth: 1,
-            borderColor: theming.colors.secondary500,
-            backgroundColor: theming.colors.white,
+            borderColor: theme.colors.secondary500,
+            backgroundColor: theme.colors.white,
           }}
           textStyle={{
-            color: theming.colors.secondary500,
+            color: theme.colors.secondary500,
           }}
         />
         <DCButton
@@ -139,48 +141,48 @@ export default function CreateTicket() {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   createTicketTop: {
     height: 48,
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.MD,
+    gap: theme.spacing.MD,
   },
   createTicketTopTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   createTicketTitle: {
     fontWeight: '700',
     fontSize: 16,
-    color: theming.colors.black,
+    color: theme.colors.black,
   },
   container: {
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   createTicket: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.MD,
+    gap: theme.spacing.MD,
     marginTop: 15,
   },
   createTicketToggle: {
     width: 44,
     height: 24,
-    backgroundColor: theming.colors.orange,
+    backgroundColor: theme.colors.orange,
     borderRadius: 100,
     position: 'relative',
   },
   createTicketToggleBox: {
     width: 22,
     height: 22,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
     borderRadius: 50,
     position: 'absolute',
     top: 1,
@@ -189,14 +191,14 @@ const styles = StyleSheet.create({
   createTicketToggleBoxEnable: {
     width: 22,
     height: 22,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
     borderRadius: 50,
     position: 'absolute',
     top: 1,
     right: 1,
   },
   inputName: {
-    marginTop: theming.spacing.LG,
+    marginTop: theme.spacing.LG,
   },
   inputNameTop: {
     flexDirection: 'row',
@@ -205,31 +207,31 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inputNameTopTitle: {
-    color: theming.colors.black,
+    color: theme.colors.black,
     fontWeight: '700',
     fontSize: 16,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   inputNameTopLimit: {
-    color: theming.colors.darkGray,
+    color: theme.colors.darkGray,
     fontSize: 14,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   inputNameStyle: {
     padding: 0,
     paddingHorizontal: 16,
     height: 56,
-    borderColor: theming.colors.gray50,
+    borderColor: theme.colors.gray50,
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
   },
   inputNameTopText: {
-    color: theming.colors.gray700,
+    color: theme.colors.gray700,
     fontSize: 16,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
     marginTop: 5,
     marginBottom: 12,
   },
@@ -246,17 +248,17 @@ const styles = StyleSheet.create({
   dateTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: theming.colors.black,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.black,
+    fontFamily: theme.fonts.latoRegular,
   },
   dateBox: {
     width: '100%',
-    backgroundColor: theming.colors.lightGray,
+    backgroundColor: theme.colors.lightGray,
     borderWidth: 1,
-    borderColor: theming.colors.gray50,
-    borderRadius: theming.spacing.XS,
+    borderColor: theme.colors.gray50,
+    borderRadius: theme.spacing.XS,
     paddingVertical: 17,
-    paddingHorizontal: theming.spacing.MD,
+    paddingHorizontal: theme.spacing.MD,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
@@ -264,22 +266,22 @@ const styles = StyleSheet.create({
   dateBoxTitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: theming.colors.textPrimary,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
   },
   bodyTitle: {
     fontWeight: '400',
     fontSize: 16,
-    color: theming.colors.darkGray,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.darkGray,
+    fontFamily: theme.fonts.latoRegular,
   },
   createTicketBottom: {
     width: '100%',
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderColor: theming.colors.gray75,
-    paddingHorizontal: theming.spacing.LG,
-    paddingVertical: theming.spacing.MD,
+    borderColor: theme.colors.gray75,
+    paddingHorizontal: theme.spacing.LG,
+    paddingVertical: theme.spacing.MD,
     gap: 10,
   },
-});
+}));

@@ -1,6 +1,6 @@
-import { theming } from 'common/constants/theming';
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity, ViewStyle } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface CustomCheckBoxProps {
   value: boolean;
@@ -8,20 +8,25 @@ interface CustomCheckBoxProps {
   containerStyle?: ViewStyle;
 }
 
-export const CustomCheckBox = ({ value, onValueChange, containerStyle }: CustomCheckBoxProps) => {
+export const CustomCheckBox = ({
+  value,
+  onValueChange,
+  containerStyle,
+}: CustomCheckBoxProps) => {
+  const { styles } = useStyles(styleSheet);
+
   return (
     <TouchableOpacity
       style={[containerStyle]}
-      onPress={() => onValueChange(!value)}
-    >
+      onPress={() => onValueChange(!value)}>
       <View style={[styles.checkbox, value && styles.checkedCheckbox]}>
         {value && <View style={styles.checkmark} />}
       </View>
     </TouchableOpacity>
   );
-}
+};
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   checkbox: {
     width: 20,
     height: 20,
@@ -41,10 +46,10 @@ const styles = StyleSheet.create({
     height: 12,
     backgroundColor: theming.colors.orange,
     borderRadius: 50,
-    position: "relative",
-    left: -.05
+    position: 'relative',
+    left: -0.05,
   },
   label: {
     fontSize: 16,
   },
-});
+}));

@@ -1,4 +1,3 @@
-import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { CalendarIcon } from 'components/icons/calendar';
@@ -16,21 +15,22 @@ import {
   ImageBackground,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function EventScreen() {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
   const [isActiveBox, setIsActiveBox] = useState(1);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <ImageBackground source={images.eventBg} style={styles.backgroundImage}>
           <View style={styles.eventTop}>
-            <DCRoundIcon icon={<ArrowLeftIcon fill={theming.colors.white} />} />
+            <DCRoundIcon icon={<ArrowLeftIcon fill={theme.colors.white} />} />
             <View style={styles.eventTopRight}>
               <DCRoundIcon icon={<EditIconSvg />} />
               <DCRoundIcon icon={<SettingIcon />} />
@@ -120,7 +120,7 @@ export function EventScreen() {
                 iconBoxStyle={{
                   width: 44,
                   height: 44,
-                  backgroundColor: theming.colors.transparentPurple,
+                  backgroundColor: theme.colors.transparentPurple,
                 }}
               />
               <View>
@@ -137,7 +137,7 @@ export function EventScreen() {
                 iconBoxStyle={{
                   width: 44,
                   height: 44,
-                  backgroundColor: theming.colors.transparentPurple,
+                  backgroundColor: theme.colors.transparentPurple,
                 }}
               />
               <View style={styles.eventRowBox}>
@@ -145,7 +145,7 @@ export function EventScreen() {
                 <View style={styles.eventMaps}>
                   <Text style={styles.eventMapsTitle}>{t('maps')}</Text>
                   <ArrowLeftIcon
-                    fill={theming.colors.secondary500}
+                    fill={theme.colors.secondary500}
                     style={{ transform: [{ rotate: '180deg' }] }}
                   />
                 </View>
@@ -159,7 +159,7 @@ export function EventScreen() {
               />
               <View>
                 <Text
-                  style={[styles.eventDate, { fontSize: theming.spacing.MD }]}>
+                  style={[styles.eventDate, { fontSize: theme.spacing.MD }]}>
                   World of Dance
                 </Text>
                 <Text style={styles.eventTime}>Organizer</Text>
@@ -172,11 +172,11 @@ export function EventScreen() {
           <View
             style={[styles.eventRow, { marginVertical: 15, marginBottom: 30 }]}>
             <DCRoundIcon
-              icon={<TicketIcon fill={theming.colors.secondary500} />}
+              icon={<TicketIcon fill={theme.colors.secondary500} />}
               iconBoxStyle={{
                 width: 44,
                 height: 44,
-                backgroundColor: theming.colors.transparentPurple,
+                backgroundColor: theme.colors.transparentPurple,
               }}
             />
             <View>
@@ -189,13 +189,13 @@ export function EventScreen() {
 
           <DCButton
           // containerStyle={{
-          //   borderColor: theming.colors.secondary500,
+          //   borderColor: theme.colors.secondary500,
           //   borderRadius: 100,
           // }}
           // textStyle={{
-          //   color: theming.colors.secondary500,
+          //   color: theme.colors.secondary500,
           //   fontWeight: '700',
-          //   fontFamily: theming.fonts.latoRegular,
+          //   fontFamily: theme.fonts.latoRegular,
           // }}
           >
             {t('manage_tickets')}
@@ -226,10 +226,10 @@ export function EventScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   container: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   backgroundImage: {
     width: '100%',
@@ -242,11 +242,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   eventTopRight: {
     flexDirection: 'row',
-    gap: theming.spacing.XS,
+    gap: theme.spacing.XS,
   },
   eventBoxes: {
     width: '100%',
@@ -254,49 +254,49 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row',
     gap: 4,
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
     position: 'absolute',
     bottom: -12,
     zIndex: 1,
   },
   eventBox: {
     borderWidth: 1,
-    borderColor: theming.colors.secondary500,
-    backgroundColor: theming.colors.white,
+    borderColor: theme.colors.secondary500,
+    backgroundColor: theme.colors.white,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 4,
   },
   eventBoxActive: {
     borderWidth: 1,
-    borderColor: theming.colors.secondary500,
-    backgroundColor: theming.colors.secondary500,
+    borderColor: theme.colors.secondary500,
+    backgroundColor: theme.colors.secondary500,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 4,
   },
   eventBoxTitle: {
-    color: theming.colors.secondary500,
+    color: theme.colors.secondary500,
     fontWeight: '700',
     fontSize: 14,
     position: 'relative',
     top: -1,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   eventBoxTitleActive: {
-    color: theming.colors.white,
+    color: theme.colors.white,
     fontWeight: '700',
     fontSize: 14,
     position: 'relative',
     top: -1,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   eventBody: {
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   eventTitle: {
-    fontSize: theming.spacing.LG,
-    color: theming.colors.textPrimary,
+    fontSize: theme.spacing.LG,
+    color: theme.colors.textPrimary,
     fontWeight: '700',
   },
   eventPeople: {
@@ -311,43 +311,43 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.XS,
+    gap: theme.spacing.XS,
   },
   eventAvatar: {
     width: 36,
     height: '100%',
   },
   eventPeopleTitle: {
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 14,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   eventPeopleRight: {
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theming.colors.green,
+    backgroundColor: theme.colors.green,
     paddingHorizontal: 10,
     borderRadius: 4,
   },
   eventPeopleRightTitle: {
     fontSize: 14,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.white,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.white,
   },
   eventDate: {
     fontSize: 18,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.textPrimary,
   },
   eventTime: {
     fontSize: 14,
     fontWeight: '500',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.gray700,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.gray700,
   },
   eventRow: {
     width: '100%',
@@ -367,10 +367,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   eventMapsTitle: {
-    color: theming.colors.secondary500,
-    fontSize: theming.spacing.MD,
+    color: theme.colors.secondary500,
+    fontSize: theme.spacing.MD,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   eventOrganizerAvatar: {
     width: 44,
@@ -383,15 +383,15 @@ const styles = StyleSheet.create({
   eventSubtitle: {
     fontSize: 20,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.textPrimary,
   },
   eventDescription: {
-    fontSize: theming.spacing.MD,
+    fontSize: theme.spacing.MD,
     fontWeight: '500',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.gray800,
-    marginVertical: theming.spacing.MD,
-    // marginBottom: theming.spacing.MD
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.gray800,
+    marginVertical: theme.spacing.MD,
+    // marginBottom: theme.spacing.MD
   },
-});
+}));

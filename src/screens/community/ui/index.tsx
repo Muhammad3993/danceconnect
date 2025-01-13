@@ -1,14 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
-import { theming } from 'common/constants/theming';
 import { EventItem } from 'components/shared/event_item';
 import { JoinCommunityCard } from 'components/shared/join_community_card';
 import { DCTabs } from 'components/shared/tabs';
 import { Community } from 'data/api/community/interfaces';
 import { Event } from 'data/api/event/interfaces';
 import { User } from 'data/api/user/inerfaces';
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   all: any;
@@ -29,7 +29,7 @@ export function CommunityCardList({
   loadingMore,
 }: Props) {
   const { t } = useTranslation();
-
+  const { styles } = useStyles(styleSheet);
   const navigation = useNavigation();
 
   const TABS = [
@@ -92,9 +92,9 @@ export function CommunityCardList({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   infoHeader: {
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   actions: {
     flexDirection: 'row',
@@ -107,13 +107,13 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
     fontSize: 16,
 
-    color: theming.colors.gray500,
+    color: theme.colors.gray500,
   },
   eventWrapper: {
     marginTop: 15,
     gap: 15,
   },
-});
+}));

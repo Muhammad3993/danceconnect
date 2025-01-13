@@ -1,14 +1,15 @@
-import { Image, StyleSheet, Text, View, Dimensions } from 'react-native';
-import React, { useState } from 'react';
 import { images } from 'common/resources/images';
-import { SetCalendarIcon } from 'components/icons/setCalendar';
 import { LocationIcon } from 'components/icons/location';
-import { theming } from 'common/constants/theming';
+import { SetCalendarIcon } from 'components/icons/setCalendar';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SCREEN_WIDTH } from 'common/constants';
+import { Image, Text, View } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function RecentEvent() {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
+
   // const [isActiveBox, setIsActiveBox] = useState(1);
 
   return (
@@ -46,8 +47,7 @@ export function RecentEvent() {
           justifyContent: 'space-between',
         }}>
         <View style={{ flex: 1 }}>
-          <View
-            style={[styles.homeBoxRow, { marginBottom: theming.spacing.SM }]}>
+          <View style={[styles.homeBoxRow, { marginBottom: theme.spacing.SM }]}>
             <SetCalendarIcon />
             <Text style={styles.homeBoxRowTitle} numberOfLines={1}>
               Mon, nov 5 • 21:00
@@ -69,7 +69,7 @@ export function RecentEvent() {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   homeBox: {
     flex: 1,
     width: 333,
@@ -191,4 +191,4 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontFamily: theming.fonts.latoBold,
   },
-});
+}));

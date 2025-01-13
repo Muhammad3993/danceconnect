@@ -1,13 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { theming } from 'common/constants/theming';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { ListItem } from 'components/list_item';
 import { DCButton } from 'components/shared/button';
 import { DCLine } from 'components/shared/line';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { CountryBottomSheet } from './CountryBottomSheet';
 import { RegionBottomSheet } from './RegionBottomSheet';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface IProps {
   content: any;
@@ -16,6 +16,7 @@ interface IProps {
 
 export function LocationBottomSheet({ content, setContent }: IProps) {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
 
   if (content === 'region') {
     return (
@@ -42,7 +43,7 @@ export function LocationBottomSheet({ content, setContent }: IProps) {
           title="Search by Region"
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -54,7 +55,7 @@ export function LocationBottomSheet({ content, setContent }: IProps) {
           title="Search by Country"
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -67,7 +68,7 @@ export function LocationBottomSheet({ content, setContent }: IProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   root: {
     paddingHorizontal: 20,
   },
@@ -100,4 +101,4 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontFamily: theming.fonts.latoRegular,
   },
-});
+}));

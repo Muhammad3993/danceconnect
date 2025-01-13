@@ -1,6 +1,5 @@
-import { Linking, StyleSheet, Text, View } from 'react-native';
+import { Linking, Text, View } from 'react-native';
 
-import { theming } from 'common/constants/theming';
 import { CategoryIcon } from 'components/icons/category';
 import { CommunitiesIcon } from 'components/icons/communities';
 import { InfoIcon } from 'components/icons/info';
@@ -22,6 +21,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useEditUser } from 'data/hooks/user';
 import { UserLocation } from 'data/api/user/inerfaces';
 import { showErrorToast } from 'common/libs/toast';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   navigation: TabScreenNavigation<'profile'>;
@@ -29,6 +29,8 @@ interface Props {
 }
 
 export function ProfileSettings({ navigation, close }: Props) {
+  const { styles, theme } = useStyles(styleSheet);
+
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const locationRef = useRef<BottomSheetModal>(null);
   const { t } = useTranslation();
@@ -79,7 +81,7 @@ export function ProfileSettings({ navigation, close }: Props) {
         <ListItem
           leftIcon={
             <CommunitiesIcon
-              fill={theming.colors.textPrimary}
+              fill={theme.colors.textPrimary}
               width={28}
               height={28}
             />
@@ -88,7 +90,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           title={t('manage_communties')}
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -101,7 +103,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           title={t('manage_events')}
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -115,7 +117,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           count={`(${user?.individualStyles.length})`}
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -125,7 +127,7 @@ export function ProfileSettings({ navigation, close }: Props) {
         <ListItem
           leftIcon={
             <TicketIcon
-              fill={theming.colors.textPrimary}
+              fill={theme.colors.textPrimary}
               width={28}
               height={28}
             />
@@ -135,7 +137,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           // count={'(3)'}
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -157,7 +159,7 @@ export function ProfileSettings({ navigation, close }: Props) {
                 {user?.location?.location}
               </Text>
               <RightArrowIcon
-                stroke={theming.colors.textPrimary}
+                stroke={theme.colors.textPrimary}
                 width={20}
                 height={20}
               />
@@ -175,7 +177,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           title={t('terms_condition')}
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -190,7 +192,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           title={t('privacy')}
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -205,7 +207,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           title={t('payouts')}
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -220,7 +222,7 @@ export function ProfileSettings({ navigation, close }: Props) {
           title={t('contact')}
           rightIcon={
             <RightArrowIcon
-              stroke={theming.colors.textPrimary}
+              stroke={theme.colors.textPrimary}
               width={20}
               height={20}
             />
@@ -231,13 +233,13 @@ export function ProfileSettings({ navigation, close }: Props) {
           click={handleLogout}
           leftIcon={<LogoutIcon />}
           title={t('logout')}
-          titleStyle={{ color: theming.colors.error }}
+          titleStyle={{ color: theme.colors.error }}
         />
 
         <ListItem
           leftIcon={<TrashIcon />}
           title={t('del_acc')}
-          titleStyle={{ color: theming.colors.error }}
+          titleStyle={{ color: theme.colors.error }}
           click={onPressDeleteAccount}
         />
       </View>
@@ -251,7 +253,7 @@ export function ProfileSettings({ navigation, close }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   listWrapper: {
     paddingVertical: 14,
     paddingHorizontal: 24,
@@ -265,13 +267,13 @@ const styles = StyleSheet.create({
   listItemText: {
     lineHeight: 25.2,
     paddingLeft: 20,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontWeight: '500',
   },
   listItemLocation: {
     fontSize: 14,
-    color: theming.colors.gray700,
+    color: theme.colors.gray700,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
-});
+}));

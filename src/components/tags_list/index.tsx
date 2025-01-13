@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { theming } from 'common/constants/theming';
+import { Text, View } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface IProps {
   list: string[];
@@ -15,6 +15,7 @@ export function TagsList({
 }: IProps) {
   const slicedCategories = shouldSlice ? list.slice(0, 2) : list;
   const remainingCategoriesCount = list.length - slicedCategories.length;
+  const { styles, theme } = useStyles(styleSheet);
 
   return (
     <View style={styles.itemTags}>
@@ -26,7 +27,7 @@ export function TagsList({
               backgroundColor: backgroundColor[i],
               borderColor: backgroundColor.length
                 ? backgroundColor[i]
-                : theming.colors.gray250,
+                : theme.colors.gray250,
             },
           ]}
           key={i}>
@@ -35,8 +36,8 @@ export function TagsList({
               styles.itemTagTitle,
               {
                 color: backgroundColor.length
-                  ? theming.colors.white
-                  : theming.colors.secondary500,
+                  ? theme.colors.white
+                  : theme.colors.secondary500,
               },
             ]}>
             {category}
@@ -54,7 +55,7 @@ export function TagsList({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   itemTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -87,4 +88,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: theming.fonts.latoRegular,
   },
-});
+}));

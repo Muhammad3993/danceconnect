@@ -1,13 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { BasicInfo } from './ui/BasicInfo';
-import { theming } from 'common/constants/theming';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PagerView from 'react-native-pager-view';
 import { Details } from './ui/Details';
 import { Tickets } from './ui/Tickets';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function CreateEvent() {
+  const { styles } = useStyles(styleSheet);
+
   const refPagerView = useRef<PagerView>(null);
   const [currPage, setCurrPage] = useState(0);
 
@@ -25,8 +26,7 @@ export function CreateEvent() {
         scrollEnabled={false}
         ref={refPagerView}
         style={styles.root}
-        initialPage={0}
-        useNext={false}>
+        initialPage={0}>
         <BasicInfo key={'1'} click={goNext} />
         <Details key={'2'} click={goNext} />
         <Tickets key={'3'} />
@@ -35,9 +35,9 @@ export function CreateEvent() {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   root: {
     flex: 1,
     backgroundColor: theming.colors.white,
   },
-});
+}));

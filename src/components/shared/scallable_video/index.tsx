@@ -10,10 +10,10 @@ import {
 } from 'react-native';
 import React, { memo, useCallback, useState } from 'react';
 import Video from 'react-native-video';
-import { theming } from 'common/constants/theming';
 import { PlayCircle } from 'components/icons/play_circle';
 import { SoundIcon } from 'components/icons/sound';
 import { UnsoundIcon } from 'components/icons/unsound';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   paused?: boolean;
@@ -34,6 +34,8 @@ export const VideoView = memo(
     videoUrl,
     containerStyle,
   }: Props) => {
+    const { styles } = useStyles(styleSheet);
+
     const [localPause, setLocalPause] = useState(false);
     const [buffering, setBuffering] = useState(true);
     const [isMute, setIsMute] = useState(true);
@@ -131,7 +133,7 @@ export const VideoView = memo(
   },
 );
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   mediaContainer: {
     borderRadius: 8,
     overflow: 'hidden',
@@ -194,4 +196,4 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
   },
-});
+}));

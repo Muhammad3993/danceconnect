@@ -2,12 +2,10 @@ import {
   ActivityIndicator,
   FlatList,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import { theming } from 'common/constants/theming';
 import { DCRoundIcon } from 'components/shared/round_icon';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { RecentEvent } from './ui/recent_event';
@@ -17,9 +15,12 @@ import { DCTabs } from 'components/shared/tabs';
 import { TabScreenProps } from 'screens/interfaces';
 import { JoinCommunityCard } from 'components/shared/join_community_card';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
+
   const TABS = [
     { text: t('all_tab'), containerStyle: { flex: 0.7 } },
     { text: t('festival'), containerStyle: { flex: 1 } },
@@ -48,7 +49,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
             <Text style={styles.homeTitle}>{t('interested')}</Text>
             <DCRoundIcon
               icon={<RightArrowIcon />}
-              iconBoxStyle={{ backgroundColor: theming.colors.lightPurple }}
+              iconBoxStyle={{ backgroundColor: theme.colors.lightPurple }}
               size={28}
             />
           </View>
@@ -58,17 +59,17 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
             renderItem={() => <RecentEvent />}
             pagingEnabled
             style={{
-              paddingVertical: theming.spacing.MD,
+              paddingVertical: theme.spacing.MD,
             }}
             contentContainerStyle={{
-              gap: theming.spacing.MD,
-              paddingHorizontal: theming.spacing.LG,
+              gap: theme.spacing.MD,
+              paddingHorizontal: theme.spacing.LG,
             }}
             horizontal
             showsHorizontalScrollIndicator={false}
           />
 
-          <View style={{ paddingHorizontal: theming.spacing.LG }}>
+          <View style={{ paddingHorizontal: theme.spacing.LG }}>
             <StartCommunity
               onPress={() => navigation.push('createCommunity', {})}
             />
@@ -86,9 +87,9 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
             onPressTab={setCurrentTab}
           />
 
-          <View style={{ paddingHorizontal: theming.spacing.LG }}>
+          <View style={{ paddingHorizontal: theme.spacing.LG }}>
             <JoinCommunityCard
-              containerStyle={{ marginTop: theming.spacing.LG }}
+              containerStyle={{ marginTop: theme.spacing.LG }}
             />
           </View>
         </ScrollView>
@@ -97,10 +98,10 @@ export function HomeScreen({ navigation }: TabScreenProps<'home'>) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   homeTop: {
     width: '100%',
@@ -113,24 +114,24 @@ const styles = StyleSheet.create({
   homeTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: theming.colors.textPrimary,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
   },
   homeEventsTitle: {
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 20,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
     marginTop: 30,
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   infoHeader: {
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
     marginTop: 15,
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   tabText: {
     lineHeight: 22,
     textTransform: 'capitalize',
   },
-});
+}));

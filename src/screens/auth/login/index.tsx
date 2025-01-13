@@ -1,19 +1,20 @@
 import React from 'react';
 
 import { CredentialsForm } from '../ui/CredentialsForm';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { localStorage } from 'common/libs/local_storage';
 import { useLoginUser } from 'data/hooks/user';
 import { StackScreenProps } from 'screens/interfaces';
 import { useDCStore } from 'store';
-import { theming } from 'common/constants/theming';
 import { showErrorToast } from 'common/libs/toast';
 import { AuthSchema } from 'data/api/user/schema';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function LoginScreen({ navigation }: StackScreenProps<'login'>) {
   const { mutate, isPending } = useLoginUser();
   const getUser = useDCStore.use.initAppAction();
+  const { styles } = useStyles(styleSheet);
 
   const { t } = useTranslation();
 
@@ -48,7 +49,7 @@ export function LoginScreen({ navigation }: StackScreenProps<'login'>) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -70,4 +71,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: theming.fonts.latoRegular,
   },
-});
+}));

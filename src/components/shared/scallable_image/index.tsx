@@ -1,8 +1,8 @@
-import { theming } from 'common/constants/theming';
 import React, { useState, useCallback, memo } from 'react';
 
-import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, View, ViewStyle } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   uri: string;
@@ -20,6 +20,8 @@ export const ScalableImage = memo(
     style = {},
     containerStyle,
   }: Props) => {
+    const { styles } = useStyles(styleSheet);
+
     const [scalableWidth, setScalableWidth] = useState(originalWidth);
     const [scalableHeight, setScalableHeight] = useState(
       originalHeight ?? originalWidth,
@@ -66,7 +68,7 @@ export const ScalableImage = memo(
   },
 );
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   mediaContainer: {
     backgroundColor: theming.colors.gray100,
     alignItems: 'center',
@@ -78,4 +80,4 @@ const styles = StyleSheet.create({
   loader: {
     position: 'absolute',
   },
-});
+}));

@@ -11,4 +11,4 @@ export function CountryBottomSheet({ setContent }: any) {
   );
 }
 
-const styles = StyleSheet.create({});
+const styleSheet = createStyleSheet({});

@@ -1,13 +1,5 @@
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
-import { theming } from 'common/constants/theming';
 import { Header } from './Header';
 import { CloseIcon } from 'components/icons/close';
 import { Status } from './Status';
@@ -17,13 +9,14 @@ import { DCButton } from 'components/shared/button';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { CustomCheckBox } from './check';
 import { TicketFillIcon } from 'components/icons/ticketFill';
-import { EditFillIcon } from 'components/icons/editFIll';
 import { EditIconSvg } from 'components/icons/editIcon';
 import { TrashIcon } from 'components/icons/trash';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function Tickets() {
+  const { styles, theme } = useStyles(styleSheet);
   const [selectedBox, setSelectedBox] = useState(null);
 
   const navigation = useNavigation();
@@ -37,7 +30,7 @@ export function Tickets() {
     <SafeAreaView style={styles.root}>
       <Header
         rightIcon={<CloseIcon />}
-        leftIcon={<ArrowLeftIcon fill={theming.colors.textPrimary} />}
+        leftIcon={<ArrowLeftIcon fill={theme.colors.textPrimary} />}
       />
       <Status
         statusStyle1={{
@@ -50,25 +43,25 @@ export function Tickets() {
           opacity: 1,
         }}
         statusColorStyle1={{
-          backgroundColor: theming.colors.green,
+          backgroundColor: theme.colors.green,
         }}
         statusColorStyle2={{
-          backgroundColor: theming.colors.green,
+          backgroundColor: theme.colors.green,
         }}
         statusColorStyle3={{
-          backgroundColor: theming.colors.secondary500,
+          backgroundColor: theme.colors.secondary500,
         }}
         titleStyle1={{
           fontWeight: '400',
-          color: theming.colors.textPrimary,
+          color: theme.colors.textPrimary,
         }}
         titleStyle2={{
           fontWeight: '400',
-          color: theming.colors.textPrimary,
+          color: theme.colors.textPrimary,
         }}
         titleStyle3={{
           fontWeight: '700',
-          color: theming.colors.gray800,
+          color: theme.colors.gray800,
         }}
       />
       <ScrollView>
@@ -137,12 +130,12 @@ export function Tickets() {
                   <EditIconSvg
                     width={24}
                     height={24}
-                    stroke={theming.colors.darkGray}
+                    stroke={theme.colors.darkGray}
                   />
                   <TrashIcon
                     width={24}
                     height={24}
-                    stroke={theming.colors.darkGray}
+                    stroke={theme.colors.darkGray}
                   />
                 </View>
               </View>
@@ -165,7 +158,7 @@ export function Tickets() {
                   <Text
                     style={[
                       styles.ticketBottomTitle,
-                      { color: theming.colors.gray700 },
+                      { color: theme.colors.gray700 },
                     ]}>
                     Final price:
                   </Text>
@@ -183,12 +176,12 @@ export function Tickets() {
               containerStyle={{
                 height: 58,
                 marginTop: 10,
-                backgroundColor: theming.colors.white,
+                backgroundColor: theme.colors.white,
                 borderWidth: 1,
-                borderColor: theming.colors.secondary500,
+                borderColor: theme.colors.secondary500,
               }}
               textStyle={{
-                color: theming.colors.secondary500,
+                color: theme.colors.secondary500,
               }}
               onPress={() => navigation.navigate('createTicket')}
             />
@@ -208,27 +201,27 @@ export function Tickets() {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   title: {
-    color: theming.colors.black,
+    color: theme.colors.black,
     fontWeight: '700',
     fontSize: 16,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   container: {
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   box: {
     paddingVertical: 20,
-    paddingHorizontal: theming.spacing.MD,
+    paddingHorizontal: theme.spacing.MD,
     borderWidth: 1,
-    borderColor: theming.colors.gray250,
-    borderRadius: theming.spacing.XS,
-    backgroundColor: theming.colors.white,
+    borderColor: theme.colors.gray250,
+    borderRadius: theme.spacing.XS,
+    backgroundColor: theme.colors.white,
     marginTop: 15,
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -236,11 +229,11 @@ const styles = StyleSheet.create({
   },
   boxActive: {
     paddingVertical: 20,
-    paddingHorizontal: theming.spacing.MD,
+    paddingHorizontal: theme.spacing.MD,
     borderWidth: 1,
-    borderColor: theming.colors.secondary500,
-    borderRadius: theming.spacing.XS,
-    backgroundColor: theming.colors.white,
+    borderColor: theme.colors.secondary500,
+    borderRadius: theme.spacing.XS,
+    backgroundColor: theme.colors.white,
     marginTop: 15,
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -248,21 +241,21 @@ const styles = StyleSheet.create({
   },
   boxTitle: {
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
     fontSize: 18,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   boxSubTitle: {
     fontSize: 16,
-    color: theming.colors.gray700,
+    color: theme.colors.gray700,
     marginTop: 5,
   },
   ticket: {
-    backgroundColor: theming.colors.lightOrange,
+    backgroundColor: theme.colors.lightOrange,
     marginTop: 10,
-    borderRadius: theming.spacing.XS,
+    borderRadius: theme.spacing.XS,
     paddingVertical: 20,
-    paddingHorizontal: theming.spacing.MD,
+    paddingHorizontal: theme.spacing.MD,
   },
   ticketTop: {
     flexDirection: 'row',
@@ -272,32 +265,32 @@ const styles = StyleSheet.create({
   ticketTopLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.XS,
+    gap: theme.spacing.XS,
   },
   ticketTitle: {
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
     fontSize: 16,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   ticketTopRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.MD,
+    gap: theme.spacing.MD,
   },
   ticketSubtitle: {
     fontSize: 14,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
     marginTop: 10,
     lineHeight: 21,
   },
   ticketDescription: {
     fontSize: 14,
-    color: theming.colors.gray700,
+    color: theme.colors.gray700,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
     marginTop: 10,
     lineHeight: 21,
   },
@@ -310,7 +303,7 @@ const styles = StyleSheet.create({
   ticketBottomLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theming.spacing.XS,
+    gap: theme.spacing.XS,
   },
   ticketBottomRight: {
     flexDirection: 'row',
@@ -321,17 +314,17 @@ const styles = StyleSheet.create({
     width: 9,
     height: 9,
     borderRadius: 50,
-    backgroundColor: theming.colors.orange,
+    backgroundColor: theme.colors.orange,
     position: 'relative',
     top: 0.5,
   },
   ticketBottomTitle: {
     fontSize: 16,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   bottom: {
-    padding: theming.spacing.LG,
+    padding: theme.spacing.LG,
   },
-});
+}));

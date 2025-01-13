@@ -1,4 +1,3 @@
-import { theming } from 'common/constants/theming';
 import DanceStylesSelector from 'components/dance_styles_selector';
 import { CommunitiesIcon } from 'components/icons/communities';
 import LocationSelector from 'components/location_selector';
@@ -6,13 +5,7 @@ import { DCButton } from 'components/shared/button';
 import { DCInput } from 'components/shared/input';
 import { t } from 'i18next';
 import React, { useRef } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import ImageUploadList from 'components/image_upload_list';
 import { useCreateCommunity, useUpdateCommunity } from 'data/hooks/community';
@@ -22,11 +15,13 @@ import { StackScreenProps } from 'screens/interfaces';
 import { LocationIcon } from 'components/icons/location';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { showErrorToast } from 'common/libs/toast';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function CreateCommunity({
   navigation,
   route,
 }: StackScreenProps<'createCommunity'>) {
+  const { styles, theme } = useStyles(styleSheet);
   const locationRef = useRef<BottomSheetModal>(null);
   const initialData = route.params.community;
   const methods = useForm({
@@ -175,7 +170,7 @@ export function CreateCommunity({
               rules={{ required: 'Description is required' }}
               render={({ field: { value, onChange } }) => (
                 <ImageUploadList
-                  containerStyle={{ marginTop: theming.spacing.LG }}
+                  containerStyle={{ marginTop: theme.spacing.LG }}
                   value={value}
                   onChange={onChange}
                 />
@@ -198,9 +193,9 @@ export function CreateCommunity({
                       </Text>
                       <LocationIcon />
                     </TouchableOpacity>
-                    {fieldState.error?.location?.message && (
-                      <Text style={{ color: theming.colors.error }}>
-                        {fieldState.error?.location?.message}
+                    {fieldState.error?.message && (
+                      <Text style={{ color: theme.colors.error }}>
+                        {fieldState.error?.message}
                       </Text>
                     )}
                     <LocationSelector
@@ -237,24 +232,24 @@ export function CreateCommunity({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   top: {
     height: 48,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
 
   container: {
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   box: {
-    backgroundColor: theming.colors.transparentPurple,
+    backgroundColor: theme.colors.transparentPurple,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 20,
@@ -262,13 +257,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   uploadBox: {
-    paddingHorizontal: theming.spacing.LG,
-    marginBottom: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
+    marginBottom: theme.spacing.LG,
   },
   boxCircleOpacity: {
     width: 66,
     height: 66,
-    backgroundColor: theming.colors.lightPurple,
+    backgroundColor: theme.colors.lightPurple,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -276,7 +271,7 @@ const styles = StyleSheet.create({
   boxCircle: {
     width: 46,
     height: 46,
-    backgroundColor: theming.colors.secondary500,
+    backgroundColor: theme.colors.secondary500,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -284,15 +279,15 @@ const styles = StyleSheet.create({
   boxTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: theming.colors.black,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.black,
+    fontFamily: theme.fonts.latoRegular,
     marginTop: 5,
   },
   chooseCountryWrapper: {
-    backgroundColor: theming.colors.lightGray,
+    backgroundColor: theme.colors.lightGray,
     borderRadius: 8,
     borderWidth: 0.5,
-    borderColor: theming.colors.grayTransparent,
+    borderColor: theme.colors.grayTransparent,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -303,21 +298,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22.4,
     letterSpacing: 0.2,
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   boxSubtitle: {
     width: '90%',
     fontSize: 16,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.textPrimary,
     marginBottom: 10,
     marginTop: 5,
     textAlign: 'center',
   },
   inputName: {
-    marginVertical: theming.spacing.LG,
-    paddingHorizontal: theming.spacing.LG,
+    marginVertical: theme.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   inputNameTop: {
     flexDirection: 'row',
@@ -326,22 +321,22 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inputNameTopTitle: {
-    color: theming.colors.black,
+    color: theme.colors.black,
     fontWeight: '700',
     fontSize: 16,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   inputNameTopLimit: {
-    color: theming.colors.darkGray,
+    color: theme.colors.darkGray,
     fontSize: 14,
     fontWeight: '400',
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   inputNameStyle: {
     padding: 0,
     paddingHorizontal: 16,
     height: 56,
-    borderColor: theming.colors.gray50,
+    borderColor: theme.colors.gray50,
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
@@ -349,21 +344,21 @@ const styles = StyleSheet.create({
   bodyTitle: {
     fontWeight: '400',
     fontSize: 16,
-    color: theming.colors.darkGray,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.darkGray,
+    fontFamily: theme.fonts.latoRegular,
   },
   bodySubtitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: theming.colors.textPrimary,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
     marginTop: 5,
   },
   describe: {
     fontSize: 16,
     fontWeight: '400',
-    color: theming.colors.gray700,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.gray700,
+    fontFamily: theme.fonts.latoRegular,
     marginBottom: 15,
   },
 
@@ -372,27 +367,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderColor: theming.colors.gray75,
-    paddingHorizontal: theming.spacing.LG,
-    paddingVertical: theming.spacing.MD,
-    gap: theming.spacing.MD,
+    borderColor: theme.colors.gray75,
+    paddingHorizontal: theme.spacing.LG,
+    paddingVertical: theme.spacing.MD,
+    gap: theme.spacing.MD,
   },
   // bottomBtn: {
   //   width: '49%',
-  //   backgroundColor: theming.colors.white,
+  //   backgroundColor: theme.colors.white,
   //   borderWidth: 1,
-  //   borderColor: theming.colors.secondary500,
+  //   borderColor: theme.colors.secondary500,
   // },
   // bottomBtn1: {
   //   width: '49%',
   // },
   bottomTitle: {
-    color: theming.colors.secondary500,
+    color: theme.colors.secondary500,
     fontWeight: '700',
     fontSize: 16,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   city: {
     marginVertical: 30,
   },
-});
+}));

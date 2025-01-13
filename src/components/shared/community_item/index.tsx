@@ -1,6 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
 import { DCLine } from '../line';
 import { Community } from 'data/api/community/interfaces';
@@ -10,6 +9,7 @@ import { useToggleFollowCommunity } from 'data/hooks/community';
 import FastImage from 'react-native-fast-image';
 import { getImgePath } from 'data/api';
 import { TagsList } from 'components/tags_list';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface CommunityItemProps {
   community: Community;
@@ -18,6 +18,8 @@ interface CommunityItemProps {
 
 export function CommunityItem({ community, click }: CommunityItemProps) {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
+
   // const slicedCategories = community.categories.slice(0, 2);
   // // Remaining elements
   // const remainingCategoriesCount =
@@ -41,7 +43,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
             <Text style={styles.itemTitle}>{community.title}</Text>
             <Text style={styles.itemSubtitle} numberOfLines={3}>
               {community.description}{' '}
-              <Text style={{ color: theming.colors.secondary500 }}>
+              <Text style={{ color: theme.colors.secondary500 }}>
                 {t('details')}
               </Text>
             </Text>
@@ -93,7 +95,7 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   item: {
     width: '100%',
     borderWidth: 1,
@@ -201,4 +203,4 @@ const styles = StyleSheet.create({
     color: theming.colors.gray700,
     fontFamily: theming.fonts.latoRegular,
   },
-});
+}));

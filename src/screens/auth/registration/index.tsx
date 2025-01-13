@@ -1,20 +1,21 @@
 import React from 'react';
 
 import { CredentialsForm } from '../ui/CredentialsForm';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { localStorage } from 'common/libs/local_storage';
 import { useRegisterUser } from 'data/hooks/user';
 import { StackScreenProps } from 'screens/interfaces';
 import { useDCStore } from 'store';
-import { theming } from 'common/constants/theming';
 import { showErrorToast } from 'common/libs/toast';
 import { AuthSchema } from 'data/api/user/schema';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function RegisterScreen({ navigation }: StackScreenProps<'register'>) {
   const { mutate, isPending } = useRegisterUser();
   const getUser = useDCStore.use.initAppAction();
   const { t } = useTranslation();
+  const { styles } = useStyles(styleSheet);
 
   const handleLogin = (d: AuthSchema) => {
     mutate(d, {
@@ -47,7 +48,7 @@ export function RegisterScreen({ navigation }: StackScreenProps<'register'>) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -69,4 +70,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: theming.fonts.latoRegular,
   },
-});
+}));

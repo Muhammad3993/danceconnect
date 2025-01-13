@@ -1,6 +1,5 @@
 import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
 import { SCREEN_WIDTH } from 'common/constants';
-import { theming } from 'common/constants/theming';
 import { ImageData, usePickImage } from 'common/hooks/usePickImage';
 import { usePickVideoFile, VideoData } from 'common/hooks/usePickVideoFile';
 import { showErrorToast } from 'common/libs/toast';
@@ -9,7 +8,7 @@ import { CameraIcon } from 'components/icons/camera';
 import { ImageIcon } from 'components/icons/image';
 import { PlayCircle } from 'components/icons/play_circle';
 import { TrashIcon } from 'components/icons/trash';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -23,12 +22,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { StackScreenProps } from 'screens/interfaces';
 
 export function CreatePostScreen({
   navigation,
   route,
 }: StackScreenProps<'createPost'>) {
+  const { styles } = useStyles(styleSheet);
+
   const { targetId, targetType, postId, postText = '', file } = route.params;
 
   const isCreating = postId === undefined;
@@ -217,14 +219,16 @@ const MediaContainer = ({
   onDeleteMedia,
   attachment,
 }: MediaContainerProps) => {
+  const { styles, theme } = useStyles(styleSheet);
+
   if (fileUploadProgress > 0 && fileUploadProgress < 99) {
     return (
       <View style={styles.uploadOverlay}>
         <ActivityIndicator />
-        <Text style={{ fontSize: 25, color: theming.colors.textPrimary }}>
+        <Text style={{ fontSize: 25, color: theme.colors.textPrimary }}>
           {12}
         </Text>
-        <Text style={{ fontSize: 25, color: theming.colors.textPrimary }}>
+        <Text style={{ fontSize: 25, color: theme.colors.textPrimary }}>
           {fileUploadProgress}
         </Text>
       </View>
@@ -262,10 +266,10 @@ const MediaContainer = ({
   return null;
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   contianer: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   header: {
     flexDirection: 'row',
@@ -276,7 +280,7 @@ const styles = StyleSheet.create({
   uploadOverlay: {
     width: WINDOW_WIDTH - 32,
     height: WINDOW_WIDTH - 32,
-    backgroundColor: theming.colors.baseShade,
+    backgroundColor: theme.colors.baseShade,
     borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
@@ -296,7 +300,7 @@ const styles = StyleSheet.create({
   headerRight: {
     fontFamily: 'Lato-Regular',
     fontSize: 15,
-    color: theming.colors.textHighlighted,
+    color: theme.colors.textHighlighted,
     letterSpacing: -0.2,
   },
   scroll: {
@@ -312,7 +316,7 @@ const styles = StyleSheet.create({
   footer: {
     height: 48,
     width: SCREEN_WIDTH,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
     borderTopEndRadius: 12,
     borderTopStartRadius: 12,
     position: 'absolute',
@@ -335,7 +339,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theming.colors.baseShade,
+    backgroundColor: theme.colors.baseShade,
     marginRight: 45,
   },
-});
+}));

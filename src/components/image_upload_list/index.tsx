@@ -1,6 +1,5 @@
 import {
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -8,13 +7,13 @@ import {
 } from 'react-native';
 import React from 'react';
 import { useUploadImage } from 'data/hooks/collections';
-import { theming } from 'common/constants/theming';
 import { UploadIcon } from 'components/icons/upload';
 import FastImage from 'react-native-fast-image';
 import { TrashIcon } from 'components/icons/trash';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useTranslation } from 'react-i18next';
 import { getImgePath } from 'data/api';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export interface Props {
   value?: string[];
@@ -29,6 +28,8 @@ export default function ImageUploadList({
 }: Props) {
   const { mutate: uploadImage } = useUploadImage();
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
+
   const handleImagePicker = async () => {
     try {
       const image = await ImageCropPicker.openPicker({ cropping: true });
@@ -77,7 +78,7 @@ export default function ImageUploadList({
           <TouchableOpacity
             onPress={() => deleteImage(img)}
             style={styles.imageTrash}>
-            <TrashIcon stroke={theming.colors.white} />
+            <TrashIcon stroke={theme.colors.white} />
           </TouchableOpacity>
         </View>
       ))}
@@ -85,7 +86,7 @@ export default function ImageUploadList({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   upload: {
     width: '100%',
     height: 60,
@@ -130,4 +131,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+}));

@@ -3,7 +3,6 @@ import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDCStore } from 'store';
 import { DCCountry } from 'data/api/collections/interfaces';
-import { theming } from 'common/constants/theming';
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
 import { useSearchCities } from 'data/hooks/collections';
@@ -16,7 +15,7 @@ import {
 import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserLocation } from 'data/api/user/inerfaces';
-import Config from 'react-native-config';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   onChange?: (val: UserLocation) => void;
@@ -25,6 +24,8 @@ interface Props {
 
 export const LocationSelector = forwardRef<BottomSheetModal, Props>(
   ({ onChange, onClose }, bottomSheetModalRef) => {
+    const { styles, theme } = useStyles(styleSheet);
+
     const { t } = useTranslation();
     const { bottom, top } = useSafeAreaInsets();
 
@@ -106,7 +107,7 @@ export const LocationSelector = forwardRef<BottomSheetModal, Props>(
             flex: 1,
             paddingHorizontal: 24,
             paddingVertical: 16,
-            paddingBottom: bottom + theming.spacing.MD,
+            paddingBottom: bottom + theme.spacing.MD,
           }}>
           <DCInput
             forBottomSheet
@@ -119,7 +120,7 @@ export const LocationSelector = forwardRef<BottomSheetModal, Props>(
                 : searchCountryText
             }
             onChangeText={handleSearchCountry}
-            placeholderTextColor={theming.colors.darkGray}
+            placeholderTextColor={theme.colors.darkGray}
           />
 
           {selectedCountry == null && countriesSearchValue.length > 0 && (
@@ -182,6 +183,8 @@ const CitySearch = ({
   selectedCity,
 }: CityPickerProps) => {
   const { t } = useTranslation();
+  const { theme } = useStyles();
+
   const [searchText, setSearchText] = useState('');
   const [debounceText] = useDebounceValue(searchText);
   const { data } = useSearchCities(debounceText, selectedCountry);
@@ -216,7 +219,7 @@ const CitySearch = ({
               <Text
                 style={{
                   fontSize: 16,
-                  color: theming.colors.textPrimary,
+                  color: theme.colors.textPrimary,
                   lineHeight: 22.4,
                 }}>
                 {cityName}
@@ -234,6 +237,7 @@ const CityPicker = ({
   selectedCity,
 }: CityPickerProps) => {
   const [openList, setOpenList] = useState(false);
+  const { styles } = useStyles(styleSheet);
 
   const cities = Array.isArray(selectedCountry.cities)
     ? selectedCountry.cities
@@ -281,7 +285,7 @@ const CityPicker = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   justifyCenter: {
     justifyContent: 'center',
     height: 15,
@@ -375,5 +379,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
   },
-});
+}));
 export default LocationSelector;

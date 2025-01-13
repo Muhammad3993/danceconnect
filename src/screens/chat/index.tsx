@@ -9,4 +9,4 @@ export function ChatScreen() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styleSheet = createStyleSheet({});

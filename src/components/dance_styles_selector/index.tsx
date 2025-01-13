@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 
-import { theming } from 'common/constants/theming';
 import { useDCStore } from 'store';
 import {
   FlatList,
   LayoutAnimation,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -13,6 +11,7 @@ import {
 import { DanceStyleGroup } from 'data/api/collections/interfaces';
 import { CloseSmallIcon } from 'components/icons/close_small';
 import { ArrowDownButtonIcon } from 'components/icons/arrow_down_button';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   value: string[];
@@ -29,6 +28,7 @@ export const DanceStylesSelector = ({
 }: Props) => {
   const constants = useDCStore.use.constants();
   const danceStyles = constants?.danceStyles ?? [];
+  const { styles } = useStyles(styleSheet);
 
   const deleteStyle = (style: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
@@ -72,7 +72,73 @@ export const DanceStylesSelector = ({
     </View>
   );
 };
-const styles = StyleSheet.create({
+
+interface StylesGroupProps {
+  group: DanceStyleGroup;
+  value: string[];
+  onSelectItem: (newValue: string) => void;
+}
+
+export function StylesGroup({ group, value, onSelectItem }: StylesGroupProps) {
+  const [expand, setExpand] = useState(false);
+  const { styles, theme } = useStyles(styleSheet);
+
+  return (
+    <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.titleWrapper}
+        onPress={() => {
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          setExpand(!expand);
+        }}
+        activeOpacity={0.7}>
+        <View style={{ justifyContent: 'center' }}>
+          <Text style={styles.itemTitle}>{group.title}</Text>
+        </View>
+        <ArrowDownButtonIcon
+          style={{ transform: [{ rotate: `${expand ? 0 : 180}deg` }] }}
+        />
+      </TouchableOpacity>
+      {expand && (
+        <View style={styles.animatedBody}>
+          {group.items.map(dStyle => {
+            const isAvailable = value.includes(dStyle);
+            return (
+              <TouchableOpacity
+                key={dStyle}
+                style={[
+                  styles.danceStyleItem,
+                  {
+                    borderColor: isAvailable
+                      ? theme.colors.orange
+                      : theme.colors.darkGray,
+                  },
+                ]}
+                activeOpacity={0.7}
+                onPress={() => onSelectItem(dStyle)}>
+                <Text
+                  style={[
+                    styles.danceStyleText,
+                    {
+                      color: isAvailable
+                        ? theme.colors.orange
+                        : theme.colors.darkGray,
+                    },
+                  ]}>
+                  {dStyle}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      )}
+    </View>
+  );
+}
+
+export default DanceStylesSelector;
+
+const styleSheet = createStyleSheet(theming => ({
   errorText: {
     color: theming.colors.error,
     marginBottom: theming.spacing.MD,
@@ -159,67 +225,4 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     fontFamily: theming.fonts.latoRegular,
   },
-});
-
-interface StylesGroupProps {
-  group: DanceStyleGroup;
-  value: string[];
-  onSelectItem: (newValue: string) => void;
-}
-
-export function StylesGroup({ group, value, onSelectItem }: StylesGroupProps) {
-  const [expand, setExpand] = useState(false);
-  return (
-    <View style={styles.itemContainer}>
-      <TouchableOpacity
-        style={styles.titleWrapper}
-        onPress={() => {
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-          setExpand(!expand);
-        }}
-        activeOpacity={0.7}>
-        <View style={{ justifyContent: 'center' }}>
-          <Text style={styles.itemTitle}>{group.title}</Text>
-        </View>
-        <ArrowDownButtonIcon
-          style={{ transform: [{ rotate: `${expand ? 0 : 180}deg` }] }}
-        />
-      </TouchableOpacity>
-      {expand && (
-        <View style={styles.animatedBody}>
-          {group.items.map(dStyle => {
-            const isAvailable = value.includes(dStyle);
-            return (
-              <TouchableOpacity
-                key={dStyle}
-                style={[
-                  styles.danceStyleItem,
-                  {
-                    borderColor: isAvailable
-                      ? theming.colors.orange
-                      : theming.colors.darkGray,
-                  },
-                ]}
-                activeOpacity={0.7}
-                onPress={() => onSelectItem(dStyle)}>
-                <Text
-                  style={[
-                    styles.danceStyleText,
-                    {
-                      color: isAvailable
-                        ? theming.colors.orange
-                        : theming.colors.darkGray,
-                    },
-                  ]}>
-                  {dStyle}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      )}
-    </View>
-  );
-}
-
-export default DanceStylesSelector;
+}));

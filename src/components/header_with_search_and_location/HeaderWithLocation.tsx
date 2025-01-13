@@ -1,15 +1,16 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useRef, useState } from 'react';
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { LocationIcon } from 'components/icons/location';
 import { RightArrowIcon } from 'components/icons/rightArrow';
-import { theming } from 'common/constants/theming';
 import { DCBottomSheet } from 'components/shared/bottom_sheet';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import React, { useCallback, useRef, useState } from 'react';
+import { Text, TouchableOpacity } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { LocationBottomSheet } from './ui/LocationBottomSheet';
 
 export function HeaderWithLocation() {
   const [content, setContent] = useState('main');
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const { styles } = useStyles(styleSheet);
 
   const presentModal = useCallback(() => {
     bottomSheetRef.current?.present();
@@ -39,7 +40,7 @@ export function HeaderWithLocation() {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   communitiesLocation: {
     flexDirection: 'row',
     alignSelf: 'center',
@@ -59,4 +60,4 @@ const styles = StyleSheet.create({
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.textPrimary,
   },
-});
+}));

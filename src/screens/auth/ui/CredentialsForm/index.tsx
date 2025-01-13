@@ -3,7 +3,6 @@ import {
   KeyboardAvoidingView,
   Linking,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -11,13 +10,13 @@ import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
-import { theming } from 'common/constants/theming';
 import { useSocialBtns } from 'data/hooks/user';
 import { images } from 'common/resources/images';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AuthSchema, authSchema } from 'data/api/user/schema';
 import { isEmptyObj } from 'common/utils/object';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   footerComponent: ReactNode;
@@ -39,6 +38,7 @@ export function CredentialsForm({
   });
   const { dirtyFields } = formState;
   const { socialButtons } = useSocialBtns();
+  const { styles, theme } = useStyles(styleSheet);
 
   const { t } = useTranslation();
 
@@ -66,7 +66,7 @@ export function CredentialsForm({
                   onChangeText={onChange}
                   placeholder={t('email')}
                   keyboardType="email-address"
-                  containerStyle={{ marginBottom: theming.spacing.MD }}
+                  containerStyle={{ marginBottom: theme.spacing.MD }}
                   errorText={fieldState.error?.message}
                   onBlur={onBlur}
                 />
@@ -85,7 +85,7 @@ export function CredentialsForm({
                   placeholder={t('password')}
                   keyboardType="default"
                   secureTextEntry
-                  containerStyle={{ marginBottom: theming.spacing.MD }}
+                  containerStyle={{ marginBottom: theme.spacing.MD }}
                   errorText={fieldState.error?.message}
                   onBlur={onBlur}
                 />
@@ -119,7 +119,7 @@ export function CredentialsForm({
                   key={btn.title}
                   onPress={btn.onPress}
                   isLoading={btn.isLoading}
-                  containerStyle={{ paddingHorizontal: theming.spacing.LG }}>
+                  containerStyle={{ paddingHorizontal: theme.spacing.LG }}>
                   <Image style={{ width: 24, height: 24 }} source={btn.icon} />
                 </DCButton>
               );
@@ -143,7 +143,7 @@ export function CredentialsForm({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   container: {
     flex: 1,
     backgroundColor: theming.colors.white,
@@ -228,4 +228,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-});
+}));

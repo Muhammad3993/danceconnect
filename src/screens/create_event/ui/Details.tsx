@@ -1,13 +1,5 @@
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { theming } from 'common/constants/theming';
 import { Header } from './Header';
 import { CloseIcon } from 'components/icons/close';
 import { Status } from './Status';
@@ -19,6 +11,7 @@ import { TrashIcon } from 'components/icons/trash';
 import { images } from 'common/resources/images';
 import { LittleCalendarIcon } from 'components/icons/calendarIcon';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface DetailsProps {
   click: () => void;
@@ -26,32 +19,26 @@ interface DetailsProps {
 
 export const Details = ({ click }: DetailsProps) => {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
+
   return (
     <SafeAreaView style={styles.root}>
       <Header
         rightIcon={<CloseIcon />}
-        leftIcon={<ArrowLeftIcon fill={theming.colors.textPrimary} />}
+        leftIcon={<ArrowLeftIcon fill={theme.colors.textPrimary} />}
       />
       <Status
-        statusStyle1={{
-          opacity: 1,
-        }}
-        statusStyle2={{
-          opacity: 1,
-        }}
-        statusColorStyle1={{
-          backgroundColor: theming.colors.green,
-        }}
-        statusColorStyle2={{
-          backgroundColor: theming.colors.secondary500,
-        }}
+        statusStyle1={{ opacity: 1 }}
+        statusStyle2={{ opacity: 1 }}
+        statusColorStyle1={{ backgroundColor: theme.colors.green }}
+        statusColorStyle2={{ backgroundColor: theme.colors.secondary500 }}
         titleStyle1={{
           fontWeight: '400',
-          color: theming.colors.textPrimary,
+          color: theme.colors.textPrimary,
         }}
         titleStyle2={{
           fontWeight: '700',
-          color: theming.colors.gray800,
+          color: theme.colors.gray800,
         }}
       />
       <ScrollView>
@@ -91,7 +78,7 @@ export const Details = ({ click }: DetailsProps) => {
               <View style={styles.image}>
                 <Image source={images.homeImg1} style={styles.img} />
                 <TouchableOpacity style={styles.imageTrash}>
-                  <TrashIcon stroke={theming.colors.white} />
+                  <TrashIcon stroke={theme.colors.white} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -114,32 +101,32 @@ export const Details = ({ click }: DetailsProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   uploadBox: {
     marginBottom: 30,
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   inputNameTopTitle: {
-    color: theming.colors.black,
+    color: theme.colors.black,
     fontWeight: '700',
     fontSize: 16,
-    fontFamily: theming.fonts.latoRegular,
+    fontFamily: theme.fonts.latoRegular,
   },
   bodyTitle: {
     fontWeight: '400',
     fontSize: 16,
-    color: theming.colors.darkGray,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.darkGray,
+    fontFamily: theme.fonts.latoRegular,
   },
   bodySubtitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: theming.colors.textPrimary,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
     marginTop: 5,
   },
   upload: {
@@ -147,7 +134,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: theming.colors.secondary200,
+    borderColor: theme.colors.secondary200,
     borderRadius: 8,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -158,8 +145,8 @@ const styles = StyleSheet.create({
   uploadTitle: {
     fontSize: 16,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.secondary500,
+    fontFamily: theme.fonts.latoRegular,
+    color: theme.colors.secondary500,
   },
   images: {
     marginTop: 20,
@@ -177,7 +164,7 @@ const styles = StyleSheet.create({
   imageTrash: {
     width: 40,
     height: 40,
-    backgroundColor: theming.colors.brown,
+    backgroundColor: theme.colors.brown,
     position: 'absolute',
     top: 10,
     right: 10,
@@ -186,10 +173,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   dates: {
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
     marginTop: 10,
     marginBottom: 20,
   },
@@ -205,17 +192,17 @@ const styles = StyleSheet.create({
   dateTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: theming.colors.black,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.black,
+    fontFamily: theme.fonts.latoRegular,
   },
   dateBox: {
     width: '100%',
-    backgroundColor: theming.colors.lightGray,
+    backgroundColor: theme.colors.lightGray,
     borderWidth: 1,
-    borderColor: theming.colors.gray50,
-    borderRadius: theming.spacing.XS,
+    borderColor: theme.colors.gray50,
+    borderRadius: theme.spacing.XS,
     paddingVertical: 17,
-    paddingHorizontal: theming.spacing.MD,
+    paddingHorizontal: theme.spacing.MD,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
@@ -223,18 +210,18 @@ const styles = StyleSheet.create({
   dateBoxTitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: theming.colors.textPrimary,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.textPrimary,
+    fontFamily: theme.fonts.latoRegular,
   },
   describe: {
     fontSize: 16,
     fontWeight: '400',
-    color: theming.colors.gray700,
-    fontFamily: theming.fonts.latoRegular,
+    color: theme.colors.gray700,
+    fontFamily: theme.fonts.latoRegular,
     marginTop: 5,
     marginBottom: 10,
   },
   bottom: {
-    padding: theming.spacing.LG,
+    padding: theme.spacing.LG,
   },
-});
+}));

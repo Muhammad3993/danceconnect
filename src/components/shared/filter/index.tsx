@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Text, View, ViewStyle } from 'react-native';
 import React, { ReactNode } from 'react';
 import { FilterIcon } from 'components/icons/filter';
 import { RightArrowIcon } from 'components/icons/rightArrow';
-import { theming } from 'common/constants/theming';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface FilterComponentProps {
   containerStyle?: ViewStyle;
@@ -15,6 +15,8 @@ export const FilterComponent = ({
   containerStyle,
 }: FilterComponentProps) => {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
+
   return (
     <View style={[styles.filter, containerStyle]}>
       <Text style={styles.filterTitle}>{title}</Text>
@@ -22,17 +24,15 @@ export const FilterComponent = ({
         <FilterIcon />
         <Text style={styles.filterBtnTitle}>{t('filters')}</Text>
         <RightArrowIcon
-          stroke={theming.colors.textPrimary}
-          style={{
-            transform: [{ rotate: '90deg' }],
-          }}
+          stroke={theme.colors.textPrimary}
+          style={{ transform: [{ rotate: '90deg' }] }}
         />
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   filter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: theming.colors.darkGray,
   },
-});
+}));

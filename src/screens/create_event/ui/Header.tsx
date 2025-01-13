@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { ReactNode } from 'react';
-import { theming } from 'common/constants/theming';
 import { useTranslation } from 'react-i18next';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface HeaderProps {
   leftIcon?: ReactNode;
@@ -10,18 +10,20 @@ interface HeaderProps {
 
 export const Header = ({ leftIcon, rightIcon }: HeaderProps) => {
   const { t } = useTranslation();
+  const { styles } = useStyles(styleSheet);
+
   return (
     <View style={styles.container}>
       <View style={{ width: '20%' }}>{leftIcon}</View>
       <View style={{ width: '60%', alignItems: 'center' }}>
-        <Text style={styles.title}>{t("create_your_event")}</Text>
+        <Text style={styles.title}>{t('create_your_event')}</Text>
       </View>
       <View style={{ width: '20%', alignItems: 'flex-end' }}>{rightIcon}</View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   container: {
     width: '100%',
     height: 48,
@@ -36,4 +38,4 @@ const styles = StyleSheet.create({
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.textPrimary,
   },
-});
+}));

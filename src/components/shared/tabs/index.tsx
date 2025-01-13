@@ -1,6 +1,5 @@
 import {
   FlatList,
-  StyleSheet,
   Text,
   TextStyle,
   TouchableOpacity,
@@ -8,7 +7,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import React from 'react';
-import { theming } from 'common/constants/theming';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   data: ({ text: string; containerStyle?: ViewStyle } | string)[];
@@ -33,6 +32,8 @@ export function DCTabs({
   scrollEnabled = true,
   wrapperStyle,
 }: Props) {
+  const { styles, theme } = useStyles(styleSheet);
+
   if (!scrollEnabled) {
     return (
       <View style={containerStyle}>
@@ -54,11 +55,11 @@ export function DCTabs({
                   style={[
                     textStyle,
                     {
-                      fontFamily: theming.fonts.latoRegular,
+                      fontFamily: theme.fonts.latoRegular,
                       fontWeight: '600',
                       color: active
-                        ? theming.colors.secondary500
-                        : theming.colors.darkGray,
+                        ? theme.colors.secondary500
+                        : theme.colors.darkGray,
                     },
                   ]}>
                   {text}
@@ -94,11 +95,11 @@ export function DCTabs({
                 style={[
                   textStyle,
                   {
-                    fontFamily: theming.fonts.latoRegular,
+                    fontFamily: theme.fonts.latoRegular,
                     fontWeight: '600',
                     color: active
-                      ? theming.colors.secondary500
-                      : theming.colors.darkGray,
+                      ? theme.colors.secondary500
+                      : theme.colors.darkGray,
                   },
                 ]}>
                 {text}
@@ -112,15 +113,15 @@ export function DCTabs({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   item: {
     alignSelf: 'center',
-    paddingBottom: theming.spacing.XS,
-    borderBottomColor: theming.colors.secondary500,
+    paddingBottom: theme.spacing.XS,
+    borderBottomColor: theme.colors.secondary500,
   },
   tabsWrapper: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: theming.colors.gray,
+    borderBottomColor: theme.colors.gray,
   },
-});
+}));

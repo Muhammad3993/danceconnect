@@ -1,16 +1,17 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { theming } from 'common/constants/theming';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LocationIcon } from 'components/icons/location';
 import { DCInput } from 'components/shared/input';
 import { SearchIcon } from 'components/icons/search';
 import { t } from 'i18next';
 import { FilterComponent } from 'components/shared/filter';
 import { PeopleItem } from './ui';
 import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function PeopleScreen() {
+  const { styles } = useStyles(styleSheet);
+
   return (
     <SafeAreaView style={styles.root}>
       {/* <View style={styles.eventsLocation}>
@@ -57,7 +58,7 @@ export function PeopleScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   root: {
     flex: 1,
     backgroundColor: theming.colors.white,
@@ -101,4 +102,4 @@ const styles = StyleSheet.create({
   messageBody: {
     gap: theming.spacing.XS,
   },
-});
+}));

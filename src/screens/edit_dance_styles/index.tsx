@@ -2,17 +2,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import DanceStylesSelector from 'components/dance_styles_selector';
 import { useDCStore } from 'store';
-import { theming } from 'common/constants/theming';
 import { useTranslation } from 'react-i18next';
 import { DCButton } from 'components/shared/button';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEditUser } from 'data/hooks/user';
 import { StackScreenProps } from 'screens/interfaces';
 import { showErrorToast } from 'common/libs/toast';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function EditDanceStylesSreen({
   navigation,
 }: StackScreenProps<'editDanceStyles'>) {
+  const { styles, theme } = useStyles(styleSheet);
+
   const user = useDCStore.use.user();
   const setUser = useDCStore.use.setUser();
   const [dStyles, setDstyles] = useState(user?.individualStyles ?? []);
@@ -38,7 +40,7 @@ export function EditDanceStylesSreen({
     <SafeAreaView edges={['bottom']} style={styles.root}>
       <Text style={styles.title}>{t('select_dc')}</Text>
       <DanceStylesSelector value={dStyles} onChange={setDstyles} />
-      <View style={{ paddingHorizontal: theming.spacing.LG }}>
+      <View style={{ paddingHorizontal: theme.spacing.LG }}>
         <DCButton
           isLoading={isPending}
           disabled={dStyles.length === 0}
@@ -50,18 +52,18 @@ export function EditDanceStylesSreen({
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
-    paddingVertical: theming.spacing.MD,
+    backgroundColor: theme.colors.white,
+    paddingVertical: theme.spacing.MD,
   },
   title: {
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 30,
     fontWeight: '600',
-    fontFamily: theming.fonts.latoRegular,
-    paddingHorizontal: theming.spacing.LG,
+    fontFamily: theme.fonts.latoRegular,
+    paddingHorizontal: theme.spacing.LG,
     marginBottom: 28,
   },
-});
+}));

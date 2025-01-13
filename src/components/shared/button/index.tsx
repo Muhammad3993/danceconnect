@@ -1,12 +1,7 @@
-import { theming } from 'common/constants/theming';
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
+import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { DCButtonProps } from './interfaces';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export const DCButton = ({
   children,
@@ -20,6 +15,8 @@ export const DCButton = ({
   variant = 'primary',
   size = 'medium',
 }: DCButtonProps) => {
+  const { styles } = useStyles(styleSheet);
+
   const variantStyle = {
     primary: styles.btnPrimary,
     outlined: styles.btnOutlined,
@@ -61,7 +58,7 @@ export const DCButton = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   btn: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -102,4 +99,4 @@ const styles = StyleSheet.create({
     color: theming.colors.textPrimary,
     fontFamily: theming.fonts.latoRegular,
   },
-});
+}));

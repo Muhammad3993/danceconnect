@@ -6,7 +6,6 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import { theming } from 'common/constants/theming';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabScreenProps } from 'screens/interfaces';
 import { DCTabs } from 'components/shared/tabs';
@@ -15,9 +14,11 @@ import { FilterComponent } from 'components/shared/filter';
 import { EventItem } from 'components/shared/event_item';
 import { HeaderWithSearch } from 'components/header_with_search_and_location/HeaderWithSearch';
 import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
   const TABS = [t('upcoming'), t('attending'), t('managing'), t('passed')];
   const [currentTab, setCurrentTab] = useState(TABS[0]);
 
@@ -41,7 +42,7 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
         </View>
         <FilterComponent
           title="978 communities found"
-          containerStyle={{ marginBottom: theming.spacing.LG }}
+          containerStyle={{ marginBottom: theme.spacing.LG }}
         />
         <FlatList
           showsVerticalScrollIndicator={false}
@@ -60,20 +61,20 @@ export function EventsScreen({ navigation }: TabScreenProps<'events'>) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   root: {
     flex: 1,
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
   events: {
     flex: 1,
-    paddingHorizontal: theming.spacing.LG,
+    paddingHorizontal: theme.spacing.LG,
   },
   tabText: {
     lineHeight: 22,
     textTransform: 'capitalize',
   },
   infoHeader: {
-    backgroundColor: theming.colors.white,
+    backgroundColor: theme.colors.white,
   },
-});
+}));

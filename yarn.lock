@@ -4843,6 +4843,7 @@ __metadata:
     react-native-screens: ^4.4.0
     react-native-share: ^12.0.3
     react-native-svg: ^15.10.1
+    react-native-unistyles: ^2.20.0
     react-native-video: ^6.9.0
     react-native-video-trim: ^2.2.11
     react-test-renderer: 18.3.1
@@ -10888,6 +10889,27 @@ __metadata:
   version: 1.0.5
   resolution: "react-native-swipe-gestures@npm:1.0.5"
   checksum: d637bc40baa50fa0ce3b6cf2b494efeceaea03cc3875cb7cf7d76922914a21d5e6b098d4a084fb291ce61bfbb0a241c03cff24b15bebf0cfae1c146f4ad10d92
+  languageName: node
+  linkType: hard
+
+"react-native-unistyles@npm:^2.20.0":
+  version: 2.20.0
+  resolution: "react-native-unistyles@npm:2.20.0"
+  peerDependencies:
+    "@react-native/normalize-colors": "*"
+    react: "*"
+    react-native: "*"
+    react-native-macos: "*"
+    react-native-web: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    react-native-macos:
+      optional: true
+    react-native-web:
+      optional: true
+    react-native-windows:
+      optional: true
+  checksum: a3f6a05df6b4f6d1cf09e4d4d7e0795ffe71ee2ed32549c30a2d1e3cc8d4402059d1c85ef523cb73f8365590f8a69afedfaf4ed4e546ff94f0b2a8fbe6ed8b7b
   languageName: node
   linkType: hard
 

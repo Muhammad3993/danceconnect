@@ -1,9 +1,11 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { images } from 'common/resources/images';
-import { theming } from 'common/constants/theming';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export const PeopleItem = () => {
+  const { styles } = useStyles(styleSheet);
+
   return (
     <View style={styles.messageItem}>
       <View style={styles.messageItemImage}>
@@ -19,7 +21,7 @@ export const PeopleItem = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   messageItem: {
     width: '100%',
     height: 65,
@@ -68,4 +70,4 @@ const styles = StyleSheet.create({
     position: 'relative',
     top: 6,
   },
-});
+}));

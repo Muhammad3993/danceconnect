@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import React from 'react';
-import { theming } from 'common/constants/theming';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   title: string;
@@ -8,15 +8,17 @@ interface Props {
 }
 
 export function Header({ description, title }: Props) {
+  const { styles, theme } = useStyles(styleSheet);
+
   return (
-    <View style={{ paddingHorizontal: theming.spacing.LG, marginBottom: 28 }}>
+    <View style={{ paddingHorizontal: theme.spacing.LG, marginBottom: 28 }}>
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   title: {
     color: theming.colors.textPrimary,
     fontSize: 30,
@@ -32,4 +34,4 @@ const styles = StyleSheet.create({
     fontFamily: theming.fonts.latoRegular,
     marginTop: 12,
   },
-});
+}));

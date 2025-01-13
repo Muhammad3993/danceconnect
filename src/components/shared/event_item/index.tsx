@@ -1,13 +1,13 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import React from 'react';
 import { SetCalendarIcon } from 'components/icons/setCalendar';
-import { theming } from 'common/constants/theming';
 import { images } from 'common/resources/images';
 import { LocationIcon } from 'components/icons/location';
 import { DCLine } from '../line';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
 import { TagsList } from '../../tags_list';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface EventItemProps {
   click?: () => void;
@@ -15,6 +15,8 @@ interface EventItemProps {
 
 export const EventItem = ({ click }: EventItemProps) => {
   const { t } = useTranslation();
+  const { styles, theme } = useStyles(styleSheet);
+
   return (
     <TouchableOpacity onPress={click}>
       <View style={styles.item}>
@@ -22,10 +24,7 @@ export const EventItem = ({ click }: EventItemProps) => {
           <View style={styles.itemBodyText}>
             <TagsList
               list={['Festival', '$25.00']}
-              backgroundColor={[
-                theming.colors.secondary500,
-                theming.colors.green,
-              ]}
+              backgroundColor={[theme.colors.secondary500, theme.colors.green]}
             />
 
             <View style={styles.itemDate}>
@@ -36,7 +35,7 @@ export const EventItem = ({ click }: EventItemProps) => {
             <Text style={styles.itemSubtitle} numberOfLines={3}>
               Experience the Magic of Bachata at the Los Angeles Bachata
               Festival!...
-              <Text style={{ color: theming.colors.secondary500 }}>
+              <Text style={{ color: theme.colors.secondary500 }}>
                 {t('details')}
               </Text>
             </Text>
@@ -75,7 +74,7 @@ export const EventItem = ({ click }: EventItemProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   item: {
     width: '100%',
     borderWidth: 1,
@@ -186,4 +185,4 @@ const styles = StyleSheet.create({
     color: theming.colors.white,
     fontFamily: theming.fonts.latoRegular,
   },
-});
+}));

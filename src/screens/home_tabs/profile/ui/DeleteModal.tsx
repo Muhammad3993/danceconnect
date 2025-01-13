@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import React from 'react';
-import { theming } from 'common/constants/theming';
 import { DCButton } from 'components/shared/button';
 import { useDCStore } from 'store';
 import { useDeleteAccount } from 'data/hooks/user';
 import { useTranslation } from 'react-i18next';
 import { showErrorToast } from 'common/libs/toast';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface DeleteModalProps {
   onChange: (visible: boolean) => void;
@@ -13,6 +13,7 @@ interface DeleteModalProps {
 
 export const DeleteModal = ({ onChange }: DeleteModalProps) => {
   const user = useDCStore.use.user();
+  const { styles, theme } = useStyles(styleSheet);
 
   const logOutAction = useDCStore.use.clearDCStoreAction();
 
@@ -22,6 +23,9 @@ export const DeleteModal = ({ onChange }: DeleteModalProps) => {
   const { t } = useTranslation();
 
   const handleDeleteAccount = () => {
+    if (!userId) {
+      return;
+    }
     deleteAccount(userId, {
       onSuccess: logOutAction,
       onError(err) {
@@ -46,7 +50,7 @@ export const DeleteModal = ({ onChange }: DeleteModalProps) => {
             width: '50%',
             height: 58,
             flex: 1,
-            backgroundColor: theming.colors.error,
+            backgroundColor: theme.colors.error,
           }}
           onPress={handleDeleteAccount}
         />
@@ -55,15 +59,15 @@ export const DeleteModal = ({ onChange }: DeleteModalProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theme => ({
   modalBox: {
     width: '100%',
-    backgroundColor: theming.colors.white,
-    padding: theming.spacing.LG,
+    backgroundColor: theme.colors.white,
+    padding: theme.spacing.LG,
     borderRadius: 10,
   },
   modalBoxTitle: {
-    color: theming.colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 20,
     fontWeight: '700',
     textAlign: 'center',
@@ -74,4 +78,4 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 15,
   },
-});
+}));

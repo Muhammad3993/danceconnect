@@ -1,20 +1,13 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { DCButton } from 'components/shared/button';
 import { useDCStore } from 'store';
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { theming } from 'common/constants/theming';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { CloseIcon } from 'components/icons/close';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function RegionBottomSheet({ setContent }: any) {
   const regions = useDCStore.use.constants()?.regions;
+  const { styles } = useStyles(styleSheet);
 
   // console.log('regions', regions);
 
@@ -47,7 +40,7 @@ export function RegionBottomSheet({ setContent }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const styleSheet = createStyleSheet(theming => ({
   root: {
     paddingHorizontal: theming.spacing.MD,
   },
@@ -77,4 +70,4 @@ const styles = StyleSheet.create({
   closeIcon: {
     height: 20,
   },
-});
+}));
