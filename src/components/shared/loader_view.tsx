@@ -9,7 +9,7 @@ export function LoaderView() {
   );
 }
 
-const styleSheet = createStyleSheet({
+const styles = StyleSheet.create({
   root: {
     flex: 1,
     alignItems: 'center',

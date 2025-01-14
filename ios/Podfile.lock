@@ -1508,6 +1508,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-unistyles (2.20.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-video (6.9.0):
     - DoubleConversion
     - glog
@@ -2300,6 +2321,7 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-unistyles (from `../node_modules/react-native-unistyles`)
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-video-trim (from `../node_modules/react-native-video-trim`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
@@ -2468,6 +2490,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-pager-view"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-unistyles:
+    :path: "../node_modules/react-native-unistyles"
   react-native-video:
     :path: "../node_modules/react-native-video"
   react-native-video-trim:
@@ -2634,6 +2658,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-pager-view: d43f2637dd5952c1486b9baf2d8f9bb3dd83c46f
   react-native-safe-area-context: 16c455e62ad9dae353281f8099a4f93800adabe6
+  react-native-unistyles: 3b02e33356bb7391768b2938688e05896a6bc0e6
   react-native-video: 5ea365c4e1861ba426340f475b0c399f84ead3b8
   react-native-video-trim: b20b2479adcf8231bf25fc8cdbfca76a6d9f84dd
   React-nativeconfig: 565ebf4340d9ede95b523f0e3640f48286985ef5

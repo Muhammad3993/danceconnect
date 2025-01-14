@@ -31,6 +31,8 @@ apiClient.interceptors.response.use(
     return response;
   },
   async function (error: AxiosError) {
+    // console.log(error.response?.data);
+
     if (error.response?.status === 401 || error.status === 401) {
       DCStore.getState().clearDCStoreAction();
     }

@@ -81,10 +81,14 @@ const useGoogleLoginUser = () => {
 
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
     // Get the users ID token
-    const { idToken } = await GoogleSignin.signIn();
+    const { data } = await GoogleSignin.signIn();
+
+    if (!data || !data.idToken) {
+      throw Error('Something get wrong!');
+    }
 
     // Create a Google credential with the token
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+    const googleCredential = auth.GoogleAuthProvider.credential(data.idToken);
 
     // Sign-in the user with the credential
     await auth().signInWithCredential(googleCredential);
