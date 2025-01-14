@@ -5,6 +5,7 @@ import { DCStore } from 'store';
 
 export const apiClient = axios.create({
   baseURL: Config.API_URL,
+  // baseURL: 'http://95.217.221.8:4004/api/v1',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -34,7 +35,7 @@ apiClient.interceptors.response.use(
     // console.log(error.response?.data);
 
     if (error.response?.status === 401 || error.status === 401) {
-      DCStore.getState().clearDCStoreAction();
+      DCStore.getState().clearDCStoreAction({ endSession: false });
     }
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error

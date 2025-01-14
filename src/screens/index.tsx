@@ -92,10 +92,7 @@ export function Navigation() {
     }
   }, []);
 
-  const isEmptyUser =
-    user !== null &&
-    isEmptyArray(user.individualStyles) &&
-    isEmptyArray(user.userRole);
+  const isEmptyUser = user !== null && isEmptyArray(user.individualStyles);
 
   if (initing) {
     return <LoaderView />;

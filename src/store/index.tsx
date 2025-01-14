@@ -4,7 +4,6 @@ import { create } from 'zustand';
 import { createSelectors } from './types';
 import { DCConstants } from 'data/api/collections/interfaces';
 import { collectionsApi } from 'data/api/collections';
-import auth from '@react-native-firebase/auth';
 import { localStorage } from 'common/libs/local_storage';
 
 type State = {
@@ -14,11 +13,13 @@ type State = {
 
 type Action = {
   initAppAction: () => Promise<void>;
-  clearDCStoreAction: () => Promise<void>;
+  clearDCStoreAction: (data: { endSession: boolean }) => Promise<void>;
+  updateUser: (user: Partial<User>) => void;
+  updateSubscriptionsCount: (val: number) => void;
   setUser: (user: User) => void;
 };
 
-export const DCStore = create<State & Action>(set => ({
+export const DCStore = create<State & Action>((set, get) => ({
   user: null,
   constants: null,
   initAppAction: async () => {
@@ -26,22 +27,76 @@ export const DCStore = create<State & Action>(set => ({
 
     // await DCAmity.loginUser(user.id, user.userName);
 
+    // const getStreamToken = await userApi.getGetStreamToken();
+
+    // await client.connectUser(
+    //   {
+    //     id: user.id,
+    //     name: extractUserFullName(user),
+    //     image: user.photo?.path,
+    //     // @ts-ignore
+    //     language: user.lang ?? i18n.language,
+    //   },
+    //   getStreamToken.token,
+    // );
+
     const constants = await collectionsApi.getConstants();
 
     return set({ user, constants });
   },
 
   setUser: (user: User) => set({ user }),
+  updateUser: user => {
+    const currUser = get().user;
+    if (currUser) set({ user: { ...currUser, ...user } });
+  },
 
-  clearDCStoreAction: async () => {
-    // await DCAmity.logoutUser();
+  updateSubscriptionsCount: val => {
+    const oldUser = get().user;
+    if (oldUser) {
+      set({
+        user: {
+          ...oldUser,
+          subscriptionsCount: (oldUser.subscriptionsCount ?? 0) + val,
+        },
+      });
+    }
+  },
 
-    if (auth().currentUser) {
-      await auth().signOut();
+  // clearDCStoreAction: async () => {
+  //   // await DCAmity.logoutUser();
+
+  //   if (auth().currentUser) {
+  //     await auth().signOut();
+  //   }
+
+  //   await localStorage.clearAll();
+  //   set({ user: null, constants: null });
+  // },
+  clearDCStoreAction: async ({ endSession }) => {
+    // const pushToken = await localStorage.getItem('pushToken');
+
+    if (endSession) {
+      // if (pushToken) {
+      //   await userApi.unregisterDeviceToken(pushToken);
+      // }
+      await userApi.logOut();
     }
 
+    // if (client.user) {
+    //   await client.disconnectUser();
+    //   if (pushToken) {
+    //     await client.removeDevice(pushToken, 'firebase');
+    //   }
+    // }
+
+    // if (pushToken) {
+    //   await NotificationsService.removeDeviceToken();
+    // }
+
     await localStorage.clearAll();
-    set({ user: null, constants: null });
+
+    set({ user: null });
   },
 }));
 

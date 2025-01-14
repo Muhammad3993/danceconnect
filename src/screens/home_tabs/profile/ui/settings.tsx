@@ -71,7 +71,7 @@ export function ProfileSettings({ navigation, close }: Props) {
   };
 
   const handleLogout = async () => {
-    await logOutAction();
+    await logOutAction({ endSession: true });
     close();
   };
 

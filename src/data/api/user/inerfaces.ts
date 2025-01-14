@@ -1,30 +1,36 @@
 import { Community } from '../community/interfaces';
 
-export interface AuthResponse {
-  access_token: string;
-}
-
-export interface AuthUserRequest {
-  email: string;
-  password: string;
-}
-
-export interface UserShort {
+export interface User {
   id: string;
-  individualStyles: string[];
+  individualStyles?: string[];
+  userRole?: string[];
   email: string;
   userName?: string;
   location?: UserLocation;
   userGender?: Gender;
   userImage?: string;
+  about: string | null;
+  createdAt: string;
+  deactivated: false;
+  provider: 'email' | 'google' | 'apple';
+  socialId: string | null;
+  subscribers: string[];
+  subscribersCount: number;
+  subscriptions: string[];
+  subscriptionsCount: number;
+  updatedAt: string;
 }
 
-export interface User extends UserShort {
-  myCommunities: Community[];
-  joinedCommunities: Community[];
-  userRole: string[];
-  fcmToken?: string;
-  about?: string;
+export interface AuthResponse {
+  refreshToken: string;
+  token: string;
+  tokenExpires: number;
+  user: User;
+}
+
+export interface AuthUserRequest {
+  email: string;
+  password: string;
 }
 
 export interface UserLocation {

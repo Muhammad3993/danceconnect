@@ -1,40 +1,22 @@
 import React from 'react';
 
-import { CredentialsForm } from '../ui/CredentialsForm';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import { localStorage } from 'common/libs/local_storage';
 import { useRegisterUser } from 'data/hooks/user';
-import { StackScreenProps } from 'screens/interfaces';
-import { useDCStore } from 'store';
-import { showErrorToast } from 'common/libs/toast';
-import { AuthSchema } from 'data/api/user/schema';
+import { useTranslation } from 'react-i18next';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StackScreenProps } from 'screens/interfaces';
+import { CredentialsForm } from '../ui/CredentialsForm';
 
 export function RegisterScreen({ navigation }: StackScreenProps<'register'>) {
   const { mutate, isPending } = useRegisterUser();
-  const getUser = useDCStore.use.initAppAction();
   const { t } = useTranslation();
   const { styles } = useStyles(styleSheet);
-
-  const handleLogin = (d: AuthSchema) => {
-    mutate(d, {
-      async onSuccess(data) {
-        await localStorage.setItem('token', data.access_token);
-        getUser();
-      },
-      onError(err) {
-        const error = err as Error;
-        showErrorToast(error.message);
-      },
-    });
-  };
 
   return (
     <CredentialsForm
       isLoading={isPending}
       submitTitle={t('sign_up')}
-      onSubmit={handleLogin}
+      onSubmit={mutate}
       title={t('create_account')}
       footerComponent={
         <View style={styles.bottomWrapper}>
@@ -52,8 +34,7 @@ const styleSheet = createStyleSheet(theming => ({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: 60,
-    paddingBottom: 40,
+    marginVertical: theming.spacing.LG,
   },
   alreadyAccountText: {
     fontSize: 14,

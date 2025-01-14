@@ -185,8 +185,8 @@ const styleSheet = createStyleSheet(theming => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 65,
     marginHorizontal: 12,
+    marginVertical: theming.spacing.LG,
   },
   line: {
     height: 1,
@@ -209,7 +209,6 @@ const styleSheet = createStyleSheet(theming => ({
   },
 
   btnsWrapper: {
-    paddingTop: 24,
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginHorizontal: 30,

@@ -67,20 +67,6 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
           <Text style={styles.logInText}>{t('login')}</Text>
         </TouchableOpacity>
       </View>
-
-      <View>
-        <Text style={styles.licenceText}>
-          {t('terms_first')}
-          <Text
-            style={styles.licenceTextOrange}
-            onPress={() =>
-              Linking.openURL('https://danceconnect.online/terms.html')
-            }>
-            {' '}
-            {t('terms_second')}
-          </Text>
-        </Text>
-      </View>
     </ScrollView>
   );
 }
@@ -152,8 +138,7 @@ const styleSheet = createStyleSheet(theming => ({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: 100,
-    paddingBottom: 20,
+    marginVertical: theming.spacing.LG,
   },
   bottomWrapperLg: {
     flexDirection: 'row',

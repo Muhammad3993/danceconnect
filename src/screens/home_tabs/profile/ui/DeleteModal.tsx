@@ -1,10 +1,8 @@
-import { Text, View } from 'react-native';
-import React from 'react';
 import { DCButton } from 'components/shared/button';
-import { useDCStore } from 'store';
 import { useDeleteAccount } from 'data/hooks/user';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { showErrorToast } from 'common/libs/toast';
+import { Text, View } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface DeleteModalProps {
@@ -12,28 +10,10 @@ interface DeleteModalProps {
 }
 
 export const DeleteModal = ({ onChange }: DeleteModalProps) => {
-  const user = useDCStore.use.user();
   const { styles, theme } = useStyles(styleSheet);
-
-  const logOutAction = useDCStore.use.clearDCStoreAction();
-
-  const userId = user?.id;
 
   const { mutate: deleteAccount } = useDeleteAccount();
   const { t } = useTranslation();
-
-  const handleDeleteAccount = () => {
-    if (!userId) {
-      return;
-    }
-    deleteAccount(userId, {
-      onSuccess: logOutAction,
-      onError(err) {
-        const error = err as Error;
-        showErrorToast(error.message);
-      },
-    });
-  };
 
   return (
     <View style={styles.modalBox}>
@@ -52,7 +32,7 @@ export const DeleteModal = ({ onChange }: DeleteModalProps) => {
             flex: 1,
             backgroundColor: theme.colors.error,
           }}
-          onPress={handleDeleteAccount}
+          onPress={deleteAccount}
         />
       </View>
     </View>
