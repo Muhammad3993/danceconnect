@@ -1,12 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDCStore } from 'store';
-import { DCCountry } from 'data/api/collections/interfaces';
+import { DCCountry } from 'data/api/common/interfaces';
 import { DCInput } from 'components/shared/input';
 import { DCButton } from 'components/shared/button';
-import { useSearchCities } from 'data/hooks/collections';
-import { useDebounceValue } from 'common/hooks/useDebounceValue';
+import { useSearchCities } from 'data/hooks/common';
 import {
   BottomSheetFlatList,
   BottomSheetModal,
@@ -186,8 +185,7 @@ const CitySearch = ({
   const { theme } = useStyles();
 
   const [searchText, setSearchText] = useState('');
-  const [debounceText] = useDebounceValue(searchText);
-  const { data } = useSearchCities(debounceText, selectedCountry);
+  const { data } = useSearchCities(searchText, selectedCountry);
 
   const searchCities = data?.predictions ?? [];
 
@@ -380,4 +378,3 @@ const styleSheet = createStyleSheet(theming => ({
     paddingVertical: 12,
   },
 }));
-export default LocationSelector;

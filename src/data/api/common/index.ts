@@ -5,10 +5,7 @@ import {
   PlaceAutocompleteResponse,
 } from './interfaces';
 import axios from 'axios';
-import { apiClient } from '../';
-
-const googleUrl =
-  'https://maps.googleapis.com/maps/api/place/autocomplete/json?';
+import { apiClient } from '..';
 
 export const collectionsApi = {
   async getConstants() {
@@ -17,11 +14,23 @@ export const collectionsApi = {
     return res.data;
   },
 
-  async searchCity(searchString: string, countryCode: string) {
+  async searchCity(
+    searchString: string,
+    countryCode: string,
+    language: string,
+  ) {
     const response = await axios.get<PlaceAutocompleteResponse>(
-      `${googleUrl}key=${Config.GOOGLE_API_KEY}&types=(cities)&components=country:${countryCode}&input=${searchString}&language=en`,
+      'https://maps.googleapis.com/maps/api/place/autocomplete/json',
+      {
+        params: {
+          key: Config.GOOGLE_API_KEY,
+          types: '(cities)',
+          components: `country:${countryCode}`,
+          input: searchString,
+          language,
+        },
+      },
     );
-    console.log(response);
 
     return response.data;
   },

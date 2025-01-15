@@ -1,17 +1,16 @@
-import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { useMutation } from '@tanstack/react-query';
-import { localStorage } from 'common/libs/local_storage';
+import { sharedStorage } from 'common/libs/shared_storage';
 import { showErrorToast } from 'common/libs/toast';
 import { images } from 'common/resources/images';
 import { userApi } from 'data/api/user';
 import { User } from 'data/api/user/inerfaces';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 import { useDCStore } from 'store';
 
 // const boostrap = async ({ token, user }: AuthResponse) => {
-//   await localStorage.setItem("token", token);
+//   await sharedStorage.setItem("token", token);
 //   const getStreamToken = await userApi.getGetStreamToken();
 
 //   await client.connectUser(
@@ -34,7 +33,7 @@ import { useDCStore } from 'store';
 //       await userApi.registerDeviceToken(pushToken);
 //       await client.addDevice(pushToken, "firebase");
 
-//       await localStorage.setItem("pushToken", pushToken);
+//       await sharedStorage.setItem("pushToken", pushToken);
 //       console.log("registerDeviceToken");
 //     } catch (err) {
 //       console.log("cannot Register device token");
@@ -90,7 +89,7 @@ export const useGoogleLoginUser = () => {
   return useMutation({
     mutationFn: userApi.googleLoginUser,
     async onSuccess(data) {
-      await localStorage.setItem('token', data.token);
+      await sharedStorage.setItem('token', data.token);
       setUser(data.user);
     },
     onError(err) {
@@ -106,7 +105,7 @@ const useAppleLoginUser = () => {
   return useMutation({
     mutationFn: userApi.appleLoginUser,
     async onSuccess(data) {
-      await localStorage.setItem('token', data.token);
+      await sharedStorage.setItem('token', data.token);
       setUser(data.user);
     },
     onError(err) {
@@ -117,7 +116,20 @@ const useAppleLoginUser = () => {
 };
 
 export const useLoginUser = () => {
-  return useMutation({ mutationFn: userApi.loginUser });
+  const setUser = useDCStore.use.setUser();
+
+  return useMutation({
+    mutationFn: userApi.loginUser,
+
+    async onSuccess(data) {
+      await sharedStorage.setItem('token', data.token);
+      setUser(data.user);
+    },
+    onError(err) {
+      const error = err as Error;
+      showErrorToast(error.message);
+    },
+  });
 };
 
 export const useRegisterUser = () => {
@@ -126,7 +138,7 @@ export const useRegisterUser = () => {
   return useMutation({
     mutationFn: userApi.registerUser,
     async onSuccess(data) {
-      await localStorage.setItem('token', data.token);
+      await sharedStorage.setItem('token', data.token);
       setUser(data.user);
     },
     onError(err) {

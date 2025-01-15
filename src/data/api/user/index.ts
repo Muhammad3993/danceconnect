@@ -8,6 +8,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import { sharedStorage } from 'common/libs/shared_storage';
 
 export const userApi = {
   async loginUser(data: AuthUserRequest) {
@@ -17,7 +18,7 @@ export const userApi = {
   async googleLoginUser() {
     try {
       GoogleSignin.configure({
-        // iosClientId: Config.GOOGLE_IOS_CLIENT_ID,
+        iosClientId: Config.GOOGLE_IOS_CLIENT_ID,
         webClientId: Config.GOOGLE_WEB_CLIENT_ID,
       });
 
@@ -36,9 +37,9 @@ export const userApi = {
         throw Error('sign in was cancelled by user');
       }
     } catch (error) {
-      if (isErrorWithCode(error)) {
-        console.log(error);
+      console.log(error);
 
+      if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.IN_PROGRESS:
             throw Error('operation (eg. sign in) already in progress');
@@ -84,6 +85,10 @@ export const userApi = {
   },
 
   async getUser() {
+    const token = await sharedStorage.getItem('token');
+    if (!token) {
+      throw Error('Not Authorized');
+    }
     const res = await apiClient.get<User | null>('/auth/me');
     const user = res.data;
 

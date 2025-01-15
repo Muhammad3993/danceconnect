@@ -3,37 +3,19 @@ import React from 'react';
 import { CredentialsForm } from '../ui/CredentialsForm';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { localStorage } from 'common/libs/local_storage';
 import { useLoginUser } from 'data/hooks/user';
 import { StackScreenProps } from 'screens/interfaces';
-import { useDCStore } from 'store';
-import { showErrorToast } from 'common/libs/toast';
-import { AuthSchema } from 'data/api/user/schema';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function LoginScreen({ navigation }: StackScreenProps<'login'>) {
   const { mutate, isPending } = useLoginUser();
-  const getUser = useDCStore.use.initAppAction();
   const { styles } = useStyles(styleSheet);
 
   const { t } = useTranslation();
 
-  const handleLogin = (d: AuthSchema) => {
-    mutate(d, {
-      async onSuccess(data) {
-        await localStorage.setItem('token', data.access_token);
-        getUser();
-      },
-      onError(err) {
-        const error = err as Error;
-        showErrorToast(error.message);
-      },
-    });
-  };
-
   return (
     <CredentialsForm
-      onSubmit={handleLogin}
+      onSubmit={mutate}
       isLoading={isPending}
       submitTitle={t('login')}
       title={t('login')}

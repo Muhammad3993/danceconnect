@@ -2,9 +2,9 @@ import { userApi } from 'data/api/user';
 import { User } from 'data/api/user/inerfaces';
 import { create } from 'zustand';
 import { createSelectors } from './types';
-import { DCConstants } from 'data/api/collections/interfaces';
-import { collectionsApi } from 'data/api/collections';
-import { localStorage } from 'common/libs/local_storage';
+import { DCConstants } from 'data/api/common/interfaces';
+import { collectionsApi } from 'data/api/common';
+import { sharedStorage } from 'common/libs/shared_storage';
 
 type State = {
   user: User | null;
@@ -40,9 +40,9 @@ export const DCStore = create<State & Action>((set, get) => ({
     //   getStreamToken.token,
     // );
 
-    const constants = await collectionsApi.getConstants();
+    // const constants = await collectionsApi.getConstants();
 
-    return set({ user, constants });
+    return set({ user });
   },
 
   setUser: (user: User) => set({ user }),
@@ -70,11 +70,11 @@ export const DCStore = create<State & Action>((set, get) => ({
   //     await auth().signOut();
   //   }
 
-  //   await localStorage.clearAll();
+  //   await sharedStorage.clearAll();
   //   set({ user: null, constants: null });
   // },
   clearDCStoreAction: async ({ endSession }) => {
-    // const pushToken = await localStorage.getItem('pushToken');
+    // const pushToken = await sharedStorage.getItem('pushToken');
 
     if (endSession) {
       // if (pushToken) {
@@ -94,7 +94,7 @@ export const DCStore = create<State & Action>((set, get) => ({
     //   await NotificationsService.removeDeviceToken();
     // }
 
-    await localStorage.clearAll();
+    await sharedStorage.clearAll();
 
     set({ user: null });
   },

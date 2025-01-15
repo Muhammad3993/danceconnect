@@ -2,7 +2,7 @@ import { Community } from '../community/interfaces';
 
 export interface User {
   id: string;
-  individualStyles?: string[];
+  individualStyles: string[];
   userRole?: string[];
   email: string;
   userName?: string;

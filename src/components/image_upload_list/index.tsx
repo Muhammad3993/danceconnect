@@ -6,7 +6,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import React from 'react';
-import { useUploadImage } from 'data/hooks/collections';
+import { useUploadImage } from 'data/hooks/common';
 import { UploadIcon } from 'components/icons/upload';
 import FastImage from 'react-native-fast-image';
 import { TrashIcon } from 'components/icons/trash';

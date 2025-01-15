@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { DanceStyleGroup } from 'data/api/collections/interfaces';
+import { DanceStyleGroup } from 'data/api/common/interfaces';
 import { CloseSmallIcon } from 'components/icons/close_small';
 import { ArrowDownButtonIcon } from 'components/icons/arrow_down_button';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';

@@ -1,9 +1,9 @@
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import React from 'react';
 import { EditIcon } from 'components/icons/edit';
 import { UserImage } from 'components/user_image';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import { useUploadImage } from 'data/hooks/collections';
+import { useUploadImage } from 'data/hooks/common';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showErrorToast } from 'common/libs/toast';
 import { getImgePath } from 'data/api';
