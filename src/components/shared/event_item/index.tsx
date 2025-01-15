@@ -2,7 +2,6 @@ import { Image, Text, View } from 'react-native';
 import React from 'react';
 import { SetCalendarIcon } from 'components/icons/setCalendar';
 import { images } from 'common/resources/images';
-import { LocationIcon } from 'components/icons/location';
 import { DCLine } from '../line';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +46,11 @@ export const EventItem = ({ click }: EventItemProps) => {
         </View>
 
         <View style={styles.itemSpot}>
-          <LocationIcon width={16} height={16} />
+          <Image
+            style={{ width: 16, height: 16 }}
+            tintColor={theme.colors.secondary500}
+            source={images.icon.locationPin}
+          />
           <View style={styles.itemSpotRight}>
             <Text style={styles.itemSpotTitle}>Moderno Dance Academy</Text>
             <View style={styles.itemSpotImages}>

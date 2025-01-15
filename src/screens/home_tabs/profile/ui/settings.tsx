@@ -1,9 +1,8 @@
-import { Linking, Text, View } from 'react-native';
+import { Image, Linking, Text, View } from 'react-native';
 
 import { CategoryIcon } from 'components/icons/category';
 import { CommunitiesIcon } from 'components/icons/communities';
 import { InfoIcon } from 'components/icons/info';
-import { LocationIcon } from 'components/icons/location';
 import { LogoutIcon } from 'components/icons/logout';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { TicketIcon } from 'components/icons/ticket';
@@ -16,12 +15,13 @@ import Modal from 'react-native-modal';
 import { TabScreenNavigation } from 'screens/interfaces';
 import { useDCStore } from 'store';
 import { DeleteModal } from './DeleteModal';
-import LocationSelector from 'components/location_selector';
+import { LocationSelector } from 'components/location_selector';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useEditUser } from 'data/hooks/user';
 import { UserLocation } from 'data/api/user/inerfaces';
 import { showErrorToast } from 'common/libs/toast';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { images } from 'common/resources/images';
 
 interface Props {
   navigation: TabScreenNavigation<'profile'>;
@@ -147,7 +147,12 @@ export function ProfileSettings({ navigation, close }: Props) {
         <DCLine />
 
         <ListItem
-          leftIcon={<LocationIcon active />}
+          leftIcon={
+            <Image
+              tintColor={theme.colors.secondary500}
+              source={images.icon.locationPin}
+            />
+          }
           click={() => {
             locationRef.current?.present();
           }}

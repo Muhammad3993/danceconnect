@@ -8,4 +8,8 @@ export const images = {
   homeImg: require('../../../assets/images/rectangle.png'),
   homeImg1: require('../../../assets/images/rectangle1.png'),
   itemImg: require('../../../assets/images/item_img.png'),
+  icon: {
+    locationPin: require('../../../assets/images/icon/location-pin/location-pin.png'),
+    close: require('../../../assets/images/icon/close/close.png'),
+  },
 };

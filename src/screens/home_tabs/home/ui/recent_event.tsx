@@ -1,5 +1,4 @@
 import { images } from 'common/resources/images';
-import { LocationIcon } from 'components/icons/location';
 import { SetCalendarIcon } from 'components/icons/setCalendar';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -54,7 +53,11 @@ export function RecentEvent() {
             </Text>
           </View>
           <View style={styles.homeBoxRow}>
-            <LocationIcon width={16} height={16} />
+            <Image
+              style={{ width: 16, height: 16 }}
+              tintColor={theme.colors.secondary500}
+              source={images.icon.locationPin}
+            />
             <Text style={styles.homeBoxRowTitle} numberOfLines={1}>
               night Club 24
             </Text>
@@ -160,7 +163,7 @@ const styleSheet = createStyleSheet(theming => ({
   homeBoxTitle: {
     fontSize: 20,
     fontWeight: '700',
-    fontFamily: theming.fonts.latoBold,
+    fontFamily: theming.fonts.latoRegular,
     color: theming.colors.textPrimary,
     marginBottom: theming.spacing.SM,
   },
@@ -189,6 +192,6 @@ const styleSheet = createStyleSheet(theming => ({
     fontSize: 12,
     color: theming.colors.textPrimary,
     textTransform: 'uppercase',
-    fontFamily: theming.fonts.latoBold,
+    fontFamily: theming.fonts.latoRegular,
   },
 }));

@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDCStore } from 'store';
@@ -15,6 +15,7 @@ import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserLocation } from 'data/api/user/inerfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { images } from 'common/resources/images';
 
 interface Props {
   onChange?: (val: UserLocation) => void;
@@ -26,7 +27,6 @@ export const LocationSelector = forwardRef<BottomSheetModal, Props>(
     const { styles, theme } = useStyles(styleSheet);
 
     const { t } = useTranslation();
-    const { bottom, top } = useSafeAreaInsets();
 
     const constants = useDCStore.use.constants();
     const [searchCountryText, setSearchCountryText] = useState('');
@@ -78,36 +78,25 @@ export const LocationSelector = forwardRef<BottomSheetModal, Props>(
       });
     };
 
-    const handle = useCallback(() => {
-      return (
-        <View style={[styles.headerWrapper, { paddingTop: top + 24 }]}>
-          <View style={{ width: 22 }} />
-          <View style={{ alignSelf: 'center' }}>
-            <Text style={styles.title}>{t('location')}</Text>
-          </View>
-          <TouchableOpacity onPress={onClose} style={styles.backIcon}>
-            {/* <Image source={{ uri: 'close' }} style={styles.backIcon} /> */}
-          </TouchableOpacity>
-        </View>
-      );
-    }, [t, top, onClose]);
-
     return (
       <DCBottomSheet
         enableContentPanningGesture={false}
         enableHandlePanningGesture={false}
-        handleComponent={handle}
+        handleComponent={null}
         ref={bottomSheetModalRef}
         snapPoints={snapPoints}
         backgroundStyle={{ borderRadius: 0 }}
         enableDynamicSizing={false}>
-        <BottomSheetView
-          style={{
-            flex: 1,
-            paddingHorizontal: 24,
-            paddingVertical: 16,
-            paddingBottom: bottom + theme.spacing.MD,
-          }}>
+        <BottomSheetView style={styles.container}>
+          <View style={styles.header}>
+            <View style={{ width: 20 }} />
+            <View style={{ alignSelf: 'center' }}>
+              <Text style={styles.title}>{t('location')}</Text>
+            </View>
+            <TouchableOpacity onPress={onClose}>
+              <Image source={images.icon.close} style={styles.backIcon} />
+            </TouchableOpacity>
+          </View>
           <DCInput
             forBottomSheet
             placeholder={t('country_choose')}
@@ -283,22 +272,27 @@ const CityPicker = ({
   );
 };
 
-const styleSheet = createStyleSheet(theming => ({
+const styleSheet = createStyleSheet((theming, ctx) => ({
+  container: {
+    flex: 1,
+    paddingHorizontal: theming.spacing.LG,
+    paddingBottom: ctx.insets.bottom + theming.spacing.MD,
+    paddingTop: ctx.insets.top + 24,
+  },
   justifyCenter: {
     justifyContent: 'center',
     height: 15,
     width: 15,
     backgroundColor: 'red',
   },
-  headerWrapper: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 24,
+    marginBottom: theming.spacing.LG,
   },
   backIcon: {
     height: 20,
     width: 20,
-    backgroundColor: 'red',
   },
   title: {
     fontSize: 20,

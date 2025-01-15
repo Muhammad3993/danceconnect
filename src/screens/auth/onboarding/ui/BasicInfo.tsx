@@ -2,15 +2,15 @@ import React, { useRef } from 'react';
 import { genders, roles } from 'common/constants';
 import { DCInput } from 'components/shared/input';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Text, View } from 'react-native';
+import { Image, ScrollView, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocationSelector } from 'components/location_selector';
 import { Controller, useFormContext } from 'react-hook-form';
 import { User } from 'data/api/user/inerfaces';
 import { Header } from './Header';
-import { LocationIcon } from 'components/icons/location';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { images } from 'common/resources/images';
 
 export const BasicInfo = () => {
   const { t } = useTranslation();
@@ -102,7 +102,11 @@ export const BasicInfo = () => {
                   <Text style={styles.chooseCountryText}>
                     {value ? value.location : t('location_choose')}
                   </Text>
-                  <LocationIcon />
+                  <Image
+                    style={{ width: 24, height: 24 }}
+                    tintColor={theme.colors.secondary500}
+                    source={images.icon.locationPin}
+                  />
                 </TouchableOpacity>
 
                 {fieldState.error?.message && (

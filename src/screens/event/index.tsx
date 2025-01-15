@@ -2,7 +2,6 @@ import { images } from 'common/resources/images';
 import { ArrowLeftIcon } from 'components/icons/arrowLeft';
 import { CalendarIcon } from 'components/icons/calendar';
 import { EditIconSvg } from 'components/icons/editIcon';
-import { LocationIcon } from 'components/icons/location';
 import { SettingIcon } from 'components/icons/settingIcon';
 import { ShareIcon } from 'components/icons/shareIcon';
 import { TicketIcon } from 'components/icons/ticket';
@@ -133,7 +132,13 @@ export function EventScreen() {
 
             <View style={styles.eventRow}>
               <DCRoundIcon
-                icon={<LocationIcon />}
+                icon={
+                  <Image
+                    style={{ width: 16, height: 16 }}
+                    tintColor={theme.colors.secondary500}
+                    source={images.icon.locationPin}
+                  />
+                }
                 iconBoxStyle={{
                   width: 44,
                   height: 44,

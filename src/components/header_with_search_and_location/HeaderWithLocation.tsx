@@ -1,16 +1,16 @@
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { LocationIcon } from 'components/icons/location';
 import { RightArrowIcon } from 'components/icons/rightArrow';
 import { DCBottomSheet } from 'components/shared/bottom_sheet';
 import React, { useCallback, useRef, useState } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Image, Text, TouchableOpacity } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { LocationBottomSheet } from './ui/LocationBottomSheet';
+import { images } from 'common/resources/images';
 
 export function HeaderWithLocation() {
   const [content, setContent] = useState('main');
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const { styles } = useStyles(styleSheet);
+  const { styles, theme } = useStyles(styleSheet);
 
   const presentModal = useCallback(() => {
     bottomSheetRef.current?.present();
@@ -25,7 +25,11 @@ export function HeaderWithLocation() {
       <TouchableOpacity
         style={styles.communitiesLocation}
         onPress={presentModal}>
-        <LocationIcon width={16} height={16} />
+        <Image
+          style={{ width: 16, height: 16 }}
+          tintColor={theme.colors.secondary500}
+          source={images.icon.locationPin}
+        />
         <Text style={styles.communitiesLocationTitle}>
           San Francisco, California
         </Text>

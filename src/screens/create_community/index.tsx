@@ -1,21 +1,21 @@
 import DanceStylesSelector from 'components/dance_styles_selector';
 import { CommunitiesIcon } from 'components/icons/communities';
-import LocationSelector from 'components/location_selector';
+import { LocationSelector } from 'components/location_selector';
 import { DCButton } from 'components/shared/button';
 import { DCInput } from 'components/shared/input';
 import { t } from 'i18next';
 import React, { useRef } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import ImageUploadList from 'components/image_upload_list';
 import { useCreateCommunity, useUpdateCommunity } from 'data/hooks/community';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from 'screens/interfaces';
-import { LocationIcon } from 'components/icons/location';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { showErrorToast } from 'common/libs/toast';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { images } from 'common/resources/images';
 
 export function CreateCommunity({
   navigation,
@@ -191,7 +191,11 @@ export function CreateCommunity({
                       <Text style={styles.chooseCountryText}>
                         {value ? value.location : t('location_choose')}
                       </Text>
-                      <LocationIcon />
+                      <Image
+                        style={{ width: 16, height: 16 }}
+                        tintColor={theme.colors.secondary500}
+                        source={images.icon.locationPin}
+                      />
                     </TouchableOpacity>
                     {fieldState.error?.message && (
                       <Text style={{ color: theme.colors.error }}>
