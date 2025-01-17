@@ -79,7 +79,13 @@ export const userApi = {
     return res.data;
   },
   async editUser(data: Partial<User>) {
+    console.log('editUser');
+    console.log(data);
+
     const res = await apiClient.patch<User>('/auth/me', data);
+    console.log('editUser Res');
+
+    console.log(res.data);
 
     return res.data;
   },

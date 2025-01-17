@@ -4,8 +4,7 @@ import Config from 'react-native-config';
 import { DCStore } from 'store';
 
 export const apiClient = axios.create({
-  // baseURL: Config.API_URL,
-  baseURL: 'https://stage.danceconnect.online/api/v1',
+  baseURL: Config.API_URL,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -17,6 +16,7 @@ apiClient.interceptors.request.use(
     const token = await sharedStorage.getItem('token');
     // Do something before request is sent
     config.headers.Authorization = `Bearer ${token}`;
+    console.log(token);
 
     return config;
   },

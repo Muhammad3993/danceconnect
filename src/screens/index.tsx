@@ -24,6 +24,7 @@ import { ChatScreen } from './chat';
 
 import { EditDanceStylesSreen } from './edit_dance_styles';
 import { CreatePostScreen } from './create_post';
+import Config from 'react-native-config';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 

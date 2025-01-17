@@ -14,9 +14,9 @@ import { useSocialBtns } from 'data/hooks/user';
 import { images } from 'common/resources/images';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AuthSchema, authSchema } from 'data/api/user/schema';
 import { isEmptyObj } from 'common/utils/object';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { authSchema, AuthSchema } from 'data/api/user/schema';
 
 interface Props {
   footerComponent: ReactNode;

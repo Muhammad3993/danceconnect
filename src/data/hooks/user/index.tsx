@@ -2,8 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import { sharedStorage } from 'common/libs/shared_storage';
 import { showErrorToast } from 'common/libs/toast';
 import { images } from 'common/resources/images';
+import { collectionsApi } from 'data/api/common';
 import { userApi } from 'data/api/user';
-import { User } from 'data/api/user/inerfaces';
+import { AuthUserRequest, User } from 'data/api/user/inerfaces';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
@@ -119,11 +120,16 @@ export const useLoginUser = () => {
   const setUser = useDCStore.use.setUser();
 
   return useMutation({
-    mutationFn: userApi.loginUser,
+    mutationFn: async (data: AuthUserRequest) => {
+      const user = await userApi.loginUser(data);
+      const constants = await collectionsApi.getConstants();
 
-    async onSuccess(data) {
-      await sharedStorage.setItem('token', data.token);
-      setUser(data.user);
+      return { user, constants };
+    },
+
+    async onSuccess({ constants, user }) {
+      await sharedStorage.setItem('token', user.token);
+      setUser(user.user, constants);
     },
     onError(err) {
       const error = err as Error;
@@ -136,10 +142,16 @@ export const useRegisterUser = () => {
   const setUser = useDCStore.use.setUser();
 
   return useMutation({
-    mutationFn: userApi.registerUser,
-    async onSuccess(data) {
-      await sharedStorage.setItem('token', data.token);
-      setUser(data.user);
+    mutationFn: async (data: AuthUserRequest) => {
+      const user = await userApi.registerUser(data);
+      const constants = await collectionsApi.getConstants();
+
+      return { user, constants };
+    },
+
+    async onSuccess({ user, constants }) {
+      await sharedStorage.setItem('token', user.token);
+      setUser(user.user, constants);
     },
     onError(err) {
       const error = err as Error;

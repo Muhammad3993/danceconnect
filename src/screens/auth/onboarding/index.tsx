@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDCStore } from 'store';
-import { userEditSchema } from '../../../data/api/user/schema';
+import { userEditSchema } from './schema';
 import { isEmptyObj } from 'common/utils/object';
 import { useEditUser } from 'data/hooks/user';
 import { showErrorToast } from 'common/libs/toast';
@@ -26,12 +26,18 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const refPagerView = useRef<PagerView>(null);
   const { mutateAsync, isPending } = useEditUser();
   const methods = useForm<Partial<User>>({
-    defaultValues: user ?? {},
+    defaultValues: {
+      fullName: user?.fullName,
+      individualStyles: user?.individualStyles,
+      userGender: user?.userGender,
+      location: user?.location,
+      userRole: user?.userRole,
+      about: null,
+    },
     resolver: yupResolver(userEditSchema),
   });
 
-  const { isValid, dirtyFields, errors } = methods.formState;
-  console.log(errors);
+  const { isValid, dirtyFields } = methods.formState;
 
   const goNext = async () => {
     if (currPage === 0) {
@@ -49,17 +55,8 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
 
       return;
     }
-    methods.handleSubmit(
-      async d => {
-        await mutateAsync(d);
-      },
-      err => {
-        console.log(err);
-      },
-    )();
+    methods.handleSubmit(d => mutateAsync(d))();
   };
-
-  console.log(user);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -78,7 +75,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
       <View style={styles.btnFooter}>
         <DCButton
           isLoading={isPending}
-          // disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
+          disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
           onPress={goNext}>
           {t('next')}
         </DCButton>

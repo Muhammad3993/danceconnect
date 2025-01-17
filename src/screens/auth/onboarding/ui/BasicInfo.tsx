@@ -62,10 +62,10 @@ export const BasicInfo = () => {
                   return (
                     <TouchableOpacity
                       key={item.id}
-                      onPress={() => onChange(item.title)}
+                      onPress={() => onChange(item.id)}
                       style={[
                         styles.choiseItem,
-                        value === item.title && styles.choiseItemActive,
+                        value === item.id && styles.choiseItemActive,
                       ]}>
                       <Text style={styles.choiseItemText}>{item.title}</Text>
                     </TouchableOpacity>

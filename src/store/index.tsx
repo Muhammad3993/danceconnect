@@ -16,7 +16,7 @@ type Action = {
   clearDCStoreAction: (data: { endSession: boolean }) => Promise<void>;
   updateUser: (user: Partial<User>) => void;
   updateSubscriptionsCount: (val: number) => void;
-  setUser: (user: User) => void;
+  setUser: (user: User, constants?: DCConstants) => void;
 };
 
 export const DCStore = create<State & Action>((set, get) => ({
@@ -45,7 +45,8 @@ export const DCStore = create<State & Action>((set, get) => ({
     return set({ user, constants });
   },
 
-  setUser: (user: User) => set({ user }),
+  setUser: (user, constants) =>
+    set({ user, constants: constants ?? get().constants }),
   updateUser: user => {
     const currUser = get().user;
     if (currUser) set({ user: { ...currUser, ...user } });
