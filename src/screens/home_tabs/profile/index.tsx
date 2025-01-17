@@ -154,8 +154,8 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
                 style={styles.image}
               />
               <View style={styles.profileData}>
-                <Text numberOfLines={1} style={styles.userName}>
-                  {user?.userName}
+                <Text numberOfLines={1} style={styles.fullName}>
+                  {user?.fullName}
                 </Text>
                 {user?.location && (
                   <Text numberOfLines={1} style={styles.userAdress}>
@@ -271,7 +271,7 @@ const styleSheet = createStyleSheet(theme => ({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  userName: {
+  fullName: {
     fontSize: 18,
     color: theme.colors.textPrimary,
     marginBottom: 4,

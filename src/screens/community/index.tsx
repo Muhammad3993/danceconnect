@@ -220,7 +220,7 @@ export function CommunityScreen({
               <View>
                 <Text
                   style={[styles.eventDate, { fontSize: theme.spacing.MD }]}>
-                  {community?.creator.userName}
+                  {community?.creator.fullName}
                 </Text>
                 <Text style={styles.eventTime}>{t('organizer')}</Text>
               </View>

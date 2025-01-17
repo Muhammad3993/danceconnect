@@ -4,7 +4,8 @@ import Config from 'react-native-config';
 import { DCStore } from 'store';
 
 export const apiClient = axios.create({
-  baseURL: Config.API_URL,
+  // baseURL: Config.API_URL,
+  baseURL: 'https://stage.danceconnect.online/api/v1',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -32,6 +33,7 @@ apiClient.interceptors.response.use(
   },
   async function (error: AxiosError) {
     console.log('error data', error.response?.data);
+    console.log('error data', error);
 
     if (error.response?.status === 401 || error.status === 401) {
       DCStore.getState().clearDCStoreAction({ endSession: false });

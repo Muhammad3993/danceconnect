@@ -25,7 +25,7 @@ export const DCStore = create<State & Action>((set, get) => ({
   initAppAction: async () => {
     const user = await userApi.getUser();
 
-    // await DCAmity.loginUser(user.id, user.userName);
+    // await DCAmity.loginUser(user.id, user.fullName);
 
     // const getStreamToken = await userApi.getGetStreamToken();
 
@@ -40,9 +40,9 @@ export const DCStore = create<State & Action>((set, get) => ({
     //   getStreamToken.token,
     // );
 
-    // const constants = await collectionsApi.getConstants();
+    const constants = await collectionsApi.getConstants();
 
-    return set({ user });
+    return set({ user, constants });
   },
 
   setUser: (user: User) => set({ user }),

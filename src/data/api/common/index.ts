@@ -5,7 +5,7 @@ import {
   PlaceAutocompleteResponse,
 } from './interfaces';
 import axios from 'axios';
-import { apiClient } from '..';
+import { apiClient } from '../';
 
 export const collectionsApi = {
   async getConstants() {

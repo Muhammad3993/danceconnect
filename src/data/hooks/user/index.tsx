@@ -149,11 +149,16 @@ export const useRegisterUser = () => {
 };
 
 export const useEditUser = () => {
-  return useMutation({
-    mutationFn: async (data: Partial<User>) => {
-      const newUser = await userApi.editUser(data);
+  const updateUser = useDCStore.use.setUser();
 
-      return newUser;
+  return useMutation({
+    mutationFn: userApi.editUser,
+    onSuccess(newUser) {
+      updateUser(newUser);
+    },
+    onError(err) {
+      const error = err as Error;
+      showErrorToast(error.message);
     },
   });
 };

@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDCStore } from 'store';
-import { userEditSchema } from './schema';
+import { userEditSchema } from '../../../data/api/user/schema';
 import { isEmptyObj } from 'common/utils/object';
 import { useEditUser } from 'data/hooks/user';
 import { showErrorToast } from 'common/libs/toast';
@@ -22,7 +22,6 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const { styles } = useStyles(styleSheet);
 
   const user = useDCStore.use.user();
-  const updateUser = useDCStore.use.setUser();
   const [currPage, setCurrPage] = useState(0);
   const refPagerView = useRef<PagerView>(null);
   const { mutateAsync, isPending } = useEditUser();
@@ -32,13 +31,14 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   });
 
   const { isValid, dirtyFields, errors } = methods.formState;
+  console.log(errors);
 
   const goNext = async () => {
     if (currPage === 0) {
       const validInfo = await methods.trigger([
         'location',
         'userGender',
-        'userName',
+        'fullName',
         'userRole',
       ]);
 
@@ -46,20 +46,20 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
         refPagerView.current?.setPage(1);
         setCurrPage(1);
       }
-    } else {
-      methods.handleSubmit(data => {
-        mutateAsync(data, {
-          onSuccess(newUser) {
-            updateUser(newUser);
-          },
-          onError(err) {
-            const error = err as Error;
-            showErrorToast(error.message);
-          },
-        });
-      })();
+
+      return;
     }
+    methods.handleSubmit(
+      async d => {
+        await mutateAsync(d);
+      },
+      err => {
+        console.log(err);
+      },
+    )();
   };
+
+  console.log(user);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -78,7 +78,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
       <View style={styles.btnFooter}>
         <DCButton
           isLoading={isPending}
-          disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
+          // disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
           onPress={goNext}>
           {t('next')}
         </DCButton>

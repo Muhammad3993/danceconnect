@@ -58,7 +58,7 @@ export function EditProfileScreen({
 
           <Controller
             control={control}
-            name="userName"
+            name="fullName"
             render={({ field: { value, onChange } }) => (
               <DCInput
                 placeholder={t('name')}

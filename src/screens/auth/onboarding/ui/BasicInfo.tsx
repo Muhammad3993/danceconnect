@@ -26,7 +26,7 @@ export const BasicInfo = () => {
 
       <Controller
         control={control}
-        name="userName"
+        name="fullName"
         render={({ field: { value, onChange }, fieldState }) => {
           return (
             <DCInput

@@ -5,7 +5,7 @@ export interface User {
   individualStyles: string[];
   userRole?: string[];
   email: string;
-  userName?: string;
+  fullName?: string;
   location?: UserLocation;
   userGender?: Gender;
   userImage?: string;
