@@ -121,7 +121,7 @@ export function CredentialsForm({
                   key={btn.title}
                   onPress={btn.onPress}
                   isLoading={btn.isLoading}
-                  containerStyle={{ paddingHorizontal: theme.spacing.LG }}>
+                  containerStyle={styles.btn}>
                   <Image style={{ width: 24, height: 24 }} source={btn.icon} />
                 </DCButton>
               );
@@ -154,7 +154,7 @@ const styleSheet = createStyleSheet((theming, { insets }) => ({
   container: {
     flex: 1,
     paddingTop:
-      insets.top + theming.utils.getAdaptiveWidth(theming.spacing.LG * 3),
+      insets.top + theming.utils.getAdaptiveWidth(theming.spacing.LG * 2),
     paddingBottom: insets.bottom + theming.spacing.MD,
   },
 
@@ -167,7 +167,7 @@ const styleSheet = createStyleSheet((theming, { insets }) => ({
     fontSize: 32,
     textAlign: 'center',
     marginTop: theming.spacing.LG,
-    marginBottom: theming.spacing.LG * 2,
+    marginBottom: theming.utils.getAdaptiveWidth(theming.spacing.LG * 2),
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.textPrimary,
   },
@@ -200,6 +200,16 @@ const styleSheet = createStyleSheet((theming, { insets }) => ({
   btnsWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+  },
+  btn: {
+    width: {
+      xs: 55,
+      sm: 60,
+    },
+    height: {
+      xs: 55,
+      sm: 60,
+    },
   },
   licenceText: {
     fontSize: 14,

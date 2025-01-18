@@ -70,7 +70,7 @@ const styleSheet = createStyleSheet((theming, { insets }) => ({
   container: {
     flex: 1,
     paddingTop:
-      insets.top + theming.utils.getAdaptiveWidth(theming.spacing.LG * 5),
+      insets.top + theming.utils.getAdaptiveWidth(theming.spacing.LG * 4),
     paddingBottom: insets.bottom + theming.spacing.MD,
   },
 
@@ -78,7 +78,7 @@ const styleSheet = createStyleSheet((theming, { insets }) => ({
     fontSize: 32,
     textAlign: 'center',
     marginTop: theming.spacing.LG,
-    marginBottom: theming.spacing.LG * 2,
+    marginBottom: theming.utils.getAdaptiveWidth(theming.spacing.LG * 2),
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.textPrimary,
   },
