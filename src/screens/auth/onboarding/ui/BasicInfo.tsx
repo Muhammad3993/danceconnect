@@ -19,7 +19,7 @@ export const BasicInfo = () => {
   const { styles, theme } = useStyles(styleSheet);
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1, paddingTop: theme.spacing.MD }}>
       <Header title={t('yourself')} description={t('yourself_desc')} />
 
       <Text style={styles.placeholderTitle}>{t('name')}</Text>
@@ -77,6 +77,7 @@ export const BasicInfo = () => {
                   style={{
                     color: theme.colors.error,
                     paddingHorizontal: theme.spacing.LG,
+                    marginTop: theme.spacing.XS,
                   }}>
                   {fieldState.error.message}
                 </Text>
@@ -110,7 +111,11 @@ export const BasicInfo = () => {
                 </TouchableOpacity>
 
                 {fieldState.error?.message && (
-                  <Text style={{ color: theme.colors.error }}>
+                  <Text
+                    style={{
+                      color: theme.colors.error,
+                      marginTop: theme.spacing.XS,
+                    }}>
                     {fieldState.error?.message}
                   </Text>
                 )}
@@ -166,6 +171,7 @@ export const BasicInfo = () => {
                   style={{
                     paddingHorizontal: theme.spacing.LG,
                     color: theme.colors.error,
+                    marginTop: theme.spacing.XS,
                   }}>
                   {fieldState.error.message}
                 </Text>
@@ -184,7 +190,7 @@ const styleSheet = createStyleSheet(theme => ({
     fontWeight: '700',
     color: theme.colors.textPrimary,
     paddingHorizontal: theme.spacing.LG,
-    marginBottom: theme.spacing.XS,
+    marginBottom: theme.spacing.SM,
   },
   choiseItem: {
     borderWidth: 1,
@@ -222,6 +228,6 @@ const styleSheet = createStyleSheet(theme => ({
     letterSpacing: 0.2,
   },
   input: {
-    marginBottom: 28,
+    marginBottom: theme.spacing.LG,
   },
 }));

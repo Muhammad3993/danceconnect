@@ -1,4 +1,4 @@
-import { Image, Linking, ScrollView, Text, View } from 'react-native';
+import { Image, ScrollView, Text, View } from 'react-native';
 import React from 'react';
 import { StackScreenProps } from '../interfaces';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { DCButton } from 'components/shared/button';
 import { useSocialBtns } from 'data/hooks/user';
 import { images } from 'common/resources/images';
-import { SCREEN_HEIGHT } from 'common/constants';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
@@ -16,10 +15,8 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
 
   return (
     <ScrollView
-      style={{
-        backgroundColor: theme.colors.white,
-        padding: theme.spacing.LG,
-      }}
+      style={styles.root}
+      contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}>
       <Image source={images.authLogo} style={styles.logo} />
       <Text style={styles.welcome}>{t('welcome_text')}</Text>
@@ -50,17 +47,11 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
       <DCButton
         size="large"
         variant="outlined"
-        containerStyle={{ marginTop: theme.spacing.MD }}
+        containerStyle={{ marginVertical: theme.spacing.MD }}
         onPress={() => navigation.push('register')}>
         {t('auth_btn_email')}
       </DCButton>
-      <Text
-        style={styles.privacyP}
-        onPress={() =>
-          Linking.openURL('https://danceconnect.online/privacy.html')
-        }>
-        {t('privacy')}
-      </Text>
+
       <View style={styles.bottomWrapper}>
         <Text style={styles.alreadyAccountText}>{t('already')}</Text>
         <TouchableOpacity onPress={() => navigation.push('login')}>
@@ -71,51 +62,30 @@ export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {
   );
 }
 
-const styleSheet = createStyleSheet(theming => ({
+const styleSheet = createStyleSheet((theming, { insets }) => ({
+  root: {
+    backgroundColor: theming.colors.white,
+    paddingHorizontal: theming.spacing.LG,
+  },
   container: {
     flex: 1,
-    backgroundColor: theming.colors.white,
-    justifyContent: 'space-between',
+    paddingTop:
+      insets.top + theming.utils.getAdaptiveWidth(theming.spacing.LG * 5),
+    paddingBottom: insets.bottom + theming.spacing.MD,
   },
-  privacyP: {
-    textAlign: 'center',
-    color: theming.colors.orange,
-    fontSize: 14,
-    lineHeight: 20,
-    paddingTop: 8,
-  },
-  licenceText: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: '400',
-    color: theming.colors.darkGray,
-    fontFamily: theming.fonts.latoRegular,
-    textAlign: 'center',
-  },
-  licenceTextOrange: {
-    color: theming.colors.orange,
-    fontSize: 14,
-    lineHeight: 20,
-  },
+
   welcome: {
     fontSize: 32,
     textAlign: 'center',
-    paddingTop: 41,
-    paddingBottom: 36,
+    marginTop: theming.spacing.LG,
+    marginBottom: theming.spacing.LG * 2,
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.textPrimary,
   },
-  btn: {
-    margin: 14,
-    backgroundColor: theming.colors.lightGray,
-    borderRadius: 14,
-    padding: 14,
-    alignItems: 'center',
-  },
+
   logo: {
     height: 55,
     width: 200,
-    marginTop: SCREEN_HEIGHT / 10,
     alignSelf: 'center',
   },
   linesWrapper: {
@@ -138,14 +108,9 @@ const styleSheet = createStyleSheet(theming => ({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: theming.spacing.LG,
+    marginTop: 'auto',
   },
-  bottomWrapperLg: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    // paddingTop: 100,
-    paddingBottom: 40,
-  },
+
   alreadyAccountText: {
     fontSize: 14,
     lineHeight: 20,

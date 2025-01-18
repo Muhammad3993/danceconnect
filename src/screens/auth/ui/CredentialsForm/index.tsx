@@ -47,11 +47,13 @@ export function CredentialsForm({
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="height">
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: theme.colors.white }}
+      behavior="height">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingVertical: 20 }}>
+        style={styles.root}
+        contentContainerStyle={styles.container}>
         <View>
           <Image source={images.authLogo} style={styles.logo} />
           <Text style={styles.welcome}>{title}</Text>
@@ -129,7 +131,7 @@ export function CredentialsForm({
 
         {footerComponent}
 
-        <View style={{ paddingHorizontal: 20 }}>
+        <View style={{ marginTop: 'auto' }}>
           <Text style={styles.licenceText}>
             {t('terms_first')}
             <Text style={styles.licenceTextOrange} onPress={openTerms}>
@@ -143,49 +145,38 @@ export function CredentialsForm({
   );
 }
 
-const styleSheet = createStyleSheet(theming => ({
-  container: {
+const styleSheet = createStyleSheet((theming, { insets }) => ({
+  root: {
     flex: 1,
     backgroundColor: theming.colors.white,
     paddingHorizontal: theming.spacing.LG,
-    justifyContent: 'space-between',
+  },
+  container: {
+    flex: 1,
+    paddingTop:
+      insets.top + theming.utils.getAdaptiveWidth(theming.spacing.LG * 3),
+    paddingBottom: insets.bottom + theming.spacing.MD,
   },
 
-  icon: {
-    height: 20,
-    width: 24,
-    marginHorizontal: 30,
-  },
-  errorMessage: {
-    marginTop: -16,
-    paddingBottom: 6,
-    alignItems: 'center',
-  },
-  errorMessageText: {
-    color: theming.colors.error,
-    fontSize: 13,
-  },
-
-  welcome: {
-    fontSize: 32,
-    textAlign: 'center',
-    paddingTop: 41,
-    paddingBottom: 36,
-    fontFamily: theming.fonts.latoRegular,
-    color: theming.colors.textPrimary,
-  },
   logo: {
     height: 55,
     width: 200,
-    marginTop: 84,
-    marginBottom: 20,
     alignSelf: 'center',
   },
+  welcome: {
+    fontSize: 32,
+    textAlign: 'center',
+    marginTop: theming.spacing.LG,
+    marginBottom: theming.spacing.LG * 2,
+    fontFamily: theming.fonts.latoRegular,
+    color: theming.colors.textPrimary,
+  },
+
   linesWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 12,
+    marginHorizontal: theming.spacing.SM,
     marginVertical: theming.spacing.LG,
   },
   line: {
@@ -204,14 +195,11 @@ const styleSheet = createStyleSheet(theming => ({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: 60,
-    paddingBottom: 40,
   },
 
   btnsWrapper: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginHorizontal: 30,
+    justifyContent: 'space-evenly',
   },
   licenceText: {
     fontSize: 14,
@@ -220,7 +208,6 @@ const styleSheet = createStyleSheet(theming => ({
     color: theming.colors.darkGray,
     fontFamily: theming.fonts.latoRegular,
     textAlign: 'center',
-    marginHorizontal: 40,
   },
   licenceTextOrange: {
     color: theming.colors.orange,

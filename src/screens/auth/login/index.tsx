@@ -35,8 +35,7 @@ const styleSheet = createStyleSheet(theming => ({
   bottomWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: 60,
-    paddingBottom: 40,
+    marginVertical: theming.spacing.LG,
   },
   alreadyAccountText: {
     fontSize: 14,

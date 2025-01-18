@@ -96,7 +96,8 @@ export const DCInput = ({
         {rightIcon}
       </View>
       {errorText && (
-        <Text style={{ color: theme.colors.error, marginTop: 4 }}>
+        <Text
+          style={{ color: theme.colors.error, marginTop: theme.spacing.XS }}>
           {errorText}
         </Text>
       )}
@@ -113,7 +114,11 @@ const styleSheet = createStyleSheet(theming => ({
     borderWidth: 1,
     borderRadius: 8,
     gap: 16,
-    padding: 16,
+    paddingHorizontal: theming.spacing.MD,
+    height: {
+      xs: 50,
+      sm: 54,
+    },
     flexDirection: 'row',
     backgroundColor: theming.colors.lightGray,
   },

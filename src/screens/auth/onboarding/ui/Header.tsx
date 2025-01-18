@@ -11,7 +11,11 @@ export function Header({ description, title }: Props) {
   const { styles, theme } = useStyles(styleSheet);
 
   return (
-    <View style={{ paddingHorizontal: theme.spacing.LG, marginBottom: 28 }}>
+    <View
+      style={{
+        paddingHorizontal: theme.spacing.LG,
+        marginBottom: theme.spacing.MD,
+      }}>
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
     </View>
@@ -24,6 +28,7 @@ const styleSheet = createStyleSheet(theming => ({
     fontSize: 30,
     fontWeight: '700',
     fontFamily: theming.fonts.latoRegular,
+    marginBottom: theming.spacing.MD,
   },
   description: {
     fontSize: 18,
@@ -32,6 +37,5 @@ const styleSheet = createStyleSheet(theming => ({
     lineHeight: 25.2,
     letterSpacing: 0.2,
     fontFamily: theming.fonts.latoRegular,
-    marginTop: 12,
   },
 }));

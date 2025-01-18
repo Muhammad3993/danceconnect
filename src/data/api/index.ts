@@ -16,7 +16,6 @@ apiClient.interceptors.request.use(
     const token = await sharedStorage.getItem('token');
     // Do something before request is sent
     config.headers.Authorization = `Bearer ${token}`;
-    console.log(token);
 
     return config;
   },

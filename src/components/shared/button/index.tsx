@@ -15,7 +15,7 @@ export const DCButton = ({
   variant = 'primary',
   size = 'medium',
 }: DCButtonProps) => {
-  const { styles } = useStyles(styleSheet);
+  const { styles, theme } = useStyles(styleSheet);
 
   const variantStyle = {
     primary: styles.btnPrimary,
@@ -43,7 +43,13 @@ export const DCButton = ({
           {typeof children === 'string' ? (
             <Text
               style={[
-                variant === 'primary' ? styles.title : styles.titleOutlined,
+                styles.title,
+                {
+                  color:
+                    variant === 'primary'
+                      ? theme.colors.white
+                      : theme.colors.textPrimary,
+                },
                 textStyle,
               ]}>
               {children}
@@ -65,8 +71,18 @@ const styleSheet = createStyleSheet(theming => ({
     justifyContent: 'center',
     gap: 6,
   },
-  btnMd: { height: 46 },
-  btnLg: { height: 54 },
+  btnMd: {
+    height: {
+      xs: 42,
+      sm: 46,
+    },
+  },
+  btnLg: {
+    height: {
+      xs: 50,
+      sm: 54,
+    },
+  },
   btnOutlined: {
     borderWidth: 1,
     borderColor: theming.colors.gray300,
@@ -90,13 +106,6 @@ const styleSheet = createStyleSheet(theming => ({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: theming.colors.white,
-    fontFamily: theming.fonts.latoRegular,
-  },
-  titleOutlined: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theming.colors.textPrimary,
     fontFamily: theming.fonts.latoRegular,
   },
 }));

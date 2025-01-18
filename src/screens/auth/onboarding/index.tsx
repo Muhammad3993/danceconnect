@@ -74,6 +74,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
 
       <View style={styles.btnFooter}>
         <DCButton
+          size={'large'}
           isLoading={isPending}
           disabled={currPage === 0 ? isEmptyObj(dirtyFields) : !isValid}
           onPress={goNext}>
