@@ -66,8 +66,9 @@ export function CommunityItem({ community, click }: CommunityItemProps) {
             <View style={styles.itemSpotImages}>
               {slicedFollowers.map((user, i) => (
                 <UserImage
+                  size={24}
                   key={user.id}
-                  userImage={getImgePath(user.userImage)}
+                  imageUrl={getImgePath(user.userImage)}
                   style={i === 0 ? styles.itemSpotImg : styles.itemSpotImg1}
                 />
               ))}

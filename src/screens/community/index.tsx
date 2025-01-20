@@ -214,7 +214,8 @@ export function CommunityScreen({
 
             <View style={styles.eventRow}>
               <UserImage
-                userImage={getImgePath(community?.creator.userImage)}
+                size={44}
+                imageUrl={getImgePath(community?.creator.userImage)}
                 style={styles.eventOrganizerAvatar}
               />
               <View>

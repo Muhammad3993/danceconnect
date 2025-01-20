@@ -150,7 +150,8 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
           <>
             <View style={styles.profile}>
               <UserImage
-                userImage={getImgePath(user.userImage)}
+                size={80}
+                imageUrl={user.photo?.path}
                 style={styles.image}
               />
               <View style={styles.profileData}>
@@ -226,7 +227,7 @@ export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {
           </>
         }
       />
-      <DCBottomSheet snapPoints={['70%']} ref={settingsSheet}>
+      <DCBottomSheet ref={settingsSheet}>
         <BottomSheetView>
           <ProfileSettings close={closeModal} navigation={navigation} />
         </BottomSheetView>

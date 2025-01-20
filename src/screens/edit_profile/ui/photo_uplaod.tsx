@@ -1,33 +1,37 @@
-import { ActivityIndicator } from 'react-native';
-import React from 'react';
-import { EditIcon } from 'components/icons/edit';
-import { UserImage } from 'components/user_image';
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import { useUploadImage } from 'data/hooks/common';
-import ImageCropPicker from 'react-native-image-crop-picker';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { showErrorToast } from 'common/libs/toast';
-import { getImgePath } from 'data/api';
+import { ImageUploadBottomSheet } from 'components/image_upload_bottosheet';
+import { UserImage } from 'components/user_image';
+import { ServerFile } from 'data/api/common/interfaces';
+import { useUploadImage } from 'data/hooks/common';
+import React, { useRef } from 'react';
+import { Pressable, View } from 'react-native';
+import { Image } from 'react-native-image-crop-picker';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {
   value?: string;
-  onChange: (val: string) => void;
+  gender?: string;
+  onChange: (file: ServerFile) => void;
 }
 
-export function PhotoUplaod({ value, onChange }: Props) {
-  const { styles } = useStyles(styleSheet);
-  const { mutate, isPending } = useUploadImage();
-  const uploadImage = async (path: string) => {
+export function PhotoUplaod({ onChange, gender, value }: Props) {
+  const { styles } = useStyles(stylesheet);
+  const { mutate } = useUploadImage();
+  const sheetRef = useRef<BottomSheetModal>(null);
+
+  const uploadImage = async ({ path }: Image) => {
     const formData = new FormData();
     formData.append('file', {
       name: 'photo.jpg',
       type: 'image/jpeg',
       uri: path,
     });
+    sheetRef.current?.dismiss();
 
     mutate(formData, {
-      async onSuccess(data) {
-        onChange(data.filename);
+      onSuccess(data) {
+        onChange(data);
       },
       onError(err) {
         const error = err as Error;
@@ -36,44 +40,25 @@ export function PhotoUplaod({ value, onChange }: Props) {
     });
   };
 
-  const handleImagePicker = async () => {
-    try {
-      const image = await ImageCropPicker.openPicker({ cropping: true });
-      await uploadImage(image.path);
-    } catch (error) {
-      console.error('Error picking image from gallery:', error);
-    }
-  };
-
   return (
-    <TouchableOpacity onPress={handleImagePicker} style={styles.editAvatar}>
-      {isPending ? (
-        <ActivityIndicator />
-      ) : (
-        <UserImage userImage={getImgePath(value)} style={styles.editImage} />
-      )}
-      <EditIcon style={styles.editIcon} />
-    </TouchableOpacity>
+    <>
+      <View>
+        <Pressable
+          style={styles.pressable}
+          onPress={() => sheetRef.current?.present()}>
+          <UserImage key={value} imageUrl={value} gender={gender} size={100} />
+        </Pressable>
+      </View>
+      <ImageUploadBottomSheet cropping onChange={uploadImage} ref={sheetRef} />
+    </>
   );
 }
 
-const styleSheet = createStyleSheet(theming => ({
-  editAvatar: {
-    width: 140,
-    height: 140,
-    position: 'relative',
-    marginVertical: theming.spacing.LG,
-    alignItems: 'center',
-  },
-  editImage: {
-    width: 140,
-    height: 140,
-    resizeMode: 'contain',
-    borderRadius: 70,
-  },
-  editIcon: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
+const stylesheet = createStyleSheet(theming => ({
+  pressable: {
+    width: 100,
+    height: 100,
+    alignSelf: 'center',
+    marginBottom: theming.spacing.LG,
   },
 }));

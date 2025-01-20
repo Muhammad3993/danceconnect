@@ -16,7 +16,7 @@ export const userEditSchema = yup.object<Partial<User>>({
     .min(1, 'Choose your style')
     .required(),
   fullName: yup.string().required('user name is required'),
-  userGender: yup.string().required('choose your gender'),
+  gender: yup.string().required('choose your gender'),
   about: yup.string().optional().nullable(),
   fcmToken: yup.string().optional(),
   location: locationSchema.required('choose your location'),

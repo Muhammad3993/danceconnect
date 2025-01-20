@@ -12,7 +12,6 @@ import { useDCStore } from 'store';
 import { userEditSchema } from './schema';
 import { isEmptyObj } from 'common/utils/object';
 import { useEditUser } from 'data/hooks/user';
-import { showErrorToast } from 'common/libs/toast';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { User } from 'data/api/user/inerfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
@@ -29,7 +28,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
     defaultValues: {
       fullName: user?.fullName,
       individualStyles: user?.individualStyles,
-      userGender: user?.userGender,
+      gender: user?.gender,
       location: user?.location,
       userRole: user?.userRole,
       about: null,
@@ -43,7 +42,7 @@ export function EditUserScreen({}: StackScreenProps<'editUser'>) {
     if (currPage === 0) {
       const validInfo = await methods.trigger([
         'location',
-        'userGender',
+        'gender',
         'fullName',
         'userRole',
       ]);

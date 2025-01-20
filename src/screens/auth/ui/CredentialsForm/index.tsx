@@ -2,6 +2,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Linking,
+  Platform,
   ScrollView,
   Text,
   View,
@@ -154,7 +155,10 @@ const styleSheet = createStyleSheet((theming, { insets }) => ({
   container: {
     flex: 1,
     paddingTop:
-      insets.top + theming.utils.getAdaptiveWidth(theming.spacing.LG * 2),
+      insets.top +
+      theming.utils.getAdaptiveWidth(
+        theming.spacing.LG * Platform.select({ default: 2, android: 3 }),
+      ),
     paddingBottom: insets.bottom + theming.spacing.MD,
   },
 
@@ -164,10 +168,13 @@ const styleSheet = createStyleSheet((theming, { insets }) => ({
     alignSelf: 'center',
   },
   welcome: {
+    lineHeight: 30,
     fontSize: 32,
     textAlign: 'center',
     marginTop: theming.spacing.LG,
-    marginBottom: theming.utils.getAdaptiveWidth(theming.spacing.LG * 2),
+    marginBottom: theming.utils.getAdaptiveWidth(
+      theming.spacing.LG * Platform.select({ default: 2, android: 3 }),
+    ),
     fontFamily: theming.fonts.latoRegular,
     color: theming.colors.textPrimary,
   },

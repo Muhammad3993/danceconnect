@@ -63,6 +63,7 @@
     "react-native-screens": "^4.4.0",
     "react-native-share": "^12.0.3",
     "react-native-svg": "^15.10.1",
+    "react-native-turbo-image": "^1.21.0",
     "react-native-unistyles": "^2.20.0",
     "react-native-video": "^6.9.0",
     "react-native-video-trim": "^2.2.11",

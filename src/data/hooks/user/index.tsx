@@ -88,10 +88,15 @@ export const useGoogleLoginUser = () => {
   const setUser = useDCStore.use.setUser();
 
   return useMutation({
-    mutationFn: userApi.googleLoginUser,
-    async onSuccess(data) {
-      await sharedStorage.setItem('token', data.token);
-      setUser(data.user);
+    mutationFn: async () => {
+      const user = await userApi.googleLoginUser();
+      const constants = await collectionsApi.getConstants();
+
+      return { user, constants };
+    },
+    async onSuccess({ user, constants }) {
+      await sharedStorage.setItem('token', user.token);
+      setUser(user.user, constants);
     },
     onError(err) {
       const error = err as Error;
@@ -104,10 +109,16 @@ const useAppleLoginUser = () => {
   const setUser = useDCStore.use.setUser();
 
   return useMutation({
-    mutationFn: userApi.appleLoginUser,
-    async onSuccess(data) {
-      await sharedStorage.setItem('token', data.token);
-      setUser(data.user);
+    mutationFn: async () => {
+      const user = await userApi.appleLoginUser();
+      const constants = await collectionsApi.getConstants();
+
+      return { user, constants };
+    },
+
+    async onSuccess({ user, constants }) {
+      await sharedStorage.setItem('token', user.token);
+      setUser(user.user, constants);
     },
     onError(err) {
       const error = err as Error;

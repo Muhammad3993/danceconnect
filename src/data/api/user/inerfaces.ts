@@ -7,8 +7,11 @@ export interface User {
   email: string;
   fullName?: string;
   location?: UserLocation;
-  userGender?: Gender;
-  userImage?: string;
+  gender?: Gender;
+  photo?: {
+    id: string;
+    path: string;
+  };
   about: string | null;
   createdAt: string;
   deactivated: false;
@@ -35,10 +38,10 @@ export interface AuthUserRequest {
 
 export interface UserLocation {
   country: string;
-  countryCode3: string;
-  countryCode2: string;
+  countryCode: string;
+  placeId: string;
+  coordinates: number[];
   city: string;
-  location: string;
 }
 
 export type Gender = 'male' | 'female';

@@ -48,7 +48,6 @@ export interface PlaceAutocompleteTerm {
   value: string;
 }
 
-export interface FileUploadRespoonse {
-  message: string;
-  filename: string;
+export interface ServerFile {
+  file: { id: string; path: string };
 }

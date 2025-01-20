@@ -1,10 +1,10 @@
 import Config from 'react-native-config';
 import {
   DCConstants,
-  FileUploadRespoonse,
   PlaceAutocompleteResponse,
+  ServerFile,
 } from './interfaces';
-import axios from 'axios';
+import axios, { AxiosProgressEvent } from 'axios';
 import { apiClient } from '../';
 
 export const collectionsApi = {
@@ -35,10 +35,18 @@ export const collectionsApi = {
     return response.data;
   },
 
-  async uploadImage(data: FormData) {
-    const res = await apiClient.post<FileUploadRespoonse>('/upload', data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+  async uploadImage(
+    { token, formData }: { token: string; formData: FormData },
+    onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
+  ) {
+    const res = await apiClient.post<ServerFile>('/files/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+      onUploadProgress,
     });
+
     return res.data;
   },
 };

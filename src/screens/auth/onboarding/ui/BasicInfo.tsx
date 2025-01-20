@@ -47,7 +47,7 @@ export const BasicInfo = () => {
 
       <Controller
         control={control}
-        name="userGender"
+        name="gender"
         render={({ field: { value, onChange }, fieldState }) => {
           return (
             <View style={styles.input}>

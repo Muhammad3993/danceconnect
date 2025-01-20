@@ -1,6 +1,5 @@
 export const images = {
   authLogo: require('../../../assets/images/logoauth.png'),
-  defaultUser: require('../../../assets/images/defaultuser.png'),
   googleLogo: require('../../../assets/images/googleicon.png'),
   appleLogo: require('../../../assets/images/appleicon.png'),
   eventBg: require('../../../assets/images/eventbg.png'),
@@ -8,6 +7,8 @@ export const images = {
   homeImg: require('../../../assets/images/rectangle.png'),
   homeImg1: require('../../../assets/images/rectangle1.png'),
   itemImg: require('../../../assets/images/item_img.png'),
+  defaultImage: require('../../../assets/images/default.jpeg'),
+  defaultUser: require('../../../assets/images/default-user.png'),
   icon: {
     locationPin: require('../../../assets/images/icon/location-pin/location-pin.png'),
     close: require('../../../assets/images/icon/close/close.png'),

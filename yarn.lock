@@ -4056,6 +4056,7 @@ __metadata:
     react-native-screens: ^4.4.0
     react-native-share: ^12.0.3
     react-native-svg: ^15.10.1
+    react-native-turbo-image: ^1.21.0
     react-native-unistyles: ^2.20.0
     react-native-video: ^6.9.0
     react-native-video-trim: ^2.2.11
@@ -10013,6 +10014,16 @@ __metadata:
   version: 1.0.5
   resolution: "react-native-swipe-gestures@npm:1.0.5"
   checksum: d637bc40baa50fa0ce3b6cf2b494efeceaea03cc3875cb7cf7d76922914a21d5e6b098d4a084fb291ce61bfbb0a241c03cff24b15bebf0cfae1c146f4ad10d92
+  languageName: node
+  linkType: hard
+
+"react-native-turbo-image@npm:^1.21.0":
+  version: 1.21.0
+  resolution: "react-native-turbo-image@npm:1.21.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: db7424ab5b2ae646e85f5e88b4a4db9c5f49cde04e3b07810d9e4048aefb312790f242b9a679852e6edfca56c07b54a7fa3479ea356cd091ee154cbea446e6c7
   languageName: node
   linkType: hard
 

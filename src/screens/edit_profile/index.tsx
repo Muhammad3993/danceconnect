@@ -50,9 +50,13 @@ export function EditProfileScreen({
         <View style={styles.editForm}>
           <Controller
             control={control}
-            name="userImage"
+            name="photo"
             render={({ field: { value, onChange } }) => (
-              <PhotoUplaod value={value} onChange={onChange} />
+              <PhotoUplaod
+                value={value?.path}
+                gender={user?.gender}
+                onChange={data => onChange(data.file)}
+              />
             )}
           />
 
@@ -70,7 +74,7 @@ export function EditProfileScreen({
 
           <Controller
             control={control}
-            name="userGender"
+            name="gender"
             render={({ field: { value, onChange } }) => (
               <Dropdown
                 value={value}
@@ -94,7 +98,7 @@ export function EditProfileScreen({
             render={({ field: { value, onChange } }) => (
               <DCInput
                 placeholder={t('yourself')}
-                value={value}
+                value={value ?? ''}
                 onChangeText={onChange}
               />
             )}
@@ -115,12 +119,12 @@ export function EditProfileScreen({
 const styleSheet = createStyleSheet(theme => ({
   container: {
     flex: 1,
-    paddingHorizontal: theme.spacing.LG,
     backgroundColor: theme.colors.white,
   },
   editProfile: {
     flex: 1,
     justifyContent: 'space-between',
+    padding: theme.spacing.LG,
   },
   editTop: {
     alignItems: 'center',
