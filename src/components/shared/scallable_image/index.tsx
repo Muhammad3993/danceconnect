@@ -17,7 +17,7 @@ import {
   UnistylesRuntime,
   useStyles,
 } from 'react-native-unistyles';
-import { AppImage } from '../AppImage';
+import { AppImage } from '../app_image';
 import TurboImage from 'react-native-turbo-image';
 import { images } from 'common/resources/images';
 
@@ -116,7 +116,7 @@ const stylesheet = createStyleSheet(theming => ({
     justifyContent: 'center',
     position: 'relative',
     overflow: 'hidden',
-    backgroundColor: theming.color.lightGrey300,
+    backgroundColor: theming.colors.transparentPurple,
   },
   image: (width, height) => ({
     width,

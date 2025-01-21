@@ -1,0 +1,20 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [
+          "NNKFJP8QCK.com.incode.danceconnect"
+        ],
+        "paths": [
+          "*"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "NNKFJP8QCK.com.incode.danceconnect"
+    ]
+  }
+}

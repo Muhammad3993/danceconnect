@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppImage } from './shared/AppImage';
+import { AppImage } from './shared/app_image';
 import { ImageStyle } from 'react-native';
 import { images } from 'common/resources/images';
 

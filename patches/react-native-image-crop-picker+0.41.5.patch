@@ -1,0 +1,66 @@
+diff --git a/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/Compression.java b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/Compression.java
+index 5ea266c..d3cf9ef 100644
+--- a/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/Compression.java
++++ b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/Compression.java
+@@ -117,15 +117,22 @@ class Compression {
+         List knownMimes = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/gif", "image/tiff");
+         boolean isKnownMimeType = (bitmapOptions.outMimeType != null && knownMimes.contains(bitmapOptions.outMimeType.toLowerCase()));
+        
+-        if (isLossLess && useOriginalWidth && useOriginalHeight && isKnownMimeType) {
++        File originalFile = new File(originalImagePath);
++
++        long fileSizeInBytes = originalFile.length();
++
++        // Convert bytes to megabytes (1 MB = 1024 * 1024 bytes)
++        float fileSizeInMB = (float) fileSizeInBytes / (1024 * 1024);
++
++        if (isLossLess && useOriginalWidth && useOriginalHeight && isKnownMimeType && fileSizeInMB < 4.0) {
+             Log.d("image-crop-picker", "Skipping image compression");
+-            return new File(originalImagePath);
++            return originalFile;
+         }
+ 
+         Log.d("image-crop-picker", "Image compression activated");
+ 
+         // compression quality
+-        int targetQuality = quality != null ? (int) (quality * 100) : 100;
++        int targetQuality = quality != null ? (int) (quality * 100) : 65;
+         Log.d("image-crop-picker", "Compressing image with quality " + targetQuality);
+ 
+         if (maxWidth == null) maxWidth = bitmapOptions.outWidth;
+diff --git a/node_modules/react-native-image-crop-picker/ios/src/Compression.m b/node_modules/react-native-image-crop-picker/ios/src/Compression.m
+index 813a9c6..d108549 100644
+--- a/node_modules/react-native-image-crop-picker/ios/src/Compression.m
++++ b/node_modules/react-native-image-crop-picker/ios/src/Compression.m
+@@ -65,6 +65,21 @@
+     return result;
+ }
+ 
++
++- (CGFloat)getImageSizeInMB:(UIImage *)image {
++    // Convert UIImage to NSData
++    NSData *imageData = UIImageJPEGRepresentation(image, 1.0); // 1.0 for no compression
++    
++    // Get the size in bytes
++    NSUInteger imageSizeInBytes = imageData.length;
++    
++    // Convert bytes to megabytes (1 MB = 1024 * 1024 bytes)
++    CGFloat imageSizeInMB = (CGFloat)imageSizeInBytes / (1024.0 * 1024.0);
++    
++    return imageSizeInMB;
++}
++
++
+ - (ImageResult*) compressImage:(UIImage*)image
+                    withOptions:(NSDictionary*)options {
+     
+@@ -93,7 +108,8 @@
+     
+     // parse desired image quality
+     NSNumber *compressQuality = [options valueForKey:@"compressImageQuality"];
+-    if (compressQuality == nil) {
++    CGFloat imageSize = [self getImageSizeInMB:image];
++    if (compressQuality == nil && imageSize > 4.0) {
+         compressQuality = [NSNumber numberWithFloat:0.8];
+     }
+     

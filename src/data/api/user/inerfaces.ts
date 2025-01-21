@@ -37,11 +37,11 @@ export interface AuthUserRequest {
 }
 
 export interface UserLocation {
-  country: string;
-  countryCode: string;
-  placeId: string;
-  coordinates: number[];
   city: string;
+  country: string;
+  countryCode2: string;
+  countryCode3: string;
+  location: string;
 }
 
 export type Gender = 'male' | 'female';
