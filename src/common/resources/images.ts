@@ -12,5 +12,6 @@ export const images = {
   icon: {
     locationPin: require('../../../assets/images/icon/location-pin/location-pin.png'),
     close: require('../../../assets/images/icon/close/close.png'),
+    arrowDown: require('../../../assets/images/icon/arrow-down/arrow-down.png'),
   },
 };

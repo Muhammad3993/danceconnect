@@ -237,9 +237,7 @@ const CityPicker = ({
         onPress={() => setOpenList(true)}>
         <Text style={styles.locationText}>{selectedCity}</Text>
         {isMultipleSelect && (
-          <View style={styles.justifyCenter}>
-            {/* <Image source={{ uri: 'arrowdown' }} style={styles.backIcon} /> */}
-          </View>
+          <Image source={images.icon.arrowDown} style={styles.backIcon} />
         )}
       </TouchableOpacity>
 
@@ -276,12 +274,7 @@ const styleSheet = createStyleSheet((theming, ctx) => ({
     paddingBottom: ctx.insets.bottom + theming.spacing.MD,
     paddingTop: ctx.insets.top + 24,
   },
-  justifyCenter: {
-    justifyContent: 'center',
-    height: 15,
-    width: 15,
-    backgroundColor: 'red',
-  },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -358,7 +351,7 @@ const styleSheet = createStyleSheet((theming, ctx) => ({
     fontSize: 16,
     lineHeight: 22.4,
     color: theming.colors.textPrimary,
-    marginVertical: 12,
+    marginVertical: theming.spacing.SM,
     fontWeight: '500',
   },
   selectLocationBtn: {
@@ -366,6 +359,7 @@ const styleSheet = createStyleSheet((theming, ctx) => ({
     borderColor: theming.colors.grayTransparent,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    alignItems: 'center',
+    paddingVertical: theming.spacing.SM,
   },
 }));
