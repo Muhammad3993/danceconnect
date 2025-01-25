@@ -14,6 +14,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import { useTranslation } from 'react-i18next';
 import { getImgePath } from 'data/api';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { AppImage } from 'components/shared/app_image';
+import { ScalableImage } from 'components/shared/scallable_image';
 
 export interface Props {
   value?: string[];
@@ -32,7 +34,10 @@ export default function ImageUploadList({
 
   const handleImagePicker = async () => {
     try {
-      const image = await ImageCropPicker.openPicker({ cropping: true });
+      const image = await ImageCropPicker.openPicker({
+        mediaType: 'photo',
+        selectionLimit: 1,
+      });
 
       const formData = new FormData();
       formData.append('file', {
@@ -43,7 +48,7 @@ export default function ImageUploadList({
 
       uploadImage(formData, {
         onSuccess(data) {
-          onChange([...value, data.filename]);
+          onChange([...value, data.file.path]);
         },
       });
     } catch (error) {
@@ -57,30 +62,32 @@ export default function ImageUploadList({
 
   if (value.length === 0) {
     return (
-      <TouchableOpacity
-        onPress={handleImagePicker}
-        style={[styles.upload, containerStyle]}>
-        <UploadIcon />
-        <Text style={styles.uploadTitle}>{t('upload_img')}</Text>
-      </TouchableOpacity>
+      <View style={containerStyle}>
+        <TouchableOpacity onPress={handleImagePicker} style={[styles.upload]}>
+          <UploadIcon />
+          <Text style={styles.uploadTitle}>{t('upload_img')}</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
   return (
-    <ScrollView style={containerStyle} horizontal>
+    <ScrollView
+      contentContainerStyle={containerStyle}
+      showsHorizontalScrollIndicator={false}
+      horizontal>
       {value.map(img => (
-        <View style={styles.image} key={img}>
-          <FastImage
-            resizeMode="cover"
-            source={{ uri: getImgePath(img) }}
-            style={styles.img}
-          />
+        <ScalableImage
+          key={img}
+          originalHeight={160}
+          source={{ uri: img }}
+          containerStyle={styles.img}>
           <TouchableOpacity
             onPress={() => deleteImage(img)}
             style={styles.imageTrash}>
             <TrashIcon stroke={theme.colors.white} />
           </TouchableOpacity>
-        </View>
+        </ScalableImage>
       ))}
     </ScrollView>
   );
@@ -109,15 +116,9 @@ const styleSheet = createStyleSheet(theming => ({
     marginBottom: 30,
     paddingHorizontal: theming.spacing.LG,
   },
-  image: {
-    width: 151,
-    height: 167,
-    position: 'relative',
-  },
+
   img: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    marginRight: theming.spacing.MD,
     borderRadius: 8,
   },
   imageTrash: {
@@ -125,8 +126,8 @@ const styleSheet = createStyleSheet(theming => ({
     height: 40,
     backgroundColor: theming.colors.brown,
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 6,
+    right: 6,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',

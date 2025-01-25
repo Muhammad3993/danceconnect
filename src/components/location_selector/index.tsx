@@ -12,12 +12,12 @@ import {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import { DCBottomSheet } from 'components/shared/bottom_sheet';
-import { UserLocation } from 'data/api/user/inerfaces';
+import { Location } from 'data/api/user/inerfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { images } from 'common/resources/images';
 
 interface Props {
-  onChange?: (val: UserLocation) => void;
+  onChange?: (val: Location) => void;
   onClose?: () => void;
 }
 
@@ -68,12 +68,15 @@ export const LocationSelector = forwardRef<BottomSheetModal, Props>(
     };
 
     const handleSelectLocation = () => {
+      if (!selectedCountry || !selectedCity) {
+        return;
+      }
       onChange?.({
-        city: selectedCity!,
-        country: selectedCountry!.country,
-        countryCode2: selectedCountry!.countryCode,
-        countryCode3: selectedCountry!.countryCode,
-        location: selectedCountry!.country + ', ' + selectedCity,
+        city: selectedCity,
+        country: selectedCountry.country,
+        countryCode2: selectedCountry.countryCode,
+        countryCode3: selectedCountry.countryCode,
+        location: selectedCountry.country + ', ' + selectedCity,
       });
     };
 

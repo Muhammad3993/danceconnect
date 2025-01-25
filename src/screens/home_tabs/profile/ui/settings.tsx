@@ -18,7 +18,7 @@ import { DeleteModal } from './DeleteModal';
 import { LocationSelector } from 'components/location_selector';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useEditUser } from 'data/hooks/user';
-import { UserLocation } from 'data/api/user/inerfaces';
+import { Location } from 'data/api/user/inerfaces';
 import { showErrorToast } from 'common/libs/toast';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { images } from 'common/resources/images';
@@ -39,7 +39,7 @@ export function ProfileSettings({ navigation, close }: Props) {
   const user = useDCStore.use.user();
   const setUser = useDCStore.use.setUser();
 
-  const changeLocation = (location: UserLocation) => {
+  const changeLocation = (location: Location) => {
     mutate(
       { location },
       {

@@ -21,7 +21,7 @@ export const useCreateCommunity = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Omit<Community, 'id'>) => {
+    mutationFn: async (data: Partial<Community>) => {
       // const amityCommunity = await DCAmity.createCommunity({
       //   displayName: data.title,
       //   metadata: { photo: getImgePath(data.images[0]) ?? '' },
@@ -43,7 +43,7 @@ export const useUpdateCommunity = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Community) => {
+    mutationFn: async (data: Partial<Community>) => {
       // await DCAmity.updateCommunity(data.channelId, {
       //   displayName: data.title,
       //   metadata: { photo: getImgePath(data.images[0]) ?? '' },

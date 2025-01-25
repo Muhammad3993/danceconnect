@@ -14,12 +14,12 @@ export const communityApi = {
     return res.data;
   },
 
-  async createCommunity(communityData: Omit<Community, 'id'>) {
+  async createCommunity(communityData: Partial<Community>) {
     const res = await apiClient.post<Community>('/community', communityData);
     return res.data;
   },
 
-  async updateCommunity(communityData: Community) {
+  async updateCommunity(communityData: Partial<Community>) {
     const res = await apiClient.put<Community>(
       `/community/update/${communityData.id}`,
       communityData,

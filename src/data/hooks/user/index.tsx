@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { sharedStorage } from 'common/libs/shared_storage';
-import { showErrorToast } from 'common/libs/toast';
+import { showErrorToast, showSuccessToast } from 'common/libs/toast';
 import { images } from 'common/resources/images';
 import { collectionsApi } from 'data/api/common';
 import { userApi } from 'data/api/user';
@@ -193,6 +193,32 @@ export const useDeleteAccount = () => {
     onSuccess: () => logOutAction({ endSession: true }),
     onError(err) {
       const error = err as Error;
+      showErrorToast(error.message);
+    },
+  });
+};
+
+export const useForgetPassword = () => {
+  return useMutation({
+    mutationFn: userApi.forgetPasword,
+    onSuccess() {
+      showSuccessToast(
+        'We send confirmation reset password link to your email',
+      );
+    },
+    onError(error) {
+      showErrorToast(error.message);
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: userApi.resetPasword,
+    onSuccess() {
+      showSuccessToast('You successfully changed your password');
+    },
+    onError(error) {
       showErrorToast(error.message);
     },
   });

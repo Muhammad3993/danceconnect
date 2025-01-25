@@ -1,15 +1,15 @@
-import { UserShort } from '../user/inerfaces';
+import { User } from '../user/inerfaces';
 
 export interface Community {
   images: string[];
   categories: string[];
-  managers: UserShort[];
-  creator: UserShort;
-  followers: UserShort[];
+  managers: User[];
+  creator: User;
+  followers: User[];
   createdAt: string;
   updatedAt: string;
   id: string;
-  description: string;
+  description?: string;
   location: string;
   title: string;
   type: 'free' | 'paid';

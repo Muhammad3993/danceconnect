@@ -16,23 +16,26 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { showErrorToast } from 'common/libs/toast';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { images } from 'common/resources/images';
+import { useDCStore } from 'store';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { CommunitySchema, communitySchema } from 'data/api/community/schema';
 
 export function CreateCommunity({
   navigation,
   route,
 }: StackScreenProps<'createCommunity'>) {
   const { styles, theme } = useStyles(styleSheet);
+  const user = useDCStore.use.user();
   const locationRef = useRef<BottomSheetModal>(null);
   const initialData = route.params.community;
   const methods = useForm({
+    resolver: yupResolver(communitySchema),
     defaultValues: initialData ?? {
       title: '',
       description: '',
       images: [],
-      categories: [],
-      location: undefined,
-      type: '',
-      channelId: '',
+      categories: user?.individualStyles ?? [],
+      location: user?.location?.location,
     },
   });
 
@@ -48,7 +51,7 @@ export function CreateCommunity({
   const { mutateAsync: editCommunity, isPending: isEditing } =
     useUpdateCommunity();
 
-  const handleCreateCommunity = async data => {
+  const handleCreateCommunity = async (data: CommunitySchema) => {
     try {
       if (initialData) {
         await editCommunity(data);
@@ -141,7 +144,7 @@ export function CreateCommunity({
                       {t('description_title')}
                     </Text>
                     <Text style={styles.inputNameTopLimit}>
-                      {value.length}/350
+                      {value?.length ?? 0}/350
                     </Text>
                   </View>
                   <Text style={styles.describe}>{t('description_desc')}</Text>
@@ -158,11 +161,17 @@ export function CreateCommunity({
           </View>
 
           <View style={styles.uploadBox}>
-            <Text style={styles.inputNameTopTitle}>
-              {false ? t('upload_img_title') : 'Add Cover Image'}
-              <Text style={styles.bodyTitle}>{t('optional')}</Text>
-            </Text>
-            <Text style={styles.bodySubtitle}>{t('upload_img_desc')}</Text>
+            <View
+              style={{
+                paddingHorizontal: theme.spacing.LG,
+                marginBottom: theme.spacing.LG,
+              }}>
+              <Text style={styles.inputNameTopTitle}>
+                {t('upload_img_title')}
+                <Text style={styles.bodyTitle}> {t('optional')}</Text>
+              </Text>
+              <Text style={styles.bodySubtitle}>{t('upload_img_desc')}</Text>
+            </View>
 
             <Controller
               name="images"
@@ -170,7 +179,7 @@ export function CreateCommunity({
               rules={{ required: 'Description is required' }}
               render={({ field: { value, onChange } }) => (
                 <ImageUploadList
-                  containerStyle={{ marginTop: theme.spacing.LG }}
+                  containerStyle={{ paddingHorizontal: theme.spacing.LG }}
                   value={value}
                   onChange={onChange}
                 />
@@ -189,7 +198,7 @@ export function CreateCommunity({
                       onPress={() => locationRef.current?.present()}
                       style={styles.chooseCountryWrapper}>
                       <Text style={styles.chooseCountryText}>
-                        {value ? value.location : t('location_choose')}
+                        {value ? value : t('location_choose')}
                       </Text>
                       <Image
                         style={{ width: 16, height: 16 }}
@@ -205,7 +214,10 @@ export function CreateCommunity({
                     <LocationSelector
                       ref={locationRef}
                       onChange={data => {
-                        onChange(data);
+                        onChange(data.location);
+                        locationRef.current?.dismiss();
+                      }}
+                      onClose={() => {
                         locationRef.current?.dismiss();
                       }}
                     />
@@ -261,7 +273,6 @@ const styleSheet = createStyleSheet(theme => ({
     borderRadius: 8,
   },
   uploadBox: {
-    paddingHorizontal: theme.spacing.LG,
     marginBottom: theme.spacing.LG,
   },
   boxCircleOpacity: {

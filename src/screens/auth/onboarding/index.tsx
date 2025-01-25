@@ -9,12 +9,12 @@ import { useTranslation } from 'react-i18next';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDCStore } from 'store';
-import { userEditSchema } from './schema';
 import { isEmptyObj } from 'common/utils/object';
 import { useEditUser } from 'data/hooks/user';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { User } from 'data/api/user/inerfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { userEditSchema } from 'data/api/user/schema';
 
 export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const { t } = useTranslation();

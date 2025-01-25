@@ -6,7 +6,7 @@ export interface User {
   userRole?: string[];
   email: string;
   fullName?: string;
-  location?: UserLocation;
+  location?: Location;
   gender?: Gender;
   photo?: {
     id: string;
@@ -36,7 +36,7 @@ export interface AuthUserRequest {
   password: string;
 }
 
-export interface UserLocation {
+export interface Location {
   city: string;
   country: string;
   countryCode2: string;
