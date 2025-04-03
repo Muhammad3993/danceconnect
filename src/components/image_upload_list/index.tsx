@@ -6,16 +6,16 @@ import {
   ViewStyle,
 } from 'react-native';
 import React from 'react';
-import { useUploadImage } from 'data/hooks/common';
-import { UploadIcon } from 'components/icons/upload';
+import { useUploadImage } from '@data/hooks/common';
+import { UploadIcon } from '@components/icons/upload';
 import FastImage from 'react-native-fast-image';
-import { TrashIcon } from 'components/icons/trash';
+import { TrashIcon } from '@components/icons/trash';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useTranslation } from 'react-i18next';
-import { getImgePath } from 'data/api';
+import { getImgePath } from '@data/api';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { AppImage } from 'components/shared/app_image';
-import { ScalableImage } from 'components/shared/scallable_image';
+import { AppImage } from '@components/shared/app_image';
+import { ScalableImage } from '@components/shared/scallable_image';
 
 export interface Props {
   value?: string[];

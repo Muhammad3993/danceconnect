@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { showErrorToast } from 'common/libs/toast';
+import { showErrorToast } from '@common/libs/toast';
 import ImageCropPicker, { Image } from 'react-native-image-crop-picker';
 
 export interface ImageData {

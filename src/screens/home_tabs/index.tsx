@@ -3,17 +3,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StackScreenProps, TabRoutes } from 'screens/interfaces';
+import { StackScreenProps, TabRoutes } from '@screens/interfaces';
 import { ProfileScreen } from './profile';
 import { HomeScreen } from './home';
 import { CommunitiesScreen } from './communities';
 import { EventsScreen } from './events';
 import { PeopleScreen } from './people';
-import { HomeIcon } from 'components/icons/home';
-import { CommunitiesIcon } from 'components/icons/communities';
-import { TicketIcon } from 'components/icons/ticket';
-import { PeopleIcon } from 'components/icons/people';
-import { ProfileIcon } from 'components/icons/profile';
+import { HomeIcon } from '@components/icons/home';
+import { CommunitiesIcon } from '@components/icons/communities';
+import { TicketIcon } from '@components/icons/ticket';
+import { PeopleIcon } from '@components/icons/people';
+import { ProfileIcon } from '@components/icons/profile';
 import { useTranslation } from 'react-i18next';
 import { useStyles } from 'react-native-unistyles';
 

@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { images } from 'common/resources/images';
+import { images } from '@common/resources/images';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export const PeopleItem = () => {

@@ -7,13 +7,13 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { TabScreenProps } from 'screens/interfaces';
-import { DCTabs } from 'components/shared/tabs';
+import { TabScreenProps } from '@screens/interfaces';
+import { DCTabs } from '@components/shared/tabs';
 import { useTranslation } from 'react-i18next';
-import { FilterComponent } from 'components/shared/filter';
-import { EventItem } from 'components/shared/event_item';
-import { HeaderWithSearch } from 'components/header_with_search_and_location/HeaderWithSearch';
-import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
+import { FilterComponent } from '@components/shared/filter';
+import { EventItem } from '@components/shared/event_item';
+import { HeaderWithSearch } from '@components/header_with_search_and_location/HeaderWithSearch';
+import { HeaderWithLocation } from '@components/header_with_search_and_location/HeaderWithLocation';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function EventsScreen({ navigation }: TabScreenProps<'events'>) {

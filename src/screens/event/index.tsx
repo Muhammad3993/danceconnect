@@ -1,13 +1,13 @@
-import { images } from 'common/resources/images';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { CalendarIcon } from 'components/icons/calendar';
-import { EditIconSvg } from 'components/icons/editIcon';
-import { SettingIcon } from 'components/icons/settingIcon';
-import { ShareIcon } from 'components/icons/shareIcon';
-import { TicketIcon } from 'components/icons/ticket';
-import { DCButton } from 'components/shared/button';
-import { DCRoundIcon } from 'components/shared/round_icon';
-import { DCLine } from 'components/shared/line';
+import { images } from '@common/resources/images';
+import { ArrowLeftIcon } from '@components/icons/arrowLeft';
+import { CalendarIcon } from '@components/icons/calendar';
+import { EditIconSvg } from '@components/icons/editIcon';
+import { SettingIcon } from '@components/icons/settingIcon';
+import { ShareIcon } from '@components/icons/shareIcon';
+import { TicketIcon } from '@components/icons/ticket';
+import { DCButton } from '@components/shared/button';
+import { DCRoundIcon } from '@components/shared/round_icon';
+import { DCLine } from '@components/shared/line';
 import React, { useState } from 'react';
 import {
   Image,

@@ -1,10 +1,10 @@
-import { userApi } from 'data/api/user';
-import { User } from 'data/api/user/inerfaces';
+import { userApi } from '@data/api/user';
+import { User } from '@data/api/user/inerfaces';
 import { create } from 'zustand';
 import { createSelectors } from './types';
-import { DCConstants } from 'data/api/common/interfaces';
-import { collectionsApi } from 'data/api/common';
-import { sharedStorage } from 'common/libs/shared_storage';
+import { DCConstants } from '@data/api/common/interfaces';
+import { collectionsApi } from '@data/api/common';
+import { sharedStorage } from '@common/libs/shared_storage';
 
 type State = {
   user: User | null;

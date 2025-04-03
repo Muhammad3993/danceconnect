@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
-import { EventItem } from 'components/shared/event_item';
-import { JoinCommunityCard } from 'components/shared/join_community_card';
-import { DCTabs } from 'components/shared/tabs';
-import { Community } from 'data/api/community/interfaces';
-import { Event } from 'data/api/event/interfaces';
-import { User } from 'data/api/user/inerfaces';
+import { EventItem } from '@components/shared/event_item';
+import { JoinCommunityCard } from '@components/shared/join_community_card';
+import { DCTabs } from '@components/shared/tabs';
+import { Community } from '@data/api/community/interfaces';
+import { Event } from '@data/api/event/interfaces';
+import { User } from '@data/api/user/inerfaces';
 import React, { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, View } from 'react-native';

@@ -1,20 +1,20 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { DCInput } from 'components/shared/input';
-import { DCButton } from 'components/shared/button';
+import { DCInput } from '@components/shared/input';
+import { DCButton } from '@components/shared/button';
 // dropdown
-import { FillArrowIcon } from 'components/icons/fillArrow';
-import { genders } from 'common/constants';
-import { useDCStore } from 'store';
+import { FillArrowIcon } from '@components/icons/fillArrow';
+import { genders } from '@common/constants';
+import { useDCStore } from '@store';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller, useForm } from 'react-hook-form';
 import { Dropdown } from 'react-native-element-dropdown';
-import { useEditUser } from 'data/hooks/user';
+import { useEditUser } from '@data/hooks/user';
 import { PhotoUplaod } from './ui/photo_uplaod';
-import { StackScreenProps } from 'screens/interfaces';
-import { showErrorToast } from 'common/libs/toast';
-import { User } from 'data/api/user/inerfaces';
+import { StackScreenProps } from '@screens/interfaces';
+import { showErrorToast } from '@common/libs/toast';
+import { User } from '@data/api/user/inerfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function EditProfileScreen({

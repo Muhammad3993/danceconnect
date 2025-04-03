@@ -1,4 +1,4 @@
-import { PrifleView } from 'components/profile_view';
+import { PrifleView } from '@components/profile_view';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   FlatListProps,
@@ -8,24 +8,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { TabScreenProps } from 'screens/interfaces';
-import { useDCStore } from 'store';
+import { TabScreenProps } from '@screens/interfaces';
+import { useDCStore } from '@store';
 
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { PlusSquareIcon } from 'components/icons/plusSquare';
-import { SettingIcon } from 'components/icons/settingIcon';
-import { ShareIcon } from 'components/icons/shareIcon';
-import { DCBottomSheet } from 'components/shared/bottom_sheet';
-import { DCButton } from 'components/shared/button';
+import { PlusSquareIcon } from '@components/icons/plusSquare';
+import { SettingIcon } from '@components/icons/settingIcon';
+import { ShareIcon } from '@components/icons/shareIcon';
+import { DCBottomSheet } from '@components/shared/bottom_sheet';
+import { DCButton } from '@components/shared/button';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileSettings } from './ui/settings';
-import { EditFillIcon } from 'components/icons/editFIll';
-import { UserImage } from 'components/user_image';
-import { getImgePath } from 'data/api';
-import ExpandableText from 'components/shared/expandable_text';
-import { DCTabs } from 'components/shared/tabs';
-import { TagsList } from 'components/tags_list';
+import { EditFillIcon } from '@components/icons/editFIll';
+import { UserImage } from '@components/user_image';
+import { getImgePath } from '@data/api';
+import ExpandableText from '@components/shared/expandable_text';
+import { DCTabs } from '@components/shared/tabs';
+import { TagsList } from '@components/tags_list';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function ProfileScreen({ navigation }: TabScreenProps<'profile'>) {

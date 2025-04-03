@@ -8,15 +8,15 @@ import {
 import React, { useState } from 'react';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackScreenProps } from 'screens/interfaces';
-import { DCInput } from 'components/shared/input';
+import { StackScreenProps } from '@screens/interfaces';
+import { DCInput } from '@components/shared/input';
 import { useTranslation } from 'react-i18next';
-import { DCButton } from 'components/shared/button';
-import { useForgetPassword } from 'data/hooks/user';
+import { DCButton } from '@components/shared/button';
+import { useForgetPassword } from '@data/hooks/user';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
-import { isEmptyObj } from 'common/utils/object';
+import { isEmptyObj } from '@common/utils/object';
 
 export function ForgetPaswordPage({
   navigation,

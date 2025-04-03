@@ -1,14 +1,14 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { images } from 'common/resources/images';
+import { images } from '@common/resources/images';
 import { DCLine } from '../line';
-import { Community } from 'data/api/community/interfaces';
-import { UserImage } from 'components/user_image';
+import { Community } from '@data/api/community/interfaces';
+import { UserImage } from '@components/user_image';
 import { useTranslation } from 'react-i18next';
-import { useToggleFollowCommunity } from 'data/hooks/community';
+import { useToggleFollowCommunity } from '@data/hooks/community';
 import FastImage from 'react-native-fast-image';
-import { getImgePath } from 'data/api';
-import { TagsList } from 'components/tags_list';
+import { getImgePath } from '@data/api';
+import { TagsList } from '@components/tags_list';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface CommunityItemProps {

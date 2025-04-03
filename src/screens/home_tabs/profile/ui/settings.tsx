@@ -1,27 +1,27 @@
 import { Image, Linking, Text, View } from 'react-native';
 
-import { CategoryIcon } from 'components/icons/category';
-import { CommunitiesIcon } from 'components/icons/communities';
-import { InfoIcon } from 'components/icons/info';
-import { LogoutIcon } from 'components/icons/logout';
-import { RightArrowIcon } from 'components/icons/rightArrow';
-import { TicketIcon } from 'components/icons/ticket';
-import { TrashIcon } from 'components/icons/trash';
-import { ListItem } from 'components/list_item';
-import { DCLine } from 'components/shared/line';
+import { CategoryIcon } from '@components/icons/category';
+import { CommunitiesIcon } from '@components/icons/communities';
+import { InfoIcon } from '@components/icons/info';
+import { LogoutIcon } from '@components/icons/logout';
+import { RightArrowIcon } from '@components/icons/rightArrow';
+import { TicketIcon } from '@components/icons/ticket';
+import { TrashIcon } from '@components/icons/trash';
+import { ListItem } from '@components/list_item';
+import { DCLine } from '@components/shared/line';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from 'react-native-modal';
-import { TabScreenNavigation } from 'screens/interfaces';
-import { useDCStore } from 'store';
+import { TabScreenNavigation } from '@screens/interfaces';
+import { useDCStore } from '@store';
 import { DeleteModal } from './DeleteModal';
-import { LocationSelector } from 'components/location_selector';
+import { LocationSelector } from '@components/location_selector';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useEditUser } from 'data/hooks/user';
-import { Location } from 'data/api/user/inerfaces';
-import { showErrorToast } from 'common/libs/toast';
+import { useEditUser } from '@data/hooks/user';
+import { Location } from '@data/api/user/inerfaces';
+import { showErrorToast } from '@common/libs/toast';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { images } from 'common/resources/images';
+import { images } from '@common/resources/images';
 
 interface Props {
   navigation: TabScreenNavigation<'profile'>;

@@ -7,9 +7,9 @@ import {
 } from 'react-native';
 import React from 'react';
 import { DCRoundIcon } from '../round_icon';
-import { CommunitiesIcon } from 'components/icons/communities';
-import { PlusIcon } from 'components/icons/plus';
-import { RightArrowIcon } from 'components/icons/rightArrow';
+import { CommunitiesIcon } from '@components/icons/communities';
+import { PlusIcon } from '@components/icons/plus';
+import { RightArrowIcon } from '@components/icons/rightArrow';
 import { useTranslation } from 'react-i18next';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 

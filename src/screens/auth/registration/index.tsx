@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { useRegisterUser } from 'data/hooks/user';
+import { useRegisterUser } from '@data/hooks/user';
 import { useTranslation } from 'react-i18next';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { StackScreenProps } from 'screens/interfaces';
+import { StackScreenProps } from '@screens/interfaces';
 import { CredentialsForm } from '../ui/CredentialsForm';
 
 export function RegisterScreen({ navigation }: StackScreenProps<'register'>) {

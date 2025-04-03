@@ -1,5 +1,5 @@
-import { images } from 'common/resources/images';
-import { SetCalendarIcon } from 'components/icons/setCalendar';
+import { images } from '@common/resources/images';
+import { SetCalendarIcon } from '@components/icons/setCalendar';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Text, View } from 'react-native';

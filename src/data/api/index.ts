@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
-import { sharedStorage } from 'common/libs/shared_storage';
+import { sharedStorage } from '@common/libs/shared_storage';
 import Config from 'react-native-config';
-import { DCStore } from 'store';
+import { DCStore } from '@store';
 
 export const apiClient = axios.create({
   baseURL: Config.API_URL,

@@ -6,14 +6,14 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import { DCRoundIcon } from 'components/shared/round_icon';
-import { RightArrowIcon } from 'components/icons/rightArrow';
+import { DCRoundIcon } from '@components/shared/round_icon';
+import { RightArrowIcon } from '@components/icons/rightArrow';
 import { RecentEvent } from './ui/recent_event';
-import { StartCommunity } from 'components/shared/start_community';
+import { StartCommunity } from '@components/shared/start_community';
 import { useTranslation } from 'react-i18next';
-import { DCTabs } from 'components/shared/tabs';
-import { TabScreenProps } from 'screens/interfaces';
-import { JoinCommunityCard } from 'components/shared/join_community_card';
+import { DCTabs } from '@components/shared/tabs';
+import { TabScreenProps } from '@screens/interfaces';
+import { JoinCommunityCard } from '@components/shared/join_community_card';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 

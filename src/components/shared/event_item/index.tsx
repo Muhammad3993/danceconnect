@@ -1,7 +1,7 @@
 import { Image, Text, View } from 'react-native';
 import React from 'react';
-import { SetCalendarIcon } from 'components/icons/setCalendar';
-import { images } from 'common/resources/images';
+import { SetCalendarIcon } from '@components/icons/setCalendar';
+import { images } from '@common/resources/images';
 import { DCLine } from '../line';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';

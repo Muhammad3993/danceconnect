@@ -1,12 +1,12 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DCInput } from 'components/shared/input';
-import { SearchIcon } from 'components/icons/search';
+import { DCInput } from '@components/shared/input';
+import { SearchIcon } from '@components/icons/search';
 import { t } from 'i18next';
-import { FilterComponent } from 'components/shared/filter';
+import { FilterComponent } from '@components/shared/filter';
 import { PeopleItem } from './ui';
-import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
+import { HeaderWithLocation } from '@components/header_with_search_and_location/HeaderWithLocation';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function PeopleScreen() {

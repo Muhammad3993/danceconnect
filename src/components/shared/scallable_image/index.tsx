@@ -19,7 +19,7 @@ import {
 } from 'react-native-unistyles';
 import { AppImage } from '../app_image';
 import TurboImage from 'react-native-turbo-image';
-import { images } from 'common/resources/images';
+import { images } from '@common/resources/images';
 
 interface Props {
   source: { uri?: string };

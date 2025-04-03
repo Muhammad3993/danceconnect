@@ -1,5 +1,5 @@
-import { DCButton } from 'components/shared/button';
-import { useDeleteAccount } from 'data/hooks/user';
+import { DCButton } from '@components/shared/button';
+import { useDeleteAccount } from '@data/hooks/user';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';

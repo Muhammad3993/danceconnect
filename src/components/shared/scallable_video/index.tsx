@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import React, { memo, useCallback, useState } from 'react';
 import Video from 'react-native-video';
-import { PlayCircle } from 'components/icons/play_circle';
-import { SoundIcon } from 'components/icons/sound';
-import { UnsoundIcon } from 'components/icons/unsound';
+import { PlayCircle } from '@components/icons/play_circle';
+import { SoundIcon } from '@components/icons/sound';
+import { UnsoundIcon } from '@components/icons/unsound';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 interface Props {

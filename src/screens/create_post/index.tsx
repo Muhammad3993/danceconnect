@@ -1,13 +1,13 @@
 import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
-import { SCREEN_WIDTH } from 'common/constants';
-import { ImageData, usePickImage } from 'common/hooks/usePickImage';
-import { usePickVideoFile, VideoData } from 'common/hooks/usePickVideoFile';
-import { showErrorToast } from 'common/libs/toast';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { CameraIcon } from 'components/icons/camera';
-import { ImageIcon } from 'components/icons/image';
-import { PlayCircle } from 'components/icons/play_circle';
-import { TrashIcon } from 'components/icons/trash';
+import { SCREEN_WIDTH } from '@common/constants';
+import { ImageData, usePickImage } from '@common/hooks/usePickImage';
+import { usePickVideoFile, VideoData } from '@common/hooks/usePickVideoFile';
+import { showErrorToast } from '@common/libs/toast';
+import { ArrowLeftIcon } from '@components/icons/arrowLeft';
+import { CameraIcon } from '@components/icons/camera';
+import { ImageIcon } from '@components/icons/image';
+import { PlayCircle } from '@components/icons/play_circle';
+import { TrashIcon } from '@components/icons/trash';
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
@@ -23,7 +23,7 @@ import {
   View,
 } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { StackScreenProps } from 'screens/interfaces';
+import { StackScreenProps } from '@screens/interfaces';
 
 export function CreatePostScreen({
   navigation,

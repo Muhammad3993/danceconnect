@@ -1,12 +1,12 @@
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import { Header } from './Header';
-import { CloseIcon } from 'components/icons/close';
+import { CloseIcon } from '@components/icons/close';
 import { Status } from './Status';
-import { DCInput } from 'components/shared/input';
-import DanceStylesSelector from 'components/dance_styles_selector';
+import { DCInput } from '@components/shared/input';
+import DanceStylesSelector from '@components/dance_styles_selector';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DCButton } from 'components/shared/button';
+import { DCButton } from '@components/shared/button';
 import { useTranslation } from 'react-i18next';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 

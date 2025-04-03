@@ -1,7 +1,7 @@
-import { communityApi } from 'data/api/community';
+import { communityApi } from '@data/api/community';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getImgePath } from 'data/api';
-import { Community } from 'data/api/community/interfaces';
+import { getImgePath } from '@data/api';
+import { Community } from '@data/api/community/interfaces';
 
 export default function useGetCommunities() {
   return useQuery({

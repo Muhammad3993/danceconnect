@@ -1,17 +1,17 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { isEmptyObj } from 'common/utils/object';
-import { DCButton } from 'components/shared/button';
-import { useResetPassword } from 'data/hooks/user';
+import { isEmptyObj } from '@common/utils/object';
+import { DCButton } from '@components/shared/button';
+import { useResetPassword } from '@data/hooks/user';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { StackScreenProps } from 'screens/interfaces';
+import { StackScreenProps } from '@screens/interfaces';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import i18n from 'i18n';
-import { DCInput } from 'components/shared/input';
+import i18n from '@i18n';
+import { DCInput } from '@components/shared/input';
 
 const scheme = yup.object({
   newPassword: yup

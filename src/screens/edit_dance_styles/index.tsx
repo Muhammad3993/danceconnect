@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
-import DanceStylesSelector from 'components/dance_styles_selector';
-import { useDCStore } from 'store';
+import DanceStylesSelector from '@components/dance_styles_selector';
+import { useDCStore } from '@store';
 import { useTranslation } from 'react-i18next';
-import { DCButton } from 'components/shared/button';
+import { DCButton } from '@components/shared/button';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useEditUser } from 'data/hooks/user';
-import { StackScreenProps } from 'screens/interfaces';
-import { showErrorToast } from 'common/libs/toast';
+import { useEditUser } from '@data/hooks/user';
+import { StackScreenProps } from '@screens/interfaces';
+import { showErrorToast } from '@common/libs/toast';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function EditDanceStylesSreen({

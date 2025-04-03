@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import en from './en.json';
 import ru from './ru.json';
 import ch from './ch.json';
-import { sharedStorage } from 'common/libs/shared_storage';
+import { sharedStorage } from '@common/libs/shared_storage';
 // import { getLocales } from 'react-native-localize';
 
 export const DEFAULT_LANGUAGE = 'en';

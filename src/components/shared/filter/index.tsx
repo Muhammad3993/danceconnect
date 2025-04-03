@@ -1,7 +1,7 @@
 import { Text, View, ViewStyle } from 'react-native';
 import React, { ReactNode } from 'react';
-import { FilterIcon } from 'components/icons/filter';
-import { RightArrowIcon } from 'components/icons/rightArrow';
+import { FilterIcon } from '@components/icons/filter';
+import { RightArrowIcon } from '@components/icons/rightArrow';
 import { useTranslation } from 'react-i18next';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 

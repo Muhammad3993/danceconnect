@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RightArrowIcon } from 'components/icons/rightArrow';
-import { ListItem } from 'components/list_item';
-import { DCButton } from 'components/shared/button';
-import { DCLine } from 'components/shared/line';
+import { RightArrowIcon } from '@components/icons/rightArrow';
+import { ListItem } from '@components/list_item';
+import { DCButton } from '@components/shared/button';
+import { DCLine } from '@components/shared/line';
 import { Text, View } from 'react-native';
 import { CountryBottomSheet } from './CountryBottomSheet';
 import { RegionBottomSheet } from './RegionBottomSheet';

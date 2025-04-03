@@ -10,7 +10,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import { Community } from 'data/api/community/interfaces';
+import { Community } from '@data/api/community/interfaces';
 
 export type RootStackRoutes = {
   // auth

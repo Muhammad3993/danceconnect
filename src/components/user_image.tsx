@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppImage } from './shared/app_image';
 import { ImageStyle } from 'react-native';
-import { images } from 'common/resources/images';
+import { images } from '@common/resources/images';
 
 interface Props {
   imageUrl?: string;

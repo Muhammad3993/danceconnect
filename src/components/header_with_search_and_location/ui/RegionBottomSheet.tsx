@@ -1,8 +1,8 @@
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { useDCStore } from 'store';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { CloseIcon } from 'components/icons/close';
+import { useDCStore } from '@store';
+import { ArrowLeftIcon } from '@components/icons/arrowLeft';
+import { CloseIcon } from '@components/icons/close';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function RegionBottomSheet({ setContent }: any) {

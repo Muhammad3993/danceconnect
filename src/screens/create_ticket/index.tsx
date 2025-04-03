@@ -7,11 +7,11 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { DCButton } from 'components/shared/button';
-import { DCInput } from 'components/shared/input';
+import { ArrowLeftIcon } from '@components/icons/arrowLeft';
+import { DCButton } from '@components/shared/button';
+import { DCInput } from '@components/shared/input';
 import { t } from 'i18next';
-import { LittleCalendarIcon } from 'components/icons/calendarIcon';
+import { LittleCalendarIcon } from '@components/icons/calendarIcon';
 import { useTranslation } from 'react-i18next';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 

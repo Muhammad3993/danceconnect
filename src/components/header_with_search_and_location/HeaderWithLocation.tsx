@@ -1,11 +1,11 @@
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { RightArrowIcon } from 'components/icons/rightArrow';
-import { DCBottomSheet } from 'components/shared/bottom_sheet';
+import { RightArrowIcon } from '@components/icons/rightArrow';
+import { DCBottomSheet } from '@components/shared/bottom_sheet';
 import React, { useCallback, useRef, useState } from 'react';
 import { Image, Text, TouchableOpacity } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { LocationBottomSheet } from './ui/LocationBottomSheet';
-import { images } from 'common/resources/images';
+import { images } from '@common/resources/images';
 
 export function HeaderWithLocation() {
   const [content, setContent] = useState('main');

@@ -2,19 +2,19 @@ import React, { useRef, useState } from 'react';
 import { View } from 'react-native';
 import { BasicInfo } from './ui/BasicInfo';
 import { DanceStyles } from './ui/DanceStyles';
-import { StackScreenProps } from 'screens/interfaces';
+import { StackScreenProps } from '@screens/interfaces';
 import PagerView from 'react-native-pager-view';
-import { DCButton } from 'components/shared/button';
+import { DCButton } from '@components/shared/button';
 import { useTranslation } from 'react-i18next';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDCStore } from 'store';
-import { isEmptyObj } from 'common/utils/object';
-import { useEditUser } from 'data/hooks/user';
+import { useDCStore } from '@store';
+import { isEmptyObj } from '@common/utils/object';
+import { useEditUser } from '@data/hooks/user';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User } from 'data/api/user/inerfaces';
+import { User } from '@data/api/user/inerfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { userEditSchema } from 'data/api/user/schema';
+import { userEditSchema } from '@data/api/user/schema';
 
 export function EditUserScreen({}: StackScreenProps<'editUser'>) {
   const { t } = useTranslation();

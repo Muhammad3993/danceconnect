@@ -1,9 +1,9 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { showErrorToast } from 'common/libs/toast';
-import { ImageUploadBottomSheet } from 'components/image_upload_bottosheet';
-import { UserImage } from 'components/user_image';
-import { ServerFile } from 'data/api/common/interfaces';
-import { useUploadImage } from 'data/hooks/common';
+import { showErrorToast } from '@common/libs/toast';
+import { ImageUploadBottomSheet } from '@components/image_upload_bottosheet';
+import { UserImage } from '@components/user_image';
+import { ServerFile } from '@data/api/common/interfaces';
+import { useUploadImage } from '@data/hooks/common';
 import React, { useRef } from 'react';
 import { Pressable, View } from 'react-native';
 import { Image } from 'react-native-image-crop-picker';

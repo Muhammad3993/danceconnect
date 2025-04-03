@@ -1,10 +1,10 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MessageIcon } from 'components/icons/message';
+import { MessageIcon } from '@components/icons/message';
 // import { MessageItem } from '../chat/ui';
 import { useTranslation } from 'react-i18next';
-import { StackScreenProps } from 'screens/interfaces';
+import { StackScreenProps } from '@screens/interfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function ChatsScreen({ navigation }: StackScreenProps<'chats'>) {

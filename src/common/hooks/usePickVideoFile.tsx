@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect } from 'react';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { showEditor } from 'react-native-video-trim';
-import { showErrorToast } from 'common/libs/toast';
+import { showErrorToast } from '@common/libs/toast';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
 export interface VideoData {

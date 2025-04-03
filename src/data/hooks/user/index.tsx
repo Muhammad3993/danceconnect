@@ -1,14 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
-import { sharedStorage } from 'common/libs/shared_storage';
-import { showErrorToast, showSuccessToast } from 'common/libs/toast';
-import { images } from 'common/resources/images';
-import { collectionsApi } from 'data/api/common';
-import { userApi } from 'data/api/user';
-import { AuthUserRequest, User } from 'data/api/user/inerfaces';
+import { sharedStorage } from '@common/libs/shared_storage';
+import { showErrorToast, showSuccessToast } from '@common/libs/toast';
+import { images } from '@common/resources/images';
+import { collectionsApi } from '@data/api/common';
+import { userApi } from '@data/api/user';
+import { AuthUserRequest, User } from '@data/api/user/inerfaces';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
-import { useDCStore } from 'store';
+import { useDCStore } from '@store';
 
 // const boostrap = async ({ token, user }: AuthResponse) => {
 //   await sharedStorage.setItem("token", token);

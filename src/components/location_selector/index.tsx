@@ -1,20 +1,20 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import React, { forwardRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDCStore } from 'store';
-import { DCCountry } from 'data/api/common/interfaces';
-import { DCInput } from 'components/shared/input';
-import { DCButton } from 'components/shared/button';
-import { useSearchCities } from 'data/hooks/common';
+import { useDCStore } from '@store';
+import { DCCountry } from '@data/api/common/interfaces';
+import { DCInput } from '@components/shared/input';
+import { DCButton } from '@components/shared/button';
+import { useSearchCities } from '@data/hooks/common';
 import {
   BottomSheetFlatList,
   BottomSheetModal,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import { DCBottomSheet } from 'components/shared/bottom_sheet';
-import { Location } from 'data/api/user/inerfaces';
+import { DCBottomSheet } from '@components/shared/bottom_sheet';
+import { Location } from '@data/api/user/inerfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { images } from 'common/resources/images';
+import { images } from '@common/resources/images';
 
 interface Props {
   onChange?: (val: Location) => void;

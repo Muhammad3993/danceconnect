@@ -1,8 +1,8 @@
 import { TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { DCInput } from 'components/shared/input';
-import { SearchIcon } from 'components/icons/search';
-import { PlusBigIcon } from 'components/icons/plusBig';
+import { DCInput } from '@components/shared/input';
+import { SearchIcon } from '@components/icons/search';
+import { PlusBigIcon } from '@components/icons/plusBig';
 import { useTranslation } from 'react-i18next';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 

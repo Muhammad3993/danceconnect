@@ -3,9 +3,9 @@ import React from 'react';
 import { StackScreenProps } from '../interfaces';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { DCButton } from 'components/shared/button';
-import { useSocialBtns } from 'data/hooks/user';
-import { images } from 'common/resources/images';
+import { DCButton } from '@components/shared/button';
+import { useSocialBtns } from '@data/hooks/user';
+import { images } from '@common/resources/images';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function AuthScreen({ navigation }: StackScreenProps<'auth'>) {

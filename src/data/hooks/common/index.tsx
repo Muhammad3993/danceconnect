@@ -1,11 +1,11 @@
-import { collectionsApi } from 'data/api/common';
-import { DCCountry } from 'data/api/common/interfaces';
+import { collectionsApi } from '@data/api/common';
+import { DCCountry } from '@data/api/common/interfaces';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import i18n from 'i18n';
-import { useDebounceValue } from 'common/hooks/useDebounceValue';
-import { showErrorToast } from 'common/libs/toast';
+import i18n from '@i18n';
+import { useDebounceValue } from '@common/hooks/useDebounceValue';
+import { showErrorToast } from '@common/libs/toast';
 import { useState } from 'react';
-import { sharedStorage } from 'common/libs/shared_storage';
+import { sharedStorage } from '@common/libs/shared_storage';
 
 export const useSearchCities = (
   searchString: string,

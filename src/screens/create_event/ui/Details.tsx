@@ -1,15 +1,15 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { Header } from './Header';
-import { CloseIcon } from 'components/icons/close';
+import { CloseIcon } from '@components/icons/close';
 import { Status } from './Status';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DCButton } from 'components/shared/button';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { UploadIcon } from 'components/icons/upload';
-import { TrashIcon } from 'components/icons/trash';
-import { images } from 'common/resources/images';
-import { LittleCalendarIcon } from 'components/icons/calendarIcon';
+import { DCButton } from '@components/shared/button';
+import { ArrowLeftIcon } from '@components/icons/arrowLeft';
+import { UploadIcon } from '@components/icons/upload';
+import { TrashIcon } from '@components/icons/trash';
+import { images } from '@common/resources/images';
+import { LittleCalendarIcon } from '@components/icons/calendarIcon';
 import { useTranslation } from 'react-i18next';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 

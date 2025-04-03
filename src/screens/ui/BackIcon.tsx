@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
+import { ArrowLeftIcon } from '@components/icons/arrowLeft';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 

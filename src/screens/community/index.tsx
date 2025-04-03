@@ -1,11 +1,11 @@
-import { images } from 'common/resources/images';
-import { ArrowLeftIcon } from 'components/icons/arrowLeft';
-import { EditIconSvg } from 'components/icons/editIcon';
-import { SettingIcon } from 'components/icons/settingIcon';
-import { ShareIcon } from 'components/icons/shareIcon';
-import { DCButton } from 'components/shared/button';
-import { DCRoundIcon } from 'components/shared/round_icon';
-import { DCLine } from 'components/shared/line';
+import { images } from '@common/resources/images';
+import { ArrowLeftIcon } from '@components/icons/arrowLeft';
+import { EditIconSvg } from '@components/icons/editIcon';
+import { SettingIcon } from '@components/icons/settingIcon';
+import { ShareIcon } from '@components/icons/shareIcon';
+import { DCButton } from '@components/shared/button';
+import { DCRoundIcon } from '@components/shared/round_icon';
+import { DCLine } from '@components/shared/line';
 import React, { useState } from 'react';
 import {
   FlatList,
@@ -20,20 +20,20 @@ import {
   View,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { RightArrowIcon } from 'components/icons/rightArrow';
+import { RightArrowIcon } from '@components/icons/rightArrow';
 import {
   useGetCommunity,
   useToggleFollowCommunity,
-} from 'data/hooks/community';
-import { MessageIcon } from 'components/icons/message';
-import { StackScreenProps } from 'screens/interfaces';
-import { UserImage } from 'components/user_image';
-import { useDCStore } from 'store';
-import ExpandableText from 'components/shared/expandable_text';
-import { SCREEN_WIDTH } from 'common/constants';
-import { LoaderView } from 'components/shared/loader_view';
+} from '@data/hooks/community';
+import { MessageIcon } from '@components/icons/message';
+import { StackScreenProps } from '@screens/interfaces';
+import { UserImage } from '@components/user_image';
+import { useDCStore } from '@store';
+import ExpandableText from '@components/shared/expandable_text';
+import { SCREEN_WIDTH } from '@common/constants';
+import { LoaderView } from '@components/shared/loader_view';
 import FastImage from 'react-native-fast-image';
-import { getImgePath } from 'data/api';
+import { getImgePath } from '@data/api';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function CommunityScreen({

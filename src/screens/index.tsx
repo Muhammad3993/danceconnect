@@ -5,8 +5,8 @@ import { RootStackRoutes } from './interfaces';
 import { RegisterScreen } from './auth/registration';
 import { LoginScreen } from './auth/login';
 import { AuthScreen } from './auth';
-import { useDCStore } from 'store';
-import { isEmptyArray } from 'common/utils/array';
+import { useDCStore } from '@store';
+import { isEmptyArray } from '@common/utils/array';
 import { EditUserScreen } from './auth/onboarding';
 import { Platform, UIManager } from 'react-native';
 import { HomeTabs } from './home_tabs';
@@ -17,14 +17,13 @@ import { ChatsScreen } from './chats';
 import { CommunityScreen } from './community';
 import { CreateEvent } from './create_event';
 import CreateTicket from './create_ticket';
-import { LoaderView } from 'components/shared/loader_view';
+import { LoaderView } from '@components/shared/loader_view';
 import { useTranslation } from 'react-i18next';
 import { NavigationBackIcon } from './ui/BackIcon';
 import { ChatScreen } from './chat';
 
 import { EditDanceStylesSreen } from './edit_dance_styles';
 import { CreatePostScreen } from './create_post';
-import Config from 'react-native-config';
 
 const Stack = createNativeStackNavigator<RootStackRoutes>();
 
@@ -44,6 +43,7 @@ const linking = {
           id: (id: string) => id,
         },
       },
+      // createPassword: 'create-password',
       // ['User']: {
       //   path: 'user/:id',
       //   parse: {

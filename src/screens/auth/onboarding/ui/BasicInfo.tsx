@@ -1,16 +1,16 @@
 import React, { useRef } from 'react';
-import { genders, roles } from 'common/constants';
-import { DCInput } from 'components/shared/input';
+import { genders, roles } from '@common/constants';
+import { DCInput } from '@components/shared/input';
 import { useTranslation } from 'react-i18next';
 import { Image, ScrollView, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { LocationSelector } from 'components/location_selector';
+import { LocationSelector } from '@components/location_selector';
 import { Controller, useFormContext } from 'react-hook-form';
-import { User } from 'data/api/user/inerfaces';
+import { User } from '@data/api/user/inerfaces';
 import { Header } from './Header';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { images } from 'common/resources/images';
+import { images } from '@common/resources/images';
 
 export const BasicInfo = () => {
   const { t } = useTranslation();

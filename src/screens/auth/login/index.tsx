@@ -3,8 +3,8 @@ import React from 'react';
 import { CredentialsForm } from '../ui/CredentialsForm';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useLoginUser } from 'data/hooks/user';
-import { StackScreenProps } from 'screens/interfaces';
+import { useLoginUser } from '@data/hooks/user';
+import { StackScreenProps } from '@screens/interfaces';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function LoginScreen({ navigation }: StackScreenProps<'login'>) {

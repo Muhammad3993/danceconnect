@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "components": ["./components"],
-      "i18n": ["./i18n"],
-      "screens": ["./screens"],
-      "store": ["./store"],
-      "common": ["./common"],
-      "data": ["./data"]
+      "@components/*": ["src/components/*"],
+      "@i18n/*": ["src/i18n/*"],
+      "@screens/*": ["src/screens/*"],
+      "@store/*": ["src/store/*"],
+      "@common/*": ["src/common/*"],
+      "@data/*": ["src/data/*"]
     }
   },
   "extends": "@react-native/typescript-config/tsconfig.json"

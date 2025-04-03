@@ -8,7 +8,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import appleAuth from '@invertase/react-native-apple-authentication';
-import { sharedStorage } from 'common/libs/shared_storage';
+import { sharedStorage } from '@common/libs/shared_storage';
 
 export const userApi = {
   async loginUser(data: AuthUserRequest) {

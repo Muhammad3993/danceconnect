@@ -1,4 +1,4 @@
-import i18n from 'i18n';
+import i18n from '@i18n';
 import { Dimensions } from 'react-native';
 
 const screenSize = Dimensions.get('screen');

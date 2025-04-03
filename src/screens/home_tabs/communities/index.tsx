@@ -2,14 +2,14 @@ import { ActivityIndicator, FlatList, View } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { CommunityItem } from 'components/shared/community_item';
-import { DCTabs } from 'components/shared/tabs';
-import { TabScreenProps } from 'screens/interfaces';
-import useGetCommunities from 'data/hooks/community';
-import { LoaderView } from 'components/shared/loader_view';
-import { HeaderWithSearch } from 'components/header_with_search_and_location/HeaderWithSearch';
-import { HeaderWithLocation } from 'components/header_with_search_and_location/HeaderWithLocation';
-import { FilterComponent } from 'components/shared/filter';
+import { CommunityItem } from '@components/shared/community_item';
+import { DCTabs } from '@components/shared/tabs';
+import { TabScreenProps } from '@screens/interfaces';
+import useGetCommunities from '@data/hooks/community';
+import { LoaderView } from '@components/shared/loader_view';
+import { HeaderWithSearch } from '@components/header_with_search_and_location/HeaderWithSearch';
+import { HeaderWithLocation } from '@components/header_with_search_and_location/HeaderWithLocation';
+import { FilterComponent } from '@components/shared/filter';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
 export function CommunitiesScreen({

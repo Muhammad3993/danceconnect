@@ -9,15 +9,15 @@ import {
 } from 'react-native';
 import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DCInput } from 'components/shared/input';
-import { DCButton } from 'components/shared/button';
-import { useSocialBtns } from 'data/hooks/user';
-import { images } from 'common/resources/images';
+import { DCInput } from '@components/shared/input';
+import { DCButton } from '@components/shared/button';
+import { useSocialBtns } from '@data/hooks/user';
+import { images } from '@common/resources/images';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { isEmptyObj } from 'common/utils/object';
+import { isEmptyObj } from '@common/utils/object';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { authSchema, AuthSchema } from 'data/api/user/schema';
+import { authSchema, AuthSchema } from '@data/api/user/schema';
 
 interface Props {
   footerComponent: ReactNode;
